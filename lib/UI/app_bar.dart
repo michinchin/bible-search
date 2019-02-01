@@ -29,7 +29,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
               hintStyle: new TextStyle(color: Colors.white)
           ),
         ),
-        centerTitle: true,
+        centerTitle: false,
         actions: <Widget>[
         IconButton(
           icon: Icon(Icons.info_outline),
