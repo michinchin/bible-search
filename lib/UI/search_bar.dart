@@ -6,6 +6,7 @@ class SearchBar extends StatelessWidget {
   final double height;
   final TextEditingController controller;
   final double imageHeight;
+  final navigation;
  
 
   const SearchBar({
@@ -14,28 +15,13 @@ class SearchBar extends StatelessWidget {
       @required this.height,
       @required this.controller,
       @required this.imageHeight,
+      @required this.navigation,
     })  : assert(orientation != null),
           assert(height != null),
           assert(controller != null),
           assert(imageHeight != null),
+          assert(navigation != null),
           super(key: key);
-
-    void _navigateToResults(BuildContext context, String keywords) {
-    Navigator.of(context).push(MaterialPageRoute<Null>(
-      builder: (BuildContext context) {
-        return Scaffold(
-          appBar: AppBar(
-            elevation: 1.0,
-            title: Text(
-              keywords,
-              style: Theme.of(context).textTheme.display1,
-            ),
-            centerTitle: true,
-          ),
-        );
-      },
-    ));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +54,7 @@ class SearchBar extends StatelessWidget {
                 border: InputBorder.none,
             ),
             controller: controller,
-            onSubmitted: (String s){_navigateToResults(context,s);},
+            onSubmitted: (String s){navigation(context,s);},
             ),
           ),
       ),

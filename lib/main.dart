@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'Screens/initial_search.dart';
+import './Model/votd_image.dart';
 
 void main() => runApp(BibleSearch());
 
@@ -9,11 +10,12 @@ class BibleSearch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Bible Search',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.orange,
+        fontFamily: 'Roboto',
       ),
-      home: InitialSearchScreen(title: 'TecartaBible Search'),
+      home: InitialSearchPage(votd: VOTDImage.fetch()),
     );
   }
 }

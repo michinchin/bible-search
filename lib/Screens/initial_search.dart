@@ -2,27 +2,28 @@ import 'package:flutter/material.dart';
 import '../UI/extended_appbar.dart';
 import '../UI/gradient_overlay_image.dart';
 import '../UI/search_bar.dart';
-import '../Services/votd_image_api.dart';
-
+import '../Model/votd_image.dart';
+import '../Screens/results_page.dart';
+import '../Model/search_result.dart';
 // Initial Search Route (screen)
 // 
 // This is the 'home' screen of the Bible Search app. It shows an app bar, a search bar,
 // and a list of recent searches. 
 
-class InitialSearchScreen extends StatefulWidget {
-  InitialSearchScreen({Key key, this.title}) : super(key: key);
-  final String title;
+class InitialSearchPage extends StatefulWidget {
+  final Future<VOTDImage> votd;
+
+  InitialSearchPage({Key key, this.votd}) : super(key: key);
 
   @override
-  _InitialSearchScreenState createState() => _InitialSearchScreenState();
+  _InitialSearchPageState createState() => _InitialSearchPageState();
 }
 
-class _InitialSearchScreenState extends State<InitialSearchScreen> {
-
+class _InitialSearchPageState extends State<InitialSearchPage> {
+  
   final searchController = TextEditingController();
-  final votd = VOTDImageAPI();
-  String _imageURL = 'https://cf-stream.tecartabible.com/7/votd/699.jpg';
   String _searchTerm;
+
   static const _searchHistoryExamples = <String>[
     'Length',
     'Area',
@@ -36,7 +37,6 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
 
   @override
   void initState() {
-    _updateURL();
     super.initState();
     searchController.addListener(_printLatestValue);
   }
@@ -51,19 +51,9 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
     setState(() {
       _searchTerm = searchController.text;
     });
-    print('Search field input: ${_searchTerm}');
-
-  }
-
-  Future<void> _updateURL() async {
-    final imageURL = await votd.getImageURL();
-    setState(() {
-      _imageURL = 'https://cf-stream.tecartabible.com/7/votd/$imageURL';
-    });
+    print('Search field input: $_searchTerm');
   }
   
-
-
   Widget _buildSearchHistoryWidgets(List<ListTile> searchHistory) {
       return ListView.builder(
 
@@ -78,6 +68,17 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
         itemCount: searchHistory.length,
       );
     }
+
+  void _navigateToResults(BuildContext context, String keywords) {
+    Navigator.of(context).push(MaterialPageRoute<Null>(
+      builder: (BuildContext context) {
+        return ResultsPage(
+          keywords: keywords, 
+          searchResults: SearchResults.fetch(keywords, '51'),
+        );
+      },
+    ));
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -104,7 +105,7 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
 
     final gradientAppBarImage = GradientOverlayImage(
       height: _imageHeight,
-      imageURL: _imageURL,
+      votd: widget.votd,
       topColor: Colors.black,
       bottomColor: Colors.transparent,
     );
@@ -119,6 +120,7 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
       height: _searchBarHeight,
       imageHeight: _imageHeight,
       controller: searchController,
+      navigation: _navigateToResults,
     );
 
     final title = Container(

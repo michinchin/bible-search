@@ -36,18 +36,18 @@ class ExtendedAppBar extends StatelessWidget {
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.info_outline),
-          disabledColor: Colors.white,
+          color: Colors.white,
           onPressed: () => _infoButtonPressed(context),
           //TODO: onPressed action
         ),
         IconButton(
           icon: Icon(Icons.filter_list),
-          disabledColor: Colors.white,
+          color: Colors.white,
           onPressed: () => _navigateToFilter(context),
           //TODO: onPressed action
         ),
       ],
-      leading: Icon(Icons.search),  
+      leading: Icon(Icons.search, color: Colors.white,),  
     );
   }
 }
