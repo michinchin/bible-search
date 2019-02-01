@@ -82,6 +82,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
   
   @override
   Widget build(BuildContext context) {
+    final _imageWidth = MediaQuery.of(context).size.width;
     final _imageHeight = MediaQuery.of(context).size.height/3;
     final _orientation = MediaQuery.of(context).orientation;
     final _searchBarHeight = 50.0;
@@ -104,15 +105,11 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     );
 
     final gradientAppBarImage = GradientOverlayImage(
+      width: _imageWidth,
       height: _imageHeight,
       votd: widget.votd,
       topColor: Colors.black,
       bottomColor: Colors.transparent,
-    );
-
-    final appBar = Container(
-        height: _imageHeight,
-        child: ExtendedAppBar(),
     );
 
     final searchBox = SearchBar(
@@ -126,8 +123,9 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     final title = Container(
       padding: EdgeInsets.only(
         left: 20.0,
-        top: _orientation == Orientation.portrait ? 15.0 : _searchBarHeight/2 + 15.0,
+        top: _searchBarHeight/4,
       ),
+      color: Colors.transparent,
       child: Text(
         'SEARCH HISTORY',
         style: TextStyle(
@@ -140,26 +138,34 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
       ),
     );
 
-    final appBarAndList = Column(
+    final seachHistoryListWithTitle = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       mainAxisSize: MainAxisSize.max,
       children: [
-        appBar,
         title,    
         Expanded(child: searchHistoryList),
       ],
     );
 
+    final ps = Size.fromHeight(_orientation == Orientation.portrait ? _imageHeight : _imageHeight+_searchBarHeight/2);
+    final appBar = PreferredSize(
+      preferredSize: ps,
+      child: Stack(children: <Widget>[
+        gradientAppBarImage,
+        ExtendedAppBar(height: _imageHeight),
+        searchBox,
+      ],)
+    );
+
     return Scaffold(
-      body:
-      Stack(
+      backgroundColor: Colors.white,
+      appBar: appBar,
+      body: Stack(
         children: [     
-          gradientAppBarImage,                         
           SafeArea(
-            child: appBarAndList,
+            child: seachHistoryListWithTitle,
           ),
-          searchBox,
         ],
       ),
     );

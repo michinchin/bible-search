@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../Model/search_result.dart';
 import '../UI/result_card.dart';
+import '../UI/app_bar.dart';
 
 class ResultsPage extends StatefulWidget {
   final Future<SearchResults> searchResults;
@@ -31,14 +32,8 @@ class _ResultsPageState extends State<ResultsPage> {
 
   Widget _buildView(Widget body) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 1.0,
-        title: Text(
-          widget.keywords,
-          style: Theme.of(context).textTheme.title,
-        ),
-        centerTitle: true,
-      ),
+      appBar:  SearchAppBar(title: widget.keywords),
+    
       body: body,
     );
   }

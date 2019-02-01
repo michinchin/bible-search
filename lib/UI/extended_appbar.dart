@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
-class ExtendedAppBar extends StatelessWidget {
-  
+class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget{
+  final double height;
+
+  ExtendedAppBar({Key key, this.height}) : super(key:key);
+
+  Size get preferredSize {
+    return new Size.fromHeight(height);
+  }
   void _infoButtonPressed(BuildContext context){
     //TODO: Show popup for different settings 
     print('info button pressed');
