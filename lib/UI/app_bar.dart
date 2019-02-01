@@ -19,9 +19,15 @@ class _SearchAppBarState extends State<SearchAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
         elevation: 1.0,
-        title: Text(
-          widget.title,
-          style: Theme.of(context).textTheme.title,
+        title: TextField(
+          style: new TextStyle(
+            color: Colors.white,
+          ),
+          decoration: new InputDecoration(
+              prefixIcon: new Icon(Icons.search, color: Colors.white),
+              hintText: "Search...",
+              hintStyle: new TextStyle(color: Colors.white)
+          ),
         ),
         centerTitle: true,
         actions: <Widget>[
