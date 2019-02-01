@@ -48,13 +48,15 @@ class SearchBar extends StatelessWidget {
           height: height,
           child: Center(
             child: TextField(
-            textAlign: TextAlign.center,
-            decoration: InputDecoration(
-                hintText: 'Search term here',
-                border: InputBorder.none,
-            ),
-            controller: controller,
-            onSubmitted: (String s){navigation(context,s);},
+              textAlign: TextAlign.center,
+              style: TextStyle(color:Colors.black),
+              decoration: InputDecoration(
+                  hintText: 'Search term here',
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(color: Colors.grey),
+              ),
+              controller: controller,
+              onSubmitted: (String s){navigation(context,s);},
             ),
           ),
       ),

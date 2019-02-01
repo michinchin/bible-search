@@ -56,9 +56,11 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
   
   Widget _buildSearchHistoryWidgets(List<ListTile> searchHistory) {
       return ListView.builder(
-
         itemBuilder: (BuildContext context, int index) {
-          return searchHistory[index];
+          return ListTileTheme(
+          textColor: Colors.black,
+          iconColor: Colors.black,
+          child: searchHistory[index]);
           // return filter == null || filter == "" ? searchHistory[index] : (searchHistory[index].title as Text).data.contains(filter) ? searchHistory[index] : new ListTile();
           //TODO: If you want the list builder to rebuild the list of list tiles, 
           // rather than showing the results in place, make _categoryList a list of strings
@@ -91,9 +93,10 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     for(int i = 0; i < _searchHistoryExamples.length; i++) {
       _categoryList.add(
         ListTile(
-          title: Text('${_searchHistoryExamples[i]}'),
+          title: Text('${_searchHistoryExamples[i]}',),
           subtitle: Text('data'),
           leading: Icon(Icons.access_time),
+          
           onTap: () => print('${_searchHistoryExamples[i]}'),
         ),
       );
@@ -150,6 +153,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
 
     final ps = Size.fromHeight(_orientation == Orientation.portrait ? _imageHeight : _imageHeight+_searchBarHeight/2);
     final appBar = PreferredSize(
+
       preferredSize: ps,
       child: Stack(children: <Widget>[
         gradientAppBarImage,

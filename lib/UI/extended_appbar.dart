@@ -21,6 +21,7 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget{
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      textTheme: TextTheme(),
       elevation: 0.0,
       title: RichText(
         text: TextSpan(
