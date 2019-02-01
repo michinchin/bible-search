@@ -10,8 +10,6 @@ class ResultsPage extends StatefulWidget {
 
   @override
   _ResultsPageState createState() => _ResultsPageState();
-
- 
 }
 
 class _ResultsPageState extends State<ResultsPage> {
@@ -21,16 +19,17 @@ class _ResultsPageState extends State<ResultsPage> {
     return FutureBuilder<SearchResults>(
           future: widget.searchResults,
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return _buildCardView(snapshot.data);
-            } else {
-              return _createScaffold();
-            }
+            if (snapshot.hasData && snapshot.data.data.length == 0) {
+              return _buildView(_buildNoResults());
+            } else if (snapshot.hasData) {
+              return _buildView(_buildCardView(snapshot.data));
+            } 
+            return _buildView(_buildLoading());
           }
     );
   }
 
-   Widget _createScaffold(){
+  Widget _buildView(Widget body) {
     return Scaffold(
       appBar: AppBar(
         elevation: 1.0,
@@ -40,39 +39,37 @@ class _ResultsPageState extends State<ResultsPage> {
         ),
         centerTitle: true,
       ),
+      body: body,
     );
+  }
+  Widget _buildLoading() {
+    return Center(child: CircularProgressIndicator(),);
+  }
+
+  Widget _buildNoResults() {
+    return Center(child: Text("No results ☹️", style: Theme.of(context).textTheme.title,),);
   }
 
   Widget _buildCardView(SearchResults res) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 1.0,
-        title: Text(
-          widget.keywords,
-          style: Theme.of(context).textTheme.title,
-        ),
-        centerTitle: true,
-      ),
-      body: Container(
-        padding: EdgeInsets.all(10),
-        child: CustomScrollView(
-          slivers: [
-            SliverGrid(
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 500.0,
-                mainAxisSpacing: 10.0,
-                crossAxisSpacing: 10.0,
-                childAspectRatio: 2.0,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  return ResultCard(result: res.data[index]);
-                },
-                childCount: res.data.length,
-              ),
+    return Container(
+      padding: EdgeInsets.all(10),
+      child: CustomScrollView(
+        slivers: [
+          SliverGrid(
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: 500.0,
+              mainAxisSpacing: 10.0,
+              crossAxisSpacing: 10.0,
+              childAspectRatio: 2.0,
             ),
-          ]),
-      ),
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                return ResultCard(result: res.data[index]);
+              },
+              childCount: res.data.length,
+            ),
+          ),
+        ]),
     );
   }
 }

@@ -12,7 +12,6 @@ class API {
 
   Future<Map<String,dynamic>> getResponse({String auth, String unencodedPath, Map<String,String> queryParameters,bool isGet}) async {
     final uri = Uri.https(auth, unencodedPath, queryParameters);
-
     final jsonResponse = await _getJson(uri,isGet);
 
     if (jsonResponse == null) {

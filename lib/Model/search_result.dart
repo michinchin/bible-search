@@ -1,6 +1,7 @@
 import '../tecarta.dart';
 import '../Model/verse.dart';
 import '../Services/api.dart';
+import 'dart:io';
 
 class SearchResult {
 
@@ -77,7 +78,7 @@ class SearchResults {
       queryParameters: {
         'key' : kTBkey,
         'version' : kTBApiVersion,
-        'words' : words,
+        'words' : formatWords(words), 
         'book' : '0',
         'bookset' : '0',
         'exact' : '0',
@@ -92,4 +93,35 @@ class SearchResults {
       return SearchResults(data: []);
     }
   }
+}
+
+Map<String,String> urlEncodingExceptions = {
+  "’": "'", // UTF-8: E2 80 99
+  "‘": "'", // UTF-8: E2 80 98
+  "‚": "", // get rid of commas
+  "‛": "'",
+  "“": "\"", // UTF-8: E2 80 9C
+  "”": "\"", // UTF-8: E2 80 9D
+  "„": "\"", // UTF-8: E2 80 9E
+  "‟": "\"",
+  "′": "'",
+  "″": "\"",
+  "‴": "\"",
+  "‵": "'",
+  "‶": "\"",
+  "‷": "\"",
+  "–": "-",   // UTF-8: E2 80 93
+  "‐": "-",
+  "‒": "-",
+  "—": "-", // UTF-8: E2 80 94
+  "―": "-" // UTF-8: E2 80 95
+};
+
+String formatWords(String keywords) {
+  urlEncodingExceptions.forEach(
+    (k,v) => keywords = keywords.replaceAll(RegExp(k), v)
+  );
+  List<String> wordList = keywords.split(" ");
+  wordList.sort((a,b) => b.length.compareTo(a.length));
+  return wordList.length < 5 ? keywords : wordList.sublist(0,4).join(" ");
 }
