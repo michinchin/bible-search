@@ -67,17 +67,10 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
           if (snapshot.hasData && snapshot.data.data.length == 0) {
             return _buildNoResults();
           } else if (snapshot.hasData) {
-            return _buildCenter(snapshot.data);
+            return _buildTranslationWidgets(snapshot.data);
           } 
           return _buildLoading();
         }
-    );
-  }
-
-  Widget _buildCenter(BibleTranslations data){
-    return Container(
-      padding: EdgeInsets.all(10),
-      child: _buildTranslationWidgets(data),
     );
   }
 
@@ -86,8 +79,9 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
   }
 
   Widget _buildTranslationWidgets(BibleTranslations t) {
-    
-      return ListView.builder(
+    return Container(
+      padding: EdgeInsets.all(10.0),
+      child: ListView.builder(
         itemBuilder: (BuildContext context, int index) {
           return ListTileTheme(
             child: CheckboxListTile(
@@ -100,24 +94,28 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
           );
         },
         itemCount: t.data.length,
-      );
+      )
+    );
   }
 
   Widget _buildBookWidgets() {
-    return ListView.builder(
-        itemBuilder: (BuildContext context, int index) {
-          return ListTileTheme(
-            child: CheckboxListTile(
-              onChanged: (bool b){setState(() {
-                bookNames[index].isSelected = b;
-              });},
-              value: bookNames[index].isSelected,
-              title: Text(bookNames[index].name),
-            ),
-          );
-        },
-        itemCount: bookNames.length,
-      );
+    return Container(
+      padding: EdgeInsets.all(10.0),
+      child: ListView.builder(
+          itemBuilder: (BuildContext context, int index) {
+            return ListTileTheme(
+              child: CheckboxListTile(
+                onChanged: (bool b){setState(() {
+                  bookNames[index].isSelected = b;
+                });},
+                value: bookNames[index].isSelected,
+                title: Text(bookNames[index].name),
+              ),
+            );
+          },
+          itemCount: bookNames.length,
+        ),
+    );
   }
 
   Widget _buildNoResults() {

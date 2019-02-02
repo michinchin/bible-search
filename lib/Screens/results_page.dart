@@ -22,6 +22,7 @@ class _ResultsPageState extends State<ResultsPage> {
       builder: (BuildContext context) {
         return TranslationBookFilterPage();
       },
+      fullscreenDialog: true
     ));
   }
 

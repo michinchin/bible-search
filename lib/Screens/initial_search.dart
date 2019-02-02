@@ -64,11 +64,6 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
           textColor: Colors.black,
           iconColor: Colors.black,
           child: searchHistory[index]);
-          // return filter == null || filter == "" ? searchHistory[index] : (searchHistory[index].title as Text).data.contains(filter) ? searchHistory[index] : new ListTile();
-          //TODO: If you want the list builder to rebuild the list of list tiles, 
-          // rather than showing the results in place, make _categoryList a list of strings
-          // of the titles and build each tile in the list view 
-          // https://medium.com/@thedome6/how-to-create-a-searchable-filterable-listview-in-flutter-4faf3e300477
         },
         itemCount: searchHistory.length,
       );
@@ -76,6 +71,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
 
   void _navigateToResults(BuildContext context, String keywords) {
     searchResults = SearchResults.fetch(keywords, '51');
+    searchQueries.add(keywords);
     Navigator.of(context).push(MaterialPageRoute<Null>(
       builder: (BuildContext context) {
         return ResultsPage(
@@ -92,6 +88,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
       builder: (BuildContext context) {
         return TranslationBookFilterPage();
       },
+      fullscreenDialog: true,
     ));
   }
   

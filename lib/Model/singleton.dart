@@ -4,6 +4,7 @@ import '../Model/translation.dart';
 
 Future<SearchResults> searchResults;
 final Future<BibleTranslations> translations = BibleTranslations.fetch();
+var searchQueries = <String>[];
 
 var bookNames = <Book>[
   Book(name:"Old Testament",id:-1),
