@@ -100,14 +100,14 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     final _searchBarHeight = 50.0;
     final _categoryList = <ListTile>[];
 
-    for(int i = 0; i < _searchHistoryExamples.length; i++) {
+    for(int i = 0; i < searchQueries.length; i++) {
       _categoryList.add(
         ListTile(
-          title: Text('${_searchHistoryExamples[i]}',),
-          subtitle: Text('data'),
+          title: Text('${searchQueries[i]}',),
+          subtitle: Text('${DateTime.now()}'),
           leading: Icon(Icons.access_time),
           
-          onTap: () => print('${_searchHistoryExamples[i]}'),
+          onTap: () => print('${searchQueries[i]}'),
         ),
       );
     }

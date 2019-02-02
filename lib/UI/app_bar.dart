@@ -21,6 +21,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
 
   void _updateSearchResults(String keywords) {
     setState(() {
+      searchQueries.add(keywords);
       searchResults = SearchResults.fetch(keywords, '51');
     });
   }
