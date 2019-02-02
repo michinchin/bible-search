@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../Screens/translation_book_filter.dart';
+import '../Model/translation.dart';
 
 class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget{
   final double height;
@@ -18,7 +19,7 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget{
     //TODO: Navigate to Filter Route--Filter Route can be a single route, tab bar page controller 😄
     Navigator.of(context).push(MaterialPageRoute<Null>(
       builder: (BuildContext context) {
-        return TranslationBookFilterPage();
+        return TranslationBookFilterPage(translations:BibleTranslations.fetch());
       },
     ));
   }

@@ -33,7 +33,6 @@ class _ResultsPageState extends State<ResultsPage> {
   Widget _buildView(Widget body) {
     return Scaffold(
       appBar:  SearchAppBar(title: widget.keywords),
-    
       body: body,
     );
   }
