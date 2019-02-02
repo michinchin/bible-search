@@ -47,7 +47,6 @@ class BibleTranslations {
             }
           }
         } 
-        
       }
     }
     return BibleTranslations(data: d);
