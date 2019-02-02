@@ -5,6 +5,9 @@ import '../UI/search_bar.dart';
 import '../Model/votd_image.dart';
 import '../Screens/results_page.dart';
 import '../Model/search_result.dart';
+import '../Screens/translation_book_filter.dart';
+import '../Model/singleton.dart';
+
 // Initial Search Route (screen)
 // 
 // This is the 'home' screen of the Bible Search app. It shows an app bar, a search bar,
@@ -41,11 +44,11 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     searchController.addListener(_printLatestValue);
   }
 
-  @override
-  void dispose() {
-    searchController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   searchController.dispose();
+  //   super.dispose();
+  // }
 
   _printLatestValue() {
     setState(() {
@@ -72,12 +75,22 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     }
 
   void _navigateToResults(BuildContext context, String keywords) {
+    searchResults = SearchResults.fetch(keywords, '51');
     Navigator.of(context).push(MaterialPageRoute<Null>(
       builder: (BuildContext context) {
         return ResultsPage(
           keywords: keywords, 
-          searchResults: SearchResults.fetch(keywords, '51'),
+          searchController: searchController,
         );
+      },
+    ));
+  }
+
+  void _navigateToFilter(BuildContext context) {
+    //TODO: Navigate to Filter Route--Filter Route can be a single route, tab bar page controller 😄
+    Navigator.of(context).push(MaterialPageRoute<Null>(
+      builder: (BuildContext context) {
+        return TranslationBookFilterPage();
       },
     ));
   }
@@ -157,7 +170,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
       preferredSize: ps,
       child: Stack(children: <Widget>[
         gradientAppBarImage,
-        ExtendedAppBar(height: _imageHeight),
+        ExtendedAppBar(height: _imageHeight, navigate: _navigateToFilter,),
         searchBox,
       ],)
     );

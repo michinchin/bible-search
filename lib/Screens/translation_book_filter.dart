@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import '../Model/translation.dart';
-import '../Model/book.dart';
+import '../Model/singleton.dart';
 
 class TranslationBookFilterPage extends StatefulWidget {
-  final Future<BibleTranslations> translations;
 
-  const TranslationBookFilterPage({ Key key, this.translations }) : super(key: key);
+  const TranslationBookFilterPage({ Key key }) : super(key: key);
   @override
   _TranslationBookFilterPageState createState() => _TranslationBookFilterPageState();
 }
@@ -63,7 +62,7 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
 
   Widget _buildTranslationView(){
     return FutureBuilder<BibleTranslations>(
-        future: widget.translations,
+        future: translations,
         builder: (context, snapshot) {
           if (snapshot.hasData && snapshot.data.data.length == 0) {
             return _buildNoResults();
@@ -91,8 +90,6 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
       return ListView.builder(
         itemBuilder: (BuildContext context, int index) {
           return ListTileTheme(
-            textColor: Colors.white,
-            iconColor: Colors.white,
             child: CheckboxListTile(
               onChanged: (bool b){setState(() {
                 t.data[index].isSelected = b;
@@ -110,8 +107,6 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
     return ListView.builder(
         itemBuilder: (BuildContext context, int index) {
           return ListTileTheme(
-            textColor: Colors.white,
-            iconColor: Colors.white,
             child: CheckboxListTile(
               onChanged: (bool b){setState(() {
                 bookNames[index].isSelected = b;

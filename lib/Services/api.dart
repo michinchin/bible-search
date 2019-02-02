@@ -18,13 +18,11 @@ class API {
       print('Error retrieving json.');
       return null;
     }
-
     return jsonResponse;
   }
 
   Future<Map<String, dynamic>> _getJson(Uri uri, bool isGet) async {
     try {
-      
       final httpRequest = isGet ? await _httpClient.getUrl(uri) : await _httpClient.postUrl(uri);
       final httpResponse = await httpRequest.close();
       if (httpResponse.statusCode != HttpStatus.ok) {

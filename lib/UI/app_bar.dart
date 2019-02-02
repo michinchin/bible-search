@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-
+import '../Model/singleton.dart';
+import '../Model/search_result.dart';
 
 class SearchAppBar extends StatefulWidget implements PreferredSizeWidget{
   final String title;
+  final navigator;
+  final TextEditingController searchController;
 
-  SearchAppBar({Key key, this.title}) : super(key: key);
+  SearchAppBar({Key key, this.title,this.navigator,this.searchController}) : super(key: key);
 
   Size get preferredSize {
     return new Size.fromHeight(kToolbarHeight);
@@ -15,6 +18,13 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget{
 }
 
 class _SearchAppBarState extends State<SearchAppBar> {
+
+  void _updateSearchResults(String keywords) {
+    setState(() {
+      searchResults = SearchResults.fetch(keywords, '51');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -26,8 +36,11 @@ class _SearchAppBarState extends State<SearchAppBar> {
           decoration: new InputDecoration(
               prefixIcon: new Icon(Icons.search, color: Colors.white),
               hintText: "Search...",
-              hintStyle: new TextStyle(color: Colors.white)
+              hintStyle: new TextStyle(color: Colors.white),
+              labelText: widget.searchController.text,
           ),
+          controller: widget.searchController,
+          onSubmitted: (String s) =>_updateSearchResults(s),
         ),
         centerTitle: false,
         actions: <Widget>[
@@ -40,7 +53,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
         IconButton(
           icon: Icon(Icons.filter_list),
           color: Colors.white,
-          onPressed: () => {},
+          onPressed: () => widget.navigator(context),
           //TODO: onPressed action
         ),
       ],

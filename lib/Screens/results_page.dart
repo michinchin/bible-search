@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import '../Model/search_result.dart';
 import '../UI/result_card.dart';
 import '../UI/app_bar.dart';
+import '../Screens/translation_book_filter.dart';
+import '../Model/singleton.dart';
 
 class ResultsPage extends StatefulWidget {
-  final Future<SearchResults> searchResults;
   final String keywords;
+  final TextEditingController searchController;
 
-  ResultsPage({Key key, this.searchResults, this.keywords}) : super(key: key);
+  ResultsPage({Key key, this.keywords,this.searchController}) : super(key: key);
 
   @override
   _ResultsPageState createState() => _ResultsPageState();
@@ -15,10 +17,18 @@ class ResultsPage extends StatefulWidget {
 
 class _ResultsPageState extends State<ResultsPage> {
 
+  void _navigateToFilter(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute<Null>(
+      builder: (BuildContext context) {
+        return TranslationBookFilterPage();
+      },
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<SearchResults>(
-          future: widget.searchResults,
+          future: searchResults,
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data.data.length == 0) {
               return _buildView(_buildNoResults());
@@ -32,7 +42,7 @@ class _ResultsPageState extends State<ResultsPage> {
 
   Widget _buildView(Widget body) {
     return Scaffold(
-      appBar:  SearchAppBar(title: widget.keywords),
+      appBar:  SearchAppBar(title: widget.keywords, navigator: _navigateToFilter,searchController: widget.searchController,),
       body: body,
     );
   }

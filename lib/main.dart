@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'Screens/initial_search.dart';
 import './Model/votd_image.dart';
 
+
 void main() => runApp(BibleSearch());
 
 class BibleSearch extends StatelessWidget {

@@ -4,8 +4,8 @@ import '../Model/translation.dart';
 
 class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget{
   final double height;
-
-  ExtendedAppBar({Key key, this.height}) : super(key:key);
+  final navigate;
+  ExtendedAppBar({Key key, this.height,this.navigate}) : super(key:key);
 
   Size get preferredSize {
     return new Size.fromHeight(height);
@@ -13,15 +13,6 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget{
   void _infoButtonPressed(BuildContext context){
     //TODO: Show popup for different settings 
     print('info button pressed');
-  }
-
-  void _navigateToFilter (BuildContext context) {
-    //TODO: Navigate to Filter Route--Filter Route can be a single route, tab bar page controller 😄
-    Navigator.of(context).push(MaterialPageRoute<Null>(
-      builder: (BuildContext context) {
-        return TranslationBookFilterPage(translations:BibleTranslations.fetch());
-      },
-    ));
   }
 
   @override
@@ -56,7 +47,7 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget{
         IconButton(
           icon: Icon(Icons.filter_list),
           color: Colors.white,
-          onPressed: () => _navigateToFilter(context),
+          onPressed: () => navigate(context),
           //TODO: onPressed action
         ),
       ],
