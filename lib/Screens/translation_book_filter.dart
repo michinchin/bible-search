@@ -89,7 +89,9 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
                 t.data[index].isSelected = b;
               });},
               value: t.data[index].isSelected,
-              title: Text(t.data[index].name),
+              title: Text(t.data[index].a),
+              subtitle: Text(t.data[index].name),
+              controlAffinity: ListTileControlAffinity.leading,
             ),
           );
         },
@@ -103,6 +105,7 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
       padding: EdgeInsets.all(10.0),
       child: ListView.builder(
           itemBuilder: (BuildContext context, int index) {
+            //TODO: OT & NT checkmark
             return ListTileTheme(
               child: CheckboxListTile(
                 onChanged: (bool b){setState(() {
@@ -110,6 +113,7 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
                 });},
                 value: bookNames[index].isSelected,
                 title: Text(bookNames[index].name),
+                controlAffinity: ListTileControlAffinity.leading,
               ),
             );
           },

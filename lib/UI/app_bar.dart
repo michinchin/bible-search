@@ -21,7 +21,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
 
   void _updateSearchResults(String keywords) {
     setState(() {
-      searchQueries.add(keywords);
+      searchQueries[keywords] = '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
       searchResults = SearchResults.fetch(keywords, '51');
     });
   }

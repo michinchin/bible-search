@@ -15,7 +15,7 @@ class BibleTranslation {
     this.a,
     this.lang,
     this.isOnSale,
-    this.isSelected = false,
+    this.isSelected = true,
   });
 
   factory BibleTranslation.fromJson(Map<String, dynamic> json){

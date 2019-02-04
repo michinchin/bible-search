@@ -71,7 +71,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
 
   void _navigateToResults(BuildContext context, String keywords) {
     searchResults = SearchResults.fetch(keywords, '51');
-    searchQueries.add(keywords);
+    searchQueries[keywords] = '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
     Navigator.of(context).push(MaterialPageRoute<Null>(
       builder: (BuildContext context) {
         return ResultsPage(
@@ -83,7 +83,6 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
   }
 
   void _navigateToFilter(BuildContext context) {
-    //TODO: Navigate to Filter Route--Filter Route can be a single route, tab bar page controller 😄
     Navigator.of(context).push(MaterialPageRoute<Null>(
       builder: (BuildContext context) {
         return TranslationBookFilterPage();
@@ -100,17 +99,17 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     final _searchBarHeight = 50.0;
     final _categoryList = <ListTile>[];
 
-    for(int i = 0; i < searchQueries.length; i++) {
+    searchQueries.forEach((k,v){
       _categoryList.add(
         ListTile(
-          title: Text('${searchQueries[i]}',),
-          subtitle: Text('${DateTime.now()}'),
+          title: Text('$k',),
+          subtitle: Text('$v'),
           leading: Icon(Icons.access_time),
           
-          onTap: () => print('${searchQueries[i]}'),
+          onTap: () => print('$k'),
         ),
       );
-    }
+    });
     //TODO: Create a list view of the Categories
     final searchHistoryList = Container(
       color: Colors.white,
