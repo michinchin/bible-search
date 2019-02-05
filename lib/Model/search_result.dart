@@ -43,9 +43,9 @@ class SearchResult {
     }
     return SearchResult(
       ref: ref,
-      bookId: json['bookId'],
-      chapterId: json['chapterId'],
-      verseId: json['verseId'],
+      bookId: json['bookId'] as int,
+      chapterId: json['chapterId'] as int,
+      verseId: json['verseId'] as int,
       verses: v,
     );
   }

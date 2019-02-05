@@ -31,6 +31,7 @@ class _ResultsPageState extends State<ResultsPage> {
     return FutureBuilder<SearchResults>(
           future: searchResults,
           builder: (context, snapshot) {
+            //snapshot.connectionState switch statement
             if (snapshot.hasData && snapshot.data.data.length == 0) {
               return _buildView(_buildNoResults());
             } else if (snapshot.hasData) {

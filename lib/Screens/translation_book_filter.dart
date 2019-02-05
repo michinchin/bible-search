@@ -113,6 +113,7 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
                 });},
                 value: bookNames[index].isSelected,
                 title: Text(bookNames[index].name),
+                subtitle: Text('${bookNames[index].getotnt()}'),
                 controlAffinity: ListTileControlAffinity.leading,
               ),
             );
