@@ -7,6 +7,7 @@ import '../Screens/results_page.dart';
 import '../Model/search_result.dart';
 import '../Screens/translation_book_filter.dart';
 import '../Model/singleton.dart';
+import '../Model/translation.dart';
 
 // Initial Search Route (screen)
 // 
@@ -41,6 +42,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
   @override
   void initState() {
     super.initState();
+    _grabTranslations();
     searchController.addListener(_printLatestValue);
   }
 
@@ -56,6 +58,13 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     });
     print('Search field input: $_searchTerm');
   }
+
+  _grabTranslations() async {
+    final test = await BibleTranslations.fetch();
+    setState(() {
+      translations = test;
+    });
+  }
   
   Widget _buildSearchHistoryWidgets(List<ListTile> searchHistory) {
       return ListView.builder(
@@ -70,7 +79,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     }
 
   void _navigateToResults(BuildContext context, String keywords) {
-    searchResults = SearchResults.fetch(keywords, '51');
+    searchResults = SearchResults.fetch(keywords, translations);
     searchQueries[keywords] = '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
     Navigator.of(context).push(MaterialPageRoute<Null>(
       builder: (BuildContext context) {

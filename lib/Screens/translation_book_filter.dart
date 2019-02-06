@@ -29,7 +29,7 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
    _tabController.dispose();
    super.dispose();
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,17 +61,18 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
   }
 
   Widget _buildTranslationView(){
-    return FutureBuilder<BibleTranslations>(
-        future: translations,
-        builder: (context, snapshot) {
-          if (snapshot.hasData && snapshot.data.data.length == 0) {
-            return _buildNoResults();
-          } else if (snapshot.hasData) {
-            return _buildTranslationWidgets(snapshot.data);
-          } 
-          return _buildLoading();
-        }
-    );
+    // return FutureBuilder<BibleTranslations>(
+    //     future: translations,
+    //     builder: (context, snapshot) {
+    //       if (snapshot.hasData && snapshot.data.data.length == 0) {
+    //         return _buildNoResults();
+    //       } else if (snapshot.hasData) {
+    //         return _buildTranslationWidgets(snapshot.data);
+    //       } 
+    //       return _buildLoading();
+    //     }
+    // );
+    return _buildTranslationWidgets(translations);
   }
 
   Widget _buildLoading() {
@@ -85,9 +86,11 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
         itemBuilder: (BuildContext context, int index) {
           return ListTileTheme(
             child: CheckboxListTile(
-              onChanged: (bool b){setState(() {
-                t.data[index].isSelected = b;
-              });},
+              onChanged: (bool b){
+                setState(() {
+                  t.data[index].isSelected = b;
+                });
+              },
               value: t.data[index].isSelected,
               title: Text(t.data[index].a),
               subtitle: Text(t.data[index].name),
@@ -108,9 +111,11 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
             //TODO: OT & NT checkmark
             return ListTileTheme(
               child: CheckboxListTile(
-                onChanged: (bool b){setState(() {
+                onChanged: (bool b){
+                  setState(() {
                   bookNames[index].isSelected = b;
-                });},
+                  });
+                },
                 value: bookNames[index].isSelected,
                 title: Text(bookNames[index].name),
                 subtitle: Text('${bookNames[index].getotnt()}'),

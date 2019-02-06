@@ -16,6 +16,7 @@ class ResultsPage extends StatefulWidget {
 }
 
 class _ResultsPageState extends State<ResultsPage> {
+  bool submitting = false;
 
   void _navigateToFilter(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute<Null>(
@@ -26,14 +27,23 @@ class _ResultsPageState extends State<ResultsPage> {
     ));
   }
 
+  void _updateSearchResults(String keywords) {
+    setState(() {
+      searchQueries[keywords] = '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
+      searchResults = SearchResults.fetch(keywords, translations);
+      //submitting = !submitting;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    
     return FutureBuilder<SearchResults>(
           future: searchResults,
           builder: (context, snapshot) {
             //snapshot.connectionState switch statement
             if (snapshot.hasData && snapshot.data.data.length == 0) {
-              return _buildView(_buildNoResults());
+              return _buildView(_buildNoResults("No results ☹️"));
             } else if (snapshot.hasData) {
               return _buildView(_buildCardView(snapshot.data));
             } 
@@ -44,7 +54,12 @@ class _ResultsPageState extends State<ResultsPage> {
 
   Widget _buildView(Widget body) {
     return Scaffold(
-      appBar:  SearchAppBar(title: widget.keywords, navigator: _navigateToFilter,searchController: widget.searchController,),
+      appBar:  SearchAppBar(
+        title: widget.keywords,
+        navigator: _navigateToFilter,
+        searchController: widget.searchController,
+        update: _updateSearchResults,
+      ),
       body: body,
     );
   }
@@ -52,8 +67,8 @@ class _ResultsPageState extends State<ResultsPage> {
     return Center(child: CircularProgressIndicator(),);
   }
 
-  Widget _buildNoResults() {
-    return Center(child: Text("No results ☹️", style: Theme.of(context).textTheme.title,),);
+  Widget _buildNoResults(String text) {
+    return Center(child: Text(text, style: Theme.of(context).textTheme.title,),);
   }
 
   Widget _buildCardView(SearchResults res) {

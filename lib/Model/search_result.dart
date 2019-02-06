@@ -1,7 +1,7 @@
 import '../tecarta.dart';
 import '../Model/verse.dart';
 import '../Services/api.dart';
-import 'dart:io';
+import '../Model/translation.dart';
 
 class SearchResult {
 
@@ -70,7 +70,7 @@ class SearchResults {
     return SearchResults(data: d);
   }
 
-  static Future<SearchResults> fetch(String words, String translations) async {
+  static Future<SearchResults> fetch(String words, BibleTranslations translations) async {
     final api = API();
     final json = await api.getResponse(
       auth: kTBApiServer,
@@ -83,7 +83,7 @@ class SearchResults {
         'bookset' : '0',
         'exact' : '0',
         'phrase' : '0',
-        'searchVolumes' : translations,
+        'searchVolumes' : formatIds(translations),
       },
       isGet: true,
     );
@@ -124,4 +124,18 @@ String formatWords(String keywords) {
   List<String> wordList = keywords.split(" ");
   wordList.sort((a,b) => b.length.compareTo(a.length));
   return wordList.length < 5 ? keywords : wordList.sublist(0,4).join(" ");
+}
+
+String formatIds(BibleTranslations bt) {
+  String formattedIds = "";
+  for (final each in bt.data) {
+    // if (each.isSelected && each.isOnSale) {
+      if (each.lang == 'en') {
+      formattedIds += '${each.id}|';
+    // }
+    }
+  }
+  var idx = formattedIds.lastIndexOf('|');
+  formattedIds = formattedIds.substring(0,idx);
+  return formattedIds;
 }

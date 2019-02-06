@@ -6,8 +6,9 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget{
   final String title;
   final navigator;
   final TextEditingController searchController;
+  final update;
 
-  SearchAppBar({Key key, this.title,this.navigator,this.searchController}) : super(key: key);
+  SearchAppBar({Key key, this.title,this.navigator,this.searchController, this.update}) : super(key: key);
 
   Size get preferredSize {
     return new Size.fromHeight(kToolbarHeight);
@@ -19,12 +20,7 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget{
 
 class _SearchAppBarState extends State<SearchAppBar> {
 
-  void _updateSearchResults(String keywords) {
-    setState(() {
-      searchQueries[keywords] = '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
-      searchResults = SearchResults.fetch(keywords, '51');
-    });
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +37,8 @@ class _SearchAppBarState extends State<SearchAppBar> {
               labelText: widget.searchController.text,
           ),
           controller: widget.searchController,
-          onSubmitted: (String s) =>_updateSearchResults(s),
+          onSubmitted: (String s) => widget.update(s),
+          
         ),
         centerTitle: false,
         actions: <Widget>[

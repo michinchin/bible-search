@@ -3,11 +3,10 @@ import '../Model/search_result.dart';
 import '../Model/translation.dart';
 
 Future<SearchResults> searchResults;
-final Future<BibleTranslations> translations = BibleTranslations.fetch();
+BibleTranslations translations;
 var searchQueries = Map<String, String>();
 
 var bookNames = <Book>[
-  Book(name:"Old Testament",id:-1),
   Book(name:"Genesis",id: 1),
   Book(name:"Exodus",id: 2),
   Book(name:"Leviticus",id: 3),
@@ -47,7 +46,6 @@ var bookNames = <Book>[
   Book (name:"Haggai",id: 44),
   Book (name:"Zechariah",id: 45),
   Book (name:"Malachi",id: 46),
-  Book (name:"New Testament",id: 0),
   Book(name:"Matthew",id: 47),
   Book (name:"Mark",id: 48),
   Book (name:"Luke",id: 49),
