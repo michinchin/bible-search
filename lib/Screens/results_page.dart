@@ -60,7 +60,7 @@ class _ResultsPageState extends State<ResultsPage> {
         searchController: widget.searchController,
         update: _updateSearchResults,
       ),
-      body: body,
+      body: SafeArea(child:body),
     );
   }
   Widget _buildLoading() {
@@ -72,25 +72,21 @@ class _ResultsPageState extends State<ResultsPage> {
   }
 
   Widget _buildCardView(SearchResults res) {
-    return Container(
-      padding: EdgeInsets.all(10),
-      child: CustomScrollView(
-        slivers: [
-          SliverGrid(
-            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: 500.0,
-              mainAxisSpacing: 10.0,
-              crossAxisSpacing: 10.0,
-              childAspectRatio: 2.0,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                return ResultCard(result: res.data[index]);
-              },
-              childCount: res.data.length,
-            ),
-          ),
-        ]),
-    );
+   return Padding(
+     padding: EdgeInsets.all(10.0),
+     child: ListView.custom(
+      childrenDelegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          return ResultCard(
+            result: res.data[index], 
+            text: res.data[index].verses[0].verseContent,
+            verses: res.data[index].verses,
+          );
+        },
+        childCount: res.data.length,
+      ),
+   ));
+
   }
 }
+
