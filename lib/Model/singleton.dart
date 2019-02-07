@@ -5,6 +5,7 @@ import '../Model/translation.dart';
 Future<SearchResults> searchResults;
 BibleTranslations translations;
 var searchQueries = Map<String, String>();
+bool isInSelectionMode = false;
 
 var bookNames = <Book>[
   Book(name:"Genesis",id: 1),

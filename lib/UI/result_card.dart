@@ -6,8 +6,10 @@ class ResultCard extends StatefulWidget {
   final SearchResult result;
   String text;
   List<Verse> verses;
+  final toggleSelectionMode;
+  final currState;
 
-  ResultCard({Key key, this.result, this.text,this.verses}) : super(key: key);
+  ResultCard({Key key, this.result, this.text,this.verses, this.toggleSelectionMode, this.currState}) : super(key: key);
 
   @override
   _ResultCardState createState() => _ResultCardState();
@@ -29,92 +31,109 @@ class _ResultCardState extends State<ResultCard> {
     });
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
 
-  //not working yet
-  Widget _buildButtonStack() {
-    var buttons = <FlatButton>[];
-    for (final each in widget.verses) {
-      buttons.add(FlatButton(
-        child: Text(each.a),
-        onPressed: () => {}, 
-      ));
-    }
-    var rows = <Row>[];
-    var width = MediaQuery.of(context).size.width;
-    double currWidth = 0;
-    var currButtons = <FlatButton>[];
-    for (final each in buttons) {
-      if (currWidth >= width) {
-        currWidth = 0;
-        rows.add(Row(
-          children: currButtons,
+    final allButton = FlatButton(child: Text('ALL'), onPressed: ()=>{},);
+    //not working yet
+    Widget _buildButtonStack() {
+      var buttons = <FlatButton>[];
+      for (final each in widget.verses) {
+        buttons.add(FlatButton(
+          child: Text(each.a),
+          onPressed: () => {}, 
         ));
-        currButtons = <FlatButton>[];
+      }
+      var rows = <Row>[];
+      var width = MediaQuery.of(context).size.width;
+      double currWidth = 0;
+      var currButtons = <FlatButton>[];
+      for (final each in buttons) {
+        currWidth += 100;
+        if (currWidth >= width) {
+          currWidth = 0;
+          rows.add(Row(
+            children: currButtons,
+          ));
+          currButtons = <FlatButton>[];
+        } else {
+          currButtons.add(each);
+        } 
+      }
+      
+      currWidth += 100;
+      if (currWidth >= width) {
+        rows.add(Row(children: currButtons,));
+        rows.add(Row(children: [allButton]));
       } else {
-        currButtons.add(each);
-      } 
-      currWidth += 50;
+        currButtons.add(allButton);
+        rows.add(Row(children: currButtons,));
+      }
+      //if already at its max then don't add allButton, add allButton to the next line
+      return Center(
+        child:Column(
+        children: rows,
+        )
+      );
     }
-    return Column(
-      children: rows,
-    );
-  }
-    
-  Widget _compareButtonWidget(){
-    return Container();
+      
+    Widget _compareButtonWidget = !widget.result.compareExpanded ? Container() : _buildButtonStack();
 
-    // return !widget.result.compareExpanded ? Container() : _buildButtonStack();
-
-    // ButtonTheme(
-    //   child: ButtonBar(
-    //     alignment: MainAxisAlignment.start,
-    //     children: List.generate(widget.verses.length, (index) {
-    //     return FlatButton(
-    //       child: Text(widget.verses[index].a),
-    //       onPressed: () => {},  
-    //     );
-    //   })
-    //   ),
-    // );
-  }
-
-    return Container(
-      padding: EdgeInsets.only(top: 10.0),
-      child: Card(
-      child: Padding(
-        padding: EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            ListTile(
-              leading: Icon(Icons.book),
-              title: Text(widget.result.ref),
-              subtitle: Text(widget.text),
-            ),
-            ButtonTheme.bar( // make buttons use the appropriate styles for cards
-              child: ButtonBar(
-                children: <Widget>[
-                  FlatButton(
-                    child: const Text('CONTEXT'),
-                    onPressed: () => _contextButtonPressed(), // set state here
-                  ),
-                  FlatButton(
-                    child: const Text('COMPARE'),
-                    onPressed: () => _compareButtonPressed(),
-                  ),
-                ],
+    final _selectionModeCard = InkWell(
+      onLongPress: ()=>widget.toggleSelectionMode(),
+        child: Card(
+          child:
+              CheckboxListTile(
+                value: widget.result.isSelected,
+                onChanged: (bool b) {
+                  setState(() {
+                    widget.result.isSelected = b;
+                  });
+                },
+                title: Text(widget.result.ref),
+                subtitle: Text(widget.text),
               ),
-            ),
-            _compareButtonWidget(),
-          ],
+          
+        ),
+    
+  
+    );
+
+    return widget.currState ? _selectionModeCard :
+    InkWell(
+      onLongPress: ()=>widget.toggleSelectionMode(),
+        child: Card(
+        child: Padding(
+          padding: EdgeInsets.all(10.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: Icon(Icons.book),
+                title: Text(widget.result.ref),
+                subtitle: Text(widget.text),
+              ),
+              ButtonTheme.bar( // make buttons use the appropriate styles for cards
+                child: ButtonBar(
+                  children: <Widget>[
+                    FlatButton(
+                      child: const Text('CONTEXT'),
+                      onPressed: () => _contextButtonPressed(), // set state here
+                    ),
+                    FlatButton(
+                      child: const Text('COMPARE'),
+                      onPressed: () => _compareButtonPressed(),
+                    ),
+                  ],
+                ),
+              ),
+              _compareButtonWidget,
+            ],
+          ),
         ),
       ),
-    ),
-  );
+  
+    );
   
   
   }

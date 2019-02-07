@@ -17,6 +17,7 @@ class ResultsPage extends StatefulWidget {
 
 class _ResultsPageState extends State<ResultsPage> {
   bool submitting = false;
+  bool isInSelectionMode = false;
 
   void _navigateToFilter(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute<Null>(
@@ -32,6 +33,13 @@ class _ResultsPageState extends State<ResultsPage> {
       searchQueries[keywords] = '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
       searchResults = SearchResults.fetch(keywords, translations);
       //submitting = !submitting;
+    });
+  }
+
+
+  void _changeToSelectionMode() {
+    setState(() {
+      isInSelectionMode = !isInSelectionMode;
     });
   }
 
@@ -77,10 +85,13 @@ class _ResultsPageState extends State<ResultsPage> {
      child: ListView.custom(
       childrenDelegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
-          return ResultCard(
+          return 
+          ResultCard(
             result: res.data[index], 
             text: res.data[index].verses[0].verseContent,
             verses: res.data[index].verses,
+            toggleSelectionMode: _changeToSelectionMode,
+            currState: isInSelectionMode,
           );
         },
         childCount: res.data.length,

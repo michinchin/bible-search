@@ -28,17 +28,6 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
   final searchController = TextEditingController();
   String _searchTerm;
 
-  static const _searchHistoryExamples = <String>[
-    'Length',
-    'Area',
-    'Volume',
-    'Mass',
-    'Time',
-    'Digital Storage',
-    'Energy',
-    'Currency',
-    ];
-
   @override
   void initState() {
     super.initState();
