@@ -16,6 +16,7 @@ class ResultCard extends StatefulWidget {
 }
 
 class _ResultCardState extends State<ResultCard> {
+  var _currTag;
 
   _compareButtonPressed(){
     setState(() {
@@ -31,23 +32,37 @@ class _ResultCardState extends State<ResultCard> {
     });
   }
 
+  _translationChanged(Verse each){
+    setState(() {
+      widget.text = each.verseContent;
+      _currTag = each.id;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
-    final allButton = FlatButton(child: Text('ALL'), onPressed: ()=>{},);
+    final allButton = FlatButton(
+      child: Text('ALL'), 
+      onPressed: ()=>{},
+      textColor: Theme.of(context).hintColor,
+      splashColor: Theme.of(context).accentColor,
+    );
     //not working yet
     Widget _buildButtonStack() {
       var buttons = <FlatButton>[];
       for (final each in widget.verses) {
         buttons.add(FlatButton(
           child: Text(each.a),
-          onPressed: () => {}, 
+          textColor:  _currTag == each.id ? Theme.of(context).canvasColor : Theme.of(context).hintColor,
+          color: _currTag == each.id ? Theme.of(context).accentColor : Colors.transparent, //currently chosen, pass tag
+          onPressed: () =>_translationChanged(each), 
         ));
       }
       var rows = <Row>[];
       var width = MediaQuery.of(context).size.width;
       double currWidth = 0;
-      var currButtons = <FlatButton>[];
+      var currButtons = <Expanded>[];
       for (final each in buttons) {
         currWidth += 100;
         if (currWidth >= width) {
@@ -55,9 +70,9 @@ class _ResultCardState extends State<ResultCard> {
           rows.add(Row(
             children: currButtons,
           ));
-          currButtons = <FlatButton>[];
+          currButtons = <Expanded>[];
         } else {
-          currButtons.add(each);
+          currButtons.add(Expanded(child: each));
         } 
       }
       
@@ -66,12 +81,12 @@ class _ResultCardState extends State<ResultCard> {
         rows.add(Row(children: currButtons,));
         rows.add(Row(children: [allButton]));
       } else {
-        currButtons.add(allButton);
+        currButtons.add(Expanded(child:allButton));
         rows.add(Row(children: currButtons,));
       }
       //if already at its max then don't add allButton, add allButton to the next line
       return Center(
-        child:Column(
+        child: Column(
         children: rows,
         )
       );
@@ -80,18 +95,22 @@ class _ResultCardState extends State<ResultCard> {
     Widget _compareButtonWidget = !widget.result.compareExpanded ? Container() : _buildButtonStack();
 
     final _selectionModeCard = InkWell(
-      onLongPress: ()=>widget.toggleSelectionMode(),
+      onLongPress: widget.toggleSelectionMode,
         child: Card(
           child:
-              CheckboxListTile(
-                value: widget.result.isSelected,
-                onChanged: (bool b) {
-                  setState(() {
-                    widget.result.isSelected = b;
-                  });
-                },
-                title: Text(widget.result.ref),
-                subtitle: Text(widget.text),
+              Container(
+                padding: EdgeInsets.all(10.0),
+                child: CheckboxListTile(
+                  value: widget.result.isSelected,
+                  onChanged: (bool b) {
+                    setState(() {
+                      widget.result.isSelected = b;
+                    });
+                  },
+                  controlAffinity:  ListTileControlAffinity.leading,
+                  title: Text(widget.result.ref),
+                  subtitle: Text(widget.text),
+                ),
               ),
           
         ),
@@ -101,7 +120,7 @@ class _ResultCardState extends State<ResultCard> {
 
     return widget.currState ? _selectionModeCard :
     InkWell(
-      onLongPress: ()=>widget.toggleSelectionMode(),
+      onLongPress: widget.toggleSelectionMode,
         child: Card(
         child: Padding(
           padding: EdgeInsets.all(10.0),
@@ -118,11 +137,11 @@ class _ResultCardState extends State<ResultCard> {
                   children: <Widget>[
                     FlatButton(
                       child: const Text('CONTEXT'),
-                      onPressed: () => _contextButtonPressed(), // set state here
+                      onPressed:  _contextButtonPressed, // set state here
                     ),
                     FlatButton(
                       child: const Text('COMPARE'),
-                      onPressed: () => _compareButtonPressed(),
+                      onPressed: _compareButtonPressed,
                     ),
                   ],
                 ),

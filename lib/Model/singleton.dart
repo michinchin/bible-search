@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import '../Model/book.dart';
 import '../Model/search_result.dart';
 import '../Model/translation.dart';
@@ -6,6 +7,7 @@ Future<SearchResults> searchResults;
 BibleTranslations translations;
 var searchQueries = Map<String, String>();
 bool isInSelectionMode = false;
+var theme = Brightness.dark;
 
 var bookNames = <Book>[
   Book(name:"Genesis",id: 1),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'Screens/initial_search.dart';
 import './Model/votd_image.dart';
+import './Model/singleton.dart';
 
 
 void main() => runApp(BibleSearch());
@@ -14,7 +15,7 @@ class BibleSearch extends StatelessWidget {
       title: 'Bible Search',
       theme: ThemeData(
         primarySwatch: Colors.orange,
-        brightness: Brightness.dark,
+        brightness: theme,
         fontFamily: 'Roboto',
       ),
       home: InitialSearchPage(votd: VOTDImage.fetch()),
