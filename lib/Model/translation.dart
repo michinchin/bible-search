@@ -15,16 +15,21 @@ class BibleTranslation {
     this.a,
     this.lang,
     this.isOnSale,
-    this.isSelected = true,
+    this.isSelected,
   });
 
   factory BibleTranslation.fromJson(Map<String, dynamic> json){
-    return BibleTranslation(
-      id: json['id'],
-      name: json['name'],
-      a: json['abbreviation'],
-      lang: json['language'],
-    );
+    final onSale = json['onsale'] as bool;
+    if (onSale) {
+      return BibleTranslation(
+        id: json['id'] as int,
+        name: json['name'] as String,
+        a: json['abbreviation'] as String,
+        lang: json['language'] as String,
+        isOnSale: onSale,
+        isSelected: true,
+      );
+    }
   }
 
 }

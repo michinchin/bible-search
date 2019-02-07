@@ -129,10 +129,10 @@ String formatWords(String keywords) {
 String formatIds(BibleTranslations bt) {
   String formattedIds = "";
   for (final each in bt.data) {
-    // if (each.isSelected && each.isOnSale) {
+    if (each.isSelected && each.isOnSale) {
       if (each.lang == 'en') {
       formattedIds += '${each.id}|';
-    // }
+      }
     }
   }
   var idx = formattedIds.lastIndexOf('|');
