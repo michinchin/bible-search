@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import '../Model/translation.dart';
 import '../Model/singleton.dart';
+import '../Model/search_result.dart';
 
 class TranslationBookFilterPage extends StatefulWidget {
+  final update;
+  final String words;
 
-  const TranslationBookFilterPage({ Key key }) : super(key: key);
+  const TranslationBookFilterPage({ Key key , this.update, this.words}) : super(key: key);
   @override
   _TranslationBookFilterPageState createState() => _TranslationBookFilterPageState();
 }
@@ -26,7 +29,8 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
 
  @override
  void dispose() {
-   _tabController.dispose();
+  //  widget.update(widget.words);
+    _tabController.dispose();
    super.dispose();
   }
   

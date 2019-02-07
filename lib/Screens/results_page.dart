@@ -13,16 +13,20 @@ class ResultsPage extends StatefulWidget {
 
   @override
   _ResultsPageState createState() => _ResultsPageState();
+
+
+
 }
 
 class _ResultsPageState extends State<ResultsPage> {
+
   bool submitting = false;
   bool isInSelectionMode = false;
 
   void _navigateToFilter(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute<Null>(
       builder: (BuildContext context) {
-        return TranslationBookFilterPage();
+        return TranslationBookFilterPage(update: _updateSearchResults, words: widget.keywords);
       },
       fullscreenDialog: true
     ));
@@ -45,7 +49,8 @@ class _ResultsPageState extends State<ResultsPage> {
 
   @override
   Widget build(BuildContext context) {
-    
+    _updateSearchResults(widget.searchController.text);
+  
     return FutureBuilder<SearchResults>(
           future: searchResults,
           builder: (context, snapshot) {
