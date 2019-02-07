@@ -69,6 +69,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
 
   void _navigateToResults(BuildContext context, String keywords) {
     searchResults = SearchResults.fetch(keywords, translations);
+    searchController.text = keywords;
     searchQueries[keywords] = '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
     Navigator.of(context).push(MaterialPageRoute<Null>(
       builder: (BuildContext context) {
@@ -104,7 +105,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
           subtitle: Text('$v'),
           leading: Icon(Icons.access_time),
           
-          onTap: () => print('$k'),
+          onTap: () => _navigateToResults(context, k),
         ),
       );
     });
