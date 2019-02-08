@@ -129,17 +129,24 @@ class _ResultCardState extends State<ResultCard> {
             children: <Widget>[
               ListTile(
                 leading: Icon(Icons.book),
-                title: Text(widget.result.ref),
-                subtitle: Text(widget.text),
+                title: Align(
+                  alignment: Alignment.topLeft,
+                  child: FlatButton(
+                  onPressed: ()=>{},
+                  child: Text(widget.result.ref),
+                )),
+                subtitle: !widget.result.contextExpanded ? Text(widget.text) : Text(widget.result.verses[widget.result.currentVerseIndex].contextText),
               ),
               ButtonTheme.bar( // make buttons use the appropriate styles for cards
                 child: ButtonBar(
                   children: <Widget>[
                     FlatButton(
+                      textColor: widget.result.contextExpanded ? Theme.of(context).accentColor : Theme.of(context).hintColor,
                       child: const Text('CONTEXT'),
                       onPressed:  _contextButtonPressed, // set state here
                     ),
                     FlatButton(
+                      textColor: widget.result.compareExpanded ? Theme.of(context).accentColor : Theme.of(context).hintColor,
                       child: const Text('COMPARE'),
                       onPressed: _compareButtonPressed,
                     ),
