@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../Model/search_result.dart';
 import '../Model/verse.dart';
+import '../Screens/all.dart';
 
 class ResultCard extends StatefulWidget {
   final SearchResult result;
@@ -32,10 +33,11 @@ class _ResultCardState extends State<ResultCard> {
     });
   }
 
-  _translationChanged(Verse each){
+  _translationChanged(Verse each, int index){
     setState(() {
       widget.text = each.verseContent;
       _currTag = each.id;
+      widget.result.currentVerseIndex = index;
     });
   }
 
@@ -44,19 +46,28 @@ class _ResultCardState extends State<ResultCard> {
 
     final allButton = FlatButton(
       child: Text('ALL'), 
-      onPressed: ()=>{},
+      onPressed: (){
+        Navigator.of(context).push(MaterialPageRoute<Null>(
+          builder: (BuildContext context) {
+            return AllPage(
+              bcv: [widget.result.bookId, widget.result.chapterId, widget.result.verseId],
+            );
+          },
+        ));
+      },
       textColor: Theme.of(context).hintColor,
       splashColor: Theme.of(context).accentColor,
     );
     //not working yet
     Widget _buildButtonStack() {
       var buttons = <FlatButton>[];
-      for (final each in widget.verses) {
+      for (int i = 0; i < widget.verses.length; i++) {
+        final each = widget.verses[i];
         buttons.add(FlatButton(
           child: Text(each.a),
           textColor:  _currTag == each.id ? Theme.of(context).canvasColor : Theme.of(context).hintColor,
           color: _currTag == each.id ? Theme.of(context).accentColor : Colors.transparent, //currently chosen, pass tag
-          onPressed: () =>_translationChanged(each), 
+          onPressed: () =>_translationChanged(each, i), 
         ));
       }
       var rows = <Row>[];
@@ -112,10 +123,7 @@ class _ResultCardState extends State<ResultCard> {
                   subtitle: Text(widget.text),
                 ),
               ),
-          
         ),
-    
-  
     );
 
     return widget.currState ? _selectionModeCard :
@@ -133,7 +141,7 @@ class _ResultCardState extends State<ResultCard> {
                   alignment: Alignment.topLeft,
                   child: FlatButton(
                   onPressed: ()=>{},
-                  child: Text(widget.result.ref),
+                  child: Text('${widget.result.ref} ${widget.result.verses[widget.result.currentVerseIndex].a}'),
                 )),
                 subtitle: !widget.result.contextExpanded ? Text(widget.text) : Text(widget.result.verses[widget.result.currentVerseIndex].contextText),
               ),

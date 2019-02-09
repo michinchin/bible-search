@@ -68,7 +68,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     }
 
   void _navigateToResults(BuildContext context, String keywords) {
-    // searchResults = SearchResults.fetch(keywords, translations);
+    searchQueries[keywords] = '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
     searchController.text = keywords;
     Navigator.of(context).push(MaterialPageRoute<Null>(
       builder: (BuildContext context) {

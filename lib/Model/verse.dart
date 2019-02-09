@@ -5,7 +5,7 @@ class Verse{
   final String a;
   final verseContent;
   String contextText;
-  List<int> verseIdx;
+  List<int> verseIdx; //for when context expanded (v3-5)
 
   Verse({
     this.title,
