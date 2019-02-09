@@ -62,7 +62,6 @@ new ListTile(
           ),
           controller: widget.searchController,
           onSubmitted: (String s) => widget.update(s),
-          
         ),
         centerTitle: false,
         actions: <Widget>[

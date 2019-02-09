@@ -13,9 +13,6 @@ class ResultsPage extends StatefulWidget {
 
   @override
   _ResultsPageState createState() => _ResultsPageState();
-
-
-
 }
 
 class _ResultsPageState extends State<ResultsPage> {
@@ -26,18 +23,15 @@ class _ResultsPageState extends State<ResultsPage> {
   void _navigateToFilter(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute<Null>(
       builder: (BuildContext context) {
-        return TranslationBookFilterPage(update: _updateSearchResults, words: widget.keywords);
+        return TranslationBookFilterPage(words: widget.searchController.text);
       },
       fullscreenDialog: true
     ));
   }
 
   void _updateSearchResults(String keywords) {
-    setState(() {
-      searchQueries[keywords] = '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
-      searchResults = SearchResults.fetch(keywords, translations);
-      //submitting = !submitting;
-    });
+    searchQueries[keywords] = '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
+    submitting = !submitting;
   }
 
 
@@ -49,11 +43,16 @@ class _ResultsPageState extends State<ResultsPage> {
 
   @override
   Widget build(BuildContext context) {
-    _updateSearchResults(widget.searchController.text);
-  
+    print('rebuilt ${DateTime.now().second}');
+    // why does it rebuild every time enters textEditController
+    
     return FutureBuilder<SearchResults>(
-          future: searchResults,
+          future: SearchResults.fetch(widget.searchController.text, translations),
           builder: (context, snapshot) {
+            
+            // if (snapshot.connectionState == ConnectionState.waiting) {
+            //   return _buildView(_buildLoading());
+            // }
             //snapshot.connectionState switch statement
             if (snapshot.hasData && snapshot.data.data.length == 0) {
               return _buildView(_buildNoResults("No results ☹️"));
@@ -90,8 +89,7 @@ class _ResultsPageState extends State<ResultsPage> {
      child: ListView.custom(
       childrenDelegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
-          return 
-          ResultCard(
+          return ResultCard(
             result: res.data[index], 
             text: res.data[index].verses[0].verseContent,
             verses: res.data[index].verses,
