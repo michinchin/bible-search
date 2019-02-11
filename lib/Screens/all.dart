@@ -3,8 +3,9 @@ import 'package:bible_search/Model/all_result.dart';
 import 'package:bible_search/Model/singleton.dart';
 
 class AllPage extends StatelessWidget {
+  final String title;
   final List bcv;
-  AllPage({this.bcv});
+  AllPage({this.bcv,this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class AllPage extends StatelessWidget {
     Widget _buildAllPageView(List<AllResult> allResults) { 
       return Scaffold(
         appBar: AppBar(
-          title: Text('$book $chapter $verse'),
+          title: Text(title),
         ),
         body: ListView.builder(
           itemCount: allResults.length,

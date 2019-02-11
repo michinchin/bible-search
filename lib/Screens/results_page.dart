@@ -17,8 +17,9 @@ class ResultsPage extends StatefulWidget {
 
 class _ResultsPageState extends State<ResultsPage> {
 
-  bool submitting = false;
-  bool isInSelectionMode = false;
+  var _searchResults = <SearchResult>[];
+  bool _isSubmitting = false;
+  bool _isInSelectionMode = false;
 
   void _navigateToFilter(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute<Null>(
@@ -31,36 +32,66 @@ class _ResultsPageState extends State<ResultsPage> {
 
   void _updateSearchResults(String keywords) {
     searchQueries[keywords] = '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
-    submitting = !submitting;
+    _isSubmitting = !_isSubmitting;
   }
 
 
   void _changeToSelectionMode() {
     setState(() {
-      isInSelectionMode = !isInSelectionMode;
+      _isInSelectionMode = !_isInSelectionMode;
     });
+  }
+
+  void _shareSelection() {
+    var text = "";
+    for (final each in _searchResults) {
+      text += each.isSelected ? "${each.verseId}\n" : "";
+    }
+    print(text);
   }
 
   @override
   Widget build(BuildContext context) {
     print('rebuilt ${DateTime.now().second}');
     // why does it rebuild every time enters textEditController
-    
-    return FutureBuilder<SearchResults>(
+
+    return !_isInSelectionMode ? 
+    FutureBuilder<SearchResults>(
           future: SearchResults.fetch(widget.searchController.text, translations),
           builder: (context, snapshot) {
             
-            // if (snapshot.connectionState == ConnectionState.waiting) {
-            //   return _buildView(_buildLoading());
-            // }
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return _buildView(_loadingView);
+            }
             //snapshot.connectionState switch statement
             if (snapshot.hasData && snapshot.data.data.length == 0) {
+              _searchResults = [];
               return _buildView(_buildNoResults("No results ☹️"));
             } else if (snapshot.hasData) {
-              return _buildView(_buildCardView(snapshot.data));
+              _searchResults = snapshot.data.data;
+              return _buildView(_buildCardView());
             } 
-            return _buildView(_buildLoading());
+            return _buildView(_loadingView);
           }
+    ) : _buildSelectionView(_buildCardView());
+  }
+
+  Widget _buildSelectionView(Widget body) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Selection Mode"),
+        leading: IconButton(
+          onPressed: _changeToSelectionMode,
+          icon: Icon(Icons.close)
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.share),
+            onPressed: _shareSelection,
+          )
+        ],
+      ),
+      body: SafeArea(child: body),
     );
   }
 
@@ -71,33 +102,33 @@ class _ResultsPageState extends State<ResultsPage> {
         navigator: _navigateToFilter,
         searchController: widget.searchController,
         update: _updateSearchResults,
+        changeSelectionMode: _changeToSelectionMode,
       ),
       body: SafeArea(child:body),
     );
   }
-  Widget _buildLoading() {
-    return Center(child: CircularProgressIndicator(),);
-  }
+  Widget _loadingView = Center(child: CircularProgressIndicator(),);
 
   Widget _buildNoResults(String text) {
     return Center(child: Text(text, style: Theme.of(context).textTheme.title,),);
   }
 
-  Widget _buildCardView(SearchResults res) {
-   return Padding(
+  Widget _buildCardView() {
+    final res = _searchResults;
+   return Container(
      padding: EdgeInsets.all(10.0),
      child: ListView.custom(
       childrenDelegate: SliverChildBuilderDelegate(
         (BuildContext context, int index) {
           return ResultCard(
-            result: res.data[index], 
-            text: res.data[index].verses[0].verseContent,
-            verses: res.data[index].verses,
+            result: res[index], 
+            text: res[index].verses[0].verseContent,
+            verses: res[index].verses,
             toggleSelectionMode: _changeToSelectionMode,
-            currState: isInSelectionMode,
+            currState: _isInSelectionMode,
           );
         },
-        childCount: res.data.length,
+        childCount: res.length,
       ),
    ));
 

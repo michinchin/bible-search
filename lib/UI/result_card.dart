@@ -26,12 +26,18 @@ class _ResultCardState extends State<ResultCard> {
   }
 
   _contextButtonPressed(){
+    _loadContext();
     setState(() {
       widget.text = widget.result.contextExpanded ? widget.result.verses[widget.result.currentVerseIndex].verseContent
       : widget.result.verses[widget.result.currentVerseIndex].contextText;
       widget.result.contextExpanded = !widget.result.contextExpanded;
     });
   }
+
+  _loadContext(){
+    //fetch 
+  }
+
 
   _translationChanged(Verse each, int index){
     setState(() {
@@ -50,9 +56,11 @@ class _ResultCardState extends State<ResultCard> {
         Navigator.of(context).push(MaterialPageRoute<Null>(
           builder: (BuildContext context) {
             return AllPage(
+              title: widget.result.ref,
               bcv: [widget.result.bookId, widget.result.chapterId, widget.result.verseId],
             );
           },
+          fullscreenDialog: true,
         ));
       },
       textColor: Theme.of(context).hintColor,

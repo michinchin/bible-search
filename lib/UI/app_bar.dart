@@ -7,8 +7,10 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget{
   final navigator;
   final TextEditingController searchController;
   final update;
+  final changeSelectionMode;
 
-  SearchAppBar({Key key, this.title,this.navigator,this.searchController, this.update}) : super(key: key);
+
+  SearchAppBar({Key key, this.title,this.navigator,this.searchController, this.update, this.changeSelectionMode}) : super(key: key);
 
   Size get preferredSize {
     return new Size.fromHeight(kToolbarHeight);
@@ -26,18 +28,18 @@ void _settingModalBottomSheet(context){
       context: context,
       builder: (BuildContext bc){
           return Container(
-            child: new Wrap(
+            child: Wrap(
             children: <Widget>[
-new ListTile(
-            leading: new Icon(Icons.lightbulb_outline),
-            title: new Text('Light Mode'),
-            onTap: () {theme = Brightness.light;}          
-          ),
-          new ListTile(
-            leading: new Icon(Icons.videocam),
-            title: new Text('Dark Mode'),
-            onTap: () {theme = Brightness.dark;},          
-          ),
+            ListTile(
+              leading: Icon(Icons.lightbulb_outline),
+              title:  Text('Light Mode'),
+              onTap: () {theme = Brightness.light;}          
+            ),
+            ListTile(
+              leading: Icon(Icons.videocam),
+              title: Text('Dark Mode'),
+              onTap: () {theme = Brightness.dark;},          
+            ),
             ],
           ),
           );
@@ -65,18 +67,24 @@ new ListTile(
         ),
         centerTitle: false,
         actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.info_outline),
-          color: Colors.white,
-          onPressed: ()=>_settingModalBottomSheet(context),
-          //TODO: onPressed action
-        ),
-        IconButton(
-          icon: Icon(Icons.filter_list),
-          color: Colors.white,
-          onPressed: () => widget.navigator(context),
-          //TODO: onPressed action
-        ),
+          IconButton(
+            icon: Icon(Icons.info_outline),
+            color: Colors.white,
+            onPressed: ()=>_settingModalBottomSheet(context),
+            //TODO: onPressed action
+          ),
+          IconButton(
+            icon: Icon(Icons.filter_list),
+            color: Colors.white,
+            onPressed: () => widget.navigator(context),
+            //TODO: onPressed action
+          ),
+          IconButton(
+            icon: Icon(Icons.check_circle_outline),
+            color: Colors.white,
+            onPressed: widget.changeSelectionMode,
+          )
+
       ],
       );
   }

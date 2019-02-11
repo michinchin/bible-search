@@ -50,10 +50,12 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage> w
         children: myTabs.map((Tab tab) {
           if (tab.text == "BOOK") {
             return Container(
+              key: PageStorageKey(tab.text),
               child: _buildBookWidgets(),
             );
           } else {
             return Container(
+              key: PageStorageKey(tab.text),
               child: _buildTranslationView(),
             );
           }
