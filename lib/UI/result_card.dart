@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../Model/search_result.dart';
 import '../Model/verse.dart';
 import '../Screens/all.dart';
+import '../Model/context.dart';
+import '../Model/singleton.dart';
+
 
 class ResultCard extends StatefulWidget {
   final SearchResult result;
@@ -25,27 +28,47 @@ class _ResultCardState extends State<ResultCard> {
     });
   }
 
-  _contextButtonPressed(){
-    _loadContext();
+  _contextButtonPressed() async{
+    
+    if(widget.result.verses[widget.result.currentVerseIndex].contextText.length == 0){
+      final context = await Context.fetch(
+        translation: widget.result.verses[widget.result.currentVerseIndex].id,
+        book: widget.result.bookId,
+        chapter: widget.result.chapterId,
+        verse: widget.result.verseId,
+      );
+      widget.result.verses[widget.result.currentVerseIndex].contextText = context.text;
+      widget.result.verses[widget.result.currentVerseIndex].verseIdx = [context.initialVerse,context.finalVerse];
+    }
+    
     setState(() {
-      widget.text = widget.result.contextExpanded ? widget.result.verses[widget.result.currentVerseIndex].verseContent
-      : widget.result.verses[widget.result.currentVerseIndex].contextText;
       widget.result.contextExpanded = !widget.result.contextExpanded;
+      widget.text = !widget.result.contextExpanded ? widget.result.verses[widget.result.currentVerseIndex].verseContent
+      : widget.result.verses[widget.result.currentVerseIndex].contextText;
     });
   }
 
-  _loadContext(){
-    //fetch 
-  }
+  _translationChanged(Verse each, int index) async {
+    widget.result.currentVerseIndex = index;
 
+   if(widget.result.verses[widget.result.currentVerseIndex].contextText.length == 0){
+      final context = await Context.fetch(
+        translation: widget.result.verses[widget.result.currentVerseIndex].id,
+        book: widget.result.bookId,
+        chapter: widget.result.chapterId,
+        verse: widget.result.verseId,
+      );
+      widget.result.verses[widget.result.currentVerseIndex].contextText = context.text;
+      widget.result.verses[widget.result.currentVerseIndex].verseIdx = [context.initialVerse,context.finalVerse];
+    }
 
-  _translationChanged(Verse each, int index){
     setState(() {
-      widget.text = each.verseContent;
       _currTag = each.id;
-      widget.result.currentVerseIndex = index;
+      widget.text = !widget.result.contextExpanded ? widget.result.verses[widget.result.currentVerseIndex].verseContent
+      : widget.result.verses[widget.result.currentVerseIndex].contextText;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -127,12 +150,13 @@ class _ResultCardState extends State<ResultCard> {
                     });
                   },
                   controlAffinity:  ListTileControlAffinity.leading,
-                  title: Text(widget.result.ref),
-                  subtitle: Text(widget.text),
+                  title: Text('${widget.result.ref} ${widget.result.verses[widget.result.currentVerseIndex].a}'),
+                  subtitle: Text(widget.result.verses[widget.result.currentVerseIndex].verseContent),
                 ),
               ),
         ),
     );
+
 
     return widget.currState ? _selectionModeCard :
     InkWell(
@@ -149,9 +173,15 @@ class _ResultCardState extends State<ResultCard> {
                   alignment: Alignment.topLeft,
                   child: FlatButton(
                   onPressed: ()=>{},
-                  child: Text('${widget.result.ref} ${widget.result.verses[widget.result.currentVerseIndex].a}'),
+                  child: !widget.result.contextExpanded ? 
+                        Text('${widget.result.ref} ${widget.result.verses[widget.result.currentVerseIndex].a}'):
+                        Text('${bookNames.where((book)=>book.id == widget.result.bookId).first.name} '+
+                              '${widget.result.chapterId}:'+
+                              '${widget.result.verses[widget.result.currentVerseIndex].verseIdx[0]}'+
+                              '-${widget.result.verses[widget.result.currentVerseIndex].verseIdx[1]} '+
+                              '${widget.result.verses[widget.result.currentVerseIndex].a}'),
                 )),
-                subtitle: !widget.result.contextExpanded ? Text(widget.text) : Text(widget.result.verses[widget.result.currentVerseIndex].contextText),
+                subtitle: Text(widget.text),
               ),
               ButtonTheme.bar( // make buttons use the appropriate styles for cards
                 child: ButtonBar(

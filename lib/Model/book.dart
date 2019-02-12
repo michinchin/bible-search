@@ -13,4 +13,10 @@ class Book {
   int getotnt(){
     return id > 46 ? 0 : -1;
   }
+
+  String getBookById(int id){
+    if (id == this.id){
+      return this.name;
+    }
+  }
 }

@@ -4,6 +4,7 @@ import '../UI/result_card.dart';
 import '../UI/app_bar.dart';
 import '../Screens/translation_book_filter.dart';
 import '../Model/singleton.dart';
+import 'package:share/share.dart';
 
 class ResultsPage extends StatefulWidget {
   final String keywords;
@@ -35,7 +36,6 @@ class _ResultsPageState extends State<ResultsPage> {
     _isSubmitting = !_isSubmitting;
   }
 
-
   void _changeToSelectionMode() {
     setState(() {
       _isInSelectionMode = !_isInSelectionMode;
@@ -45,9 +45,11 @@ class _ResultsPageState extends State<ResultsPage> {
   void _shareSelection() {
     var text = "";
     for (final each in _searchResults) {
-      text += each.isSelected ? "${each.verseId}\n" : "";
+      final currVerse = each.verses[each.currentVerseIndex];
+      text += each.isSelected ? "${each.ref} (${currVerse.a})\n${currVerse.verseContent}\n\n" : "";
     }
-    print(text);
+    //print(text);
+    Share.share(text);
   }
 
   @override
