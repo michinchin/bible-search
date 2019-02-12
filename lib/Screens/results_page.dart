@@ -42,14 +42,31 @@ class _ResultsPageState extends State<ResultsPage> {
     });
   }
 
-  void _shareSelection() {
+  void _shareSelection(BuildContext context) {
     var text = "";
     for (final each in _searchResults) {
       final currVerse = each.verses[each.currentVerseIndex];
       text += each.isSelected ? "${each.ref} (${currVerse.a})\n${currVerse.verseContent}\n\n" : "";
     }
+    if (text.length > 0) {
+      Share.share(text);
+    } else {
+      _showToast(context);
+    }
     //print(text);
-    Share.share(text);
+  }
+
+  void _showToast(BuildContext context) {
+    final scaffold = Scaffold.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        content: const Text('Please make a selection'),
+        action: SnackBarAction(
+          label: 'CLOSE', onPressed: scaffold.hideCurrentSnackBar
+        ),
+        // duration: Duration(seconds: 1),
+      ),
+    );
   }
 
   @override
@@ -87,10 +104,16 @@ class _ResultsPageState extends State<ResultsPage> {
           icon: Icon(Icons.close)
         ),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.share),
-            onPressed: _shareSelection,
-          )
+          // IconButton(
+          //   icon: Icon(Icons.share),
+          //   onPressed: ,
+          // )
+          Builder(
+          builder: (context) => IconButton(
+                icon: Icon(Icons.share),
+                onPressed: () => _shareSelection(context),
+              ),
+            ),
         ],
       ),
       body: SafeArea(child: body),

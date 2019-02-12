@@ -25,6 +25,8 @@ class _ResultCardState extends State<ResultCard> {
   _compareButtonPressed(){
     setState(() {
       widget.result.compareExpanded = !widget.result.compareExpanded;
+      //on opening compare menu for first time show specified translation
+      _currTag = widget.result.verses[widget.result.currentVerseIndex].id; 
     });
   }
 
@@ -98,6 +100,7 @@ class _ResultCardState extends State<ResultCard> {
           child: Text(each.a),
           textColor:  _currTag == each.id ? Theme.of(context).canvasColor : Theme.of(context).hintColor,
           color: _currTag == each.id ? Theme.of(context).accentColor : Colors.transparent, //currently chosen, pass tag
+          
           onPressed: () =>_translationChanged(each, i), 
         ));
       }
