@@ -1,11 +1,21 @@
 import 'package:bible_search/tecarta.dart';
 import '../Services/api.dart';
+import '../Model/singleton.dart';
+
+class Language {
+  final String a;
+  final String name;
+  final int id;
+  bool isSelected;
+
+  Language({this.a,this.name,this.id, this.isSelected});
+}
 
 class BibleTranslation {
   final int id;
   final String name;
   final String a;
-  final String lang;
+  final Language lang;
   final bool isOnSale;
   bool isSelected;
 
@@ -18,6 +28,8 @@ class BibleTranslation {
     this.isSelected,
   });
 
+  // operator <(BibleTranslation bt) => lang != bt.lang;
+
   factory BibleTranslation.fromJson(Map<String, dynamic> json){
     final onSale = json['onsale'] as bool;
     if (onSale) {
@@ -25,7 +37,7 @@ class BibleTranslation {
         id: json['id'] as int,
         name: json['name'] as String,
         a: json['abbreviation'] as String,
-        lang: json['language'] as String,
+        lang: languages.firstWhere((t)=>t.a == (json['language'] as String)),
         isOnSale: onSale,
         isSelected: true,
       );

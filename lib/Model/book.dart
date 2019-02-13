@@ -10,13 +10,7 @@ class Book {
     this.isSelected = true,
   });
 
-  int getotnt(){
-    return id > 46 ? 0 : -1;
-  }
-
-  String getBookById(int id){
-    if (id == this.id){
-      return this.name;
-    }
+  bool isOT(){
+    return id > 46 ? false : true;
   }
 }

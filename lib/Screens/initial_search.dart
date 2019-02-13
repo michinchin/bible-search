@@ -50,6 +50,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
 
   _grabTranslations() async {
     final test = await BibleTranslations.fetch();
+    test.data.sort((f,k)=>f.lang.id.compareTo(k.lang.id));
     setState(() {
       translations = test;
     });

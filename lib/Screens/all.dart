@@ -15,19 +15,28 @@ class AllPage extends StatelessWidget {
     
 
     Widget _buildAllPageView(List<AllResult> allResults) { 
-      return Scaffold(
+      return Dialog(
+        child: Scaffold(
         appBar: AppBar(
           title: Text(title),
+          leading: IconButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            icon: Icon(Icons.close)
+          ),
         ),
-        body: ListView.builder(
-          itemCount: allResults.length,
-          itemBuilder:(BuildContext context, int index){
-            return ListTile(
-              title: Text(allResults[index].a),
-              subtitle: Text(allResults[index].text),
-            );
-          }),
-      );
+        body: Container(
+          padding: EdgeInsets.all(10.0),
+          child: ListView.builder(
+            itemCount: allResults.length,
+            itemBuilder:(BuildContext context, int index){
+              return ListTile(
+                title: Text(allResults[index].a),
+                subtitle: Text(allResults[index].text),
+              );
+            }),
+        ),
+      )
+    );
     }
     return FutureBuilder<AllResults>(
       future: AllResults.fetch(

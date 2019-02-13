@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import '../Model/book.dart';
 import '../Model/translation.dart';
+import '../Model/search_result.dart';
 
-// Future<SearchResults> searchResults;
+var searchResults = <SearchResult>[];
 BibleTranslations translations;
 var searchQueries = Map<String, String>();
 bool isInSelectionMode = false;
 var theme = Brightness.dark;
+
+bool otSelected = true;
+bool ntSelected = true;
+
+final languages = <Language>[
+  Language(a: 'en', name: "English", id: 0, isSelected: true),
+  Language(a: 'es', name: "Español", id: 1, isSelected: true),
+  Language(a: 'zh', name: "Chinese", id: 2, isSelected: true),
+  Language(a: 'ko', name: "Korean", id: 3, isSelected: true),
+];
 
 var bookNames = <Book>[
   Book(name:"Genesis",id: 1),
