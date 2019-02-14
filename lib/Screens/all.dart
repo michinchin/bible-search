@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:bible_search/Model/all_result.dart';
-import 'package:bible_search/Model/singleton.dart';
 
 class AllPage extends StatelessWidget {
   final String title;
@@ -43,7 +42,6 @@ class AllPage extends StatelessWidget {
         book: book,
         chapter: chapter,
         verse: verse,
-        translations: translations,
       ),
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data.data.length == 0) {

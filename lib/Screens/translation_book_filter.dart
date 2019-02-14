@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../Model/translation.dart';
 import '../Model/singleton.dart';
-import '../Model/book.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class TranslationBookFilterPage extends StatefulWidget {
   final String words;
@@ -26,12 +26,28 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage>
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: myTabs.length);
+    _loadLanguagePref();
+    _updateTranslations();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
+    // _updateTranslations();
     super.dispose();
+  }
+
+  _loadLanguagePref(){
+    for (final each in translations.data) {
+      if (!each.isSelected) {
+        each.lang.isSelected = false;
+      }
+    }
+  }
+
+  _updateTranslations() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('translations', translationIds = translations.formatIds());
   }
 
   List<Widget> _createTranslationList() {
@@ -41,6 +57,8 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage>
         onChanged: (bool b) {
           setState(() {
             translations.data[i].isSelected = b;
+            if (!b) {translations.data[i].lang.isSelected = b;}
+            _updateTranslations();
           });
         },
         value: translations.data[i].isSelected,
@@ -68,12 +86,18 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage>
     return _translationList;
   }
 
+  bool _isLangSelected(Language lang) {
+
+    return lang.isSelected;
+  }
+
   _selectLang(Language lang, bool b){
     translations.data.forEach((each) {
       if (each.lang == lang) {
         each.isSelected = b;
       }
     });
+    _updateTranslations();
     setState(() {
       lang.isSelected = b;
     });
@@ -190,26 +214,11 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage>
     );
   }
 
-  Widget _buildLoading() {
-    return Center(
-      child: CircularProgressIndicator(),
-    );
-  }
-
   Widget _buildBookWidgets() {
     return Container(
       padding: EdgeInsets.all(10.0),
       child: ListView(
         children: _createBookList(),
-      ),
-    );
-  }
-
-  Widget _buildNoResults() {
-    return Center(
-      child: Text(
-        "No results ☹️",
-        style: Theme.of(context).textTheme.title,
       ),
     );
   }

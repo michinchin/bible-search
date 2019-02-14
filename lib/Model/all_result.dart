@@ -1,6 +1,5 @@
 import 'package:bible_search/tecarta.dart';
-import 'package:bible_search/Model/search_result.dart';
-import 'package:bible_search/Model/translation.dart';
+import 'package:bible_search/Model/singleton.dart';
 import 'dart:async';
 import 'dart:convert' show json, utf8;
 import 'dart:io';
@@ -39,14 +38,14 @@ class AllResults{
     return AllResults(data: d);
   }
 
-  static Future<AllResults> fetch({int book, int chapter, int verse, BibleTranslations translations}) async {
+  static Future<AllResults> fetch({int book, int chapter, int verse}) async {
     final json = await getAllResponse(
       auth: kTBApiServer,
       unencodedPath: '/allverses',
       queryParameters: {
         'key' : kTBkey,
         'version' : kTBApiVersion,
-        'volumes' : formatIds(translations),
+        'volumes' : translations.formatIds(),
         'book' : '$book',
         'chapter' : '$chapter',
         'verse' : '$verse',

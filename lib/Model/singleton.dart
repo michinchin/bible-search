@@ -5,7 +5,8 @@ import '../Model/search_result.dart';
 
 var searchResults = <SearchResult>[];
 BibleTranslations translations;
-var searchQueries = Map<String, String>();
+String translationIds;
+var searchQueries = <String>[];
 bool isInSelectionMode = false;
 var theme = Brightness.dark;
 

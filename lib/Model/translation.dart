@@ -69,6 +69,34 @@ class BibleTranslations {
     return BibleTranslations(data: d);
   }
 
+  String formatIds() {
+    String formattedIds = "";
+    for (final each in this.data) {
+      if (each.isSelected && each.isOnSale) {
+        formattedIds += '${each.id}|';
+      }
+    }
+    if (formattedIds.length > 0) {
+      var idx = formattedIds.lastIndexOf('|');
+      formattedIds = formattedIds.substring(0,idx);
+    }
+    return formattedIds;
+  }
+
+  void selectTranslations(String id) {
+    final arr = translationIds.split('|').toList();
+    final intArr = arr.map((e) => int.parse(e)).toList();
+    var tempData = this.data;
+    for (final t in tempData) {
+      if (intArr.contains(t.id)) {
+        t.isSelected = true;
+      } else {
+        t.isSelected = false;
+      }
+    }
+    this.data = tempData;
+  }
+
   static Future<BibleTranslations> fetch() async {
     final api = API();
     final json = await api.getResponse(

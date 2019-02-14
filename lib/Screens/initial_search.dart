@@ -4,10 +4,10 @@ import '../UI/gradient_overlay_image.dart';
 import '../UI/search_bar.dart';
 import '../Model/votd_image.dart';
 import '../Screens/results_page.dart';
-import '../Model/search_result.dart';
 import '../Screens/translation_book_filter.dart';
 import '../Model/singleton.dart';
 import '../Model/translation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Initial Search Route (screen)
 // 
@@ -32,15 +32,9 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
   void initState() {
     super.initState();
     _grabTranslations();
+    _loadSearchHistory();
     searchController.addListener(_printLatestValue);
   }
-
-  // @override
-  // void dispose() {
-  //   searchController.dispose();
-  //   super.dispose();
-  // }
-
   _printLatestValue() {
     setState(() {
       _searchTerm = searchController.text;
@@ -48,34 +42,74 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     print('Search field input: $_searchTerm');
   }
 
+  _loadSearchHistory() async {
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+      setState(() {
+        searchQueries = (prefs.getStringList('searchHistory') ?? []);
+      });
+  }
+
+  _updateSearchHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setStringList('searchHistory', searchQueries);
+  }
+
   _grabTranslations() async {
-    final test = await BibleTranslations.fetch();
-    test.data.sort((f,k)=>f.lang.id.compareTo(k.lang.id));
+    final temp = await BibleTranslations.fetch();
+    temp.data.sort((f,k)=>f.lang.id.compareTo(k.lang.id));
+    final prefs = await SharedPreferences.getInstance();
     setState(() {
-      translations = test;
-    });
+      translationIds = prefs.getString('translations') ?? prefs.setString('translations', temp.formatIds());
+      //select only translations that are in the formatted Id 
+      translations = temp;
+      translations.selectTranslations(translationIds);
+     });
   }
   
-  Widget _buildSearchHistoryWidgets(List<ListTile> searchHistory) {
+  Widget _buildSearchHistoryWidgets() {
+
       return ListView.builder(
         itemBuilder: (BuildContext context, int index) {
+          final words = searchQueries;
           return ListTileTheme(
           textColor: Colors.black,
           iconColor: Colors.black,
-          child: searchHistory[index]);
+          child: Dismissible(
+            key: Key(words[index]),
+            onDismissed: (direction){
+                Scaffold.of(context).showSnackBar(SnackBar(content:Text('The search term "${words[index]}" has been removed')));
+                setState(() {
+                  searchQueries.removeWhere((w)=>(w == words[index]));  
+                  _updateSearchHistory();
+                });
+            },
+            background: Container(
+              color: Colors.red,
+            ),
+            child: ListTile(
+              title: Text('${words[index]}',),
+              // subtitle: Text('${dates[index]}'),
+              leading: Icon(Icons.access_time),
+              onTap: () => _navigateToResults(context, words[index]),
+            ),
+          ),
+          );
         },
-        itemCount: searchHistory.length,
+        itemCount: searchQueries.length,
       );
     }
 
   void _navigateToResults(BuildContext context, String keywords) {
-    searchQueries[keywords] = '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
+    // searchQueries[keywords] = '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
+    searchQueries.add(keywords);
+    _updateSearchHistory();
     searchController.text = keywords;
     Navigator.of(context).push(MaterialPageRoute<Null>(
       builder: (BuildContext context) {
         return ResultsPage(
           keywords: keywords, 
           searchController: searchController,
+          updateSearchHistory: _updateSearchHistory,
         );
       },
     ));
@@ -96,23 +130,25 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     final _imageHeight = MediaQuery.of(context).size.height/3;
     final _orientation = MediaQuery.of(context).orientation;
     final _searchBarHeight = 50.0;
-    final _categoryList = <ListTile>[];
+    // final _categoryList = <Dismissible>[];
 
-    searchQueries.forEach((k,v){
-      _categoryList.add(
-        ListTile(
-          title: Text('$k',),
-          subtitle: Text('$v'),
-          leading: Icon(Icons.access_time),
-          
-          onTap: () => _navigateToResults(context, k),
-        ),
-      );
-    });
+    // searchQueries.forEach((k,v){
+    //   _categoryList.add(
+    //     Dismissible(
+    //       child: ListTile(
+    //         title: Text('$k',),
+    //         subtitle: Text('$v'),
+    //         leading: Icon(Icons.access_time),
+            
+    //         onTap: () => _navigateToResults(context, k),
+    //       ),
+    //     ),
+    //   );
+    // });
     //TODO: Create a list view of the Categories
     final searchHistoryList = Container(
       color: Colors.white,
-      child: _buildSearchHistoryWidgets(_categoryList),
+      child: _buildSearchHistoryWidgets(),
     );
 
     final gradientAppBarImage = GradientOverlayImage(

@@ -9,8 +9,8 @@ import 'package:share/share.dart';
 class ResultsPage extends StatefulWidget {
   final String keywords;
   final TextEditingController searchController;
-
-  ResultsPage({Key key, this.keywords, this.searchController})
+  final updateSearchHistory;
+  ResultsPage({Key key, this.keywords, this.searchController, this.updateSearchHistory})
       : super(key: key);
 
   @override
@@ -30,8 +30,10 @@ class _ResultsPageState extends State<ResultsPage> {
   }
 
   void _updateSearchResults(String keywords) {
-    searchQueries[keywords] =
-        '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
+    // searchQueries[keywords] =
+    //     '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
+    searchQueries.add(keywords);
+    widget.updateSearchHistory();
     _isSubmitting = !_isSubmitting;
   }
 
@@ -114,9 +116,8 @@ class _ResultsPageState extends State<ResultsPage> {
   Widget build(BuildContext context) {
     print('rebuilt ${DateTime.now().second}');
     // why does it rebuild every time enters textEditController
-
     return FutureBuilder<SearchResults>(
-        future: SearchResults.fetch(widget.searchController.text, translations),
+        future: SearchResults.fetch( widget.searchController.text),
         builder: (context, snapshot) {
           if ((!snapshot.hasData && snapshot.hasError)) {
             return _buildView(_buildNoResults("No results ☹️"));
@@ -171,7 +172,7 @@ class _ResultsPageState extends State<ResultsPage> {
         itemBuilder: (BuildContext context, int index) {
           return FutureBuilder<SearchResults>(
             future:
-                SearchResults.fetch(widget.searchController.text, translations),
+                SearchResults.fetch(widget.searchController.text),
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.none:
