@@ -1,6 +1,6 @@
 import 'package:bible_search/tecarta.dart';
-import '../Services/api.dart';
 import '../Model/singleton.dart';
+import 'package:tec_cache/tec_cache.dart';
 
 class Language {
   final String a;
@@ -96,18 +96,31 @@ class BibleTranslations {
     }
     this.data = tempData;
   }
-
+  
   static Future<BibleTranslations> fetch() async {
-    final api = API();
-    final json = await api.getResponse(
-      auth: kTBStreamServer,
-      unencodedPath: '/$kTBApiVersion/products-list/WebSite.json.gz',
-      isGet: true,
-    );
+    final fileName = 'WebSite.json.gz';
+    final hostAndPath = '$kTBStreamServer/$kTBApiVersion/products-list';
+    final json = await TecCache().jsonFromUrl(
+        url: 'https://$hostAndPath/$fileName',
+        // cachedPath: '$hostAndPath/$fileName',
+        bundlePath: 'assets/Translation.json');
     if (json != null) {
       return BibleTranslations.fromJson(json);
     } else {
       return BibleTranslations(data: []);
     }
   }
+  // static Future<BibleTranslations> fetch() async {
+  //   final api = API();
+  //   final json = await api.getResponse(
+  //     auth: kTBStreamServer,
+  //     unencodedPath: '/$kTBApiVersion/products-list/WebSite.json.gz',
+  //     isGet: true,
+  //   );
+  //   if (json != null) {
+  //     return BibleTranslations.fromJson(json);
+  //   } else {
+  //     return BibleTranslations(data: []);
+  //   }
+  // }
 }

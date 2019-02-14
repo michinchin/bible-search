@@ -1,7 +1,7 @@
 import '../tecarta.dart';
 import '../Model/verse.dart';
-import '../Services/api.dart';
 import '../Model/singleton.dart';
+import 'package:tec_cache/tec_cache.dart';
 
 class SearchResult {
 
@@ -70,22 +70,14 @@ class SearchResults {
     return SearchResults(data: d);
   }
 
-  static Future<SearchResults> fetch(String words) async {
-    final api = API();
-    final json = await api.getResponse(
-      auth: kTBApiServer,
-      unencodedPath: '/search',
-      queryParameters: {
-        'key' : kTBkey,
-        'version' : kTBApiVersion,
-        'words' : formatWords(words), 
-        'book' : '0',
-        'bookset' : '0',
-        'exact' : '0',
-        'phrase' : '0',
-        'searchVolumes' : translationIds,
-      },
-      isGet: true,
+   static Future<SearchResults> fetch(String words) async {
+    final hostAndPath = '$kTBApiServer/search';
+    final cacheHostPath = '$kTBStreamServer/cache';
+    final json = await TecCache().jsonFromUrl(
+        url: 'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=${formatWords(words)}&book=0'+
+              '&bookset=0&exact=0&phrase=0&searchVolumes=$translationIds',
+        // cachedPath: '$cacheHostPath',
+        requestType: 'post',
     );
     if (json != null) {
       return SearchResults.fromJson(json);
@@ -93,6 +85,30 @@ class SearchResults {
       return SearchResults(data: []);
     }
   }
+
+  // static Future<SearchResults> fetch(String words) async {
+  //   final api = API();
+  //   final json = await api.getResponse(
+  //     auth: kTBApiServer,
+  //     unencodedPath: '/search',
+  //     queryParameters: {
+  //       'key' : kTBkey,
+  //       'version' : kTBApiVersion,
+  //       'words' : formatWords(words), 
+  //       'book' : '0',
+  //       'bookset' : '0',
+  //       'exact' : '0',
+  //       'phrase' : '0',
+  //       'searchVolumes' : translationIds,
+  //     },
+  //     isGet: true,
+  //   );
+  //   if (json != null) {
+  //     return SearchResults.fromJson(json);
+  //   } else {
+  //     return SearchResults(data: []);
+  //   }
+  // }
 }
 
 Map<String,String> urlEncodingExceptions = {
