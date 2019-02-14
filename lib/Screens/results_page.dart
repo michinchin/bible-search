@@ -35,6 +35,19 @@ class _ResultsPageState extends State<ResultsPage> {
     _isSubmitting = !_isSubmitting;
   }
 
+  List<SearchResult> _filterByBook(List<SearchResult> searchRes){
+    // loop through search results and filter only books that are selected
+    final sr = searchRes.where((res){
+      for (final each in bookNames) {
+        if (each.id == res.bookId && each.isSelected) {
+          return true;
+        }
+      }
+      return false;
+    }).toList();
+    return sr;
+  }
+
   void _changeToSelectionMode() {
     showDialog(
       barrierDismissible: false,
@@ -105,8 +118,7 @@ class _ResultsPageState extends State<ResultsPage> {
     return FutureBuilder<SearchResults>(
         future: SearchResults.fetch(widget.searchController.text, translations),
         builder: (context, snapshot) {
-          if ((!snapshot.hasData && snapshot.hasError) ||
-              (snapshot.hasData && snapshot.data.data.length == 0)) {
+          if ((!snapshot.hasData && snapshot.hasError)) {
             return _buildView(_buildNoResults("No results ☹️"));
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -114,7 +126,10 @@ class _ResultsPageState extends State<ResultsPage> {
           }
           //snapshot.connectionState switch statement
           if (snapshot.hasData) {
-            searchResults.length = snapshot.data.data.length;
+            searchResults = _filterByBook(snapshot.data.data);
+            if (searchResults.length == 0) {
+              return _buildView(_buildNoResults("No results ☹️"));
+            }
             return _buildView(_buildCardView());
           } else if (snapshot.hasError) {
             return Text('Error');
@@ -167,7 +182,6 @@ class _ResultsPageState extends State<ResultsPage> {
                   if (snapshot.hasError) {
                     return _buildNoResults("No Results");
                   } else {
-                    searchResults = snapshot.data.data;
                     return ResultCard(
                       index: index,
                       toggleSelectionMode: _changeToSelectionMode,

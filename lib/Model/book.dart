@@ -13,4 +13,8 @@ class Book {
   bool isOT(){
     return id > 46 ? false : true;
   }
+
+  Book getById(int id){
+    return id == this.id ? this : null;
+  }
 }

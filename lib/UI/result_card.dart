@@ -59,7 +59,7 @@ class _ResultCardState extends State<ResultCard> {
   _translationChanged(Verse each, int index) async {
     searchResults[widget.index].currentVerseIndex = index;
 
-   if(searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].contextText.length == 0){
+   if(searchResults[widget.index].contextExpanded && searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].contextText.length == 0){
       final context = await Context.fetch(
         translation: searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].id,
         book: searchResults[widget.index].bookId,
