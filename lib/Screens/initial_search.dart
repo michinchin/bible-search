@@ -51,7 +51,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
 
   _updateSearchHistory() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('searchHistory', searchQueries);
+    prefs.setStringList('searchHistory', searchQueries = searchQueries.toSet().toList());
   }
 
   _grabTranslations() async {
@@ -70,7 +70,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
 
       return ListView.builder(
         itemBuilder: (BuildContext context, int index) {
-          final words = searchQueries;
+          final words = searchQueries.reversed.toList();
           return ListTileTheme(
           textColor: Colors.black,
           iconColor: Colors.black,

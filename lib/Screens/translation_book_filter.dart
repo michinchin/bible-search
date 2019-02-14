@@ -86,11 +86,6 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage>
     return _translationList;
   }
 
-  bool _isLangSelected(Language lang) {
-
-    return lang.isSelected;
-  }
-
   _selectLang(Language lang, bool b){
     translations.data.forEach((each) {
       if (each.lang == lang) {
@@ -112,11 +107,11 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage>
           onChanged: (bool b) {
             setState(() {
               bookNames[i].isSelected = b;
+              if (!b) {bookNames[i].isOT() ? otSelected = b : ntSelected = b;}
             });
           },
           value: bookNames[i].isSelected,
           title: Text(bookNames[i].name),
-          subtitle: Text('${bookNames[i].isOT()}'),
           controlAffinity: ListTileControlAffinity.leading,
         ),
       );
