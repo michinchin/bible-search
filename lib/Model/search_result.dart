@@ -72,11 +72,10 @@ class SearchResults {
 
    static Future<SearchResults> fetch(String words) async {
     final hostAndPath = '$kTBApiServer/search';
-    final cacheHostPath = '$kTBStreamServer/cache';
     final json = await TecCache().jsonFromUrl(
         url: 'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=${formatWords(words)}&book=0'+
               '&bookset=0&exact=0&phrase=0&searchVolumes=$translationIds',
-        // cachedPath: '$cacheHostPath',
+        cachedPath: 'cache/${getCacheKey(words)}.json',
         requestType: 'post',
     );
     if (json != null) {
@@ -132,6 +131,7 @@ Map<String,String> urlEncodingExceptions = {
   "—": "-", // UTF-8: E2 80 94
   "―": "-" // UTF-8: E2 80 95
 };
+final String base64Map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
 String formatWords(String keywords) {
   urlEncodingExceptions.forEach(
@@ -140,4 +140,24 @@ String formatWords(String keywords) {
   List<String> wordList = keywords.split(" ");
   wordList.sort((a,b) => b.length.compareTo(a.length));
   return wordList.length < 5 ? keywords : wordList.sublist(0,4).join(" ");
+}
+
+String getCacheKey(String keywords) {
+  var encoded = '';
+  final length = base64Map.length;
+  final volumeIds = translationIds
+    .split('|')
+    .toList()
+    .map((id)=>double.parse(id))
+    .toList();
+
+  volumeIds.sort();
+  for (var i = 0; i < volumeIds.length; i++) {
+    var volumeId = volumeIds[i];
+    final digit = volumeId / length;
+    encoded += base64Map[base64Map.indexOf('${digit.toInt()}')];
+    volumeId -= digit * length;
+    encoded += base64Map[base64Map.indexOf('${volumeId.toInt()}')];
+  }
+  return encoded;
 }
