@@ -75,7 +75,7 @@ class SearchResults {
     final json = await TecCache().jsonFromUrl(
         url: 'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=${formatWords(words)}&book=0'+
               '&bookset=0&exact=0&phrase=0&searchVolumes=$translationIds',
-        cachedPath: 'cache/${getCacheKey(words)}.json',
+        // cachedPath: 'cache/${getCacheKey(words)}.json',
         requestType: 'post',
     );
     if (json != null) {
