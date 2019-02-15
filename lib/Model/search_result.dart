@@ -143,6 +143,8 @@ String formatWords(String keywords) {
 }
 
 String getCacheKey(String keywords) {
+  var words = keywords.replaceAll(' ', '_');
+
   var encoded = '';
   final length = base64Map.length;
   final volumeIds = translationIds
@@ -159,5 +161,5 @@ String getCacheKey(String keywords) {
     volumeId -= digit * length;
     encoded += base64Map[base64Map.indexOf('${volumeId.toInt()}')];
   }
-  return encoded;
+  return words+encoded;
 }
