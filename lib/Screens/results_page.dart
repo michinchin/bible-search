@@ -122,13 +122,14 @@ class _ResultsPageState extends State<ResultsPage> {
     return FutureBuilder<List<SearchResult>>(
       future: future,
       builder: (context, snapshot) {
+        searchResults = _filterByBook(snapshot.data);
         if (snapshot.connectionState != ConnectionState.done) {
           return _buildView(_loadingView);
         }
-        if (snapshot.hasData && snapshot.data.length == 0) {
+        if (snapshot.hasData && searchResults.length == 0) {
           return _buildView(_buildNoResults("No results ☹️"));
         } else if (snapshot.hasData) {
-          return _buildView(_buildCardView(snapshot.data));
+          return _buildView(_buildCardView());
         } 
         return _buildView(_loadingView);
       }
@@ -162,13 +163,12 @@ class _ResultsPageState extends State<ResultsPage> {
     );
   }
 
-  Widget _buildCardView(List<SearchResult> data) {
+  Widget _buildCardView() {
     return Container(
       padding: EdgeInsets.all(10.0),
       child: ListView.builder(
-        itemCount: data.length,
+        itemCount: searchResults.length,
         itemBuilder: (BuildContext context, int index) {
-          searchResults = _filterByBook(data);  
           return ResultCard(
             res: searchResults[index],
             toggleSelectionMode: _changeToSelectionMode,
