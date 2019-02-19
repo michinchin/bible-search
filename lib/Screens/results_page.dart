@@ -119,7 +119,20 @@ class _ResultsPageState extends State<ResultsPage> {
     print('rebuilt ${DateTime.now().second}');
     // why does it rebuild every time enters textEditController
     future = SearchResults.fetch(widget.searchController.text);
-    return _buildView(_buildCardView());
+    return FutureBuilder<List<SearchResult>>(
+      future: future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return _buildView(_loadingView);
+        }
+        if (snapshot.hasData && snapshot.data.length == 0) {
+          return _buildView(_buildNoResults("No results ☹️"));
+        } else if (snapshot.hasData) {
+          return _buildView(_buildCardView(snapshot.data));
+        } 
+        return _buildView(_loadingView);
+      }
+    );
 
   }
 
@@ -149,36 +162,18 @@ class _ResultsPageState extends State<ResultsPage> {
     );
   }
 
-  Widget _buildCardView() {
+  Widget _buildCardView(List<SearchResult> data) {
     return Container(
       padding: EdgeInsets.all(10.0),
       child: ListView.builder(
+        itemCount: data.length,
         itemBuilder: (BuildContext context, int index) {
-          return FutureBuilder<List<SearchResult>>(
-            future: future,
-            builder: (context, snapshot) {
-              switch (snapshot.connectionState) {
-                case ConnectionState.none:
-                case ConnectionState.waiting:
-                  return new Container(
-                    padding: const EdgeInsets.all(10.0),
-                    child: new Placeholder(fallbackHeight: 100.0, fallbackWidth: 100.0,),
-                  );
-                case ConnectionState.active:
-                case ConnectionState.done:
-                  if (snapshot.hasError) {
-                    return _buildNoResults("No Results");
-                  } else {
-                    searchResults = _filterByBook(snapshot.data);
-                    return ResultCard(
-                      res: searchResults[index],
-                      toggleSelectionMode: _changeToSelectionMode,
-                      currState: _isInSelectionMode,
-                    );
-                  }
-              }
-            },
-          );
+          searchResults = _filterByBook(data);  
+          return ResultCard(
+            res: searchResults[index],
+            toggleSelectionMode: _changeToSelectionMode,
+            currState: _isInSelectionMode,
+          ); 
         },
       ),
     );
