@@ -7,12 +7,12 @@ import '../Model/singleton.dart';
 
 
 class ResultCard extends StatefulWidget {
-  final int index;
+  final SearchResult res;
   final toggleSelectionMode;
   final currState;
   var currText;
 
-  ResultCard({Key key, this.index, this.toggleSelectionMode, this.currState}) : super(key: key);
+  ResultCard({Key key, this.res, this.toggleSelectionMode, this.currState}) : super(key: key);
 
   @override
   _ResultCardState createState() => _ResultCardState();
@@ -25,55 +25,55 @@ class _ResultCardState extends State<ResultCard> {
   @override
   void initState(){
     super.initState();
-    widget.currText = searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].verseContent;
+    widget.currText = widget.res.verses[widget.res.currentVerseIndex].verseContent;
   }
 
   _compareButtonPressed(){
     setState(() {
-      searchResults[widget.index].compareExpanded = !searchResults[widget.index].compareExpanded;
+      widget.res.compareExpanded = !widget.res.compareExpanded;
       //on opening compare menu for first time show specified translation
-      _currTag = searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].id; 
+      _currTag = widget.res.verses[widget.res.currentVerseIndex].id; 
     });
   }
 
   _contextButtonPressed() async{
     
-    if(searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].contextText.length == 0){
+    if(widget.res.verses[widget.res.currentVerseIndex].contextText.length == 0){
       final context = await Context.fetch(
-        translation: searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].id,
-        book: searchResults[widget.index].bookId,
-        chapter: searchResults[widget.index].chapterId,
-        verse: searchResults[widget.index].verseId,
+        translation: widget.res.verses[widget.res.currentVerseIndex].id,
+        book: widget.res.bookId,
+        chapter: widget.res.chapterId,
+        verse: widget.res.verseId,
       );
-      searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].contextText = context.text;
-      searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].verseIdx = [context.initialVerse,context.finalVerse];
+      widget.res.verses[widget.res.currentVerseIndex].contextText = context.text;
+      widget.res.verses[widget.res.currentVerseIndex].verseIdx = [context.initialVerse,context.finalVerse];
     }
     
     setState(() {
-      searchResults[widget.index].contextExpanded = !searchResults[widget.index].contextExpanded;
-      widget.currText = !searchResults[widget.index].contextExpanded ? searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].verseContent
-      : searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].contextText;
+      widget.res.contextExpanded = !widget.res.contextExpanded;
+      widget.currText = !widget.res.contextExpanded ? widget.res.verses[widget.res.currentVerseIndex].verseContent
+      : widget.res.verses[widget.res.currentVerseIndex].contextText;
     });
   }
 
   _translationChanged(Verse each, int index) async {
-    searchResults[widget.index].currentVerseIndex = index;
+    widget.res.currentVerseIndex = index;
 
-   if(searchResults[widget.index].contextExpanded && searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].contextText.length == 0){
+   if(widget.res.contextExpanded && widget.res.verses[widget.res.currentVerseIndex].contextText.length == 0){
       final context = await Context.fetch(
-        translation: searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].id,
-        book: searchResults[widget.index].bookId,
-        chapter: searchResults[widget.index].chapterId,
-        verse: searchResults[widget.index].verseId,
+        translation: widget.res.verses[widget.res.currentVerseIndex].id,
+        book: widget.res.bookId,
+        chapter: widget.res.chapterId,
+        verse: widget.res.verseId,
       );
-      searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].contextText = context.text;
-      searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].verseIdx = [context.initialVerse,context.finalVerse];
+      widget.res.verses[widget.res.currentVerseIndex].contextText = context.text;
+      widget.res.verses[widget.res.currentVerseIndex].verseIdx = [context.initialVerse,context.finalVerse];
   }
 
     setState(() {
       _currTag = each.id;
-      widget.currText = !searchResults[widget.index].contextExpanded ? searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].verseContent
-      : searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].contextText;
+      widget.currText = !widget.res.contextExpanded ? widget.res.verses[widget.res.currentVerseIndex].verseContent
+      : widget.res.verses[widget.res.currentVerseIndex].contextText;
     });
   }
 
@@ -95,8 +95,8 @@ class _ResultCardState extends State<ResultCard> {
           context: context,
           builder: (BuildContext context) {
             return AllPage(
-              title: searchResults[widget.index].ref,
-              bcv: [searchResults[widget.index].bookId, searchResults[widget.index].chapterId, searchResults[widget.index].verseId],
+              title: widget.res.ref,
+              bcv: [widget.res.bookId, widget.res.chapterId, widget.res.verseId],
             );
           });
 
@@ -107,8 +107,8 @@ class _ResultCardState extends State<ResultCard> {
 
     Widget _buildButtonStack() {
       var buttons = <FlatButton>[];
-      for (int i = 0; i < searchResults[widget.index].verses.length; i++) {
-        final each = searchResults[widget.index].verses[i];
+      for (int i = 0; i < widget.res.verses.length; i++) {
+        final each = widget.res.verses[i];
         buttons.add(FlatButton(
           child: Text(each.a),
           textColor:  _currTag == each.id ? Theme.of(context).canvasColor : Theme.of(context).hintColor,
@@ -149,7 +149,7 @@ class _ResultCardState extends State<ResultCard> {
       );
     }
       
-    Widget _compareButtonWidget = !searchResults[widget.index].compareExpanded ? Container() : _buildButtonStack();
+    Widget _compareButtonWidget = !widget.res.compareExpanded ? Container() : _buildButtonStack();
 
     final _selectionModeCard = InkWell(
         child: Card(
@@ -157,15 +157,15 @@ class _ResultCardState extends State<ResultCard> {
               Container(
                 padding: EdgeInsets.all(10.0),
                 child: CheckboxListTile(
-                  value: searchResults[widget.index].isSelected,
+                  value: widget.res.isSelected,
                   onChanged: (bool b) {
                     setState(() {
-                      searchResults[widget.index].isSelected = b;
+                      widget.res.isSelected = b;
                     });
                   },
                   controlAffinity:  ListTileControlAffinity.leading,
-                  title: Text('${searchResults[widget.index].ref} ${searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].a}'),
-                  subtitle: Text(searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].verseContent),
+                  title: Text('${widget.res.ref} ${widget.res.verses[widget.res.currentVerseIndex].a}'),
+                  subtitle: Text(widget.res.verses[widget.res.currentVerseIndex].verseContent),
                 ),
               ),
         ),
@@ -187,13 +187,13 @@ class _ResultCardState extends State<ResultCard> {
                   alignment: Alignment.topLeft,
                   child: FlatButton(
                   onPressed: ()=>{},
-                  child: !searchResults[widget.index].contextExpanded ? 
-                        Text('${searchResults[widget.index].ref} ${searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].a}'):
-                        Text('${bookNames.where((book)=>book.id == searchResults[widget.index].bookId).first.name} '+
-                              '${searchResults[widget.index].chapterId}:'+
-                              '${searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].verseIdx[0]}'+
-                              '-${searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].verseIdx[1]} '+
-                              '${searchResults[widget.index].verses[searchResults[widget.index].currentVerseIndex].a}'),
+                  child: !widget.res.contextExpanded ? 
+                        Text('${widget.res.ref} ${widget.res.verses[widget.res.currentVerseIndex].a}'):
+                        Text('${bookNames.where((book)=>book.id == widget.res.bookId).first.name} '+
+                              '${widget.res.chapterId}:'+
+                              '${widget.res.verses[widget.res.currentVerseIndex].verseIdx[0]}'+
+                              '-${widget.res.verses[widget.res.currentVerseIndex].verseIdx[1]} '+
+                              '${widget.res.verses[widget.res.currentVerseIndex].a}'),
                 )),
                 subtitle: Text(widget.currText),
               ),
@@ -201,12 +201,12 @@ class _ResultCardState extends State<ResultCard> {
                 child: ButtonBar(
                   children: <Widget>[
                     FlatButton(
-                      textColor: searchResults[widget.index].contextExpanded ? Theme.of(context).accentColor : Theme.of(context).hintColor,
+                      textColor: widget.res.contextExpanded ? Theme.of(context).accentColor : Theme.of(context).hintColor,
                       child: const Text('CONTEXT'),
                       onPressed:  _contextButtonPressed, // set state here
                     ),
                     FlatButton(
-                      textColor: searchResults[widget.index].compareExpanded ? Theme.of(context).accentColor : Theme.of(context).hintColor,
+                      textColor: widget.res.compareExpanded ? Theme.of(context).accentColor : Theme.of(context).hintColor,
                       child: const Text('COMPARE'),
                       onPressed: _compareButtonPressed,
                     ),

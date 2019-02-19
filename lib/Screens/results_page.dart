@@ -20,6 +20,7 @@ class ResultsPage extends StatefulWidget {
 class _ResultsPageState extends State<ResultsPage> {
   bool _isSubmitting = false;
   bool _isInSelectionMode = false;
+  var future;
 
   void _navigateToFilter(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute<Null>(
@@ -71,10 +72,10 @@ class _ResultsPageState extends State<ResultsPage> {
               ],
             ),
             body: Container(
-                child: ListView.builder(
+              child: ListView.builder(
               itemBuilder: (BuildContext context, int index) {
                 return ResultCard(
-                  index: index,
+                  res: searchResults[index],
                   currState: true,
                 );
               },
@@ -112,31 +113,14 @@ class _ResultsPageState extends State<ResultsPage> {
     );
   }
 
+
   @override
   Widget build(BuildContext context) {
     print('rebuilt ${DateTime.now().second}');
     // why does it rebuild every time enters textEditController
-    return FutureBuilder<SearchResults>(
-        future: SearchResults.fetch( widget.searchController.text),
-        builder: (context, snapshot) {
-          if ((!snapshot.hasData && snapshot.hasError)) {
-            return _buildView(_buildNoResults("No results ☹️"));
-          }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return _buildView(_loadingView);
-          }
-          //snapshot.connectionState switch statement
-          if (snapshot.hasData) {
-            searchResults = _filterByBook(snapshot.data.data);
-            if (searchResults.length == 0) {
-              return _buildView(_buildNoResults("No results ☹️"));
-            }
-            return _buildView(_buildCardView());
-          } else if (snapshot.hasError) {
-            return Text('Error');
-          }
-          return _buildView(_loadingView);
-        });
+    future = SearchResults.fetch(widget.searchController.text);
+    return _buildView(_buildCardView());
+
   }
 
   Widget _buildView(Widget body) {
@@ -170,35 +154,32 @@ class _ResultsPageState extends State<ResultsPage> {
       padding: EdgeInsets.all(10.0),
       child: ListView.builder(
         itemBuilder: (BuildContext context, int index) {
-          return FutureBuilder<SearchResults>(
-            future:
-                SearchResults.fetch(widget.searchController.text),
+          return FutureBuilder<List<SearchResult>>(
+            future: future,
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.none:
                 case ConnectionState.waiting:
-                  break;
+                  return new Container(
+                    padding: const EdgeInsets.all(10.0),
+                    child: new Placeholder(fallbackHeight: 100.0, fallbackWidth: 100.0,),
+                  );
                 case ConnectionState.active:
                 case ConnectionState.done:
                   if (snapshot.hasError) {
                     return _buildNoResults("No Results");
                   } else {
+                    searchResults = _filterByBook(snapshot.data);
                     return ResultCard(
-                      index: index,
+                      res: searchResults[index],
                       toggleSelectionMode: _changeToSelectionMode,
                       currState: _isInSelectionMode,
                     );
                   }
               }
-              return Align(
-                  alignment: Alignment.center,
-                  child: Padding(
-                      padding: EdgeInsets.all(30.0),
-                      child: CircularProgressIndicator()));
             },
           );
         },
-        itemCount: searchResults.length,
       ),
     );
   }

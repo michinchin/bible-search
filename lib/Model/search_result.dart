@@ -70,18 +70,18 @@ class SearchResults {
     return SearchResults(data: d);
   }
 
-   static Future<SearchResults> fetch(String words) async {
+   static Future<List<SearchResult>> fetch(String words) async {
     final hostAndPath = '$kTBApiServer/search';
     final json = await TecCache().jsonFromUrl(
         url: 'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=${formatWords(words)}&book=0'+
               '&bookset=0&exact=0&phrase=0&searchVolumes=$translationIds',
-        // cachedPath: 'cache/${getCacheKey(words)}.json',
+        cachedPath: 'cache/${getCacheKey(words)}.json',
         requestType: 'post',
     );
     if (json != null) {
-      return SearchResults.fromJson(json);
+      return SearchResults.fromJson(json).data;
     } else {
-      return SearchResults(data: []);
+      return SearchResults(data: []).data;
     }
   }
 
@@ -157,9 +157,9 @@ String getCacheKey(String keywords) {
   for (var i = 0; i < volumeIds.length; i++) {
     var volumeId = volumeIds[i];
     final digit = volumeId / length;
-    encoded += base64Map[base64Map.indexOf('${digit.toInt()}')];
-    volumeId -= digit * length;
-    encoded += base64Map[base64Map.indexOf('${volumeId.toInt()}')];
+    encoded += base64Map[digit.toInt()];
+    volumeId -= digit.toInt() * length;
+    encoded += base64Map[volumeId.toInt()];
   }
   return words+encoded;
 }

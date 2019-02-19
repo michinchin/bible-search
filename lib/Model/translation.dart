@@ -102,7 +102,7 @@ class BibleTranslations {
     final hostAndPath = '$kTBStreamServer/$kTBApiVersion/products-list';
     final json = await TecCache().jsonFromUrl(
         url: 'https://$hostAndPath/$fileName',
-        // cachedPath: '$hostAndPath/$fileName',
+        cachedPath: '$hostAndPath/$fileName',
         bundlePath: 'assets/Translation.json');
     if (json != null) {
       return BibleTranslations.fromJson(json);
@@ -110,17 +110,4 @@ class BibleTranslations {
       return BibleTranslations(data: []);
     }
   }
-  // static Future<BibleTranslations> fetch() async {
-  //   final api = API();
-  //   final json = await api.getResponse(
-  //     auth: kTBStreamServer,
-  //     unencodedPath: '/$kTBApiVersion/products-list/WebSite.json.gz',
-  //     isGet: true,
-  //   );
-  //   if (json != null) {
-  //     return BibleTranslations.fromJson(json);
-  //   } else {
-  //     return BibleTranslations(data: []);
-  //   }
-  // }
 }
