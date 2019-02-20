@@ -40,6 +40,7 @@ class _ResultsPageState extends State<ResultsPage> {
 
   List<SearchResult> _filterByBook(List<SearchResult> searchRes){
     // loop through search results and filter only books that are selected
+  
     final sr = searchRes.where((res){
       for (final each in bookNames) {
         if (each.id == res.bookId && each.isSelected) {
@@ -49,6 +50,7 @@ class _ResultsPageState extends State<ResultsPage> {
       return false;
     }).toList();
     return sr;
+    
   }
 
   void _changeToSelectionMode() {
@@ -122,16 +124,20 @@ class _ResultsPageState extends State<ResultsPage> {
     return FutureBuilder<List<SearchResult>>(
       future: future,
       builder: (context, snapshot) {
-        searchResults = _filterByBook(snapshot.data);
-        if (snapshot.connectionState != ConnectionState.done) {
-          return _buildView(_loadingView);
+        switch(snapshot.connectionState){
+          case ConnectionState.none:
+            return _buildView(_buildNoResults("Please Connect to the Internet ☹️"));
+          case ConnectionState.waiting:
+            return _buildView(_loadingView);
+          case ConnectionState.active:
+          case ConnectionState.done:
+            if ((snapshot.hasData && snapshot.data.length == 0) || snapshot.data == null) {
+              return _buildView(_buildNoResults("No results ☹️"));
+            } else if (snapshot.hasData) {
+              searchResults = _filterByBook(snapshot.data);
+              return searchResults.length > 0 ? _buildView(_buildCardView()) : _buildView(_buildNoResults("No results with Current Book Filter ☹️"));
+            }
         }
-        if (snapshot.hasData && searchResults.length == 0) {
-          return _buildView(_buildNoResults("No results ☹️"));
-        } else if (snapshot.hasData) {
-          return _buildView(_buildCardView());
-        } 
-        return _buildView(_loadingView);
       }
     );
 
