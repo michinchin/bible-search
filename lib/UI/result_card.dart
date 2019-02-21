@@ -4,6 +4,8 @@ import '../Model/verse.dart';
 import '../Screens/all.dart';
 import '../Model/context.dart';
 import '../Model/singleton.dart';
+import 'dart:io';
+import 'package:url_launcher/url_launcher.dart';
 
 
 class ResultCard extends StatefulWidget {
@@ -68,11 +70,42 @@ class _ResultCardState extends State<ResultCard> {
     });
   }
 
-  void _show() {
-    final navigatorKey = GlobalKey<NavigatorState>();
-    final context = navigatorKey.currentState.overlay.context;
+  _openTB() async {
+      var url = Platform.isIOS ? 'bible://${widget.res.verses[widget.res.currentVerseIndex].a}' +
+      '/${widget.res.bookId}/${widget.res.chapterId}/${widget.res.verseId}' 
+      : '';
+      
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        //couldn't launch, open app store
+        print('Could not launch $url');
+        _showAppStoreDialog();
+      }
+    }
+
+  void _showAppStoreDialog() {
+    // final navigatorKey = GlobalKey<NavigatorState>();
+    // final context = navigatorKey.currentState.overlay.context;
     final dialog = AlertDialog(
-      content: Text('Test'),
+      title: Text('Download TecartaBible'),
+      content: Text('Easily navigate to scriptures in the Bible by downloading our Bible app.'),
+      actions: [
+        FlatButton(child: Text('No Thank You'),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },),
+        FlatButton(child: Text('Okay'),
+        onPressed: () async{
+          var url = Platform.isIOS ? 'itms-apps://itunes.apple.com/app/id325955298' : '';
+          if (await canLaunch(url)) {
+            await launch(url);
+          } else {
+            Navigator.of(context).pop();
+            throw "Couldn't launch $url";
+          }
+        },)
+      ],
     );
     showDialog(context: context, builder: (x) => dialog);
   }
@@ -95,24 +128,23 @@ class _ResultCardState extends State<ResultCard> {
           final suffix = w.substring(end, w.length);
           if (prefix.length > 0) {
             text.add(TextSpan(text: prefix));
-            text.add(TextSpan(text: search, style: TextStyle(fontWeight: FontWeight.bold)));
-          } else if (suffix.length > 0) {
-            text.add(TextSpan(text: search, style: TextStyle(fontWeight: FontWeight.bold)));
-            text.add(TextSpan(text:suffix + ' '));
-          } else {
+          }
+          if (prefix.length == 0 && suffix.length == 0){
             text.add(TextSpan(text: w + ' ', style: TextStyle(fontWeight: FontWeight.bold)));
+          } else {
+            suffix.length > 0 ? text.add(TextSpan(text: search, style: TextStyle(fontWeight: FontWeight.bold))) : 
+            text.add(TextSpan(text: search + ' ', style: TextStyle(fontWeight: FontWeight.bold)));
+          }
+          if (suffix.length > 0) {
+            text.add(TextSpan(text: suffix + ' '));
           }
         }
       }
       (text.length > 0) ?
-      text.forEach((ts){contentCopy.add(ts);}):contentCopy.add(TextSpan(text:w + ' '));
+      text.forEach((ts){contentCopy.add(ts);}):contentCopy.add(TextSpan(text: w + ' '));
     }
-
     return contentCopy;
-
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -229,7 +261,7 @@ class _ResultCardState extends State<ResultCard> {
                 title: Align(
                   alignment: Alignment.topLeft,
                   child: FlatButton(
-                  onPressed: ()=>{},
+                  onPressed: ()=>_openTB(),
                   child: !widget.res.contextExpanded ? nonContextTitle : contextTitle,
                 )),
                 subtitle: _formattedText,
