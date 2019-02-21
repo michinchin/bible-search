@@ -91,7 +91,7 @@ class _ResultCardState extends State<ResultCard> {
       title: Text('Download TecartaBible'),
       content: Text('Easily navigate to scriptures in the Bible by downloading our Bible app.'),
       actions: [
-        FlatButton(child: Text('No Thank You'),
+        FlatButton(child: Text('No Thanks'),
         onPressed: () {
           Navigator.of(context).pop();
         },),
@@ -257,13 +257,10 @@ class _ResultCardState extends State<ResultCard> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                leading: Icon(Icons.book),
-                title: Align(
-                  alignment: Alignment.topLeft,
-                  child: FlatButton(
+                title:  FlatButton(
                   onPressed: ()=>_openTB(),
                   child: !widget.res.contextExpanded ? nonContextTitle : contextTitle,
-                )),
+                ),
                 subtitle: _formattedText,
               ),
               ButtonTheme.bar( // make buttons use the appropriate styles for cards

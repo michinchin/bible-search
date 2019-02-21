@@ -18,9 +18,10 @@ class ResultsPage extends StatefulWidget {
 }
 
 class _ResultsPageState extends State<ResultsPage> {
-  bool _isSubmitting = false;
   bool _isInSelectionMode = false;
   var future;
+  var _listViewController = ScrollController();
+
 
   void _navigateToFilter(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute<Null>(
@@ -33,7 +34,6 @@ class _ResultsPageState extends State<ResultsPage> {
   void _updateSearchResults(String keywords) {
     searchQueries.add(keywords);
     widget.updateSearchHistory();
-    _isSubmitting = !_isSubmitting;
   }
   
   // loop through search results and filter only books that are selected
@@ -50,43 +50,9 @@ class _ResultsPageState extends State<ResultsPage> {
   }
 
   void _changeToSelectionMode() {
-    showDialog(
-      barrierDismissible: false,
-        context: context,
-        builder: (BuildContext context) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text("Selection Mode"),
-              leading: IconButton(
-                  onPressed: () {
-                    for (final each in searchResults) {
-                      each.isSelected = false;
-                    }
-                    Navigator.of(context, rootNavigator: true).pop();
-                  } ,
-                  icon: Icon(Icons.close)),
-              actions: <Widget>[
-                Builder(
-                  builder: (context) => IconButton(
-                        icon: Icon(Icons.share),
-                        onPressed: () => _shareSelection(context),
-                      ),
-                ),
-              ],
-            ),
-            body: Container(
-              child: ListView.builder(
-              itemBuilder: (BuildContext context, int index) {
-                return ResultCard(
-                  res: searchResults[index],
-                  currState: true,
-                  keywords: widget.searchController.text,
-                );
-              },
-              itemCount: searchResults.length,
-            )),
-          );
-        });
+    setState(() {
+      _isInSelectionMode = !_isInSelectionMode;
+    });
   }
 
   void _shareSelection(BuildContext context) {
@@ -148,7 +114,8 @@ class _ResultsPageState extends State<ResultsPage> {
   Widget build(BuildContext context) {
     print('rebuilt ${DateTime.now().second}');
     future = SearchResults.fetch(widget.searchController.text);
-    return FutureBuilder<List<SearchResult>>(
+    return !_isInSelectionMode ? 
+    FutureBuilder<List<SearchResult>>(
       future: future,
       builder: (context, snapshot) {
         switch(snapshot.connectionState){
@@ -166,6 +133,44 @@ class _ResultsPageState extends State<ResultsPage> {
             }
         }
       }
+    ): _buildSelectionView();
+  }
+
+  Widget _buildSelectionView(){
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Selection Mode"),
+        leading: IconButton(
+            onPressed: () {
+              for (final each in searchResults) {
+                each.isSelected = false;
+              }
+              setState(() {
+                _isInSelectionMode = !_isInSelectionMode;
+              });
+            } ,
+            icon: Icon(Icons.close)),
+        actions: <Widget>[
+          Builder(
+            builder: (context) => IconButton(
+                  icon: Icon(Icons.share),
+                  onPressed: () => _shareSelection(context),
+                ),
+          ),
+        ],
+      ),
+      body: Container(
+        child: ListView.builder(
+          controller: _listViewController,
+        itemBuilder: (BuildContext context, int index) {
+          return ResultCard(
+            res: searchResults[index],
+            currState: true,
+            keywords: widget.searchController.text,
+          );
+        },
+        itemCount: searchResults.length,
+      )),
     );
   }
 
