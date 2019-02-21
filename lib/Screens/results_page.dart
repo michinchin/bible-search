@@ -31,16 +31,13 @@ class _ResultsPageState extends State<ResultsPage> {
   }
 
   void _updateSearchResults(String keywords) {
-    // searchQueries[keywords] =
-    //     '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
     searchQueries.add(keywords);
     widget.updateSearchHistory();
     _isSubmitting = !_isSubmitting;
   }
-
-  List<SearchResult> _filterByBook(List<SearchResult> searchRes){
-    // loop through search results and filter only books that are selected
   
+  // loop through search results and filter only books that are selected
+  List<SearchResult> _filterByBook(List<SearchResult> searchRes) {  
     final sr = searchRes.where((res){
       for (final each in bookNames) {
         if (each.id == res.bookId && each.isSelected) {
@@ -50,7 +47,6 @@ class _ResultsPageState extends State<ResultsPage> {
       return false;
     }).toList();
     return sr;
-    
   }
 
   void _changeToSelectionMode() {
@@ -62,7 +58,12 @@ class _ResultsPageState extends State<ResultsPage> {
             appBar: AppBar(
               title: Text("Selection Mode"),
               leading: IconButton(
-                  onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+                  onPressed: () {
+                    for (final each in searchResults) {
+                      each.isSelected = false;
+                    }
+                    Navigator.of(context, rootNavigator: true).pop();
+                  } ,
                   icon: Icon(Icons.close)),
               actions: <Widget>[
                 Builder(
@@ -79,6 +80,7 @@ class _ResultsPageState extends State<ResultsPage> {
                 return ResultCard(
                   res: searchResults[index],
                   currState: true,
+                  keywords: widget.searchController.text,
                 );
               },
               itemCount: searchResults.length,
@@ -91,16 +93,24 @@ class _ResultsPageState extends State<ResultsPage> {
     var text = "";
     for (final each in searchResults) {
       final currVerse = each.verses[each.currentVerseIndex];
-      text += each.isSelected
-          ? "${each.ref} (${currVerse.a})\n${currVerse.verseContent}\n\n"
-          : "";
+      if (each.isSelected && each.contextExpanded) {
+        text += '${bookNames.where((book)=>book.id == each.bookId).first.name} '+
+                '${each.chapterId}:'+
+                '${each.verses[each.currentVerseIndex].verseIdx[0]}'+
+                '-${each.verses[each.currentVerseIndex].verseIdx[1]} '+
+                '(${each.verses[each.currentVerseIndex].a})' +
+                '\n${currVerse.contextText}\n\n';
+      } else if (each.isSelected) {
+        text += "${each.ref} (${currVerse.a})\n${currVerse.verseContent}\n\n";
+      } else {
+        text += "";
+      }
     }
     if (text.length > 0) {
       Share.share(text);
     } else {
       _showToast(context);
     }
-    //print(text);
   }
 
   void _showToast(BuildContext context) {
@@ -110,16 +120,33 @@ class _ResultsPageState extends State<ResultsPage> {
         content: const Text('Please make a selection'),
         action: SnackBarAction(
             label: 'CLOSE', onPressed: scaffold.hideCurrentSnackBar),
-        // duration: Duration(seconds: 1),
       ),
     );
   }
 
+  Widget _loadingView = Stack(
+  children: [
+    ListView.builder(
+        itemCount: 15,
+        itemBuilder: (BuildContext context, int index) {
+          return Padding(
+            padding: EdgeInsets.all(10.0),
+            child: Placeholder(
+              color:Theme.of(context).accentColor.withAlpha(100),
+              fallbackWidth: MediaQuery.of(context).size.width - 30,
+              fallbackHeight: MediaQuery.of(context).size.height/5,
+            ),
+          );
+        },
+    ),
+    Center(
+      child: CircularProgressIndicator(),
+    )
+  ]);
 
   @override
   Widget build(BuildContext context) {
     print('rebuilt ${DateTime.now().second}');
-    // why does it rebuild every time enters textEditController
     future = SearchResults.fetch(widget.searchController.text);
     return FutureBuilder<List<SearchResult>>(
       future: future,
@@ -140,7 +167,6 @@ class _ResultsPageState extends State<ResultsPage> {
         }
       }
     );
-
   }
 
   Widget _buildView(Widget body) {
@@ -156,9 +182,7 @@ class _ResultsPageState extends State<ResultsPage> {
     );
   }
 
-  Widget _loadingView = Center(
-    child: CircularProgressIndicator(),
-  );
+  
 
   Widget _buildNoResults(String text) {
     return Center(
@@ -179,6 +203,7 @@ class _ResultsPageState extends State<ResultsPage> {
             res: searchResults[index],
             toggleSelectionMode: _changeToSelectionMode,
             currState: _isInSelectionMode,
+            keywords: widget.searchController.text,
           ); 
         },
       ),

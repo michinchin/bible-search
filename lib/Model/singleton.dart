@@ -8,7 +8,7 @@ BibleTranslations translations;
 String translationIds;
 var searchQueries = <String>[];
 bool isInSelectionMode = false;
-var theme = Brightness.dark;
+var theme = Brightness.light;
 
 bool otSelected = true;
 bool ntSelected = true;

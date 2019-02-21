@@ -11,8 +11,9 @@ class ResultCard extends StatefulWidget {
   final toggleSelectionMode;
   final currState;
   var currText;
+  final String keywords;
 
-  ResultCard({Key key, this.res, this.toggleSelectionMode, this.currState}) : super(key: key);
+  ResultCard({Key key, this.res, this.toggleSelectionMode, this.currState, this.keywords}) : super(key: key);
 
   @override
   _ResultCardState createState() => _ResultCardState();
@@ -21,12 +22,6 @@ class ResultCard extends StatefulWidget {
 
 class _ResultCardState extends State<ResultCard> {
   var _currTag;
-
-  @override
-  void initState(){
-    super.initState();
-    widget.currText = widget.res.verses[widget.res.currentVerseIndex].verseContent;
-  }
 
   _compareButtonPressed(){
     setState(() {
@@ -51,8 +46,6 @@ class _ResultCardState extends State<ResultCard> {
     
     setState(() {
       widget.res.contextExpanded = !widget.res.contextExpanded;
-      widget.currText = !widget.res.contextExpanded ? widget.res.verses[widget.res.currentVerseIndex].verseContent
-      : widget.res.verses[widget.res.currentVerseIndex].contextText;
     });
   }
 
@@ -72,8 +65,6 @@ class _ResultCardState extends State<ResultCard> {
 
     setState(() {
       _currTag = each.id;
-      widget.currText = !widget.res.contextExpanded ? widget.res.verses[widget.res.currentVerseIndex].verseContent
-      : widget.res.verses[widget.res.currentVerseIndex].contextText;
     });
   }
 
@@ -86,6 +77,43 @@ class _ResultCardState extends State<ResultCard> {
     showDialog(context: context, builder: (x) => dialog);
   }
 
+  List<TextSpan> _formatWords(String paragraph) {
+    final List<String> contentText = paragraph.split(' ');
+    List<TextSpan> content = contentText.map((s)=> TextSpan(text: s)).toList();
+    var contentCopy = <TextSpan>[];
+    final keywords = widget.keywords.toLowerCase().split(' ');
+    //convert each contentText item to a TextSpan
+    // if matches a keyword, change to bold TextSpan
+    for (var i = 0; i < content.length; i++) {
+      var text = <TextSpan>[];
+      final w = content[i].text;
+      for (final search in keywords) {
+        if (w.toLowerCase().contains(search)) {
+          final start = w.toLowerCase().indexOf(search);
+          final end = start + search.length;
+          final prefix = w.substring(0, start);
+          final suffix = w.substring(end, w.length);
+          if (prefix.length > 0) {
+            text.add(TextSpan(text: prefix));
+            text.add(TextSpan(text: search, style: TextStyle(fontWeight: FontWeight.bold)));
+          } else if (suffix.length > 0) {
+            text.add(TextSpan(text: search, style: TextStyle(fontWeight: FontWeight.bold)));
+            text.add(TextSpan(text:suffix + ' '));
+          } else {
+            text.add(TextSpan(text: w + ' ', style: TextStyle(fontWeight: FontWeight.bold)));
+          }
+        }
+      }
+      (text.length > 0) ?
+      text.forEach((ts){contentCopy.add(ts);}):contentCopy.add(TextSpan(text:w + ' '));
+    }
+
+    return contentCopy;
+
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     final allButton = FlatButton(
@@ -97,6 +125,7 @@ class _ResultCardState extends State<ResultCard> {
             return AllPage(
               title: widget.res.ref,
               bcv: [widget.res.bookId, widget.res.chapterId, widget.res.verseId],
+              formatWords:_formatWords,
             );
           });
 
@@ -132,7 +161,6 @@ class _ResultCardState extends State<ResultCard> {
           currButtons.add(Expanded(child: each));
         } 
       }
-      
       currWidth += 100;
       if (currWidth >= width) {
         rows.add(Row(children: currButtons,));
@@ -149,28 +177,43 @@ class _ResultCardState extends State<ResultCard> {
       );
     }
       
-    Widget _compareButtonWidget = !widget.res.compareExpanded ? Container() : _buildButtonStack();
+  Widget _compareButtonWidget = !widget.res.compareExpanded ? Container() : _buildButtonStack();
 
-    final _selectionModeCard = InkWell(
-        child: Card(
-          child:
-              Container(
-                padding: EdgeInsets.all(10.0),
-                child: CheckboxListTile(
-                  value: widget.res.isSelected,
-                  onChanged: (bool b) {
-                    setState(() {
-                      widget.res.isSelected = b;
-                    });
-                  },
-                  controlAffinity:  ListTileControlAffinity.leading,
-                  title: Text('${widget.res.ref} ${widget.res.verses[widget.res.currentVerseIndex].a}'),
-                  subtitle: Text(widget.res.verses[widget.res.currentVerseIndex].verseContent),
+  final Text nonContextTitle = Text('${widget.res.ref} ${widget.res.verses[widget.res.currentVerseIndex].a}');
+  final Text contextTitle = Text('${bookNames.where((book)=>book.id == widget.res.bookId).first.name} '+
+                              '${widget.res.chapterId}:'+
+                              '${widget.res.verses[widget.res.currentVerseIndex].verseIdx[0]}'+
+                              '-${widget.res.verses[widget.res.currentVerseIndex].verseIdx[1]} '+
+                              '${widget.res.verses[widget.res.currentVerseIndex].a}');
+  final String content = !widget.res.contextExpanded ? widget.res.verses[widget.res.currentVerseIndex].verseContent:
+                                      widget.res.verses[widget.res.currentVerseIndex].contextText;
+
+  final _formattedText = RichText(
+    text: TextSpan(
+      style: Theme.of(context).textTheme.body1,
+      children: _formatWords(content),
+    ),
+  );
+
+  final _selectionModeCard = InkWell(
+          child: Card(
+            child:
+                Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: CheckboxListTile(
+                    value: widget.res.isSelected,
+                    onChanged: (bool b) {
+                      setState(() {
+                        widget.res.isSelected = b;
+                      });
+                    },
+                    controlAffinity:  ListTileControlAffinity.leading,
+                    title: !widget.res.contextExpanded ? nonContextTitle : contextTitle,
+                    subtitle: _formattedText, 
+                  ),
                 ),
-              ),
-        ),
-    );
-
+          ),
+        );
 
     return widget.currState ? _selectionModeCard :
     InkWell(
@@ -187,15 +230,9 @@ class _ResultCardState extends State<ResultCard> {
                   alignment: Alignment.topLeft,
                   child: FlatButton(
                   onPressed: ()=>{},
-                  child: !widget.res.contextExpanded ? 
-                        Text('${widget.res.ref} ${widget.res.verses[widget.res.currentVerseIndex].a}'):
-                        Text('${bookNames.where((book)=>book.id == widget.res.bookId).first.name} '+
-                              '${widget.res.chapterId}:'+
-                              '${widget.res.verses[widget.res.currentVerseIndex].verseIdx[0]}'+
-                              '-${widget.res.verses[widget.res.currentVerseIndex].verseIdx[1]} '+
-                              '${widget.res.verses[widget.res.currentVerseIndex].a}'),
+                  child: !widget.res.contextExpanded ? nonContextTitle : contextTitle,
                 )),
-                subtitle: Text(widget.currText),
+                subtitle: _formattedText,
               ),
               ButtonTheme.bar( // make buttons use the appropriate styles for cards
                 child: ButtonBar(

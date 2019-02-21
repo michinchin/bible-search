@@ -22,6 +22,7 @@ class Verse{
       id: json['id'] as int,
       a: json['a'] as String,
       verseContent: json['text'] as String,
+      verseIdx: [0,0],
     );
   }
 }

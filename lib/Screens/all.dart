@@ -4,7 +4,9 @@ import 'package:bible_search/Model/all_result.dart';
 class AllPage extends StatelessWidget {
   final String title;
   final List bcv;
-  AllPage({this.bcv,this.title});
+  final formatWords;
+
+  AllPage({this.bcv,this.title, this.formatWords});
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +31,16 @@ class AllPage extends StatelessWidget {
             itemCount: allResults.length,
             itemBuilder:(BuildContext context, int index){
               return ListTile(
-                title: Text(allResults[index].a),
-                subtitle: Text(allResults[index].text),
+                title: Text(
+                  allResults[index].a,
+                  style: Theme.of(context).textTheme.subtitle
+                ),
+                subtitle: RichText(
+                  text: TextSpan(
+                    style: Theme.of(context).textTheme.body1,
+                    children: formatWords(allResults[index].text),
+                  ),
+                )
               );
             }),
         ),
