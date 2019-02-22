@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../Model/singleton.dart';
 import '../Model/search_result.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchAppBar extends StatefulWidget implements PreferredSizeWidget{
   final String title;
@@ -22,6 +23,11 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget{
 
 class _SearchAppBarState extends State<SearchAppBar> {
 
+void _changeTheme(bool isDark) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setBool('darkTheme', isDark);
+  darkTheme = prefs.getBool('darkTheme');
+}
   
 void _settingModalBottomSheet(context){
     showModalBottomSheet(
@@ -33,12 +39,12 @@ void _settingModalBottomSheet(context){
             ListTile(
               leading: Icon(Icons.lightbulb_outline),
               title:  Text('Light Mode'),
-              onTap: () {theme = Brightness.light;}          
+              onTap: () {_changeTheme(false);}          
             ),
             ListTile(
               leading: Icon(Icons.videocam),
               title: Text('Dark Mode'),
-              onTap: () {theme = Brightness.dark;},          
+              onTap: () {_changeTheme(true);},          
             ),
             ],
           ),

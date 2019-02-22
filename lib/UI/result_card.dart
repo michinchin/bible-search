@@ -257,10 +257,12 @@ class _ResultCardState extends State<ResultCard> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                title:  FlatButton(
+                title: Align(
+                  alignment: Alignment.topLeft,
+                  child: FlatButton(
                   onPressed: ()=>_openTB(),
                   child: !widget.res.contextExpanded ? nonContextTitle : contextTitle,
-                ),
+                )),
                 subtitle: _formattedText,
               ),
               ButtonTheme.bar( // make buttons use the appropriate styles for cards
