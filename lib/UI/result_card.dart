@@ -111,16 +111,22 @@ class _ResultCardState extends State<ResultCard> {
   }
 
   List<TextSpan> _formatWords(String paragraph) {
+   
     final List<String> contentText = paragraph.split(' ');
     List<TextSpan> content = contentText.map((s)=> TextSpan(text: s)).toList();
     var contentCopy = <TextSpan>[];
-    final keywords = widget.keywords.toLowerCase().split(' ');
+    var keywords = widget.keywords;
+    urlEncodingExceptions.forEach(
+    (k,v) => keywords = keywords.replaceAll(RegExp(k), v)
+    );
+    final formattedKeywords = keywords.toLowerCase().split(' ');
+
     //convert each contentText item to a TextSpan
     // if matches a keyword, change to bold TextSpan
     for (var i = 0; i < content.length; i++) {
       var text = <TextSpan>[];
       final w = content[i].text;
-      for (final search in keywords) {
+      for (final search in formattedKeywords) {
         if (w.toLowerCase().contains(search)) {
           final start = w.toLowerCase().indexOf(search);
           final end = start + search.length;

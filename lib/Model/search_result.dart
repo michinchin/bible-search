@@ -84,30 +84,6 @@ class SearchResults {
       return SearchResults(data: []).data;
     }
   }
-
-  // static Future<SearchResults> fetch(String words) async {
-  //   final api = API();
-  //   final json = await api.getResponse(
-  //     auth: kTBApiServer,
-  //     unencodedPath: '/search',
-  //     queryParameters: {
-  //       'key' : kTBkey,
-  //       'version' : kTBApiVersion,
-  //       'words' : formatWords(words), 
-  //       'book' : '0',
-  //       'bookset' : '0',
-  //       'exact' : '0',
-  //       'phrase' : '0',
-  //       'searchVolumes' : translationIds,
-  //     },
-  //     isGet: true,
-  //   );
-  //   if (json != null) {
-  //     return SearchResults.fromJson(json);
-  //   } else {
-  //     return SearchResults(data: []);
-  //   }
-  // }
 }
 
 Map<String,String> urlEncodingExceptions = {

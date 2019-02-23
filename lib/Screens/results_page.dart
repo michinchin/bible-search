@@ -20,8 +20,6 @@ class ResultsPage extends StatefulWidget {
 class _ResultsPageState extends State<ResultsPage> {
   bool _isInSelectionMode = false;
   var future;
-  var _listViewController = ScrollController();
-
 
   void _navigateToFilter(BuildContext context) {
     Navigator.of(context).push(MaterialPageRoute<Null>(
@@ -139,6 +137,7 @@ class _ResultsPageState extends State<ResultsPage> {
   Widget _buildSelectionView(){
     return Scaffold(
       appBar: AppBar(
+        elevation: 1.0,
         title: Text("Selection Mode"),
         leading: IconButton(
             onPressed: () {
@@ -161,15 +160,32 @@ class _ResultsPageState extends State<ResultsPage> {
       ),
       body: Container(
         child: ListView.builder(
-          controller: _listViewController,
-        itemBuilder: (BuildContext context, int index) {
-          return ResultCard(
-            res: searchResults[index],
-            currState: true,
-            keywords: widget.searchController.text,
-          );
-        },
-        itemCount: searchResults.length,
+          itemCount: searchResults == null ? 1 : searchResults.length + 1,
+          itemBuilder: (BuildContext context, int index) {
+            if (index == 0) {
+              return Container(
+                padding: EdgeInsets.all(10.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child:  RichText(
+                    text: TextSpan(
+                      style: Theme.of(context).textTheme.caption,
+                      children: [
+                        TextSpan(text: 'Showing ${searchResults.length} results for ',),
+                        TextSpan(text: '${widget.searchController.text}', style: TextStyle(fontWeight:FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                ),
+              ); 
+            }
+            index -= 1;
+            return ResultCard(
+              res: searchResults[index],
+              currState: true,
+              keywords: widget.searchController.text,
+            );
+          },
       )),
     );
   }
@@ -183,7 +199,7 @@ class _ResultsPageState extends State<ResultsPage> {
         update: _updateSearchResults,
         changeSelectionMode: _changeToSelectionMode,
       ),
-      body: SafeArea(child: body),
+      body: SafeArea(child:body)
     );
   }
 
@@ -202,8 +218,26 @@ class _ResultsPageState extends State<ResultsPage> {
     return Container(
       padding: EdgeInsets.all(10.0),
       child: ListView.builder(
-        itemCount: searchResults.length,
+        itemCount: searchResults == null ? 1 :searchResults.length + 1,
         itemBuilder: (BuildContext context, int index) {
+          if (index == 0) { 
+            return Container(
+              padding: EdgeInsets.all(10.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child:  RichText(
+                  text: TextSpan(
+                    style: Theme.of(context).textTheme.caption,
+                    children: [
+                      TextSpan(text: 'Showing ${searchResults.length} results for ',),
+                      TextSpan(text: '${widget.searchController.text}', style: TextStyle(fontWeight:FontWeight.bold)),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          } 
+          index -= 1;
           return ResultCard(
             res: searchResults[index],
             toggleSelectionMode: _changeToSelectionMode,
