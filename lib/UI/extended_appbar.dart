@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../Screens/translation_book_filter.dart';
-import '../Model/translation.dart';
+
 
 class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget{
   final double height;
@@ -42,13 +41,13 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget{
           icon: Icon(Icons.info_outline),
           color: Colors.white,
           onPressed: () => _infoButtonPressed(context),
-          //TODO: onPressed action
         ),
         IconButton(
           icon: Icon(Icons.filter_list),
           color: Colors.white,
-          onPressed: () => navigate(context),
-          //TODO: onPressed action
+          onPressed: () {
+              navigate(context);
+          } 
         ),
       ],
       leading: Icon(Icons.search, color: Colors.white,),  

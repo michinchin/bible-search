@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../Model/search_result.dart';
 import '../Model/verse.dart';
 import '../Screens/all.dart';
 import '../Model/context.dart';
 import '../Model/singleton.dart';
 import 'dart:io';
+import 'dart:core';
 import 'package:url_launcher/url_launcher.dart';
 
 
@@ -12,7 +14,6 @@ class ResultCard extends StatefulWidget {
   final SearchResult res;
   final toggleSelectionMode;
   final currState;
-  var currText;
   final String keywords;
 
   ResultCard({Key key, this.res, this.toggleSelectionMode, this.currState, this.keywords}) : super(key: key);
@@ -154,23 +155,93 @@ class _ResultCardState extends State<ResultCard> {
 
   @override
   Widget build(BuildContext context) {
-    final allButton = FlatButton(
-      child: Text('ALL'), 
-      onPressed: (){
-         showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AllPage(
-              title: widget.res.ref,
-              bcv: [widget.res.bookId, widget.res.chapterId, widget.res.verseId],
-              formatWords:_formatWords,
-            );
-          });
+    final Text nonContextTitle = Text('${widget.res.ref} ${widget.res.verses[widget.res.currentVerseIndex].a}');
+    final Text contextTitle = Text('${bookNames.where((book)=>book.id == widget.res.bookId).first.name} '+
+                                '${widget.res.chapterId}:'+
+                                '${widget.res.verses[widget.res.currentVerseIndex].verseIdx[0]}'+
+                                '-${widget.res.verses[widget.res.currentVerseIndex].verseIdx[1]} '+
+                                '${widget.res.verses[widget.res.currentVerseIndex].a}');
+    final String content = !widget.res.contextExpanded ? widget.res.verses[widget.res.currentVerseIndex].verseContent:
+                                        widget.res.verses[widget.res.currentVerseIndex].contextText;
 
-      },
-      textColor: Theme.of(context).hintColor,
-      splashColor: Theme.of(context).accentColor,
+    final colorScheme = Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white;
+
+    final _formattedText = RichText(
+      text: TextSpan(
+        style: !widget.res.isSelected ? Theme.of(context).textTheme.body1 :
+        TextStyle(
+          color: colorScheme,),
+        children: _formatWords(content),
+      ),
     );
+
+
+    final _formattedTextString = _formattedText.text.children.toList().map((each) {
+      return each.text;
+    }).join();
+
+    
+
+    if (widget.currState) { //selection mode
+      
+  
+
+  final _selectionModeCard = InkWell(
+          borderRadius: BorderRadius.circular(15.0),
+          onTap: (){
+            setState(() {
+              widget.res.isSelected = !widget.res.isSelected;
+            });
+          },
+          child: Card(
+            elevation: 2.0,
+            color: widget.res.isSelected ? Theme.of(context).accentColor : Theme.of(context).cardColor,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+            child:
+                Container(
+                  padding: EdgeInsets.all(15.0),
+                  child: ListTile(
+                    leading: widget.res.isSelected ? Icon(
+                      Icons.check_circle,
+                      color: colorScheme,
+                    ) : Icon(
+                      Icons.check_circle_outline,
+                      color: Colors.grey,
+                    ),
+                    title: Text(
+                      !widget.res.contextExpanded ? nonContextTitle.data : contextTitle.data,
+                      style: TextStyle(
+                        color: widget.res.isSelected ? colorScheme :Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.bold
+                        ),
+                      
+                    ),
+                    subtitle: _formattedText
+                  ),
+                ),
+          ),
+        );
+      return _selectionModeCard;
+    } else {
+      final allButton = FlatButton(
+        child: Text('ALL'), 
+        onPressed: (){
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AllPage(
+                title: widget.res.ref,
+                bcv: [widget.res.bookId, widget.res.chapterId, widget.res.verseId],
+                formatWords:_formatWords,
+              );
+            });
+
+        },
+        textColor: Theme.of(context).hintColor,
+        splashColor: Theme.of(context).accentColor,
+      );
 
     Widget _buildButtonStack() {
       var buttons = <FlatButton>[];
@@ -215,86 +286,84 @@ class _ResultCardState extends State<ResultCard> {
       );
     }
       
-  Widget _compareButtonWidget = !widget.res.compareExpanded ? Container() : _buildButtonStack();
+    Widget _compareButtonWidget = !widget.res.compareExpanded ? Container() : _buildButtonStack();
 
-  final Text nonContextTitle = Text('${widget.res.ref} ${widget.res.verses[widget.res.currentVerseIndex].a}');
-  final Text contextTitle = Text('${bookNames.where((book)=>book.id == widget.res.bookId).first.name} '+
-                              '${widget.res.chapterId}:'+
-                              '${widget.res.verses[widget.res.currentVerseIndex].verseIdx[0]}'+
-                              '-${widget.res.verses[widget.res.currentVerseIndex].verseIdx[1]} '+
-                              '${widget.res.verses[widget.res.currentVerseIndex].a}');
-  final String content = !widget.res.contextExpanded ? widget.res.verses[widget.res.currentVerseIndex].verseContent:
-                                      widget.res.verses[widget.res.currentVerseIndex].contextText;
-
-  final _formattedText = RichText(
-    text: TextSpan(
-      style: Theme.of(context).textTheme.body1,
-      children: _formatWords(content),
-    ),
-  );
-
-  final _selectionModeCard = InkWell(
+    Widget _nonSelectionModeCard = InkWell(
+        borderRadius: BorderRadius.circular(15.0),
+        onLongPress: () {
+          Scaffold.of(context).removeCurrentSnackBar();
+          widget.res.isSelected = true;
+          widget.toggleSelectionMode(searchResults.indexOf(widget.res));
+        },
+        onTap:  (){
+            Scaffold.of(context).showSnackBar(
+              SnackBar(
+                action: SnackBarAction(
+                  label: 'Copy',
+                  onPressed: (){
+                    final clip = ClipboardData(
+                      text: (widget.res.contextExpanded ? contextTitle.data : nonContextTitle.data) +
+                            '\n' + _formattedTextString
+                            );
+                    Clipboard.setData(clip);
+                    Scaffold.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Done!'),
+                        duration: Duration(seconds: 1),
+                      )
+                    );
+                  },
+                ),
+                content:Text((widget.res.contextExpanded ? contextTitle.data : nonContextTitle.data))
+              )
+            );
+        },
           child: Card(
-            child:
-                Container(
-                  padding: EdgeInsets.all(10.0),
-                  child: CheckboxListTile(
-                    value: widget.res.isSelected,
-                    onChanged: (bool b) {
-                      setState(() {
-                        widget.res.isSelected = b;
-                      });
-                    },
-                    controlAffinity:  ListTileControlAffinity.leading,
-                    title: !widget.res.contextExpanded ? nonContextTitle : contextTitle,
-                    subtitle: _formattedText, 
+            elevation: 2.0,
+            
+            shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+            child: Padding(
+              padding: EdgeInsets.all(15.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  ListTile(
+                    title: Align(
+                      alignment: Alignment.topLeft,
+                      child: MaterialButton(
+                      onPressed: ()=>_openTB(),
+                      child: Text(
+                        widget.res.contextExpanded ? contextTitle.data : nonContextTitle.data, 
+                        style: TextStyle(fontWeight: FontWeight.bold)) 
+                    )),
+                    subtitle:  _formattedText,
                   ),
-                ),
-          ),
-        );
-
-    return widget.currState ? _selectionModeCard :
-    InkWell(
-      onLongPress: () => widget.toggleSelectionMode(),
-        child: Card(
-        child: Padding(
-          padding: EdgeInsets.all(10.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                title: Align(
-                  alignment: Alignment.topLeft,
-                  child: FlatButton(
-                  onPressed: ()=>_openTB(),
-                  child: !widget.res.contextExpanded ? nonContextTitle : contextTitle,
-                )),
-                subtitle: _formattedText,
-              ),
-              ButtonTheme.bar( // make buttons use the appropriate styles for cards
-                child: ButtonBar(
-                  children: <Widget>[
-                    FlatButton(
-                      textColor: widget.res.contextExpanded ? Theme.of(context).accentColor : Theme.of(context).hintColor,
-                      child: const Text('CONTEXT'),
-                      onPressed:  _contextButtonPressed, // set state here
+                
+                  ButtonTheme.bar( // make buttons use the appropriate styles for cards
+                    child: ButtonBar(
+                      children: <Widget>[
+                        FlatButton(
+                          textColor: widget.res.contextExpanded ? Theme.of(context).accentColor : Theme.of(context).hintColor,
+                          child: const Text('CONTEXT'),
+                          onPressed:  _contextButtonPressed, // set state here
+                        ),
+                        FlatButton(
+                          textColor: widget.res.compareExpanded ? Theme.of(context).accentColor : Theme.of(context).hintColor,
+                          child: const Text('COMPARE'),
+                          onPressed: _compareButtonPressed,
+                        ),
+                      ],
                     ),
-                    FlatButton(
-                      textColor: widget.res.compareExpanded ? Theme.of(context).accentColor : Theme.of(context).hintColor,
-                      child: const Text('COMPARE'),
-                      onPressed: _compareButtonPressed,
-                    ),
-                  ],
-                ),
+                  ),
+                  _compareButtonWidget,
+                ],
               ),
-              _compareButtonWidget,
-            ],
+            ),
           ),
-        ),
-      ),
-  
     );
-  
-  
+    return _nonSelectionModeCard;
+    }
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../Model/singleton.dart';
-import '../Model/search_result.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchAppBar extends StatefulWidget implements PreferredSizeWidget{
@@ -77,20 +76,17 @@ void _settingModalBottomSheet(context){
             icon: Icon(Icons.info_outline),
             color: Colors.white,
             onPressed: ()=>_settingModalBottomSheet(context),
-            //TODO: onPressed action
           ),
           IconButton(
             icon: Icon(Icons.filter_list),
             color: Colors.white,
             onPressed: () => widget.navigator(context),
-            //TODO: onPressed action
           ),
           IconButton(
             icon: Icon(Icons.check_circle_outline),
             color: Colors.white,
-            onPressed: widget.changeSelectionMode,
+            onPressed: () => widget.changeSelectionMode(0),
           )
-
       ],
       );
   }

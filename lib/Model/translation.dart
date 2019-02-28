@@ -102,7 +102,6 @@ class BibleTranslations {
     final hostAndPath = '$kTBStreamServer/$kTBApiVersion/products-list';
     final json = await TecCache().jsonFromUrl(
         url: 'https://$hostAndPath/$fileName',
-        cachedPath: '$hostAndPath/$fileName',
         bundlePath: 'assets/Translation.json');
     if (json != null) {
       return BibleTranslations.fromJson(json);

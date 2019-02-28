@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import '../tecarta.dart';
 import '../Model/verse.dart';
 import '../Model/singleton.dart';
@@ -15,6 +17,7 @@ class SearchResult {
   bool isSelected;
   int currentVerseIndex;
   String fullText;
+  final GlobalKey key;
 
   SearchResult({
     this.ref,
@@ -27,6 +30,7 @@ class SearchResult {
     this.isSelected = false,
     this.currentVerseIndex = 0,
     this.fullText = '',
+    this.key,
   });
 
   factory SearchResult.fromJson(Map<String,dynamic> json) {
@@ -47,6 +51,7 @@ class SearchResult {
       chapterId: json['chapterId'] as int,
       verseId: json['verseId'] as int,
       verses: v,
+      key: GlobalKey()
     );
   }
 
@@ -89,7 +94,8 @@ class SearchResults {
 Map<String,String> urlEncodingExceptions = {
   "’": "'", // UTF-8: E2 80 99
   "‘": "'", // UTF-8: E2 80 98
-  "‚": "", // get rid of commas
+  "‚": "", 
+  ",": "", // get rid of commas
   "‛": "'",
   "“": "\"", // UTF-8: E2 80 9C
   "”": "\"", // UTF-8: E2 80 9D

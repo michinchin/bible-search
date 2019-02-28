@@ -1,5 +1,4 @@
 import '../tecarta.dart';
-import '../Services/api.dart';
 import 'package:tec_cache/tec_cache.dart';
 
 final _year = DateTime.now().year;
@@ -27,26 +26,11 @@ class VOTDImage{
   static Future<VOTDImage> fetch() async {
     final json = await TecCache().jsonFromUrl(
         url: 'https://$kTBStreamServer$_parameters',
-        bundlePath: 'assets/appimage.jpg');
+    );
     if (json != null) {
       return VOTDImage.fromJson(json);
     } else {
       return null;
     }
   }
-  
-
-  // static Future<VOTDImage> fetch() async {
-  //   final api = API();
-  //   final json = await api.getResponse(
-  //     auth:kTBStreamServer,
-  //     unencodedPath: _parameters,
-  //     isGet: true
-  //   );
-  //   if (json != null) {
-  //     return VOTDImage.fromJson(json);
-  //   } else {
-  //     return null;
-  //   }
-  // }
 }

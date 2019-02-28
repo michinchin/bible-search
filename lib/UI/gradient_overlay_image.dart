@@ -73,23 +73,32 @@ class GradientOverlayImage extends StatelessWidget {
     return FutureBuilder<VOTDImage>(
       future: votd,
       builder: (context, snapshot) {
-        if(snapshot.hasData) {
-          return _getImageOnline(snapshot.data.url);
-        } else if (snapshot.hasError) {
-          return _getImageOffline('assets/appimage.jpg');
+        var connection = snapshot.connectionState;
+        
+        switch (connection) {
+          case ConnectionState.none:
+            return _getImageOffline('assets/appimage.jpg');
+          case ConnectionState.active:
+          case ConnectionState.waiting:
+             return Container(
+              color: Colors.transparent,
+              height: height,
+              width: width,
+              child: Center(
+                child: SizedBox(
+                  child: CircularProgressIndicator(),
+                  height: 25.0,
+                  width: 25.0,
+                ),
+              ),
+            );
+          case ConnectionState.done:
+            if (snapshot.hasData && !snapshot.hasError) {
+              return _getImageOnline(snapshot.data.url);
+            } else {
+              return _getImageOffline('assets/appimage.jpg');
+            }
         }
-        return Container(
-          color: Colors.transparent,
-          height: height,
-          width: width,
-          child: Center(
-            child: SizedBox(
-              child: CircularProgressIndicator(),
-              height: 25.0,
-              width: 25.0,
-            ),
-          ),
-        );
       });
   }
 }

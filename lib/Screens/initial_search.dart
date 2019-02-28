@@ -8,6 +8,7 @@ import '../Screens/translation_book_filter.dart';
 import '../Model/singleton.dart';
 import '../Model/translation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity/connectivity.dart';
 
 // Initial Search Route (screen)
 // 
@@ -26,21 +27,14 @@ class InitialSearchPage extends StatefulWidget {
 class _InitialSearchPageState extends State<InitialSearchPage> {
   
   final searchController = TextEditingController();
-  String _searchTerm;
 
   @override
   void initState() {
     super.initState();
     _grabTranslations();
     _loadSearchHistory();
-    searchController.addListener(_printLatestValue);
   }
-  _printLatestValue() {
-    setState(() {
-      _searchTerm = searchController.text;
-    });
-    print('Search field input: $_searchTerm');
-  }
+
 
   _loadSearchHistory() async {
      SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -59,8 +53,10 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     temp.data.sort((f,k)=>f.lang.id.compareTo(k.lang.id));
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      translationIds = prefs.getString('translations') ?? prefs.setString('translations', temp.formatIds());
-      //select only translations that are in the formatted Id 
+      if (prefs.getString('translations') == null) {
+        prefs.setString('translations', temp.formatIds());
+      } 
+      translationIds = prefs.getString('translations');      //select only translations that are in the formatted Id 
       translations = temp;
       translations.selectTranslations(translationIds);
      });
@@ -76,6 +72,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
           iconColor: Colors.black,
           child: Dismissible(
             key: Key(words[index]),
+            direction: DismissDirection.endToStart,
             onDismissed: (direction){
                 Scaffold.of(context).showSnackBar(SnackBar(content:Text('The search term "${words[index]}" has been removed')));
                 setState(() {
@@ -84,6 +81,11 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
                 });
             },
             background: Container(
+             padding: EdgeInsets.only(right: 15.0),
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Icon(Icons.delete)
+              ),
               color: Colors.red,
             ),
             child: ListTile(
@@ -100,11 +102,11 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     }
 
   void _navigateToResults(BuildContext context, String keywords) {
-    // searchQueries[keywords] = '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}';
+    searchResults = [];
     searchQueries.add(keywords);
     _updateSearchHistory();
     searchController.text = keywords;
-    Navigator.of(context).push(MaterialPageRoute<Null>(
+    Navigator.of(context).push(MaterialPageRoute<dynamic>(
       builder: (BuildContext context) {
         return ResultsPage(
           keywords: keywords, 
@@ -115,13 +117,13 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     ));
   }
 
-  void _navigateToFilter(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute<Null>(
-      builder: (BuildContext context) {
-        return TranslationBookFilterPage();
-      },
-      fullscreenDialog: true,
-    ));
+  void _navigateToFilter(BuildContext context) async {
+    Navigator.of(context).push(MaterialPageRoute<dynamic>(
+          builder: (BuildContext context) {
+            return TranslationBookFilterPage(tabValue:1);
+          },
+          fullscreenDialog: true,
+        ));
   }
   
   @override
@@ -130,22 +132,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     final _imageHeight = MediaQuery.of(context).size.height/3;
     final _orientation = MediaQuery.of(context).orientation;
     final _searchBarHeight = 50.0;
-    // final _categoryList = <Dismissible>[];
-
-    // searchQueries.forEach((k,v){
-    //   _categoryList.add(
-    //     Dismissible(
-    //       child: ListTile(
-    //         title: Text('$k',),
-    //         subtitle: Text('$v'),
-    //         leading: Icon(Icons.access_time),
-            
-    //         onTap: () => _navigateToResults(context, k),
-    //       ),
-    //     ),
-    //   );
-    // });
-    //TODO: Create a list view of the Categories
+   
     final searchHistoryList = Container(
       color: Colors.white,
       child: _buildSearchHistoryWidgets(),

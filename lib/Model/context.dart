@@ -1,6 +1,5 @@
 import 'package:bible_search/tecarta.dart';
 import 'package:bible_search/Services/api.dart';
-import 'package:bible_search/Model/translation.dart';
 
 class Context {
   Map<int,String> verses;

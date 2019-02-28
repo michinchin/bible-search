@@ -23,6 +23,7 @@ class BibleSearch extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
         brightness: darkTheme ? Brightness.dark : Brightness.light,
+        primaryColorBrightness: Brightness.dark,
         fontFamily: 'Roboto',
       ),
       home: InitialSearchPage(votd: VOTDImage.fetch()),

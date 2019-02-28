@@ -4,9 +4,9 @@ import '../Model/singleton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TranslationBookFilterPage extends StatefulWidget {
-  final String words;
+  final int tabValue;
 
-  const TranslationBookFilterPage({Key key, this.words}) : super(key: key);
+  const TranslationBookFilterPage({Key key, this.tabValue}) : super(key: key);
   @override
   _TranslationBookFilterPageState createState() =>
       _TranslationBookFilterPageState();
@@ -26,8 +26,10 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage>
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: myTabs.length);
-    _loadLanguagePref();
+    _tabController.animateTo(widget.tabValue);
+     _grabTranslations();
     _updateTranslations();
+    _loadLanguagePref();
   }
 
   @override
@@ -38,12 +40,31 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage>
   }
 
   _loadLanguagePref(){
-    for (final each in translations.data) {
-      if (!each.isSelected) {
-        each.lang.isSelected = false;
+    if (translations != null) {
+      for (final each in translations.data) {
+        if (!each.isSelected) {
+          each.lang.isSelected = false;
+        }
       }
     }
   }
+
+
+  _grabTranslations() async {
+    final temp = await BibleTranslations.fetch();
+    temp.data.sort((f,k)=>f.lang.id.compareTo(k.lang.id));
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      if (prefs.getString('translations') == null) {
+        prefs.setString('translations', temp.formatIds());
+      } 
+      translationIds = prefs.getString('translations');
+      //select only translations that are in the formatted Id 
+      translations = temp;
+      translations.selectTranslations(translationIds);
+     });
+  }
+  
 
   _updateTranslations() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -201,6 +222,7 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage>
   }
 
   Widget _buildTranslationWidgets() {
+    searchResults = [];
     return Container(
         padding: EdgeInsets.all(10.0),
         child: ListView(
