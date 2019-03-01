@@ -8,7 +8,7 @@ import '../Screens/translation_book_filter.dart';
 import '../Model/singleton.dart';
 import '../Model/translation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:connectivity/connectivity.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
 
 // Initial Search Route (screen)
 // 
@@ -35,28 +35,28 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
     _loadSearchHistory();
   }
 
-
-  _loadSearchHistory() async {
+  void _loadSearchHistory() async {
      SharedPreferences prefs = await SharedPreferences.getInstance();
       setState(() {
         searchQueries = (prefs.getStringList('searchHistory') ?? []);
       });
   }
 
-  _updateSearchHistory() async {
+  void _updateSearchHistory() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setStringList('searchHistory', searchQueries = searchQueries.toSet().toList());
   }
 
-  _grabTranslations() async {
+  void _grabTranslations() async {
     final temp = await BibleTranslations.fetch();
     temp.data.sort((f,k)=>f.lang.id.compareTo(k.lang.id));
     final prefs = await SharedPreferences.getInstance();
     setState(() {
+      //select only translations that are in the formatted Id 
       if (prefs.getString('translations') == null) {
         prefs.setString('translations', temp.formatIds());
       } 
-      translationIds = prefs.getString('translations');      //select only translations that are in the formatted Id 
+      translationIds = prefs.getString('translations');
       translations = temp;
       translations.selectTranslations(translationIds);
      });

@@ -7,6 +7,7 @@ BibleTranslations translations;
 String translationIds;
 var searchQueries = <String>[];
 bool isInSelectionMode = false;
+bool isDarkTheme = false; 
 
 bool otSelected = true;
 bool ntSelected = true;
