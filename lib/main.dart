@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'Screens/initial_search.dart';
 import './Model/votd_image.dart';
-import './Model/singleton.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
 
-
-void main() async{ 
-  final prefs = await SharedPreferences.getInstance();
-  darkTheme = prefs.getBool('darkTheme') ?? await prefs.setBool('darkTheme', true);
+void main() { 
   return runApp(BibleSearch());
 }
 
@@ -16,17 +12,18 @@ class BibleSearch extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Bible Search',
-      theme: ThemeData(
+    return DynamicTheme(
+      defaultBrightness: Brightness.light,
+      data: (brightness) => new ThemeData(
         primarySwatch: Colors.orange,
-        brightness: darkTheme ? Brightness.dark : Brightness.light,
-        primaryColorBrightness: Brightness.dark,
-        fontFamily: 'Roboto',
+        brightness: brightness,
       ),
-      home: InitialSearchPage(votd: VOTDImage.fetch()),
-    );
+      themedWidgetBuilder:(context,theme) {
+        return MaterialApp(
+          title: 'Bible Search',
+          theme: theme,
+          home: InitialSearchPage(votd: VOTDImage.fetch()),
+        );
+      });
   }
 }

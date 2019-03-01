@@ -1,6 +1,7 @@
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import '../Model/singleton.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dynamic_theme/theme_switcher_widgets.dart';
+
 
 class SearchAppBar extends StatefulWidget implements PreferredSizeWidget{
   final String title;
@@ -22,34 +23,56 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget{
 
 class _SearchAppBarState extends State<SearchAppBar> {
 
-void _changeTheme(bool isDark) async {
-  final prefs = await SharedPreferences.getInstance();
-  await prefs.setBool('darkTheme', isDark);
-  darkTheme = prefs.getBool('darkTheme');
-}
+  bool _isDarkTheme;
+  bool _isOrange;
+
+  void _changeTheme(bool b)  {
+    DynamicTheme.of(context).setBrightness(Theme.of(context).brightness == Brightness.dark ? Brightness.light: Brightness.dark);
+    setState(() {
+      _isDarkTheme = b;
+    });
+  }
+
+  void _changeColor(bool b) {
+    DynamicTheme.of(context).setThemeData(
+      ThemeData(
+        primarySwatch: Theme.of(context).primaryColor == Colors.orange? Colors.blue: Colors.orange,
+        primaryColorBrightness: Brightness.dark,
+      )
+    );
+    setState(() {
+      _isOrange = b;
+    });
+  }
   
 void _settingModalBottomSheet(context){
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext bc){
-          return Container(
-            child: Wrap(
-            children: <Widget>[
-            ListTile(
-              leading: Icon(Icons.lightbulb_outline),
-              title:  Text('Light Mode'),
-              onTap: () {_changeTheme(false);}          
-            ),
-            ListTile(
-              leading: Icon(Icons.videocam),
-              title: Text('Dark Mode'),
-              onTap: () {_changeTheme(true);},          
-            ),
-            ],
+  _isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+  _isOrange = Theme.of(context).primaryColor == Colors.blue;
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext bc){
+        return Container(
+          child: Wrap(
+          children: <Widget>[
+          SwitchListTile(
+            secondary: Icon(Icons.lightbulb_outline),
+            value: _isDarkTheme,
+            title:  Text('Light/Dark Mode'),
+            onChanged: (b) {
+              _changeTheme(b);}          
           ),
-          );
-      }
-    );
+          SwitchListTile(
+            secondary: Icon(Icons.color_lens),
+            value: _isOrange,
+            title:  Text('Blue/Orange Colors'),
+            onChanged: (b) {
+              _changeColor(b);}          
+          ),
+          ],
+        ),
+      );
+    }
+  );
 }
 
   @override

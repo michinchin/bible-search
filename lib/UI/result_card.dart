@@ -175,52 +175,46 @@ class _ResultCardState extends State<ResultCard> {
       ),
     );
 
-
     final _formattedTextString = _formattedText.text.children.toList().map((each) {
       return each.text;
     }).join();
 
-    
-
     if (widget.currState) { //selection mode
-      
-  
-
-  final _selectionModeCard = InkWell(
-          borderRadius: BorderRadius.circular(15.0),
-          onTap: (){
-            setState(() {
-              widget.res.isSelected = !widget.res.isSelected;
-            });
-          },
-          child: Card(
-            elevation: 2.0,
-            color: widget.res.isSelected ? Theme.of(context).accentColor : Theme.of(context).cardColor,
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15.0),
-              ),
-            child:
-                Container(
-                  padding: EdgeInsets.all(15.0),
-                  child: ListTile(
-                    leading: widget.res.isSelected ? Icon(
-                      Icons.check_circle,
-                      color: colorScheme,
-                    ) : Icon(
-                      Icons.check_circle_outline,
-                      color: Colors.grey,
-                    ),
-                    title: Text(
-                      !widget.res.contextExpanded ? nonContextTitle.data : contextTitle.data,
-                      style: TextStyle(
-                        color: widget.res.isSelected ? colorScheme :Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.bold
-                        ),
-                      
-                    ),
-                    subtitle: _formattedText
+      final _selectionModeCard = InkWell(
+        borderRadius: BorderRadius.circular(15.0),
+        onTap: (){
+          setState(() {
+            widget.res.isSelected = !widget.res.isSelected;
+          });
+        },
+        child: Card(
+          elevation: 2.0,
+          color: widget.res.isSelected ? Theme.of(context).accentColor : Theme.of(context).cardColor,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+          child:
+              Container(
+                padding: EdgeInsets.all(15.0),
+                child: ListTile(
+                  leading: widget.res.isSelected ? Icon(
+                    Icons.check_circle,
+                    color: colorScheme,
+                  ) : Icon(
+                    Icons.check_circle_outline,
+                    color: Colors.grey,
                   ),
+                  title: Text(
+                    !widget.res.contextExpanded ? nonContextTitle.data : contextTitle.data,
+                    style: TextStyle(
+                      color: widget.res.isSelected ? colorScheme :Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.bold
+                      ),
+                    
+                  ),
+                  subtitle: _formattedText
                 ),
+              ),
           ),
         );
       return _selectionModeCard;

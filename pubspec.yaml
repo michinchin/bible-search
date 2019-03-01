@@ -23,6 +23,7 @@ dependencies:
     sdk: flutter
   draggable_scrollbar: ^0.0.4
   connectivity: ^0.4.2
+  dynamic_theme: ^1.0.1
 
 
   # The following adds the Cupertino Icons font to your application.

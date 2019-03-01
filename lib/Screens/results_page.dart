@@ -6,6 +6,7 @@ import '../Screens/translation_book_filter.dart';
 import '../Model/singleton.dart';
 import 'package:share/share.dart';
 import 'dart:async';
+import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 
 
 class ResultsPage extends StatefulWidget {
@@ -179,9 +180,6 @@ class _ResultsPageState extends State<ResultsPage> {
         title: Text('Selection Mode'),
         leading: IconButton(
             onPressed: () {
-              for (final each in searchResults) {
-                each.isSelected = false;
-              }
               setState(() {
                 _isInSelectionMode = false;
               });
@@ -278,44 +276,47 @@ class _ResultsPageState extends State<ResultsPage> {
     var container = Container(
       key: PageStorageKey(widget.searchController.text + '${searchResults[0].ref}' + '${searchResults.length}'),
       padding: EdgeInsets.all(10.0),
-      child: ListView.builder(
-          itemCount: searchResults == null ? 1 : searchResults.length + 1,
-          controller: _controller,
-          itemBuilder: (BuildContext context, int index) {
-            
-            if (index == 0) {
-              return Container(
-                padding: EdgeInsets.all(10.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: RichText(
-                    text: TextSpan(
-                      style: Theme.of(context).textTheme.caption,
-                      children: [
-                        TextSpan(
-                          text: 'Showing ${searchResults.length} results for ',
-                        ),
-                        TextSpan(
-                            text: '${widget.searchController.text}',
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ],
+      child: DraggableScrollbar.semicircle(
+        controller: _controller,
+        child: ListView.builder(
+            itemCount: searchResults == null ? 1 : searchResults.length + 1,
+            controller: _controller,
+            itemBuilder: (BuildContext context, int index) {
+              if (index == 0) {
+                return Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: RichText(
+                      text: TextSpan(
+                        style: Theme.of(context).textTheme.caption,
+                        children: [
+                          TextSpan(
+                            text: 'Showing ${searchResults.length} results for ',
+                          ),
+                          TextSpan(
+                              text: '${widget.searchController.text}',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ],
+                      ),
                     ),
                   ),
+                );
+              }
+              index -= 1;
+              searchResults[index].isSelected = false;
+              return Container(
+                padding: EdgeInsets.all(5.0),
+                child: ResultCard(
+                  res: searchResults[index],
+                  toggleSelectionMode: _changeToSelectionMode,
+                  currState: _isInSelectionMode,
+                  keywords: widget.searchController.text,
                 ),
               );
-            }
-            index -= 1;
-            return Container(
-              padding: EdgeInsets.all(5.0),
-              child: ResultCard(
-                res: searchResults[index],
-                toggleSelectionMode: _changeToSelectionMode,
-                currState: _isInSelectionMode,
-                keywords: widget.searchController.text,
-              ),
-            );
-          },
-        ),
+            },
+          ),
+      ),
     );
     return container;
   }
