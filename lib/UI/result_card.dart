@@ -96,13 +96,17 @@ class _ResultCardState extends State<ResultCard> {
           Navigator.of(context).pop();
         },),
         FlatButton(child: Text('Okay'),
-        onPressed: () async{
+        onPressed: () async {
           var url = Platform.isIOS ? 'itms-apps://itunes.apple.com/app/id325955298' : '';
           if (await canLaunch(url)) {
-            await launch(url);
+            try {
+              await launch(url);
+            } catch(e) {
+               Navigator.of(context).pop();
+              print(e);
+            }
           } else {
             Navigator.of(context).pop();
-            throw "Couldn't launch $url";
           }
         },)
       ],
