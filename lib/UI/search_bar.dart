@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class SearchBar extends StatelessWidget {
 
@@ -48,16 +49,24 @@ class SearchBar extends StatelessWidget {
           height: height,
           child: Center(
             child: TextField(
-              textAlign: TextAlign.center,
-              style: TextStyle(color:Colors.black),
-              decoration: InputDecoration(
+                textAlign: TextAlign.center,
+                style: TextStyle(color:Colors.black),
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(left: 20.0, right: 20.0),
                   hintText: 'Search term here',
                   border: InputBorder.none,
                   hintStyle: TextStyle(color: Colors.grey),
+                  suffix: Padding(
+                    padding:EdgeInsets.only(left: 5.0),
+                    child: IconButton(
+                      icon: Icon(CupertinoIcons.clear_circled, color: Colors.orange,),
+                      onPressed: ()=>controller.clear(),
+                    )
+                    )
+                ),
+                controller: controller,
+                onSubmitted: (String s){navigation(context,s);},
               ),
-              controller: controller,
-              onSubmitted: (String s){navigation(context,s);},
-            ),
           ),
       ),
     );

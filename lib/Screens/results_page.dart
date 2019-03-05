@@ -39,6 +39,7 @@ class _ResultsPageState extends State<ResultsPage> {
   void _updateSearchResults(String keywords) {
     searchQueries.add(keywords);
     widget.updateSearchHistory();
+    widget.searchController.text =keywords;
     _hasUpdated = true;
   }
 
@@ -55,11 +56,8 @@ class _ResultsPageState extends State<ResultsPage> {
     return sr;
   }
 
-  void _changeToSelectionMode(int index) {
-    idx = index;
-    setState(() {
+  void _changeToSelectionMode() {
       _isInSelectionMode = !_isInSelectionMode;
-    });
   }
 
   void _shareSelection(BuildContext context) {
@@ -82,9 +80,18 @@ class _ResultsPageState extends State<ResultsPage> {
     }
     if (text.length > 0) {
       Share.share(text);
+      _deselectAll();
     } else {
       _showToast(context);
     }
+  }
+
+  void _deselectAll(){
+    for (final each in searchResults) {
+      each.isSelected = false;
+    }
+    setState(() {
+    });
   }
 
   void _showToast(BuildContext context) {
@@ -127,9 +134,8 @@ class _ResultsPageState extends State<ResultsPage> {
   Widget build(BuildContext context) {
     //on translation change, the view should reload
     print('rebuilt ${DateTime.now().second}');
-    if (_isInSelectionMode) {
-      return _buildSelectionView();
-    } else if (!_hasUpdated && searchResults.length != 0) {
+    
+     if (!_hasUpdated && searchResults.length != 0) {
       searchResults = _filterByBook(searchResults);
       return _buildView(_buildCardView());
     } else {
@@ -164,96 +170,13 @@ class _ResultsPageState extends State<ResultsPage> {
     }
   }
 
-  Widget _buildSelectionView() {
-
-    var _controller = ScrollController();
-     if (idx != 0) {
-      Timer(Duration(milliseconds: 1), () {
-          var pos = searchResults[idx].key.currentContext;
-          Scrollable.ensureVisible(pos);
-      });
-    } 
-
-    var selectionView = Scaffold(
-      appBar: AppBar(
-        elevation: 1.0,
-        title: Text('Selection Mode'),
-        leading: IconButton(
-            onPressed: () {
-              setState(() {
-                _isInSelectionMode = false;
-              });
-            },
-            icon: Icon(Icons.close)),
-        actions: <Widget>[
-          Builder(
-            builder: (context) => IconButton(
-                  icon: Icon(Icons.share),
-                  onPressed: () {
-                    _shareSelection(context);
-                  },
-                ),
-          ),
-        ],
-      ),
-      body: Container(
-          padding: EdgeInsets.all(15.0),
-          child: SingleChildScrollView(
-            controller: _controller,
-            child: Column(
-              children: _buildChildren(),
-            )
-          ),
-        ),
-    );
-
-   
-
-    return selectionView;
-  }
-
-  List<Widget> _buildChildren() {
-    var children = <Widget>[];
-    children.add(Container(
-      padding: EdgeInsets.all(10.0),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: RichText(
-          text: TextSpan(
-            style: Theme.of(context).textTheme.caption,
-            children: [
-              TextSpan(
-                text: 'Showing ${searchResults.length} results for ',
-              ),
-              TextSpan(
-                  text: '${widget.searchController.text}',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-            ],
-          ),
-        ),
-      ),
-    ));
-    for (var i = 0; i < searchResults.length; i++) {
-      children.add(Container(
-          padding: EdgeInsets.all(5.0),
-          child: ResultCard(
-            key: searchResults[i].key,
-            res: searchResults[i],
-            currState: true,
-            keywords: widget.searchController.text,
-          )));
-    }
-    return children;
-  }
-
   Widget _buildView(Widget body) {
     return Scaffold(
         appBar: SearchAppBar(
-          title: widget.keywords,
+          title: widget.searchController.text,
           navigator: _navigateToFilter,
-          searchController: widget.searchController,
           update: _updateSearchResults,
-          changeSelectionMode: _changeToSelectionMode,
+          shareSelection: _shareSelection,
         ),
         body: SafeArea(child: body));
   }
@@ -277,6 +200,7 @@ class _ResultsPageState extends State<ResultsPage> {
       key: PageStorageKey(widget.searchController.text + '${searchResults[0].ref}' + '${searchResults.length}'),
       padding: EdgeInsets.all(10.0),
       child: DraggableScrollbar.semicircle(
+        backgroundColor: Theme.of(context).cardColor,
         controller: _controller,
         child: ListView.builder(
             itemCount: searchResults == null ? 1 : searchResults.length + 1,
@@ -310,7 +234,6 @@ class _ResultsPageState extends State<ResultsPage> {
                 child: ResultCard(
                   res: searchResults[index],
                   toggleSelectionMode: _changeToSelectionMode,
-                  currState: _isInSelectionMode,
                   keywords: widget.searchController.text,
                 ),
               );

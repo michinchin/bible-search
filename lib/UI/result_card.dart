@@ -13,10 +13,9 @@ import 'package:url_launcher/url_launcher.dart';
 class ResultCard extends StatefulWidget {
   final SearchResult res;
   final toggleSelectionMode;
-  final currState;
   final String keywords;
 
-  ResultCard({Key key, this.res, this.toggleSelectionMode, this.currState, this.keywords}) : super(key: key);
+  ResultCard({Key key, this.res, this.toggleSelectionMode, this.keywords}) : super(key: key);
 
   @override
   _ResultCardState createState() => _ResultCardState();
@@ -179,7 +178,7 @@ class _ResultCardState extends State<ResultCard> {
       return each.text;
     }).join();
 
-    if (widget.currState) { //selection mode
+    if (widget.res.isSelected) { //selection mode
       final _selectionModeCard = InkWell(
         borderRadius: BorderRadius.circular(15.0),
         onTap: (){
@@ -284,33 +283,12 @@ class _ResultCardState extends State<ResultCard> {
 
     Widget _nonSelectionModeCard = InkWell(
         borderRadius: BorderRadius.circular(15.0),
-        onLongPress: () {
-          Scaffold.of(context).removeCurrentSnackBar();
-          widget.res.isSelected = true;
-          widget.toggleSelectionMode(searchResults.indexOf(widget.res));
-        },
-        onTap:  (){
-            Scaffold.of(context).showSnackBar(
-              SnackBar(
-                action: SnackBarAction(
-                  label: 'Copy',
-                  onPressed: (){
-                    final clip = ClipboardData(
-                      text: (widget.res.contextExpanded ? contextTitle.data : nonContextTitle.data) +
-                            '\n' + _formattedTextString
-                            );
-                    Clipboard.setData(clip);
-                    Scaffold.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Done!'),
-                        duration: Duration(seconds: 1),
-                      )
-                    );
-                  },
-                ),
-                content:Text((widget.res.contextExpanded ? contextTitle.data : nonContextTitle.data))
-              )
-            );
+        onTap: () {
+          // Scaffold.of(context).removeCurrentSnackBar();
+          setState((){
+            widget.res.isSelected = !widget.res.isSelected;
+            widget.toggleSelectionMode();
+          });
         },
           child: Card(
             elevation: 2.0,
@@ -324,14 +302,15 @@ class _ResultCardState extends State<ResultCard> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   ListTile(
-                    title: Align(
-                      alignment: Alignment.topLeft,
-                      child: MaterialButton(
-                      onPressed: ()=>_openTB(),
-                      child: Text(
-                        widget.res.contextExpanded ? contextTitle.data : nonContextTitle.data, 
-                        style: TextStyle(fontWeight: FontWeight.bold)) 
-                    )),
+                    title:  Padding(
+                      padding: EdgeInsets.only(top:10.0, bottom: 10.0),
+                      child: GestureDetector(
+                        onTap: ()=> _openTB(),
+                        child: Text(
+                           (widget.res.contextExpanded ? contextTitle.data : nonContextTitle.data), 
+                           style: TextStyle(fontWeight: FontWeight.bold)) 
+                        ),
+                    ),
                     subtitle:  _formattedText,
                   ),
                 
