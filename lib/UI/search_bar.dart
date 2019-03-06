@@ -50,11 +50,11 @@ class SearchBar extends StatelessWidget {
           child: Stack(children: [
             Center(
               child: TextField(
-                textAlign: TextAlign.center,
+                textAlign: TextAlign.left,
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.only(left: 40.0, right: 40.0),
-                  hintText: 'Search term here',
+                  hintText: 'Enter search terms',
                   border: InputBorder.none,
                   hintStyle: TextStyle(color: Colors.grey),
                 ),

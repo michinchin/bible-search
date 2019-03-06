@@ -14,13 +14,10 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final ib = InfoButtonController();
     return AppBar(
+      centerTitle: false,
       textTheme: TextTheme(),
       elevation: 0.0,
-      title: Row(children: [
-        Image.asset(
-          'assets/logo.png',
-          scale: 2.0,
-        ),
+      title: 
         RichText(
           text: TextSpan(
             style: TextStyle(
@@ -28,21 +25,16 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
               fontSize: 18.0,
             ),
             children: <TextSpan>[
-              TextSpan(text: ' Tecarta'),
+              TextSpan(text: 'Tecarta'),
               TextSpan(
                   text: 'Bible', style: TextStyle(fontWeight: FontWeight.bold)),
               TextSpan(text: ' Search')
             ],
           ),
         ),
-      ]),
+      
       backgroundColor: Colors.transparent,
       actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.info_outline),
-          color: Colors.white,
-          onPressed: () => ib.infoButtonPressed(context),
-        ),
         IconButton(
             icon: Icon(Icons.filter_list),
             color: Colors.white,

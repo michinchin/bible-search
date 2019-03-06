@@ -5,27 +5,8 @@ import 'singleton.dart';
 
 class InfoButtonController {
 
-  void infoButtonPressed(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return Container(
-            child: Wrap(
-              children: <Widget>[
-                SwitchListTile(
-                    secondary: Icon(Icons.lightbulb_outline),
-                    value: isDarkTheme,
-                    title: Text('Light/Dark Mode'),
-                    onChanged: (b) {
-                      _changeTheme(b, context);
-                    }),
-              ],
-            ),
-          );
-        });
-  }
   
-  void _changeTheme(bool b, BuildContext context) {
+  void changeTheme(bool b, BuildContext context) {
       DynamicTheme.of(context).setThemeData(
         ThemeData(
           primarySwatch: Colors.orange,

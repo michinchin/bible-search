@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../Model/info_button_controller.dart';
 
 class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -21,7 +20,6 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ib = InfoButtonController();
     return AppBar(
       elevation: 1.0,
       title: TextField(
@@ -40,11 +38,6 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       centerTitle: false,
       actions: <Widget>[
-        IconButton(
-          icon: Icon(Icons.info_outline),
-          color: Colors.white,
-          onPressed: () => ib.infoButtonPressed(context),
-        ),
         IconButton(
           icon: Icon(Icons.filter_list),
           color: Colors.white,

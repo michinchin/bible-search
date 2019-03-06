@@ -288,7 +288,6 @@ class _ResultCardState extends State<ResultCard> {
     Widget _nonSelectionModeCard = InkWell(
         borderRadius: BorderRadius.circular(15.0),
         onTap: () {
-          // Scaffold.of(context).removeCurrentSnackBar();
           setState((){
             widget.res.isSelected = !widget.res.isSelected;
             widget.toggleSelectionMode();

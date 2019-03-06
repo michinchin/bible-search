@@ -8,6 +8,7 @@ import '../Screens/translation_book_filter.dart';
 import '../Model/singleton.dart';
 import '../Model/translation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../Model/info_button_controller.dart';
 
 // Initial Search Route (screen)
 // 
@@ -191,9 +192,41 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
       ],)
     );
 
+    final _settingsList = ListView(
+        children: <Widget>[
+          DrawerHeader(child: new Text('Settings'),),
+          SwitchListTile(
+                    secondary: Icon(Icons.lightbulb_outline),
+                    value: isDarkTheme,
+                    title: Text('Light/Dark Mode'),
+                    onChanged: (b) {
+                      final ib = InfoButtonController();
+                      ib.changeTheme(b, context);
+                    }),
+          ListTile(
+            leading: Icon(Icons.more),
+            title: Text('About'),
+            onTap: (){},
+          ),
+          ListTile(
+            leading: Icon(Icons.settings),
+            title: Text('Settings'),
+            onTap: (){},
+          ),
+          ListTile(
+            leading: Icon(Icons.remove_circle),
+            title: Text('Remove Ads'),
+            onTap: (){},
+          ),
+        ],
+      );
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: appBar,
+      drawer: Drawer(
+        child: _settingsList,
+      ),
       body: Stack(
         children: [     
           SafeArea(
