@@ -14,6 +14,7 @@ class SearchResult {
   final List<Verse> verses;
   bool contextExpanded;
   bool compareExpanded;
+  bool isExpanded;
   bool isSelected;
   int currentVerseIndex;
   String fullText;
@@ -26,7 +27,8 @@ class SearchResult {
     this.verseId,
     this.verses,
     this.contextExpanded = false,
-    this.compareExpanded = false,
+    this.compareExpanded = true,
+    this.isExpanded = false,
     this.isSelected = false,
     this.currentVerseIndex = 0,
     this.fullText = '',

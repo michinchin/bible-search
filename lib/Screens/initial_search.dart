@@ -218,6 +218,11 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
             title: Text('Remove Ads'),
             onTap: (){},
           ),
+          ListTile(
+            leading: Icon(Icons.clear_all),
+            title: Text('Clear Search History'),
+            onTap: (){},
+          ),
         ],
       );
 

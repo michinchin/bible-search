@@ -83,7 +83,11 @@ class _SearchBarState extends State<SearchBar> {
                   CupertinoIcons.clear_circled,
                   color: Colors.black,
                 ),
-                onPressed: () => widget.controller.clear(),
+                onPressed: () {
+                  setState(() {
+                    widget.controller.clear();
+                  });
+                },
               ):null,
             ),
              Align(
