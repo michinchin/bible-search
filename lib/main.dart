@@ -16,8 +16,8 @@ void _loadTheme() async {
   } 
   isDarkTheme = prefs.getBool('theme');
 } 
-class BibleSearch extends StatelessWidget {
-   
+
+class BibleSearch extends StatelessWidget {   
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

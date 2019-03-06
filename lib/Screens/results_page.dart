@@ -5,14 +5,13 @@ import '../UI/app_bar.dart';
 import '../Screens/translation_book_filter.dart';
 import '../Model/singleton.dart';
 import 'package:share/share.dart';
-import 'dart:async';
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 
 
 class ResultsPage extends StatefulWidget {
   final String keywords;
   final TextEditingController searchController;
-  final updateSearchHistory;
+  final VoidCallback updateSearchHistory;
   ResultsPage(
       {Key key, this.keywords, this.searchController, this.updateSearchHistory})
       : super(key: key);
@@ -98,7 +97,12 @@ class _ResultsPageState extends State<ResultsPage> {
     final scaffold = Scaffold.of(context);
     scaffold.showSnackBar(
       SnackBar(
-        content: const Text('Please make a selection'),
+        backgroundColor: Theme.of(context).cardColor,
+        content:  Text(
+          'Please make a selection',
+          style: Theme.of(context).textTheme.body1
+        
+        ),
         action: SnackBarAction(
             label: 'CLOSE', onPressed: scaffold.hideCurrentSnackBar),
       ),

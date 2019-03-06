@@ -2,34 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class SearchBar extends StatelessWidget {
-
   final Orientation orientation;
   final double height;
   final TextEditingController controller;
   final double imageHeight;
   final navigation;
- 
 
   const SearchBar({
-      Key key,
-      @required this.orientation,
-      @required this.height,
-      @required this.controller,
-      @required this.imageHeight,
-      @required this.navigation,
-    })  : assert(orientation != null),
-          assert(height != null),
-          assert(controller != null),
-          assert(imageHeight != null),
-          assert(navigation != null),
-          super(key: key);
+    Key key,
+    @required this.orientation,
+    @required this.height,
+    @required this.controller,
+    @required this.imageHeight,
+    @required this.navigation,
+  })  : assert(orientation != null),
+        assert(height != null),
+        assert(controller != null),
+        assert(imageHeight != null),
+        assert(navigation != null),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: orientation == Orientation.portrait ?
-        EdgeInsets.only(left: 20.0,right: 20.0, top: imageHeight-(height/2)):
-        EdgeInsets.only(left: 40.0,right: 40.0, top: imageHeight-(height/2)),
+        padding: orientation == Orientation.portrait
+            ? EdgeInsets.only(
+                left: 20.0, right: 20.0, top: imageHeight - (height / 2))
+            : EdgeInsets.only(
+                left: 40.0, right: 40.0, top: imageHeight - (height / 2)),
         child: Container(
           decoration: BoxDecoration(
             shape: BoxShape.rectangle,
@@ -47,30 +47,46 @@ class SearchBar extends StatelessWidget {
             ],
           ),
           height: height,
-          child: Center(
-            child: TextField(
+          child: Stack(children: [
+            Center(
+              child: TextField(
                 textAlign: TextAlign.center,
-                style: TextStyle(color:Colors.black),
+                style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.only(left: 20.0, right: 20.0),
+                  contentPadding: EdgeInsets.only(left: 40.0, right: 40.0),
                   hintText: 'Search term here',
                   border: InputBorder.none,
                   hintStyle: TextStyle(color: Colors.grey),
-                  suffix: Padding(
-                    padding:EdgeInsets.only(left: 5.0),
-                    child: IconButton(
-                      icon: Icon(CupertinoIcons.clear_circled, color: Colors.orange,),
-                      onPressed: ()=>controller.clear(),
-                    )
-                    )
                 ),
                 controller: controller,
-                onSubmitted: (String s){navigation(context,s);},
+                onSubmitted: (String s) {
+                  navigation(context, s);
+                },
               ),
-          ),
-      ),
-    );
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                splashColor: Colors.transparent,
+                icon: Icon(
+                  CupertinoIcons.clear_circled,
+                  color: Colors.black,
+                ),
+                onPressed: () => controller.clear(),
+              ),
+            ),
+             Align(
+              alignment: Alignment.centerLeft,
+              child: IconButton(
+                splashColor: Colors.transparent,
+                icon: Icon(
+                  CupertinoIcons.search,
+                  color: Colors.black,
+                ),
+                onPressed: () => {},
+              ),
+            )
+          ]),
+        ));
   }
 }
-
-

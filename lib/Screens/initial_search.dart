@@ -8,7 +8,6 @@ import '../Screens/translation_book_filter.dart';
 import '../Model/singleton.dart';
 import '../Model/translation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 
 // Initial Search Route (screen)
 // 
@@ -184,7 +183,6 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
 
     final ps = Size.fromHeight(_orientation == Orientation.portrait ? _imageHeight : _imageHeight+_searchBarHeight/2);
     final appBar = PreferredSize(
-
       preferredSize: ps,
       child: Stack(children: <Widget>[
         gradientAppBarImage,

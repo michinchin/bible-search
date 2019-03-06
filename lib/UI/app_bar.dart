@@ -1,13 +1,11 @@
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../Model/singleton.dart';
+import '../Model/info_button_controller.dart';
 
 class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  final navigator;
-  final update;
-  final shareSelection;
+  final Function(BuildContext) navigator;
+  final Function(String) update;
+  final Function(BuildContext) shareSelection;
 
   SearchAppBar(
       {Key key,
@@ -20,48 +18,10 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   Size get preferredSize {
     return new Size.fromHeight(kToolbarHeight);
   }
-  var sc = TextEditingController();
-
-  void _updateTheme(bool b) async {
-    var prefs = await SharedPreferences.getInstance();
-    prefs.setBool('theme', isDarkTheme);
-  }
-
-  void _settingModalBottomSheet(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return Container(
-            child: Wrap(
-              children: <Widget>[
-                SwitchListTile(
-                    secondary: Icon(Icons.lightbulb_outline),
-                    value: isDarkTheme,
-                    title: Text('Light/Dark Mode'),
-                    onChanged: (b) {
-                      _changeTheme(b, context);
-                    }),
-              ],
-            ),
-          );
-        });
-  }
-
-  void _changeTheme(bool b, BuildContext context) {
-      DynamicTheme.of(context).setThemeData(
-        ThemeData(
-          primarySwatch: Colors.orange,
-          primaryColorBrightness: Brightness.dark,
-          brightness: b ? Brightness.dark : Brightness.light,
-        )
-      );
-      isDarkTheme = b;
-      _updateTheme(b);
-    }
 
   @override
   Widget build(BuildContext context) {
-    
+    final ib = InfoButtonController();
     return AppBar(
       elevation: 1.0,
       title: TextField(
@@ -83,7 +43,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           icon: Icon(Icons.info_outline),
           color: Colors.white,
-          onPressed: () => _settingModalBottomSheet(context),
+          onPressed: () => ib.infoButtonPressed(context),
         ),
         IconButton(
           icon: Icon(Icons.filter_list),
