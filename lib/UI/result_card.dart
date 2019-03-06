@@ -9,7 +9,7 @@ import 'dart:io';
 import 'dart:core';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
-
+import 'dart:math' as math; 
 class ResultCard extends StatefulWidget {
   final SearchResult res;
   final toggleSelectionMode;
@@ -333,7 +333,6 @@ class _ResultCardState extends State<ResultCard> {
           ));
         }
 
-
         Widget _nonSelectionModeCard = InkWell(
           borderRadius: BorderRadius.circular(15.0),
           onTap: _expandButtonPressed,
@@ -357,48 +356,69 @@ class _ResultCardState extends State<ResultCard> {
                             style: TextStyle(fontWeight: FontWeight.bold))),
                     subtitle: _formattedText,
                   ),
+                  
+                  Stack(children: [
+                    ButtonTheme.bar(
+                      child: ButtonBar(
+                          alignment: MainAxisAlignment.start,
+                          children: [
+                            IconButton(
+                              icon: Transform(
+                                transform: new Matrix4.rotationZ(math.pi/2),
+                                alignment: FractionalOffset.center,
+                                child: widget.res.contextExpanded ? Icon(Icons.unfold_less): Icon(Icons.unfold_more),
+                              ),
+                              onPressed:
+                                  _contextButtonPressed,
+                            ),
+                          ]),
+                    ),
+                    ButtonTheme.bar(
+                      child: ButtonBar(
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(Icons.content_copy),
+                            onPressed: () async {
+                              await Clipboard.setData(
+                                  ClipboardData(text: content));
+                              Scaffold.of(context).showSnackBar(SnackBar(
+                                  content: Text('Successfully Copied!')));
+                            }, // set state here
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.share),
+                            onPressed: () {
+                              String verseContent = widget.res.contextExpanded
+                                  ? contextTitle.data +
+                                      '\n' +
+                                      widget
+                                          .res
+                                          .verses[widget.res.currentVerseIndex]
+                                          .contextText
+                                  : nonContextTitle.data +
+                                      '\n' +
+                                      widget
+                                          .res
+                                          .verses[widget.res.currentVerseIndex]
+                                          .verseContent;
+                              Share.share(verseContent);
+                            }, // set state here
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.open_in_new),
+                            onPressed: _openTB, // set state here
+                          ),
+                        ],
+                      ),
+                    ),
+                  ]),
+                  _buildButtonStack(),
                   Align(
                       alignment: Alignment.centerRight,
                       child: IconButton(
-                        icon: Icon(Icons.arrow_drop_up),
+                        icon: Icon(Icons.expand_less),
                         onPressed: _expandButtonPressed,
                       )),
-                  ButtonTheme.bar(
-                    // make buttons use the appropriate styles for cards
-                    child: ButtonBar(
-                      children: <Widget>[
-                        IconButton(
-                          icon: Icon(Icons.content_copy),
-                          onPressed: () async {
-                            await Clipboard.setData(
-                                ClipboardData(text: content));
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                                content: Text('Successfully Copied!')));
-                          }, // set state here
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.library_books),
-                          color: widget.res.contextExpanded
-                              ? Theme.of(context).iconTheme.color
-                              : Theme.of(context).disabledColor,
-                          onPressed: _contextButtonPressed, // set state here
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.share),
-                          onPressed: (){ 
-                            String verseContent = widget.res.contextExpanded
-                            ? contextTitle.data + '\n' + widget.res.verses[widget.res.currentVerseIndex].contextText
-                            : nonContextTitle.data + '\n' + widget.res.verses[widget.res.currentVerseIndex].verseContent;
-                            Share.share(verseContent);}, // set state here
-                        ),
-                        IconButton(
-                          icon: Icon(Icons.open_in_new),
-                          onPressed: _openTB, // set state here
-                        ),
-                      ],
-                    ),
-                  ),
-                  _buildButtonStack(),
                 ],
               ),
             ),
@@ -436,7 +456,7 @@ class _ResultCardState extends State<ResultCard> {
                   Align(
                       alignment: Alignment.centerRight,
                       child: IconButton(
-                        icon: Icon(Icons.arrow_drop_down),
+                        icon: Icon(Icons.expand_more),
                         onPressed: () => _expandButtonPressed(),
                       ))
                 ],
