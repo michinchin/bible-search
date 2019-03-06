@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-class SearchBar extends StatelessWidget {
+class SearchBar extends StatefulWidget {
   final Orientation orientation;
   final double height;
   final TextEditingController controller;
@@ -23,18 +23,24 @@ class SearchBar extends StatelessWidget {
         super(key: key);
 
   @override
+  State<StatefulWidget> createState() => _SearchBarState();
+}
+
+class _SearchBarState extends State<SearchBar> {
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: orientation == Orientation.portrait
+        padding: widget.orientation == Orientation.portrait
             ? EdgeInsets.only(
-                left: 20.0, right: 20.0, top: imageHeight - (height / 2))
+                left: 20.0, right: 20.0, top: widget.imageHeight - (widget.height / 2))
             : EdgeInsets.only(
-                left: 40.0, right: 40.0, top: imageHeight - (height / 2)),
+                left: 40.0, right: 40.0, top: widget.imageHeight - (widget.height / 2)),
         child: Container(
           decoration: BoxDecoration(
             shape: BoxShape.rectangle,
             color: Colors.white,
-            borderRadius: BorderRadius.circular(height),
+            borderRadius: BorderRadius.circular(widget.height),
             boxShadow: [
               BoxShadow(
                 color: Colors.black26,
@@ -46,10 +52,14 @@ class SearchBar extends StatelessWidget {
               )
             ],
           ),
-          height: height,
+          height: widget.height,
           child: Stack(children: [
             Center(
               child: TextField(
+                onChanged: (s){
+                  setState(() {
+                  });
+                },
                 textAlign: TextAlign.left,
                 style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
@@ -58,22 +68,23 @@ class SearchBar extends StatelessWidget {
                   border: InputBorder.none,
                   hintStyle: TextStyle(color: Colors.grey),
                 ),
-                controller: controller,
+                controller: widget.controller,
                 onSubmitted: (String s) {
-                  navigation(context, s);
+                  widget.navigation(context, s);
                 },
               ),
             ),
             Align(
               alignment: Alignment.centerRight,
-              child: IconButton(
+              child: widget.controller.text.length > 0
+              ? IconButton(
                 splashColor: Colors.transparent,
                 icon: Icon(
                   CupertinoIcons.clear_circled,
                   color: Colors.black,
                 ),
-                onPressed: () => controller.clear(),
-              ),
+                onPressed: () => widget.controller.clear(),
+              ):null,
             ),
              Align(
               alignment: Alignment.centerLeft,
@@ -89,4 +100,5 @@ class SearchBar extends StatelessWidget {
           ]),
         ));
   }
+
 }

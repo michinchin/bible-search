@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../Model/info_button_controller.dart';
 
 class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double height;
@@ -12,7 +11,6 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ib = InfoButtonController();
     return AppBar(
       centerTitle: false,
       textTheme: TextTheme(),

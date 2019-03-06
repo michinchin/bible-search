@@ -44,7 +44,7 @@ class _InitialSearchPageState extends State<InitialSearchPage> {
 
   void _updateSearchHistory() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setStringList('searchHistory', searchQueries = searchQueries.toSet().toList());
+    prefs.setStringList('searchHistory', searchQueries = searchQueries.reversed.toSet().toList().reversed.toList());
   }
 
   void _grabTranslations() async {
