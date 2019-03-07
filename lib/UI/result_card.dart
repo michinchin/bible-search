@@ -355,8 +355,12 @@ class _ResultCardState extends State<ResultCard> {
                                 : nonContextTitle.data),
                             style: TextStyle(fontWeight: FontWeight.bold))),
                     subtitle: _formattedText,
-                  ),
-                  
+                  ),Align(
+                      alignment: Alignment.centerRight,
+                      child: IconButton(
+                        icon: Icon(Icons.expand_less),
+                        onPressed: _expandButtonPressed,
+                      )),
                   Stack(children: [
                     ButtonTheme.bar(
                       child: ButtonBar(
@@ -376,6 +380,7 @@ class _ResultCardState extends State<ResultCard> {
                     ButtonTheme.bar(
                       child: ButtonBar(
                         children: <Widget>[
+                          
                           IconButton(
                             icon: Icon(Icons.content_copy),
                             onPressed: () async {
@@ -405,7 +410,7 @@ class _ResultCardState extends State<ResultCard> {
                             }, // set state here
                           ),
                           IconButton(
-                            icon: Icon(Icons.open_in_new),
+                            icon: Icon(Icons.exit_to_app),
                             onPressed: _openTB, // set state here
                           ),
                         ],
@@ -413,12 +418,7 @@ class _ResultCardState extends State<ResultCard> {
                     ),
                   ]),
                   _buildButtonStack(),
-                  Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        icon: Icon(Icons.expand_less),
-                        onPressed: _expandButtonPressed,
-                      )),
+                  
                 ],
               ),
             ),

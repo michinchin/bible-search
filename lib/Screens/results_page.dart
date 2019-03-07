@@ -115,7 +115,10 @@ class _ResultsPageState extends State<ResultsPage> {
     });
   }
 
-  Widget _loadingView = Stack(children: [
+  Widget _loadingView = 
+  Container(
+    padding: EdgeInsets.all(20.0),
+    child: Stack(children: [
     ListView.builder(
       itemCount: 15,
       itemBuilder: (BuildContext context, int index) {
@@ -132,7 +135,7 @@ class _ResultsPageState extends State<ResultsPage> {
     Center(
       child: CircularProgressIndicator(),
     )
-  ]);
+  ]));
 
   @override
   Widget build(BuildContext context) {
