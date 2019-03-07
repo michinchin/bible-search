@@ -28,6 +28,7 @@ class BibleTranslation {
     this.isSelected,
   });
 
+
   // operator <(BibleTranslation bt) => lang != bt.lang;
 
   factory BibleTranslation.fromJson(Map<String, dynamic> json){
@@ -95,6 +96,11 @@ class BibleTranslations {
       }
     }
     this.data = tempData;
+  }
+
+  String getFullName(int id) {
+    var tempData = this.data;
+    return tempData.where((bt){return bt.id == id;}).toList()[0].name;
   }
   
   static Future<BibleTranslations> fetch() async {

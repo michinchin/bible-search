@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bible_search/Model/all_result.dart';
-
+import '../Model/singleton.dart';
 class AllPage extends StatelessWidget {
   final String title;
   final List bcv;
@@ -39,13 +39,13 @@ class AllPage extends StatelessWidget {
                 child : ListTile(
                   contentPadding: EdgeInsets.all(20.0),
                 title: Text(
-                  allResults[index].a,
+                  translations.getFullName(allResults[index].id) + '\n',
                   style: TextStyle(fontWeight: FontWeight.bold)
                 ),
                 subtitle: RichText(
                   text: TextSpan(
                     style: Theme.of(context).textTheme.body1,
-                    children: formatWords(allResults[index].text),
+                    children: formatWords(allResults[index].text+'\n') ,
                   ),
                 )
               ));
