@@ -30,73 +30,6 @@ class _SearchAppBarState extends State<SearchAppBar> {
 
   @override
   Widget build(BuildContext context) {
-    // return SafeArea(
-    //   child: Container(
-    //     height: widget.preferredSize.height,
-    //     width: widget.preferredSize.width,
-    //     padding: EdgeInsets.only(left: 10.0, right: 10.0),
-    //         decoration: BoxDecoration(
-    //           shape: BoxShape.rectangle,
-    //           color: Colors.white,
-    //           borderRadius: BorderRadius.circular(10.0),
-    //           boxShadow: [
-    //             BoxShadow(
-    //               color: Colors.black26,
-    //               blurRadius: 5.0, // has the effect of softening the shadow
-    //               offset: Offset(
-    //                 0.0, // right
-    //                 2.0, //left
-    //               ),
-    //             )
-    //           ],
-    //         ),
-    //         child: Stack(children: [
-    //           Center(
-    //             child: TextField(
-    //               onChanged: (s){
-    //                 setState(() {
-    //                 });
-    //               },
-    //               textAlign: TextAlign.left,
-    //               style: TextStyle(color: Colors.black),
-    //               decoration: InputDecoration(
-    //                 contentPadding: EdgeInsets.only(left: 40.0, right: 40.0),
-    //                 hintText: 'Enter search terms',
-    //                 border: InputBorder.none,
-    //                 hintStyle: TextStyle(color: Colors.grey),
-    //               ),
-    //               onSubmitted: (String s) {
-    //               },
-    //             ),
-    //           ),
-    //           Align(
-    //             alignment: Alignment.centerRight,
-    //             child: widget.title.length > 0
-    //             ? IconButton(
-    //               splashColor: Colors.transparent,
-    //               icon: Icon(
-    //                 Icons.cached,
-    //                 color: Colors.black,
-    //               ),
-    //               onPressed: () {
-    //                 setState(() {
-    //                 });
-    //               },
-    //             ):null,
-    //           ),
-    //            Align(
-    //             alignment: Alignment.centerLeft,
-    //             child: IconButton(
-    //               splashColor: Colors.transparent,
-    //               icon: Icon(
-    //                 Icons.search,
-    //                 color: Colors.black,
-    //               ),
-    //               onPressed: () => {},
-    //             ),
-    //           )
-    //         ]),),
-    // );
     return SafeArea(
       minimum: EdgeInsets.only(left:20.0,right:20.0),
       child: Container(
@@ -126,7 +59,6 @@ class _SearchAppBarState extends State<SearchAppBar> {
               },
               textAlign: TextAlign.left,
               decoration: InputDecoration(
-                
                 prefixIcon: IconButton(
                   icon: Icon(Icons.arrow_back),
                   onPressed: () => Navigator.of(context).pop(),
