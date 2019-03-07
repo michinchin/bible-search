@@ -246,65 +246,12 @@ class _ResultCardState extends State<ResultCard> {
         ? colorScheme
         : oppColorScheme;
 
-    // final _formattedTextString =
-    //     _formattedText.text.children.toList().map((each) {
-    //   return each.text;
-    // }).join();
-
-    // if (widget.isInSelectionMode) {
-    //   //selection mode
-    //   final _selectionModeCard = InkWell(
-    //     borderRadius: BorderRadius.circular(15.0),
-    //     onTap: () {
-    //       setState(() {
-    //         widget.res.isSelected = !widget.res.isSelected;
-    //       });
-    //     },
-    //     child: Card(
-    //       elevation: 2.0,
-    //       color: widget.res.isSelected
-    //           ? Theme.of(context).accentColor
-    //           : Theme.of(context).cardColor,
-    //       shape: RoundedRectangleBorder(
-    //         borderRadius: BorderRadius.circular(15.0),
-    //       ),
-    //       child: Container(
-    //         padding: EdgeInsets.all(15.0),
-    //         child: ListTile(
-    //             leading: widget.res.isSelected
-    //                 ? Icon(
-    //                     Icons.check_circle,
-    //                     color: colorScheme,
-    //                   )
-    //                 : Icon(
-    //                     Icons.check_circle_outline,
-    //                     color: Colors.grey,
-    //                   ),
-    //             title: Text(
-    //               !widget.res.contextExpanded
-    //                   ? nonContextTitle.data
-    //                   : contextTitle.data,
-    //               style: TextStyle(
-    //                   color: widget.res.isSelected
-    //                       ? colorScheme
-    //                       : Theme.of(context).brightness == Brightness.dark
-    //                           ? Colors.white
-    //                           : Colors.black,
-    //                   fontWeight: FontWeight.bold),
-    //             ),
-    //             subtitle: _formattedText),
-    //       ),
-    //     ),
-    //   );
-    //   return _selectionModeCard;
-    // } else {
     final allButton = FlatButton(
       child: Text('ALL'),
       onPressed: () {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AllPage(
+        Navigator.of(context).push(MaterialPageRoute<dynamic>(
+        builder: (context){
+            return AllPage(
                 title: widget.res.ref,
                 bcv: [
                   widget.res.bookId,
@@ -313,7 +260,7 @@ class _ResultCardState extends State<ResultCard> {
                 ],
                 formatWords: _formatWords,
               );
-            });
+        }));
       },
       textColor: widget.res.isSelected
           ? colorScheme
@@ -475,7 +422,7 @@ class _ResultCardState extends State<ResultCard> {
           ))
     ];
 
-    Widget _nonSelectionModeCard = InkWell(
+    return InkWell(
       borderRadius: BorderRadius.circular(15.0),
       onTap: () =>
           !widget.isInSelectionMode ? _expandButtonPressed() : _selectCard(),
@@ -498,49 +445,5 @@ class _ResultCardState extends State<ResultCard> {
         ),
       ),
     );
-
-    return _nonSelectionModeCard;
   }
-
-  // else {
-  //   return InkWell(
-  //     borderRadius: BorderRadius.circular(15.0),
-  //     onLongPress: _selectionModeEnabled,
-  //     onTap: () {
-  //       setState(() {
-  //         widget.res.isExpanded = !widget.res.isExpanded;
-  //       });
-  //     },
-  //     child: Card(
-  //       elevation: 2.0,
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(15.0),
-  //       ),
-  //       child: Padding(
-  //         padding: EdgeInsets.all(15.0),
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: <Widget>[
-  //             ListTile(
-  //               title: Padding(
-  //                   padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-  //                   child: Text(
-  //                       (widget.res.contextExpanded
-  //                           ? contextTitle.data
-  //                           : nonContextTitle.data),
-  //                       style: TextStyle(fontWeight: FontWeight.bold))),
-  //               subtitle: _formattedText,
-  //             ),
-  //             Align(
-  //                 alignment: Alignment.centerRight,
-  //                 child: IconButton(
-  //                   icon: Icon(Icons.expand_more),
-  //                   onPressed: () => _expandButtonPressed(),
-  //                 ))
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-
 }

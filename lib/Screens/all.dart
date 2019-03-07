@@ -10,14 +10,18 @@ class AllPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+   
     var book = bcv[0];
     var chapter = bcv[1];
     var verse = bcv[2];
-    
+     var _future = AllResults.fetch(
+        book: book,
+        chapter: chapter,
+        verse: verse,
+      );
 
     Widget _buildAllPageView(List<AllResult> allResults) { 
-      return Dialog(
-        child: Scaffold(
+      return  Scaffold(
         appBar: AppBar(
           title: Text(title),
           leading: IconButton(
@@ -30,10 +34,13 @@ class AllPage extends StatelessWidget {
           child: ListView.builder(
             itemCount: allResults.length,
             itemBuilder:(BuildContext context, int index){
-              return ListTile(
+              return Card(
+                elevation: 2.0,
+                child : ListTile(
+                  contentPadding: EdgeInsets.all(20.0),
                 title: Text(
                   allResults[index].a,
-                  style: Theme.of(context).textTheme.subtitle
+                  style: TextStyle(fontWeight: FontWeight.bold)
                 ),
                 subtitle: RichText(
                   text: TextSpan(
@@ -41,18 +48,13 @@ class AllPage extends StatelessWidget {
                     children: formatWords(allResults[index].text),
                   ),
                 )
-              );
+              ));
             }),
         ),
-      )
     );
     }
     return FutureBuilder<AllResults>(
-      future: AllResults.fetch(
-        book: book,
-        chapter: chapter,
-        verse: verse,
-      ),
+      future: _future,
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data.data.length == 0) {
           return _buildAllPageView(snapshot.data.data);
