@@ -5,8 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class TranslationBookFilterPage extends StatefulWidget {
   final int tabValue;
+  final VoidCallback updateTranslations;
 
-  const TranslationBookFilterPage({Key key, this.tabValue}) : super(key: key);
+  const TranslationBookFilterPage({Key key, this.tabValue, this.updateTranslations}) : super(key: key);
   @override
   _TranslationBookFilterPageState createState() =>
       _TranslationBookFilterPageState();
@@ -69,6 +70,7 @@ class _TranslationBookFilterPageState extends State<TranslationBookFilterPage>
   _updateTranslations() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('translations', translationIds = translations.formatIds());
+    widget.updateTranslations();
   }
 
   List<Widget> _createTranslationList() {

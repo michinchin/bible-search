@@ -9,13 +9,22 @@ import 'dart:io';
 import 'dart:core';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
-import 'dart:math' as math; 
+import 'dart:math' as math;
+
 class ResultCard extends StatefulWidget {
+  final bool isInSelectionMode;
   final SearchResult res;
   final toggleSelectionMode;
   final String keywords;
+  final selectCard;
 
-  ResultCard({Key key, this.res, this.toggleSelectionMode, this.keywords})
+  ResultCard(
+      {Key key,
+      this.res,
+      this.toggleSelectionMode,
+      this.keywords,
+      this.isInSelectionMode,
+      this.selectCard})
       : super(key: key);
 
   @override
@@ -50,6 +59,18 @@ class _ResultCardState extends State<ResultCard> {
   _expandButtonPressed() {
     setState(() {
       widget.res.isExpanded = !widget.res.isExpanded;
+    });
+  }
+
+  _selectionModeEnabled() {
+    widget.toggleSelectionMode();
+    _selectCard();
+  }
+
+  _selectCard() {
+    setState(() {
+      widget.res.isSelected = !widget.res.isSelected;
+      widget.selectCard(widget.res.isSelected);
     });
   }
 
@@ -197,6 +218,17 @@ class _ResultCardState extends State<ResultCard> {
         ? Colors.black
         : Colors.white;
 
+    final _formattedTitle = Text(
+      widget.res.contextExpanded ? contextTitle.data : nonContextTitle.data,
+      style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: widget.res.isSelected
+              ? colorScheme
+              : Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black),
+    );
+
     final _formattedText = RichText(
       text: TextSpan(
         style: !widget.res.isSelected
@@ -213,258 +245,273 @@ class _ResultCardState extends State<ResultCard> {
     //   return each.text;
     // }).join();
 
-    if (widget.res.isSelected) {
-      //selection mode
-      final _selectionModeCard = InkWell(
-        borderRadius: BorderRadius.circular(15.0),
-        onTap: () {
-          setState(() {
-            widget.res.isSelected = !widget.res.isSelected;
-          });
-        },
-        child: Card(
-          elevation: 2.0,
-          color: widget.res.isSelected
+    // if (widget.isInSelectionMode) {
+    //   //selection mode
+    //   final _selectionModeCard = InkWell(
+    //     borderRadius: BorderRadius.circular(15.0),
+    //     onTap: () {
+    //       setState(() {
+    //         widget.res.isSelected = !widget.res.isSelected;
+    //       });
+    //     },
+    //     child: Card(
+    //       elevation: 2.0,
+    //       color: widget.res.isSelected
+    //           ? Theme.of(context).accentColor
+    //           : Theme.of(context).cardColor,
+    //       shape: RoundedRectangleBorder(
+    //         borderRadius: BorderRadius.circular(15.0),
+    //       ),
+    //       child: Container(
+    //         padding: EdgeInsets.all(15.0),
+    //         child: ListTile(
+    //             leading: widget.res.isSelected
+    //                 ? Icon(
+    //                     Icons.check_circle,
+    //                     color: colorScheme,
+    //                   )
+    //                 : Icon(
+    //                     Icons.check_circle_outline,
+    //                     color: Colors.grey,
+    //                   ),
+    //             title: Text(
+    //               !widget.res.contextExpanded
+    //                   ? nonContextTitle.data
+    //                   : contextTitle.data,
+    //               style: TextStyle(
+    //                   color: widget.res.isSelected
+    //                       ? colorScheme
+    //                       : Theme.of(context).brightness == Brightness.dark
+    //                           ? Colors.white
+    //                           : Colors.black,
+    //                   fontWeight: FontWeight.bold),
+    //             ),
+    //             subtitle: _formattedText),
+    //       ),
+    //     ),
+    //   );
+    //   return _selectionModeCard;
+    // } else {
+    final allButton = FlatButton(
+      child: Text('ALL'),
+      onPressed: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AllPage(
+                title: widget.res.ref,
+                bcv: [
+                  widget.res.bookId,
+                  widget.res.chapterId,
+                  widget.res.verseId
+                ],
+                formatWords: _formatWords,
+              );
+            });
+      },
+      textColor: Theme.of(context).hintColor,
+      splashColor: Theme.of(context).accentColor,
+    );
+
+    Widget _buildButtonStack() {
+      _currTag = widget.res.verses[widget.res.currentVerseIndex].id;
+      var buttons = <FlatButton>[];
+      for (int i = 0; i < widget.res.verses.length; i++) {
+        final each = widget.res.verses[i];
+        buttons.add(FlatButton(
+          child: Text(each.a),
+          textColor: _currTag == each.id
+              ? Theme.of(context).canvasColor
+              : Theme.of(context).hintColor,
+          color: _currTag == each.id
               ? Theme.of(context).accentColor
-              : Theme.of(context).cardColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          child: Container(
-            padding: EdgeInsets.all(15.0),
-            child: ListTile(
-                leading: widget.res.isSelected
-                    ? Icon(
-                        Icons.check_circle,
-                        color: colorScheme,
-                      )
-                    : Icon(
-                        Icons.check_circle_outline,
-                        color: Colors.grey,
-                      ),
-                title: Text(
-                  !widget.res.contextExpanded
-                      ? nonContextTitle.data
-                      : contextTitle.data,
-                  style: TextStyle(
-                      color: widget.res.isSelected
-                          ? colorScheme
-                          : Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black,
-                      fontWeight: FontWeight.bold),
-                ),
-                subtitle: _formattedText),
+              : Colors.transparent, //currently chosen, pass tag
+          onPressed: () => _translationChanged(each, i),
+        ));
+      }
+      var rows = <Row>[];
+      var width = MediaQuery.of(context).size.width;
+      double currWidth = 0;
+      var currButtons = <Expanded>[];
+      for (final each in buttons) {
+        currWidth += 100;
+        if (currWidth >= width) {
+          currWidth = 0;
+          rows.add(Row(
+            children: currButtons,
+          ));
+          currButtons = <Expanded>[];
+        } else {
+          currButtons.add(Expanded(child: each));
+        }
+      }
+      currWidth += 100;
+      if (currWidth >= width) {
+        rows.add(Row(
+          children: currButtons,
+        ));
+        rows.add(Row(children: [allButton]));
+      } else {
+        currButtons.add(Expanded(child: allButton));
+        rows.add(Row(
+          children: currButtons,
+        ));
+      }
+      //if already at its max then don't add allButton, add allButton to the next line
+      return Center(
+          child: Column(
+        children: rows,
+      ));
+    }
+
+    List<Widget> _expandIcons = [
+      ListTile(
+        title: Padding(
+            padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+            child: _formattedTitle),
+        subtitle: _formattedText,
+      ),
+      Align(
+          alignment: Alignment.centerRight,
+          child: IconButton(
+            icon: Icon(Icons.expand_less),
+            onPressed: _expandButtonPressed,
+          )),
+      Stack(children: [
+        ButtonTheme.bar(
+          child: ButtonBar(alignment: MainAxisAlignment.start, children: [
+            IconButton(
+              icon: Transform(
+                transform: new Matrix4.rotationZ(math.pi / 2),
+                alignment: FractionalOffset.center,
+                child: widget.res.contextExpanded
+                    ? Icon(Icons.unfold_less)
+                    : Icon(Icons.unfold_more),
+              ),
+              onPressed: _contextButtonPressed,
+            ),
+          ]),
+        ),
+        ButtonTheme.bar(
+          child: ButtonBar(
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.content_copy),
+                onPressed: () async {
+                  await Clipboard.setData(ClipboardData(text: content));
+                  Scaffold.of(context).showSnackBar(
+                      SnackBar(content: Text('Successfully Copied!')));
+                }, // set state here
+              ),
+              IconButton(
+
+                icon: Icon(Icons.share),
+                onPressed: () {
+                  String verseContent = widget.res.contextExpanded
+                      ? contextTitle.data +
+                          '\n' +
+                          widget.res.verses[widget.res.currentVerseIndex]
+                              .contextText
+                      : nonContextTitle.data +
+                          '\n' +
+                          widget.res.verses[widget.res.currentVerseIndex]
+                              .verseContent;
+                  Share.share(verseContent);
+                }, // set state here
+              ),
+              IconButton(
+
+                icon: Icon(Icons.exit_to_app),
+                onPressed: _openTB, // set state here
+              ),
+            ],
           ),
         ),
-      );
-      return _selectionModeCard;
-    } else {
-      if (widget.res.isExpanded) {
-        final allButton = FlatButton(
-          child: Text('ALL'),
-          onPressed: () {
-            showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AllPage(
-                    title: widget.res.ref,
-                    bcv: [
-                      widget.res.bookId,
-                      widget.res.chapterId,
-                      widget.res.verseId
-                    ],
-                    formatWords: _formatWords,
-                  );
-                });
-          },
-          textColor: Theme.of(context).hintColor,
-          splashColor: Theme.of(context).accentColor,
-        );
+      ]),
+      _buildButtonStack(),
+    ];
 
-        Widget _buildButtonStack() {
-          _currTag = widget.res.verses[widget.res.currentVerseIndex].id;
-          var buttons = <FlatButton>[];
-          for (int i = 0; i < widget.res.verses.length; i++) {
-            final each = widget.res.verses[i];
-            buttons.add(FlatButton(
-              child: Text(each.a),
-              textColor: _currTag == each.id
-                  ? Theme.of(context).canvasColor
-                  : Theme.of(context).hintColor,
-              color: _currTag == each.id
-                  ? Theme.of(context).accentColor
-                  : Colors.transparent, //currently chosen, pass tag
-              onPressed: () => _translationChanged(each, i),
-            ));
-          }
-          var rows = <Row>[];
-          var width = MediaQuery.of(context).size.width;
-          double currWidth = 0;
-          var currButtons = <Expanded>[];
-          for (final each in buttons) {
-            currWidth += 100;
-            if (currWidth >= width) {
-              currWidth = 0;
-              rows.add(Row(
-                children: currButtons,
-              ));
-              currButtons = <Expanded>[];
-            } else {
-              currButtons.add(Expanded(child: each));
-            }
-          }
-          currWidth += 100;
-          if (currWidth >= width) {
-            rows.add(Row(
-              children: currButtons,
-            ));
-            rows.add(Row(children: [allButton]));
-          } else {
-            currButtons.add(Expanded(child: allButton));
-            rows.add(Row(
-              children: currButtons,
-            ));
-          }
-          //if already at its max then don't add allButton, add allButton to the next line
-          return Center(
-              child: Column(
-            children: rows,
-          ));
-        }
+    List<Widget> _unexpandIcons = [
+      ListTile(
+        title: Padding(
+            padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+            child: _formattedTitle),
+        subtitle: _formattedText,
+      ),
+      Align(
+          alignment: Alignment.centerRight,
+          child: IconButton(
+            icon: Icon(Icons.expand_more),
+            onPressed: () => _expandButtonPressed(),
+          ))
+    ];
 
-        Widget _nonSelectionModeCard = InkWell(
+    Widget _nonSelectionModeCard = InkWell(
+      borderRadius: BorderRadius.circular(15.0),
+      onTap: () =>
+          !widget.isInSelectionMode ? _expandButtonPressed() : _selectCard(),
+      onLongPress: () =>
+          !widget.isInSelectionMode ? _selectionModeEnabled() : {},
+      child: Card(
+        elevation: 2.0,
+        color: widget.res.isSelected
+            ? Theme.of(context).accentColor
+            : Theme.of(context).cardColor,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
-          onTap: _expandButtonPressed,
-          child: Card(
-            elevation: 2.0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(15.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ListTile(
-                    title: Padding(
-                        padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                        child: Text(
-                            (widget.res.contextExpanded
-                                ? contextTitle.data
-                                : nonContextTitle.data),
-                            style: TextStyle(fontWeight: FontWeight.bold))),
-                    subtitle: _formattedText,
-                  ),Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        icon: Icon(Icons.expand_less),
-                        onPressed: _expandButtonPressed,
-                      )),
-                  Stack(children: [
-                    ButtonTheme.bar(
-                      child: ButtonBar(
-                          alignment: MainAxisAlignment.start,
-                          children: [
-                            IconButton(
-                              icon: Transform(
-                                transform: new Matrix4.rotationZ(math.pi/2),
-                                alignment: FractionalOffset.center,
-                                child: widget.res.contextExpanded ? Icon(Icons.unfold_less): Icon(Icons.unfold_more),
-                              ),
-                              onPressed:
-                                  _contextButtonPressed,
-                            ),
-                          ]),
-                    ),
-                    ButtonTheme.bar(
-                      child: ButtonBar(
-                        children: <Widget>[
-                          
-                          IconButton(
-                            icon: Icon(Icons.content_copy),
-                            onPressed: () async {
-                              await Clipboard.setData(
-                                  ClipboardData(text: content));
-                              Scaffold.of(context).showSnackBar(SnackBar(
-                                  content: Text('Successfully Copied!')));
-                            }, // set state here
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.share),
-                            onPressed: () {
-                              String verseContent = widget.res.contextExpanded
-                                  ? contextTitle.data +
-                                      '\n' +
-                                      widget
-                                          .res
-                                          .verses[widget.res.currentVerseIndex]
-                                          .contextText
-                                  : nonContextTitle.data +
-                                      '\n' +
-                                      widget
-                                          .res
-                                          .verses[widget.res.currentVerseIndex]
-                                          .verseContent;
-                              Share.share(verseContent);
-                            }, // set state here
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.exit_to_app),
-                            onPressed: _openTB, // set state here
-                          ),
-                        ],
-                      ),
-                    ),
-                  ]),
-                  _buildButtonStack(),
-                  
-                ],
-              ),
-            ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(15.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: widget.res.isExpanded ? _expandIcons : _unexpandIcons,
           ),
-        );
-        return _nonSelectionModeCard;
-      } else {
-        return InkWell(
-          borderRadius: BorderRadius.circular(15.0),
-          onTap: () {
-            setState(() {
-              widget.res.isExpanded = !widget.res.isExpanded;
-            });
-          },
-          child: Card(
-            elevation: 2.0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            child: Padding(
-              padding: EdgeInsets.all(15.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ListTile(
-                    title: Padding(
-                        padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-                        child: Text(
-                            (widget.res.contextExpanded
-                                ? contextTitle.data
-                                : nonContextTitle.data),
-                            style: TextStyle(fontWeight: FontWeight.bold))),
-                    subtitle: _formattedText,
-                  ),
-                  Align(
-                      alignment: Alignment.centerRight,
-                      child: IconButton(
-                        icon: Icon(Icons.expand_more),
-                        onPressed: () => _expandButtonPressed(),
-                      ))
-                ],
-              ),
-            ),
-          ),
-        );
-      }
-    }
+        ),
+      ),
+    );
+
+    return _nonSelectionModeCard;
   }
+
+  // else {
+  //   return InkWell(
+  //     borderRadius: BorderRadius.circular(15.0),
+  //     onLongPress: _selectionModeEnabled,
+  //     onTap: () {
+  //       setState(() {
+  //         widget.res.isExpanded = !widget.res.isExpanded;
+  //       });
+  //     },
+  //     child: Card(
+  //       elevation: 2.0,
+  //       shape: RoundedRectangleBorder(
+  //         borderRadius: BorderRadius.circular(15.0),
+  //       ),
+  //       child: Padding(
+  //         padding: EdgeInsets.all(15.0),
+  //         child: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: <Widget>[
+  //             ListTile(
+  //               title: Padding(
+  //                   padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+  //                   child: Text(
+  //                       (widget.res.contextExpanded
+  //                           ? contextTitle.data
+  //                           : nonContextTitle.data),
+  //                       style: TextStyle(fontWeight: FontWeight.bold))),
+  //               subtitle: _formattedText,
+  //             ),
+  //             Align(
+  //                 alignment: Alignment.centerRight,
+  //                 child: IconButton(
+  //                   icon: Icon(Icons.expand_more),
+  //                   onPressed: () => _expandButtonPressed(),
+  //                 ))
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+
 }
