@@ -218,15 +218,17 @@ class _ResultCardState extends State<ResultCard> {
         ? Colors.black
         : Colors.white;
 
+    final oppColorScheme = Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black;
+
     final _formattedTitle = Text(
       widget.res.contextExpanded ? contextTitle.data : nonContextTitle.data,
       style: TextStyle(
           fontWeight: FontWeight.bold,
           color: widget.res.isSelected
               ? colorScheme
-              : Theme.of(context).brightness == Brightness.dark
-                  ? Colors.white
-                  : Colors.black),
+              : oppColorScheme),
     );
 
     final _formattedText = RichText(
@@ -239,6 +241,10 @@ class _ResultCardState extends State<ResultCard> {
         children: _formatWords(content),
       ),
     );
+
+    final _iconColor = widget.res.isSelected
+        ? colorScheme
+        : oppColorScheme;
 
     // final _formattedTextString =
     //     _formattedText.text.children.toList().map((each) {
@@ -309,23 +315,42 @@ class _ResultCardState extends State<ResultCard> {
               );
             });
       },
-      textColor: Theme.of(context).hintColor,
-      splashColor: Theme.of(context).accentColor,
+      textColor: widget.res.isSelected
+          ? colorScheme
+          : oppColorScheme,
+      splashColor: widget.res.isSelected
+          ? Colors.transparent
+          : Theme.of(context).accentColor,
     );
 
     Widget _buildButtonStack() {
       _currTag = widget.res.verses[widget.res.currentVerseIndex].id;
+
       var buttons = <FlatButton>[];
       for (int i = 0; i < widget.res.verses.length; i++) {
         final each = widget.res.verses[i];
+        Color buttonColor;
+        Color textColor;
+        if (widget.res.isSelected) {
+          buttonColor = _currTag == each.id
+              ? Theme.of(context).cardColor
+              : Theme.of(context).accentColor;
+          textColor = _currTag == each.id
+              ? oppColorScheme
+              : colorScheme;
+        } else {
+          buttonColor = _currTag == each.id
+              ? Theme.of(context).accentColor
+              : Colors.transparent;
+          textColor = _currTag == each.id
+              ? Theme.of(context).cardColor
+              : oppColorScheme;
+        }
+
         buttons.add(FlatButton(
           child: Text(each.a),
-          textColor: _currTag == each.id
-              ? Theme.of(context).canvasColor
-              : Theme.of(context).hintColor,
-          color: _currTag == each.id
-              ? Theme.of(context).accentColor
-              : Colors.transparent, //currently chosen, pass tag
+          textColor: textColor,
+          color: buttonColor, //currently chosen, pass tag
           onPressed: () => _translationChanged(each, i),
         ));
       }
@@ -374,6 +399,7 @@ class _ResultCardState extends State<ResultCard> {
       Align(
           alignment: Alignment.centerRight,
           child: IconButton(
+            color: _iconColor,
             icon: Icon(Icons.expand_less),
             onPressed: _expandButtonPressed,
           )),
@@ -381,6 +407,7 @@ class _ResultCardState extends State<ResultCard> {
         ButtonTheme.bar(
           child: ButtonBar(alignment: MainAxisAlignment.start, children: [
             IconButton(
+              color: _iconColor,
               icon: Transform(
                 transform: new Matrix4.rotationZ(math.pi / 2),
                 alignment: FractionalOffset.center,
@@ -396,6 +423,7 @@ class _ResultCardState extends State<ResultCard> {
           child: ButtonBar(
             children: <Widget>[
               IconButton(
+                color: _iconColor,
                 icon: Icon(Icons.content_copy),
                 onPressed: () async {
                   await Clipboard.setData(ClipboardData(text: content));
@@ -404,7 +432,7 @@ class _ResultCardState extends State<ResultCard> {
                 }, // set state here
               ),
               IconButton(
-
+                color: _iconColor,
                 icon: Icon(Icons.share),
                 onPressed: () {
                   String verseContent = widget.res.contextExpanded
@@ -420,7 +448,7 @@ class _ResultCardState extends State<ResultCard> {
                 }, // set state here
               ),
               IconButton(
-
+                color: _iconColor,
                 icon: Icon(Icons.exit_to_app),
                 onPressed: _openTB, // set state here
               ),
@@ -441,6 +469,7 @@ class _ResultCardState extends State<ResultCard> {
       Align(
           alignment: Alignment.centerRight,
           child: IconButton(
+            color: _iconColor,
             icon: Icon(Icons.expand_more),
             onPressed: () => _expandButtonPressed(),
           ))

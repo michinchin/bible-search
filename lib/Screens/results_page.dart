@@ -34,8 +34,8 @@ class _ResultsPageState extends State<ResultsPage> {
       navigator: _navigateToFilter,
       update: _updateSearchResults,
       shareSelection: _shareSelection,
-     changeToSelectionMode: _changeToSelectionMode,
-     numSelected: _numSelected,
+      changeToSelectionMode: _changeToSelectionMode,
+      numSelected: _numSelected,
     );
     super.initState();
   }
@@ -62,7 +62,6 @@ class _ResultsPageState extends State<ResultsPage> {
     });
   }
 
-
   void _updateTranslations() {
     setState(() {
       _future = SearchResults.fetch(_keywords);
@@ -85,17 +84,18 @@ class _ResultsPageState extends State<ResultsPage> {
   void _changeToSelectionMode() {
     setState(() {
       _isInSelectionMode = !_isInSelectionMode;
-      if(!_isInSelectionMode) {_deselectAll();}
+      if (!_isInSelectionMode) {
+        _deselectAll();
+      }
       _appbar = SearchAppBar(
-      title: _keywords,
-      navigator: _navigateToFilter,
-      update: _updateSearchResults,
-      shareSelection: _shareSelection,
-      isInSelectionMode:_isInSelectionMode,
-      changeToSelectionMode: _changeToSelectionMode,
-      numSelected: _numSelected,
-    );
-      
+        title: _keywords,
+        navigator: _navigateToFilter,
+        update: _updateSearchResults,
+        shareSelection: _shareSelection,
+        isInSelectionMode: _isInSelectionMode,
+        changeToSelectionMode: _changeToSelectionMode,
+        numSelected: _numSelected,
+      );
     });
   }
 
@@ -118,15 +118,17 @@ class _ResultsPageState extends State<ResultsPage> {
       }
     }
     if (text.length > 0) {
-      !isCopy ? Share.share(text) : await Clipboard.setData(ClipboardData(text:text)).then((x){
-        _showToast(context, 'Copied!');
-      });
+      !isCopy
+          ? Share.share(text)
+          : await Clipboard.setData(ClipboardData(text: text)).then((x) {
+              _showToast(context, 'Copied!');
+            });
     } else {
-      _showToast(context,'Please make a selection');
+      _showToast(context, 'Please make a selection');
     }
   }
 
-  void _deselectAll(){
+  void _deselectAll() {
     _numSelected = 0;
     for (final each in searchResults) {
       each.isSelected = false;
@@ -138,27 +140,29 @@ class _ResultsPageState extends State<ResultsPage> {
     scaffold.showSnackBar(
       SnackBar(
         backgroundColor: Theme.of(context).cardColor,
-        content: Text(label,
-            style: Theme.of(context).textTheme.body1),
+        content: Text(label, style: Theme.of(context).textTheme.body1),
         action: SnackBarAction(
             label: 'CLOSE', onPressed: scaffold.hideCurrentSnackBar),
       ),
     );
   }
 
-  void _selectCard(bool select){
+  void _selectCard(bool select) {
     setState(() {
-      select ? _numSelected++:_numSelected--;
-      //= searchResults.where((t)=>t.isSelected).toList().length
-      _appbar = SearchAppBar(
-      title: _keywords,
-      navigator: _navigateToFilter,
-      update: _updateSearchResults,
-      shareSelection: _shareSelection,
-      isInSelectionMode:_isInSelectionMode,
-      changeToSelectionMode: _changeToSelectionMode,
-      numSelected: _numSelected,
-    );
+      select ? _numSelected++ : _numSelected--;
+      if (_numSelected == 0) {
+        _changeToSelectionMode();
+      } else {
+        _appbar = SearchAppBar(
+          title: _keywords,
+          navigator: _navigateToFilter,
+          update: _updateSearchResults,
+          shareSelection: _shareSelection,
+          isInSelectionMode: _isInSelectionMode,
+          changeToSelectionMode: _changeToSelectionMode,
+          numSelected: _numSelected,
+        );
+      }
     });
   }
 
@@ -279,7 +283,7 @@ class _ResultsPageState extends State<ResultsPage> {
               res: searchResults[index],
               toggleSelectionMode: _changeToSelectionMode,
               keywords: _keywords,
-              isInSelectionMode:_isInSelectionMode,
+              isInSelectionMode: _isInSelectionMode,
               selectCard: _selectCard,
             ),
           );

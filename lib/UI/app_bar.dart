@@ -158,6 +158,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                   ),
                 )))
         : AppBar(
+          
             title: Text('${widget.numSelected}'),
             leading: IconButton(
               icon: Icon(Icons.close),
