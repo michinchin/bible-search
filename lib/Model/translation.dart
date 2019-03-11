@@ -1,5 +1,4 @@
 import 'package:bible_search/tecarta.dart';
-import '../Model/singleton.dart';
 import 'package:tec_cache/tec_cache.dart';
 
 class Language {
@@ -8,7 +7,14 @@ class Language {
   final int id;
   bool isSelected;
 
-  Language({this.a,this.name,this.id, this.isSelected});
+  Language({this.a, this.name, this.id, this.isSelected});
+
+  static final languages = <Language>[
+    Language(a: 'en', name: "English", id: 0, isSelected: true),
+    Language(a: 'es', name: "Español", id: 1, isSelected: true),
+    Language(a: 'zh', name: "Chinese", id: 2, isSelected: true),
+    Language(a: 'ko', name: "Korean", id: 3, isSelected: true),
+  ];
 }
 
 class BibleTranslation {
@@ -28,23 +34,22 @@ class BibleTranslation {
     this.isSelected,
   });
 
-
   // operator <(BibleTranslation bt) => lang != bt.lang;
 
-  factory BibleTranslation.fromJson(Map<String, dynamic> json){
+  factory BibleTranslation.fromJson(Map<String, dynamic> json) {
     final onSale = json['onsale'] as bool;
     if (onSale) {
       return BibleTranslation(
         id: json['id'] as int,
         name: json['name'] as String,
         a: json['abbreviation'] as String,
-        lang: languages.firstWhere((t)=>t.a == (json['language'] as String)),
+        lang: Language.languages
+            .firstWhere((t) => t.a == (json['language'] as String)),
         isOnSale: onSale,
         isSelected: true,
       );
     }
   }
-
 }
 
 class BibleTranslations {
@@ -56,7 +61,7 @@ class BibleTranslations {
     var d = <BibleTranslation>[];
     final a = json['categories'] as List<dynamic>;
     for (final b in a) {
-      if (b is Map<String,dynamic>) {
+      if (b is Map<String, dynamic>) {
         if (b['name'] == 'Bible Translations' || b['name'] == 'Español') {
           for (final c in b['products']) {
             final res = BibleTranslation.fromJson(c);
@@ -64,7 +69,7 @@ class BibleTranslations {
               d.add(res);
             }
           }
-        } 
+        }
       }
     }
     return BibleTranslations(data: d);
@@ -79,13 +84,13 @@ class BibleTranslations {
     }
     if (formattedIds.length > 0) {
       var idx = formattedIds.lastIndexOf('|');
-      formattedIds = formattedIds.substring(0,idx);
+      formattedIds = formattedIds.substring(0, idx);
     }
     return formattedIds;
   }
 
   void selectTranslations(String id) {
-    final arr = translationIds.split('|').toList();
+    final arr = id.split('|').toList();
     final intArr = arr.map((e) => int.parse(e)).toList();
     var tempData = this.data;
     for (final t in tempData) {
@@ -100,9 +105,14 @@ class BibleTranslations {
 
   String getFullName(int id) {
     var tempData = this.data;
-    return tempData.where((bt){return bt.id == id;}).toList()[0].name;
+    return tempData
+        .where((bt) {
+          return bt.id == id;
+        })
+        .toList()[0]
+        .name;
   }
-  
+
   static Future<BibleTranslations> fetch() async {
     final fileName = 'WebSite.json.gz';
     final hostAndPath = '$kTBStreamServer/$kTBApiVersion/products-list';

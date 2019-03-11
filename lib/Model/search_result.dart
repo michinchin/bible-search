@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../tecarta.dart';
 import '../Model/verse.dart';
-import '../Model/singleton.dart';
 import 'package:tec_cache/tec_cache.dart';
 
 class SearchResult {
@@ -77,12 +76,12 @@ class SearchResults {
     return SearchResults(data: d);
   }
 
-   static Future<List<SearchResult>> fetch(String words) async {
+   static Future<List<SearchResult>> fetch({String words, String translationIds}) async {
     final hostAndPath = '$kTBApiServer/search';
     final json = await TecCache().jsonFromUrl(
         url: 'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=${formatWords(words)}&book=0'+
               '&bookset=0&exact=0&phrase=0&searchVolumes=$translationIds',
-        cachedPath: 'cache/${getCacheKey(words)}.json',
+        cachedPath: 'cache/${getCacheKey(words,translationIds)}.json',
         requestType: 'post',
     );
     if (json != null) {
@@ -126,7 +125,7 @@ String formatWords(String keywords) {
   return wordList.length < 5 ? keywords : wordList.sublist(0,4).join(" ");
 }
 
-String getCacheKey(String keywords) {
+String getCacheKey(String keywords, String translationIds) {
   var words = keywords.replaceAll(' ', '_');
 
   var encoded = '';

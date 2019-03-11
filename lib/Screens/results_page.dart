@@ -1,16 +1,16 @@
+import 'package:bible_search/Model/search_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../Model/search_result.dart';
 import '../UI/result_card.dart';
 import '../UI/app_bar.dart';
 import '../Screens/translation_book_filter.dart';
-import '../Model/singleton.dart';
 import 'package:share/share.dart';
 
+
 class ResultsPage extends StatefulWidget {
-  final String keywords;
-  final VoidCallback updateSearchHistory;
-  ResultsPage({Key key, this.keywords, this.updateSearchHistory})
+
+  ResultsPage({Key key})
       : super(key: key);
 
   @override
@@ -23,19 +23,22 @@ class _ResultsPageState extends State<ResultsPage> {
   int idx = 0;
   var _numSelected = 0;
   SearchAppBar _appbar;
-  String _keywords;
+  SearchModel model;
 
   @override
   void initState() {
-    _keywords = widget.keywords;
-    _future = SearchResults.fetch(widget.keywords);
+    model = SearchModel.of(context);
+    _future = SearchResults.fetch(
+      words: model.searchQuery,
+      translationIds: model.translationIds
+    );
     _appbar = SearchAppBar(
-      title: _keywords,
+      title: model.searchQuery,
       navigator: _navigateToFilter,
       update: _updateSearchResults,
       shareSelection: _shareSelection,
-      changeToSelectionMode: _changeToSelectionMode,
-      numSelected: _numSelected,
+     changeToSelectionMode: _changeToSelectionMode,
+     numSelected: _numSelected,
     );
     super.initState();
   }
@@ -44,34 +47,35 @@ class _ResultsPageState extends State<ResultsPage> {
     Navigator.of(context).push(MaterialPageRoute<dynamic>(
         builder: (BuildContext context) {
           return TranslationBookFilterPage(
-              tabValue: 0, updateTranslations: _updateTranslations);
-        },
+              tabValue: 0, updateTranslations: _updateTranslations
+          );},
         fullscreenDialog: true));
   }
 
   void _updateSearchResults(String keywords) {
     if (keywords.length > 0) {
-      searchQueries.add(keywords);
-      widget.updateSearchHistory();
+      model.addSearchQuery(keywords);
     }
 
     setState(() {
-      _keywords = keywords;
-      _future = SearchResults.fetch(_keywords);
+      _future = SearchResults.fetch( words: model.searchQuery,
+      translationIds: model.translationIds);
       // SearchAppBar.of(context).onFieldChange(_keywords);
     });
   }
 
+
   void _updateTranslations() {
     setState(() {
-      _future = SearchResults.fetch(_keywords);
+      _future = SearchResults.fetch( words: model.searchQuery,
+      translationIds: model.translationIds);
     });
   }
 
   // loop through search results and filter only books that are selected
   List<SearchResult> _filterByBook(List<SearchResult> searchRes) {
     final sr = searchRes.where((res) {
-      for (final each in bookNames) {
+      for (final each in model.bookNames) {
         if (each.id == res.bookId && each.isSelected) {
           return true;
         }
@@ -84,28 +88,27 @@ class _ResultsPageState extends State<ResultsPage> {
   void _changeToSelectionMode() {
     setState(() {
       _isInSelectionMode = !_isInSelectionMode;
-      if (!_isInSelectionMode) {
-        _deselectAll();
-      }
+      if(!_isInSelectionMode) {_deselectAll();}
       _appbar = SearchAppBar(
-        title: _keywords,
-        navigator: _navigateToFilter,
-        update: _updateSearchResults,
-        shareSelection: _shareSelection,
-        isInSelectionMode: _isInSelectionMode,
-        changeToSelectionMode: _changeToSelectionMode,
-        numSelected: _numSelected,
-      );
+      title: model.searchQuery,
+      navigator: _navigateToFilter,
+      update: _updateSearchResults,
+      shareSelection: _shareSelection,
+      isInSelectionMode:_isInSelectionMode,
+      changeToSelectionMode: _changeToSelectionMode,
+      numSelected: _numSelected,
+    );
+      
     });
   }
 
   void _shareSelection(BuildContext context, bool isCopy) async {
     var text = "";
-    for (final each in searchResults) {
+    for (final each in model.searchResults) {
       final currVerse = each.verses[each.currentVerseIndex];
       if (each.isSelected && each.contextExpanded) {
         text +=
-            '${bookNames.where((book) => book.id == each.bookId).first.name} ' +
+            '${model.bookNames.where((book) => book.id == each.bookId).first.name} ' +
                 '${each.chapterId}:' +
                 '${each.verses[each.currentVerseIndex].verseIdx[0]}' +
                 '-${each.verses[each.currentVerseIndex].verseIdx[1]} ' +
@@ -118,19 +121,17 @@ class _ResultsPageState extends State<ResultsPage> {
       }
     }
     if (text.length > 0) {
-      !isCopy
-          ? Share.share(text)
-          : await Clipboard.setData(ClipboardData(text: text)).then((x) {
-              _showToast(context, 'Copied!');
-            });
+      !isCopy ? Share.share(text) : await Clipboard.setData(ClipboardData(text:text)).then((x){
+        _showToast(context, 'Copied!');
+      });
     } else {
-      _showToast(context, 'Please make a selection');
+      _showToast(context,'Please make a selection');
     }
   }
 
-  void _deselectAll() {
+  void _deselectAll(){
     _numSelected = 0;
-    for (final each in searchResults) {
+    for (final each in model.searchResults) {
       each.isSelected = false;
     }
   }
@@ -140,29 +141,29 @@ class _ResultsPageState extends State<ResultsPage> {
     scaffold.showSnackBar(
       SnackBar(
         backgroundColor: Theme.of(context).cardColor,
-        content: Text(label, style: Theme.of(context).textTheme.body1),
+        content: Text(label,
+            style: Theme.of(context).textTheme.body1),
         action: SnackBarAction(
             label: 'CLOSE', onPressed: scaffold.hideCurrentSnackBar),
       ),
     );
   }
 
-  void _selectCard(bool select) {
+  void _selectCard(bool select){
     setState(() {
-      select ? _numSelected++ : _numSelected--;
-      if (_numSelected == 0) {
+      select ? _numSelected++:_numSelected--;
+      if(_numSelected == 0){
         _changeToSelectionMode();
-      } else {
-        _appbar = SearchAppBar(
-          title: _keywords,
-          navigator: _navigateToFilter,
-          update: _updateSearchResults,
-          shareSelection: _shareSelection,
-          isInSelectionMode: _isInSelectionMode,
-          changeToSelectionMode: _changeToSelectionMode,
-          numSelected: _numSelected,
-        );
-      }
+      } else{
+      _appbar = SearchAppBar(
+      title: model.searchQuery,
+      navigator: _navigateToFilter,
+      update: _updateSearchResults,
+      shareSelection: _shareSelection,
+      isInSelectionMode:_isInSelectionMode,
+      changeToSelectionMode: _changeToSelectionMode,
+      numSelected: _numSelected,
+    );}
     });
   }
 
@@ -210,8 +211,8 @@ class _ResultsPageState extends State<ResultsPage> {
                 if (snapshot.data.length == 0) {
                   return _buildView(_buildNoResults("No results ☹️"));
                 }
-                searchResults = _filterByBook(snapshot.data);
-                return searchResults.length > 0
+                model.searchResults = _filterByBook(snapshot.data);
+                return model.searchResults.length > 0
                     ? _buildView(_buildCardView())
                     : _buildView(_buildNoResults(
                         "No results with Current Book Filter ☹️"));
@@ -232,7 +233,7 @@ class _ResultsPageState extends State<ResultsPage> {
   }
 
   Widget _buildNoResults(String text) {
-    searchResults = [];
+    model.searchResults = [];
     return Container(
       padding: EdgeInsets.all(20.0),
       child: Center(
@@ -248,10 +249,10 @@ class _ResultsPageState extends State<ResultsPage> {
     var _controller = ScrollController();
     var container = Container(
       key: PageStorageKey(
-          _keywords + '${searchResults[0].ref}' + '${searchResults.length}'),
+          model.searchQuery + '${model.searchResults[0].ref}' + '${model.searchResults.length}'),
       padding: EdgeInsets.all(10.0),
       child: ListView.builder(
-        itemCount: searchResults == null ? 1 : searchResults.length + 1,
+        itemCount: model.searchResults == null ? 1 : model.searchResults.length + 1,
         controller: _controller,
         itemBuilder: (BuildContext context, int index) {
           if (index == 0) {
@@ -264,10 +265,10 @@ class _ResultsPageState extends State<ResultsPage> {
                     style: Theme.of(context).textTheme.caption,
                     children: [
                       TextSpan(
-                        text: 'Showing ${searchResults.length} results for ',
+                        text: 'Showing ${model.searchResults.length} results for ',
                       ),
                       TextSpan(
-                          text: '$_keywords',
+                          text: '${model.searchQuery}',
                           style: TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
@@ -280,10 +281,10 @@ class _ResultsPageState extends State<ResultsPage> {
           return Container(
             padding: EdgeInsets.all(5.0),
             child: ResultCard(
-              res: searchResults[index],
+              res: model.searchResults[index],
               toggleSelectionMode: _changeToSelectionMode,
-              keywords: _keywords,
-              isInSelectionMode: _isInSelectionMode,
+              keywords: model.searchQuery,
+              isInSelectionMode:_isInSelectionMode,
               selectCard: _selectCard,
             ),
           );

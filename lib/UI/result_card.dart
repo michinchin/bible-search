@@ -4,12 +4,12 @@ import '../Model/search_result.dart';
 import '../Model/verse.dart';
 import '../Screens/all.dart';
 import '../Model/context.dart';
-import '../Model/singleton.dart';
 import 'dart:io';
 import 'dart:core';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
 import 'dart:math' as math;
+import 'package:bible_search/Model/search_model.dart';
 
 class ResultCard extends StatefulWidget {
   final bool isInSelectionMode;
@@ -205,7 +205,7 @@ class _ResultCardState extends State<ResultCard> {
     final Text nonContextTitle = Text(
         '${widget.res.ref} ${widget.res.verses[widget.res.currentVerseIndex].a}');
     final Text contextTitle = Text(
-        '${bookNames.where((book) => book.id == widget.res.bookId).first.name} ' +
+        '${SearchModel.of(context).bookNames.where((book) => book.id == widget.res.bookId).first.name} ' +
             '${widget.res.chapterId}:' +
             '${widget.res.verses[widget.res.currentVerseIndex].verseIdx[0]}' +
             '-${widget.res.verses[widget.res.currentVerseIndex].verseIdx[1]} ' +
