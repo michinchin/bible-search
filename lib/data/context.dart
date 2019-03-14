@@ -1,5 +1,5 @@
 import 'package:bible_search/tecarta.dart';
-import 'package:bible_search/Services/api.dart';
+import 'package:tec_cache/tec_cache.dart';
 
 class Context {
   Map<int,String> verses;
@@ -22,11 +22,9 @@ class Context {
   }
 
   static Future<Context> fetch({int translation, int book, int chapter, int verse}) async {
-    final api = API();
-      final json = await api.getResponse(
-        auth: kTBStreamServer,
-        unencodedPath: '/$kTBApiVersion/$translation/chapters/${book}_$chapter.json.gz',
-        isGet: true,
+
+      final json = await TecCache().jsonFromUrl(
+        url: '$kTBStreamServer/$kTBApiVersion/$translation/chapters/${book}_$chapter.json.gz',
       );
       Context context;
       if (json != null) {

@@ -1,228 +1,47 @@
-import 'package:bible_search/Model/search_result.dart';
-import 'package:bible_search/Screens/translation_book_filter.dart';
-import 'package:scoped_model/scoped_model.dart';
+import 'package:bible_search/data/translation.dart';
+import 'package:bible_search/data/book.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../Model/translation.dart';
-import 'package:flutter/material.dart';
-import '../Screens/results_page.dart';
-import '../Model/book.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 
-class SearchModel extends Model {
-  bool isDarkTheme = false;
-  bool isLoading = false;
-  bool isInSelectionMode = false;
-  List<String> searchQueries;
-  String searchQuery;
-  BibleTranslations translations;
-  bool otSelected = true;
-  bool ntSelected = true;
-  String translationIds;
-  List<SearchResult> searchResults;
-
-  static SearchModel of(BuildContext context) =>
-      ScopedModel.of<SearchModel>(context);
-
-  // static ScopedModelDescendant<SearchModel> descendant(Widget child) {
-  //   return ScopedModelDescendant<SearchModel>(
-  //       builder: (BuildContext context, Widget child, SearchModel model) {
-  //     return child;
-  //   });
-  // }
-
-  /// On app start, load current theme, search history, translations from user prefs
-  void initHomePage() {
-    loadTheme();
-    loadSearchHistory();
-  }
-
-  // On opening filter page, load translations from user prefs and update language toggles
-  void initFilterPage() {
-    loadTranslations();
-    loadLanguagePref();
-  }
-
-  /// add search query and update user prefs
-  void addSearchQuery(String keywords) {
-    searchQuery = keywords;
-    if (keywords.length > 0) {
-      searchQueries.add(keywords);
-      updateSearchHistory();
-    }
-    notifyListeners();
-  }
-
-  /// clear search queries and update user prefs
-  void clearSearchQueries() {
-    searchQueries = [];
-    updateSearchHistory();
-    notifyListeners();
-  }
+class HomeModel {
 
   /// load dark or light theme from user prefs
-  void loadTheme() async {
-    await SharedPreferences.getInstance().then((prefs) {
-      if (prefs.getBool('theme') == null) {
-        prefs.setBool('theme', false);
-      }
-      isDarkTheme = prefs.getBool('theme');
-    });
-  }
+  Future<bool> loadTheme() async =>
+      await SharedPreferences.getInstance().then((prefs) {
+        if (prefs.getBool('theme') == null) {
+          prefs.setBool('theme', false);
+        }
+        return prefs.getBool('theme');
+      }).catchError((e) {
+        return false;
+      });
 
   /// load the search history from user prefs
-  void loadSearchHistory() async {
-    await SharedPreferences.getInstance().then((prefs) {
-      searchQueries = (prefs.getStringList('searchHistory') ?? []);
-    });
-  }
+  Future<List<String>> loadSearchHistory() async =>
+      await SharedPreferences.getInstance().then((prefs) {
+        return (prefs.getStringList('searchHistory') ?? []);
+      });
 
   /// update the search history with current user prefs
-  void updateSearchHistory() async {
+  void updateSearchHistory(List<String> searchQueries) async {
     await SharedPreferences.getInstance().then((prefs) {
-      prefs.setStringList(
-          'searchHistory',
-          searchQueries =
-              searchQueries.reversed.toSet().toList().reversed.toList());
+      prefs.setStringList('searchHistory',
+          searchQueries.reversed.toSet().toList().reversed.toList());
     });
   }
 
-  void changeTheme(bool b, BuildContext context) {
-    DynamicTheme.of(context).setThemeData(ThemeData(
-      primarySwatch: Colors.orange,
-      primaryColorBrightness: Brightness.dark,
-      brightness: b ? Brightness.dark : Brightness.light,
-    ));
-    isDarkTheme = b;
-    updateTheme(b);
-  }
-
+  /// update the current theme in user prefs
   void updateTheme(bool b) async {
     var prefs = await SharedPreferences.getInstance();
-    prefs.setBool('theme', isDarkTheme);
+    prefs.setBool('theme', b);
   }
 
-  /// update search queries user prefs and navigate to results page
-  void updateSearchAndNavigateToResults(BuildContext context, String keywords) {
-    // searchResults = [];
-    addSearchQuery(keywords);
-    Navigator.of(context).push(MaterialPageRoute<dynamic>(
-      builder: (BuildContext context) {
-        return ResultsPage();
-      },
-    ));
-  }
+final languages = <Language>[
+  Language(a: 'en', name: "English", id: 0, isSelected: true),
+  Language(a: 'es', name: "Español", id: 1, isSelected: true),
+  Language(a: 'zh', name: "Chinese", id: 2, isSelected: true),
+  Language(a: 'ko', name: "Korean", id: 3, isSelected: true),
+];
 
-  void navigateToFilter(BuildContext context, int filterNum) {
-    initFilterPage();
-    Navigator.of(context).push(MaterialPageRoute<dynamic>(
-      builder: (BuildContext context) {
-        return TranslationBookFilterPage(tabValue: filterNum);
-      },
-      fullscreenDialog: true,
-    ));
-  }
-
-  /// load translations chosen from user prefs
-  void loadTranslations() async {
-    // TODO (What happens if can't connect to internet?) need to test
-    final temp = await BibleTranslations.fetch();
-    temp.data.sort((f, k) => f.lang.id.compareTo(k.lang.id));
-    final prefs = await SharedPreferences.getInstance();
-    //select only translations that are in the formatted Id
-    if (prefs.getString('translations') == null) {
-      prefs.setString('translations', temp.formatIds());
-    }
-    translationIds = prefs.getString('translations');
-    translations = temp;
-    translations.selectTranslations(translationIds);
-  }
-
-  void updateTranslations() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('translations', translationIds = translations.formatIds());
-    translations.selectTranslations(translationIds);
-    notifyListeners();
-  }
-
-  void loadLanguagePref() {
-    if (translations != null) {
-      for (final each in translations.data) {
-        if (!each.isSelected) {
-          each.lang.isSelected = false;
-          languages.firstWhere((l) => l.id == each.lang.id).isSelected = false;
-        }
-      }
-    }
-  }
-
-  void chooseTranslation(bool b, int i) {
-    translations.data[i].isSelected = b;
-    if (!b) {
-      translations.data[i].lang.isSelected = b;
-      languages.firstWhere((l) => l.id == translations.data[i].lang.id).isSelected = b;
-    }
-    var currLang = translations.data[i].lang;
-    var currLangList = translations.data.where((test) {
-      return test.lang == currLang;
-    }).toList();
-    if (currLangList.any((bt) => !bt.isSelected)) {
-      updateTranslations();
-    } else {
-      selectLang(currLang, true);
-    }
-  }
-
-  void selectLang(Language lang, bool b) {
-    translations.data.forEach((each) {
-      if (each.lang.id == lang.id) {
-        each.isSelected = b;
-      }
-    });
-    languages.firstWhere((l) => l.id == lang.id).isSelected = b;
-    updateTranslations();
-  }
-
-  void chooseBook(bool b, int i) {
-    bookNames[i].isSelected = b;
-    if (!b) {
-      bookNames[i].isOT() ? otSelected = b : ntSelected = b;
-    }
-    var isOT = bookNames[i].isOT();
-    var books = bookNames.where((bn) => bn.isOT() == isOT).toList();
-    if (books.any((b) => !b.isSelected)) {
-      notifyListeners();
-    } else {
-      isOT ? selectOT(true) : selectNT(true);
-    }
-    notifyListeners();
-  }
-
-  void selectOT(bool b) {
-    bookNames.forEach((each) {
-      if (each.isOT()) {
-        each.isSelected = b;
-      }
-    });
-    otSelected = b;
-    notifyListeners();
-  }
-
-  void selectNT(bool b) {
-    bookNames.forEach((each) {
-      if (!each.isOT()) {
-        each.isSelected = b;
-      }
-    });
-    ntSelected = b;
-    notifyListeners();
-  }
-
-  final languages = <Language>[
-    Language(a: 'en', name: "English", id: 0, isSelected: true),
-    Language(a: 'es', name: "Español", id: 1, isSelected: true),
-    Language(a: 'zh', name: "Chinese", id: 2, isSelected: true),
-    Language(a: 'ko', name: "Korean", id: 3, isSelected: true),
-  ];
 
   final bookNames = <Book>[
     Book(name: "Genesis", id: 1),

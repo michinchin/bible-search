@@ -1,3 +1,4 @@
+import 'package:bible_search/models/home_model.dart';
 import 'package:bible_search/tecarta.dart';
 import 'package:tec_cache/tec_cache.dart';
 
@@ -8,13 +9,6 @@ class Language {
   bool isSelected;
 
   Language({this.a, this.name, this.id, this.isSelected});
-
-  static final languages = <Language>[
-    Language(a: 'en', name: "English", id: 0, isSelected: true),
-    Language(a: 'es', name: "Español", id: 1, isSelected: true),
-    Language(a: 'zh', name: "Chinese", id: 2, isSelected: true),
-    Language(a: 'ko', name: "Korean", id: 3, isSelected: true),
-  ];
 }
 
 class BibleTranslation {
@@ -43,8 +37,7 @@ class BibleTranslation {
         id: json['id'] as int,
         name: json['name'] as String,
         a: json['abbreviation'] as String,
-        lang: Language.languages
-            .firstWhere((t) => t.a == (json['language'] as String)),
+        lang: HomeModel().languages.firstWhere((t) => t.a == (json['language'] as String)),
         isOnSale: onSale,
         isSelected: true,
       );

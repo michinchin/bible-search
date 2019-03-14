@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-
-import '../tecarta.dart';
-import '../Model/verse.dart';
 import 'package:tec_cache/tec_cache.dart';
+
+import '../data/verse.dart';
+import '../tecarta.dart';
 
 class SearchResult {
 

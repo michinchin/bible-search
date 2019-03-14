@@ -1,37 +1,50 @@
+import 'package:bible_search/models/app_state.dart';
+import 'package:bible_search/presentation/initial_search.dart';
+import 'package:bible_search/redux/actions.dart';
 import 'package:flutter/material.dart';
-import 'Screens/initial_search.dart';
-import 'Model/votd_image.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
-import 'package:scoped_model/scoped_model.dart';
-import 'Model/search_model.dart';
+import 'package:redux/redux.dart';
+import 'package:bible_search/redux/reducers.dart';
+import 'package:bible_search/redux/middleware.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 
-void main() { 
-  var model = SearchModel();
-  model.initHomePage();
-  model.loadTranslations();
-  return runApp(ScopedModel<SearchModel>(
-    model: model,
-    child: BibleSearch()));
+void main() {
+  final store = Store<AppState>(
+    reducers,
+    initialState: AppState.initial(),
+    middleware: middleware,
+  );
+  store.dispatch(InitHomeAction());
+  store.dispatch(InitFilterAction());
+  return runApp(BibleSearchApp(
+    store: store,
+  ));
 }
 
-class BibleSearch extends StatelessWidget {   
-  // This widget is the root of your application.
+class BibleSearchApp extends StatelessWidget {
+  final Store<AppState> store;
+
+  BibleSearchApp({Key key, this.store}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-
-    return DynamicTheme(
-      defaultBrightness: Brightness.light,
-      data: (brightness) => ThemeData(
-        primarySwatch: Colors.orange,
-        primaryColorBrightness: Brightness.dark,
-        brightness: SearchModel.of(context).isDarkTheme ? Brightness.dark : Brightness.light,
-      ),
-      themedWidgetBuilder:(context,theme) {
-        return MaterialApp(
-          title: 'Bible Search',
-          theme: theme,
-          home: InitialSearchPage(votd: VOTDImage.fetch()),
-        );
-      });
+    return StoreProvider<AppState>(
+        store: store,
+        child: DynamicTheme(
+            defaultBrightness: Brightness.light,
+            data: (brightness) => ThemeData(
+                  primarySwatch: Colors.orange,
+                  primaryColorBrightness: Brightness.dark,
+                  brightness: store.state.isDarkTheme
+                      ? Brightness.dark
+                      : Brightness.light,
+                ),
+            themedWidgetBuilder: (context, theme) {
+              return MaterialApp(
+                title: 'Bible Search',
+                theme: theme,
+                home: InitialSearchPage(),
+              );
+            }));
   }
 }
