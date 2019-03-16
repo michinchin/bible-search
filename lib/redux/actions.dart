@@ -14,9 +14,27 @@ class SearchLoadingAction {}
 class SearchErrorAction {}
 
 class SearchResultAction {
-  final List<SearchResult> result;
+  final List<SearchResult> res;
+  SearchResultAction(this.res);
+}
 
-  SearchResultAction(this.result);
+class SetResultsAction{
+  final List<SearchResult> res;
+  SetResultsAction(this.res);
+}
+
+class SetFilteredResultsAction{
+  final List<SearchResult> res;
+  SetFilteredResultsAction(this.res);
+}
+
+class SetNumSelectedAction{
+  final int numSelected;
+  SetNumSelectedAction(this.numSelected);
+}
+class ContextAction{
+  final int idx;
+  ContextAction(this.idx);
 }
 
 class SetSelectionModeAction{}
@@ -37,8 +55,9 @@ class SetThemeAction {
 }
 
 class SetSearchHistoryAction {
+  final String searchQuery;
   final List<String> searchQueries;
-  SetSearchHistoryAction(this.searchQueries);
+  SetSearchHistoryAction({this.searchQuery = '',this.searchQueries});
 }
 
 class SetLanguagesAction {
@@ -70,15 +89,16 @@ class UpdateTranslationsAction{}
 class InitFilterAction {}
 
 class SelectAction {
-  final Filter select;
+  final Select select;
   final bool toggle;
   final int index;
   // final dynamic item;
   SelectAction(this.toggle, this.index, this.select);
 }
 
-enum Filter {
+enum Select {
   TRANSLATION,
   BOOK, //index indicates ot or nt (-2 or -1) or book index
-  LANGUAGE
+  LANGUAGE,
+  RESULT
 }

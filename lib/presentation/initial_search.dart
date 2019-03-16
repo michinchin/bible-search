@@ -59,11 +59,7 @@ class InitialSearchPage extends StatelessWidget {
                         leading: Icon(Icons.access_time),
                         onTap: () {
                           vm.onSearchEntered(words[index]);
-                          // Navigator.of(context).push(MaterialPageRoute<dynamic>(
-                          //   builder: (BuildContext context) {
-                          //     return ResultsPage();
-                          //   },
-                          // ));
+                          Navigator.of(context).pushNamed('/results');
                         },
                       ),
                     ),
@@ -219,15 +215,10 @@ class InitialSearchViewModel {
         onSearchEntered: (term) {
           if (term.trim().length > 0) {
             store.dispatch(SearchAction(term));
-            List<String> newSearchList = store.state.searchHistory;
-            newSearchList.add(term);
-            //got rid of repeats
-            store.dispatch(SetSearchHistoryAction(
-                newSearchList.reversed.toSet().toList().reversed.toList()));
           }
         },
         updateSearchHistory: (searchQueries) =>
-            store.dispatch(SetSearchHistoryAction(searchQueries)),
+            store.dispatch(SetSearchHistoryAction(searchQuery: store.state.searchQuery,searchQueries: searchQueries)),
         changeTheme: (isDarkTheme) =>
             store.dispatch(SetThemeAction(isDarkTheme)),
       );
@@ -242,5 +233,5 @@ class InitialSearchViewModel {
 
   @override
   int get hashCode =>
-        searchHistory.hashCode ^ isDarkTheme.hashCode;
+        votdImage.hashCode ^ searchHistory.hashCode ^isDarkTheme.hashCode;
 }

@@ -1,5 +1,6 @@
 import 'package:bible_search/models/app_state.dart';
 import 'package:bible_search/presentation/initial_search.dart';
+import 'package:bible_search/presentation/results_page.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
@@ -8,12 +9,13 @@ import 'package:bible_search/redux/reducers.dart';
 import 'package:bible_search/redux/middleware.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
+final store = Store<AppState>(
+  reducers,
+  initialState: AppState.initial(),
+  middleware: middleware,
+);
+
 void main() {
-  final store = Store<AppState>(
-    reducers,
-    initialState: AppState.initial(),
-    middleware: middleware,
-  );
   store.dispatch(InitHomeAction());
   store.dispatch(InitFilterAction());
   return runApp(BibleSearchApp(
@@ -41,6 +43,10 @@ class BibleSearchApp extends StatelessWidget {
                 ),
             themedWidgetBuilder: (context, theme) {
               return MaterialApp(
+                initialRoute: '/',
+                routes: <String, WidgetBuilder>{
+                  '/results': (BuildContext context) => ResultsPage(),
+                },
                 title: 'Bible Search',
                 theme: theme,
                 home: InitialSearchPage(),

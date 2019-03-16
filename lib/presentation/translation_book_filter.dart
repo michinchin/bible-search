@@ -159,6 +159,7 @@ class FilterViewModel {
   final Function(bool, int) selectBook;
   final bool otSelected;
   final bool ntSelected;
+  final Function() updateSearch;
 
   const FilterViewModel(
       {this.translations,
@@ -168,20 +169,23 @@ class FilterViewModel {
       this.bookNames,
       this.selectBook,
       this.otSelected,
-      this.ntSelected});
+      this.ntSelected,
+      this.updateSearch,
+      });
 
   static FilterViewModel fromStore(Store<AppState> store) {
     return FilterViewModel(
       translations: store.state.translations,
       selectTranslation: (b, i) =>
-          store.dispatch(SelectAction(b, i, Filter.TRANSLATION)),
+          store.dispatch(SelectAction(b, i, Select.TRANSLATION)),
       languages: store.state.languages,
       selectLanguage: (b, i) =>
-          store.dispatch(SelectAction(b, i, Filter.LANGUAGE)),
+          store.dispatch(SelectAction(b, i, Select.LANGUAGE)),
       bookNames: store.state.books,
-      selectBook: (b, i) => store.dispatch(SelectAction(b, i, Filter.BOOK)),
+      selectBook: (b, i) => store.dispatch(SelectAction(b, i, Select.BOOK)),
       otSelected: store.state.otSelected,
       ntSelected: store.state.ntSelected,
+      updateSearch: () => store.dispatch(SearchAction(store.state.searchQuery)),
     );
   }
 

@@ -8,6 +8,7 @@ import 'package:meta/meta.dart';
 class AppState {
   final BibleTranslations translations;
   final List<SearchResult> results;
+  final List<SearchResult> filteredResults;
   final VOTDImage votdImage;
   final String searchQuery;
   final List<String> searchHistory;
@@ -22,9 +23,12 @@ class AppState {
   final bool otSelected;
   final bool ntSelected;
 
+  final int numSelected;
+
   const AppState({
     this.translations,
     this.results,
+    this.filteredResults,
     this.votdImage,
     this.searchQuery,
     this.searchHistory,
@@ -36,12 +40,14 @@ class AppState {
     this.hasError,
     this.isDarkTheme,
     this.otSelected,
-    this.ntSelected
+    this.ntSelected,
+    this.numSelected,
   });
 
   factory AppState.initial() => AppState(
       translations: BibleTranslations(data: []),
       results: [],
+      filteredResults: [],
       votdImage: null,
       searchQuery: '',
       searchHistory: [],
@@ -53,11 +59,14 @@ class AppState {
       hasError: false,
       isDarkTheme: false,
       otSelected: true,
-      ntSelected: true);
+      ntSelected: true,
+      numSelected: 0,);
+   
   
   AppState copyWith({
     BibleTranslations translations,
      List<SearchResult> results,
+     List<SearchResult> filteredResults,
      VOTDImage votdImage,
      String searchQuery,
      List<String> searchHistory,
@@ -69,11 +78,13 @@ class AppState {
      bool hasError,
      bool isDarkTheme,
      bool otSelected,
-     bool ntSelected
+     bool ntSelected,
+     int numSelected
   }){
     return new AppState(
       translations: translations ?? this.translations,
       results: results ?? this.results,
+      filteredResults: filteredResults ?? this.filteredResults,
       votdImage: votdImage ?? this.votdImage,
       searchQuery: searchQuery ?? this.searchQuery,
       searchHistory: searchHistory ?? this.searchHistory,
@@ -86,6 +97,28 @@ class AppState {
       isDarkTheme: isDarkTheme ?? this.isDarkTheme,
       otSelected: otSelected ?? this.otSelected,
       ntSelected: ntSelected ?? this.ntSelected,
+      numSelected: numSelected ?? this.numSelected
     );
+  }
+
+  String get selectedText{
+    var text = "";
+    for (final each in this.results) {
+      final currVerse = each.verses[each.currentVerseIndex];
+      if (each.isSelected && each.contextExpanded) {
+        text +=
+            '${this.books.where((book) => book.id == each.bookId).first.name} ' +
+                '${each.chapterId}:' +
+                '${each.verses[each.currentVerseIndex].verseIdx[0]}' +
+                '-${each.verses[each.currentVerseIndex].verseIdx[1]} ' +
+                '(${each.verses[each.currentVerseIndex].a})' +
+                '\n${currVerse.contextText}\n\n';
+      } else if (each.isSelected) {
+        text += "${each.ref} (${currVerse.a})\n${currVerse.verseContent}\n\n";
+      } else {
+        text += "";
+      }
+    }
+    return text;
   }
 }

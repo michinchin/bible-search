@@ -1,20 +1,24 @@
+import 'package:bible_search/containers/result_card.dart';
+import 'package:bible_search/models/filter_model.dart';
+import 'package:bible_search/presentation/translation_book_filter.dart';
 import 'package:flutter/material.dart';
+import 'package:bible_search/presentation/results_page.dart';
 
 class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String title;
-  final Function(BuildContext) navigator;
   final Function(String) update;
-  final Function(BuildContext,bool) shareSelection;
+  final Function(BuildContext, bool, String) shareSelection;
   final bool isInSelectionMode;
+  final String text;
   final Function() changeToSelectionMode;
   final int numSelected;
 
   SearchAppBar(
       {Key key,
       this.title,
-      this.navigator,
       this.update,
       this.shareSelection,
+      this.text,
       this.isInSelectionMode = false,
       this.changeToSelectionMode,
       this.numSelected})
@@ -52,11 +56,19 @@ class _SearchAppBarState extends State<SearchAppBar> {
     });
   }
 
-  void changeToSelectionMode() {
+  void _changeToSelectionMode() {
     setState(() {
       _isInSelectionMode = !_isInSelectionMode;
       widget.changeToSelectionMode();
     });
+  }
+
+  void _navigateToFilter(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute<dynamic>(
+        builder: (BuildContext context) {
+          return TranslationBookFilterPage(tabValue: 0);
+        },
+        fullscreenDialog: true));
   }
 
   @override
@@ -116,7 +128,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                           padding: const EdgeInsetsDirectional.only(end: 40.0),
                           child: IconButton(
                             icon: Icon(Icons.filter_list),
-                            onPressed: () => widget.navigator(context),
+                            onPressed: () => _navigateToFilter(context),
                           ),
                         ),
                         Padding(
@@ -136,7 +148,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                                                 title:
                                                     new Text('Selection Mode'),
                                                 onTap: () =>
-                                                    changeToSelectionMode(),
+                                                    _changeToSelectionMode(),
                                               ),
                                               new ListTile(
                                                   leading: new Icon(
@@ -158,16 +170,78 @@ class _SearchAppBarState extends State<SearchAppBar> {
                   ),
                 )))
         : AppBar(
-          
             title: Text('${widget.numSelected}'),
             leading: IconButton(
               icon: Icon(Icons.close),
-              onPressed: () => changeToSelectionMode(),
+              onPressed: () => _changeToSelectionMode(),
             ),
             actions: <Widget>[
-              IconButton(icon: Icon(Icons.content_copy),onPressed: ()=>widget.shareSelection(context, true),),
-              IconButton(icon: Icon(Icons.share),onPressed: () => widget.shareSelection(context,false),)
+              IconButton(
+                icon: Icon(Icons.content_copy),
+                onPressed: () =>
+                    widget.shareSelection(context, true, widget.text),
+              ),
+              IconButton(
+                icon: Icon(Icons.share),
+                onPressed: () =>
+                    widget.shareSelection(context, false, widget.text),
+              )
             ],
           );
+  }
+}
+
+class CardView extends StatelessWidget {
+  ResultsViewModel vm;
+  CardView(this.vm);
+  @override
+  Widget build(BuildContext context) {
+    var _controller = ScrollController();
+    var res = FilterModel().filterByBook(vm.searchResults, vm.bookNames);
+    var container = Container(
+      key: PageStorageKey(vm.searchQuery +
+          '${res[0].ref}' +
+          '${res.length}'),
+      padding: EdgeInsets.all(10.0),
+      child: ListView.builder(
+        itemCount: res == null ? 1 : res.length + 1,
+        controller: _controller,
+        itemBuilder: (BuildContext context, int index) {
+          if (index == 0) {
+            return Container(
+              padding: EdgeInsets.all(10.0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: RichText(
+                  text: TextSpan(
+                    style: Theme.of(context).textTheme.caption,
+                    children: [
+                      TextSpan(
+                        text: 'Showing ${res.length} results for ',
+                      ),
+                      TextSpan(
+                          text: '${vm.searchQuery}',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+          index -= 1;
+
+          return ResultCard(
+            index: index,
+            res: res[index],
+            keywords: vm.searchQuery,
+            isInSelectionMode: vm.isInSelectionMode,
+            selectCard: vm.selectCard,
+            bookNames: vm.bookNames,
+            toggleSelectionMode: vm.changeToSelectionMode,
+          );
+        },
+      ),
+    );
+    return container;
   }
 }

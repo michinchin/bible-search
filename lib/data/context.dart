@@ -24,7 +24,7 @@ class Context {
   static Future<Context> fetch({int translation, int book, int chapter, int verse}) async {
 
       final json = await TecCache().jsonFromUrl(
-        url: '$kTBStreamServer/$kTBApiVersion/$translation/chapters/${book}_$chapter.json.gz',
+        url: 'https://$kTBStreamServer/$kTBApiVersion/$translation/chapters/${book}_$chapter.json.gz',
       );
       Context context;
       if (json != null) {

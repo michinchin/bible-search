@@ -1,3 +1,4 @@
+import 'package:bible_search/data/context.dart';
 import 'package:bible_search/models/filter_model.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:bible_search/data/search_result.dart';
@@ -15,8 +16,14 @@ final searchMiddleware = (
   NextDispatcher next,
 ) {
   store.dispatch(SearchLoadingAction());
+  List<String> newSearchList = store.state.searchHistory;
+  newSearchList.add(action.searchQuery);
+  store.dispatch(SetSearchHistoryAction(
+      searchQuery: action.searchQuery,
+      searchQueries:
+          newSearchList.reversed.toSet().toList().reversed.toList()));
   SearchResults.fetch(
-    words: store.state.searchQuery,
+    words: action.searchQuery,
     translationIds: store.state.translations.formatIds(),
   ).then((res) {
     store.dispatch(SearchResultAction(res));
@@ -24,6 +31,31 @@ final searchMiddleware = (
     store.dispatch(SearchErrorAction());
   });
   next(action);
+};
+
+final contextMiddleware = (
+  Store<AppState> store,
+  ContextAction action,
+  NextDispatcher next,
+) {
+  final res = store.state.results[action.idx];
+  if (res.verses[res.currentVerseIndex].contextText.length == 0) {
+    Context.fetch(
+            translation: res.verses[res.currentVerseIndex].id,
+            book: res.bookId,
+            chapter: res.chapterId,
+            verse: res.verseId)
+        .then((context) {
+      var results = store.state.results;
+      results[action.idx].verses[res.currentVerseIndex].contextText =
+          context.text;
+      results[action.idx].verses[res.currentVerseIndex].verseIdx = [
+        context.initialVerse,
+        context.finalVerse
+      ];
+      store.dispatch(SetResultsAction(results));
+    });
+  }
 };
 
 /// Fetch verse of the day, init home page by loading theme and search history from user preferences, and load languages and bookNames
@@ -42,7 +74,7 @@ final initHomeMiddleware = (
     store.dispatch(SetThemeAction(theme));
   });
   homeModel.loadSearchHistory().then((searchHistory) {
-    store.dispatch(SetSearchHistoryAction(searchHistory));
+    store.dispatch(SetSearchHistoryAction(searchQueries: searchHistory));
   });
   store.dispatch(SetLanguagesAction(homeModel.languages));
   store.dispatch(SetBookNamesAction(homeModel.bookNames));
@@ -87,6 +119,7 @@ final updateTranslationsMiddleware = (
 ) {
   filterModel.updateTranslations(store.state.translations).then((translations) {
     store.dispatch(SetTranslationsAction(translations));
+    store.dispatch(SearchAction(store.state.searchQuery));
   });
   next(action);
 };
@@ -97,13 +130,13 @@ final selectionMiddleware = (
   NextDispatcher next,
 ) {
   switch (action.select) {
-    case Filter.TRANSLATION:
+    case Select.TRANSLATION:
       final tl = filterModel.chooseTranslation(action.toggle, action.index,
           store.state.translations, store.state.languages);
       store.dispatch(SetTranslationsAction(tl[0]));
       store.dispatch(SetLanguagesAction(tl[1]));
       break;
-    case Filter.BOOK:
+    case Select.BOOK:
       var bon = filterModel.chooseBook(
           b: action.toggle,
           i: action.index,
@@ -115,11 +148,21 @@ final selectionMiddleware = (
       store.dispatch(SetTestamentAction(bon[2], Test.NT));
       store.dispatch(SetBookNamesAction(books));
       break;
-    case Filter.LANGUAGE:
+    case Select.LANGUAGE:
       final tl = filterModel.selectLang(store.state.languages[action.index],
           action.toggle, store.state.translations, store.state.languages);
       store.dispatch(SetTranslationsAction(tl[0]));
       store.dispatch(SetLanguagesAction(tl[1]));
+      break;
+    case Select.RESULT:
+      var results = store.state.results;
+      results[action.index].isSelected = action.toggle;
+      store.dispatch(SetResultsAction(results));
+      var numSelected = store.state.numSelected;
+      action.toggle ? ++numSelected : --numSelected;
+      numSelected == 0
+          ? store.dispatch(SetSelectionModeAction())
+          : store.dispatch(SetNumSelectedAction(numSelected));
       break;
   }
   next(action);
@@ -134,4 +177,5 @@ final List<Middleware<AppState>> middleware = [
   TypedMiddleware<AppState, UpdateTranslationsAction>(
       updateTranslationsMiddleware),
   TypedMiddleware<AppState, SelectAction>(selectionMiddleware),
+  TypedMiddleware<AppState, ContextAction>(contextMiddleware),
 ];

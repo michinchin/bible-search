@@ -80,11 +80,7 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
                 controller: controller,
                 onSubmitted: (String s) {
                   widget.updateSearch(s);
-                  // Navigator.of(context).push(MaterialPageRoute<dynamic>(
-                  //   builder: (BuildContext context) {
-                  //     return ResultsPage();
-                  //   },
-                  // ));
+                  Navigator.of(context).pushNamed('/results');
                 },
               ),
             ),

@@ -1,9 +1,9 @@
 import 'package:bible_search/data/book.dart';
+import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/translation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FilterModel {
-  
   /// load translations chosen from user prefs
   Future<BibleTranslations> loadTranslations() async {
     // TODO (What happens if can't connect to internet?) need to test
@@ -117,5 +117,18 @@ class FilterModel {
       }
     });
     return bookNames;
+  }
+
+  List<SearchResult> filterByBook(
+      List<SearchResult> searchRes, List<Book> bookNames) {
+    final sr = searchRes.where((res) {
+      for (final each in bookNames) {
+        if (each.id == res.bookId && each.isSelected) {
+          return true;
+        }
+      }
+      return false;
+    }).toList();
+    return sr;
   }
 }
