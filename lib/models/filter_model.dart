@@ -12,11 +12,13 @@ class FilterModel {
     final prefs = await SharedPreferences.getInstance();
     //select only translations that are in the formatted Id
     var translationIds = prefs.getString('translations');
-    if (translationIds == null || translationIds.trim().length == 0) {
+    if (translationIds == null || translationIds?.length == 0 || translationIds.trim().length == 0) {
       prefs.setString('translations', temp.formatIds());
     }
     var translations = temp;
-    translations.selectTranslations(translationIds);
+    if(translationIds != null) {
+      translations.selectTranslations(translationIds);
+    }
     return translations;
   }
 
