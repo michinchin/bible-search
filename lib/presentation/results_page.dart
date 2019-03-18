@@ -77,7 +77,7 @@ class _ResultsPageState extends State<ResultsPage> {
   Widget build(BuildContext context) {
     //on translation change, the view should reload
     print('rebuilt ${DateTime.now().second}');
-    
+
     Widget getResultsView(ResultsViewModel vm) {
       if (vm.state.isFetchingSearch) {
         return _loadingView;
@@ -98,7 +98,7 @@ class _ResultsPageState extends State<ResultsPage> {
               appBar: SearchAppBar(
                 title: vm.searchQuery,
                 update: vm.updateSearchResults,
-                text: vm.selectedText,
+                getText: vm.getSelectedText,
                 shareSelection: _shareSelection,
                 numSelected: vm.state.numSelected,
                 isInSelectionMode: vm.isInSelectionMode,
@@ -127,7 +127,7 @@ class ResultsViewModel {
   final VoidCallback updateTranslations;
   final Function() filterByBook;
   final Function(int, bool) selectCard;
-  final String selectedText;
+  final String Function() getSelectedText;
 
   const ResultsViewModel({
     this.state,
@@ -141,7 +141,7 @@ class ResultsViewModel {
     this.updateTranslations,
     this.filterByBook,
     this.selectCard,
-    this.selectedText,
+    this.getSelectedText,
   });
 
   static ResultsViewModel fromStore(Store<AppState> store) {
@@ -157,8 +157,9 @@ class ResultsViewModel {
       updateTranslations: () =>
           store.dispatch(SetTranslationsAction(store.state.translations)),
       filterByBook: () => {},
-      selectCard: (idx, b) => store.dispatch(SelectAction(b,idx,Select.RESULT)),
-      selectedText: store.state.selectedText,
+      selectCard: (idx, b) =>
+          store.dispatch(SelectAction(b, idx, Select.RESULT)),
+      getSelectedText: () => store.state.selectedText,
     );
   }
 
@@ -176,7 +177,7 @@ class ResultsViewModel {
       searchQuery.hashCode ^
       translations.hashCode ^
       bookNames.hashCode ^
-      state.isFetchingSearch.hashCode^
+      state.isFetchingSearch.hashCode ^
       isInSelectionMode.hashCode ^
       state.numSelected.hashCode;
 }

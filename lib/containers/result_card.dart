@@ -389,7 +389,7 @@ class _ResultCardState extends State<ResultCard> {
                 color: _iconColor,
                 icon: Icon(Icons.share),
                 onPressed: () {
-                  String verseContent = widget.res.contextExpanded
+                   String verseContent = widget.res.contextExpanded
                       ? contextTitle.data +
                           '\n' +
                           widget.res.verses[widget.res.currentVerseIndex]

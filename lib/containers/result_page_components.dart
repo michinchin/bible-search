@@ -9,7 +9,7 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
   final Function(String) update;
   final Function(BuildContext, bool, String) shareSelection;
   final bool isInSelectionMode;
-  final String text;
+  final String Function() getText;
   final Function() changeToSelectionMode;
   final int numSelected;
 
@@ -18,7 +18,7 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
       this.title,
       this.update,
       this.shareSelection,
-      this.text,
+      this.getText,
       this.isInSelectionMode = false,
       this.changeToSelectionMode,
       this.numSelected})
@@ -179,12 +179,12 @@ class _SearchAppBarState extends State<SearchAppBar> {
               IconButton(
                 icon: Icon(Icons.content_copy),
                 onPressed: () =>
-                    widget.shareSelection(context, true, widget.text),
+                    widget.shareSelection(context, true, widget.getText()),
               ),
               IconButton(
                 icon: Icon(Icons.share),
                 onPressed: () =>
-                    widget.shareSelection(context, false, widget.text),
+                    widget.shareSelection(context, false, widget.getText()),
               )
             ],
           );
