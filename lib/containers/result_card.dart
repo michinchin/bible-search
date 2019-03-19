@@ -113,10 +113,12 @@ class _ResultCardState extends State<ResultCard> {
     var url = Platform.isIOS
         ? 'bible://${widget.res.verses[widget.res.currentVerseIndex].a}' +
             '/${widget.res.bookId}/${widget.res.chapterId}/${widget.res.verseId}'
-        : '';
+            //need a check to see if has bible app on android
+        : 'http://bible/${widget.res.verses[widget.res.currentVerseIndex].id}' +
+            '/${widget.res.bookId}/${widget.res.chapterId}/${widget.res.verseId}';
 
     if (await canLaunch(url)) {
-      await launch(url);
+      await launch(url, universalLinksOnly: false);
     } else {
       //couldn't launch, open app store
       print('Could not launch $url');
@@ -143,7 +145,7 @@ class _ResultCardState extends State<ResultCard> {
           onPressed: () async {
             var url = Platform.isIOS
                 ? 'itms-apps://itunes.apple.com/app/id325955298'
-                : '';
+                : 'https://play.google.com/store/apps/details?id=com.tecarta.TecartaBible';
             if (await canLaunch(url)) {
               try {
                 await launch(url);
