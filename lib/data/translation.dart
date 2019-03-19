@@ -37,7 +37,9 @@ class BibleTranslation {
         id: json['id'] as int,
         name: json['name'] as String,
         a: json['abbreviation'] as String,
-        lang: HomeModel().languages.firstWhere((t) => t.a == (json['language'] as String)),
+        lang: HomeModel()
+            .languages
+            .firstWhere((t) => t.a == (json['language'] as String)),
         isOnSale: onSale,
         isSelected: true,
       );
@@ -83,17 +85,21 @@ class BibleTranslations {
   }
 
   void selectTranslations(String id) {
-    final arr = id.split('|').toList();
-    final intArr = arr.map((e) => int.parse(e)).toList();
-    var tempData = this.data;
-    for (final t in tempData) {
-      if (intArr.contains(t.id)) {
-        t.isSelected = true;
-      } else {
-        t.isSelected = false;
+    if (id.length == 0) {
+      return;
+    } else {
+      final arr = id.split('|').toList();
+      final intArr = arr.map((e) => int.parse(e)).toList();
+      var tempData = this.data;
+      for (final t in tempData) {
+        if (intArr.contains(t.id)) {
+          t.isSelected = true;
+        } else {
+          t.isSelected = false;
+        }
       }
+      this.data = tempData;
     }
-    this.data = tempData;
   }
 
   String getFullName(int id) {

@@ -9,16 +9,20 @@ class FilterModel {
     // TODO (What happens if can't connect to internet?) need to test
     final temp = await BibleTranslations.fetch();
     temp.data.sort((f, k) => f.lang.id.compareTo(k.lang.id));
-    final prefs = await SharedPreferences.getInstance();
-    //select only translations that are in the formatted Id
-    var translationIds = prefs.getString('translations');
-    if (translationIds == null || translationIds?.length == 0 || translationIds.trim().length == 0) {
-      prefs.setString('translations', temp.formatIds());
-    }
     var translations = temp;
-    if(translationIds != null) {
-      translations.selectTranslations(translationIds);
-    }
+    SharedPreferences.getInstance().then((prefs) {
+      //select only translations that are in the formatted Id
+      var translationIds = prefs.getString('translations');
+      if (translationIds == null ||
+          translationIds?.length == 0 ||
+          translationIds.trim().length == 0) {
+        prefs.setString('translations', temp.formatIds());
+        translations = temp;
+      }
+      if (translationIds != null) {
+        translations.selectTranslations(translationIds);
+      }
+    });
     return translations;
   }
 
@@ -26,9 +30,14 @@ class FilterModel {
   Future<BibleTranslations> updateTranslations(
       BibleTranslations translations) async {
     var translationIds = '';
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('translations', translationIds = translations.formatIds());
-    translations.selectTranslations(translationIds);
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.setString(
+          'translations', translationIds = translations.formatIds());
+      if (translationIds != null) {
+        translations.selectTranslations(translationIds);
+      }
+    });
+
     return translations;
   }
 
