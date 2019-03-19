@@ -103,6 +103,8 @@ class _ResultsPageState extends State<ResultsPage> {
                 numSelected: vm.state.numSelected,
                 isInSelectionMode: vm.isInSelectionMode,
                 changeToSelectionMode: vm.changeToSelectionMode,
+                isDarkTheme: vm.state.isDarkTheme,
+                changeTheme: vm.changeTheme,
               ),
               body: SafeArea(
                   child: GestureDetector(
@@ -124,10 +126,10 @@ class ResultsViewModel {
 
   final VoidCallback changeToSelectionMode;
   final Function(String) updateSearchResults;
-  final VoidCallback updateTranslations;
   final Function() filterByBook;
   final Function(int, bool) selectCard;
   final String Function() getSelectedText;
+  final Function(bool) changeTheme;
 
   const ResultsViewModel({
     this.state,
@@ -138,10 +140,10 @@ class ResultsViewModel {
     this.isInSelectionMode,
     this.changeToSelectionMode,
     this.updateSearchResults,
-    this.updateTranslations,
     this.filterByBook,
     this.selectCard,
     this.getSelectedText,
+    this.changeTheme,
   });
 
   static ResultsViewModel fromStore(Store<AppState> store) {
@@ -154,12 +156,11 @@ class ResultsViewModel {
       isInSelectionMode: store.state.isInSelectionMode,
       changeToSelectionMode: () => store.dispatch(SetSelectionModeAction()),
       updateSearchResults: (s) => store.dispatch(SearchAction(s)),
-      updateTranslations: () =>
-          store.dispatch(SetTranslationsAction(store.state.translations)),
       filterByBook: () => {},
       selectCard: (idx, b) =>
           store.dispatch(SelectAction(b, idx, Select.RESULT)),
       getSelectedText: () => store.state.selectedText,
+      changeTheme: (b) => store.dispatch(SetThemeAction(b)),
     );
   }
 
@@ -170,7 +171,8 @@ class ResultsViewModel {
       bookNames == other.bookNames &&
       state.isFetchingSearch == other.state.isFetchingSearch &&
       isInSelectionMode == other.isInSelectionMode &&
-      state.numSelected == other.state.numSelected;
+      state.numSelected == other.state.numSelected &&
+      state.isDarkTheme == other.state.isDarkTheme;
 
   @override
   int get hashCode =>
@@ -179,5 +181,6 @@ class ResultsViewModel {
       bookNames.hashCode ^
       state.isFetchingSearch.hashCode ^
       isInSelectionMode.hashCode ^
-      state.numSelected.hashCode;
+      state.numSelected.hashCode ^
+      state.isDarkTheme.hashCode;
 }

@@ -1,6 +1,7 @@
 import 'package:bible_search/containers/result_card.dart';
 import 'package:bible_search/models/filter_model.dart';
 import 'package:bible_search/presentation/translation_book_filter.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:bible_search/presentation/results_page.dart';
 
@@ -11,17 +12,21 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool isInSelectionMode;
   final String Function() getText;
   final Function() changeToSelectionMode;
+  final Function(bool) changeTheme;
   final int numSelected;
+  final bool isDarkTheme;
 
   SearchAppBar(
       {Key key,
-      this.title,
-      this.update,
-      this.shareSelection,
-      this.getText,
+      @required this.title,
+      @required this.update,
+      @required this.shareSelection,
+      @required this.getText,
       this.isInSelectionMode = false,
-      this.changeToSelectionMode,
-      this.numSelected})
+      @required this.changeToSelectionMode,
+      @required this.numSelected,
+      @required this.isDarkTheme,
+      @required this.changeTheme})
       : super(key: key);
 
   Size get preferredSize {
@@ -74,101 +79,139 @@ class _SearchAppBarState extends State<SearchAppBar> {
   @override
   Widget build(BuildContext context) {
     return !_isInSelectionMode
-        ? SafeArea(
-            minimum: EdgeInsets.only(left: 20.0, right: 20.0),
-            child: Container(
-                height: widget.preferredSize.height,
-                width: widget.preferredSize.width,
-                decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(10.0),
-                    color: Theme.of(context).cardColor,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black38,
-                        offset: Offset(0, 5.0),
-                        blurRadius: 5.0,
-                      ),
-                    ]),
-                child: Center(
-                  child: TextField(
-                    controller: _controller,
-                    onChanged: (s) {
-                      setState(() {});
-                    },
-                    onSubmitted: (s) {
-                      setState(() {
-                        widget.update(s);
-                      });
-                    },
-                    textAlign: TextAlign.left,
-                    decoration: InputDecoration(
-                      prefixIcon: IconButton(
-                        icon: Icon(Icons.arrow_back),
-                        onPressed: () => Navigator.of(context).pop(),
-                      ),
-                      border: InputBorder.none,
-                      suffixIcon:
-                          Stack(alignment: Alignment.centerRight, children: [
-                        Padding(
-                          padding: const EdgeInsetsDirectional.only(end: 80.0),
-                          child: (_controller.text.length > 0)
-                              ? IconButton(
-                                  color: Theme.of(context).disabledColor,
-                                  icon: Icon(Icons.close),
-                                  onPressed: () {
-                                    setState(() {
-                                      _controller.clear();
-                                    });
-                                  },
-                                )
-                              : null,
-                        ),
-                        Padding(
-                          padding: const EdgeInsetsDirectional.only(end: 40.0),
-                          child: IconButton(
-                            icon: Icon(Icons.filter_list),
-                            onPressed: () => _navigateToFilter(context),
+        ? Stack(children: [
+            AppBar(
+              elevation: 0.0,
+              brightness: Brightness.light,
+              backgroundColor: Colors.transparent,
+              bottomOpacity: 0.0,
+              toolbarOpacity: 0.0,
+            ),
+            SafeArea(
+                minimum: EdgeInsets.only(left: 20.0, right: 20.0),
+                child: Container(
+                    height: widget.preferredSize.height,
+                    width: widget.preferredSize.width,
+                    decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.circular(10.0),
+                        color: Theme.of(context).cardColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black38,
+                            offset: Offset(0, 5.0),
+                            blurRadius: 5.0,
                           ),
+                        ]),
+                    child: Center(
+                      child: TextField(
+                        controller: _controller,
+                        onChanged: (s) {
+                          setState(() {});
+                        },
+                        onSubmitted: (s) {
+                          setState(() {
+                            widget.update(s);
+                          });
+                        },
+                        textAlign: TextAlign.left,
+                        decoration: InputDecoration(
+                          prefixIcon: IconButton(
+                            icon: Icon(Icons.arrow_back),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                          border: InputBorder.none,
+                          suffixIcon: Stack(
+                              alignment: Alignment.centerRight,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.only(
+                                      end: 80.0),
+                                  child: (_controller.text.length > 0)
+                                      ? IconButton(
+                                          color:
+                                              Theme.of(context).disabledColor,
+                                          icon: Icon(Icons.close),
+                                          onPressed: () {
+                                            setState(() {
+                                              _controller.clear();
+                                            });
+                                          },
+                                        )
+                                      : null,
+                                ),
+                                Padding(
+                                  padding: const EdgeInsetsDirectional.only(
+                                      end: 40.0),
+                                  child: IconButton(
+                                    icon: Icon(Icons.filter_list),
+                                    onPressed: () => _navigateToFilter(context),
+                                  ),
+                                ),
+                                Padding(
+                                    padding: const EdgeInsetsDirectional.only(
+                                        end: 0.0),
+                                    child: IconButton(
+                                      icon: Icon(Icons.more_horiz),
+                                      onPressed: () => {
+                                            showModalBottomSheet(
+                                                context: context,
+                                                builder: (BuildContext c) {
+                                                  return Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      ListTile(
+                                                        leading: Icon(
+                                                            Icons.check_circle),
+                                                        title: Text(
+                                                            'Selection Mode'),
+                                                        onTap: () =>
+                                                            _changeToSelectionMode(),
+                                                      ),
+                                                      SwitchListTile(
+                                                          secondary: Icon(Icons
+                                                              .lightbulb_outline),
+                                                          value: widget.isDarkTheme,
+                                                          title: Text(
+                                                              'Light/Dark Mode'),
+                                                          onChanged: (b) {
+                                                            DynamicTheme.of(
+                                                                    context)
+                                                                .setThemeData(
+                                                                    ThemeData(
+                                                              primarySwatch: b
+                                                                  ? Colors.teal
+                                                                  : Colors
+                                                                      .orange,
+                                                              primaryColorBrightness:
+                                                                  Brightness
+                                                                      .dark,
+                                                              brightness: b
+                                                                  ? Brightness
+                                                                      .dark
+                                                                  : Brightness
+                                                                      .light,
+                                                            ));
+                                                            widget
+                                                                .changeTheme(b);
+                                                          }),
+                                                      ListTile(
+                                                          leading: new Icon(
+                                                              Icons.videocam),
+                                                          title:
+                                                              new Text('Video'),
+                                                          onTap: () => {}),
+                                                    ],
+                                                  );
+                                                })
+                                          },
+                                    )),
+                              ]),
                         ),
-                        Padding(
-                            padding: const EdgeInsetsDirectional.only(end: 0.0),
-                            child: IconButton(
-                              icon: Icon(Icons.more_horiz),
-                              onPressed: () => {
-                                    showModalBottomSheet(
-                                        context: context,
-                                        builder: (BuildContext c) {
-                                          return new Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: <Widget>[
-                                              new ListTile(
-                                                leading: new Icon(
-                                                    Icons.check_circle),
-                                                title:
-                                                    new Text('Selection Mode'),
-                                                onTap: () =>
-                                                    _changeToSelectionMode(),
-                                              ),
-                                              new ListTile(
-                                                  leading: new Icon(
-                                                      Icons.photo_album),
-                                                  title: new Text('Photos'),
-                                                  onTap: () => {}),
-                                              new ListTile(
-                                                  leading:
-                                                      new Icon(Icons.videocam),
-                                                  title: new Text('Video'),
-                                                  onTap: () => {}),
-                                            ],
-                                          );
-                                        })
-                                  },
-                            )),
-                      ]),
-                    ),
-                  ),
-                )))
+                      ),
+                    ))),
+          ])
         : AppBar(
             title: Text('${widget.numSelected}'),
             leading: IconButton(
@@ -199,9 +242,7 @@ class CardView extends StatelessWidget {
     var _controller = ScrollController();
     var res = FilterModel().filterByBook(vm.searchResults, vm.bookNames);
     var container = Container(
-      key: PageStorageKey(vm.searchQuery +
-          '${res[0].ref}' +
-          '${res.length}'),
+      key: PageStorageKey(vm.searchQuery + '${res[0].ref}' + '${res.length}'),
       padding: EdgeInsets.all(10.0),
       child: ListView.builder(
         itemCount: res == null ? 1 : res.length + 1,

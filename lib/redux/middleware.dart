@@ -135,6 +135,7 @@ final selectionMiddleware = (
           store.state.translations, store.state.languages);
       store.dispatch(SetTranslationsAction(tl[0]));
       store.dispatch(SetLanguagesAction(tl[1]));
+      store.dispatch(UpdateTranslationsAction());
       break;
     case Select.BOOK:
       var bon = filterModel.chooseBook(
@@ -153,6 +154,7 @@ final selectionMiddleware = (
           action.toggle, store.state.translations, store.state.languages);
       store.dispatch(SetTranslationsAction(tl[0]));
       store.dispatch(SetLanguagesAction(tl[1]));
+      store.dispatch(UpdateTranslationsAction());
       break;
     case Select.RESULT:
       var results = store.state.results;

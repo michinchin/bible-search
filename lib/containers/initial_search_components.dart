@@ -1,4 +1,5 @@
 import 'package:bible_search/presentation/translation_book_filter.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter/cupertino.dart';
@@ -49,7 +50,7 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
         child: Container(
           decoration: BoxDecoration(
             shape: BoxShape.rectangle,
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(widget.height),
             boxShadow: [
               BoxShadow(
@@ -70,7 +71,6 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
                   setState(() {});
                 },
                 textAlign: TextAlign.left,
-                style: TextStyle(color: Colors.black),
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.only(left: 40.0, right: 40.0),
                   hintText: 'Enter search terms',
@@ -91,7 +91,6 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
                       splashColor: Colors.transparent,
                       icon: Icon(
                         CupertinoIcons.clear_circled,
-                        color: Colors.black,
                       ),
                       onPressed: () {
                         setState(() {
@@ -107,7 +106,6 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
                 splashColor: Colors.transparent,
                 icon: Icon(
                   CupertinoIcons.search,
-                  color: Colors.black,
                 ),
                 onPressed: () => {},
               ),
@@ -201,6 +199,7 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      brightness: Brightness.dark,
       centerTitle: false,
       textTheme: TextTheme(),
       elevation: 0.0,
@@ -219,6 +218,11 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       backgroundColor: Colors.transparent,
+      leading: IconButton(
+        icon: Icon(Icons.menu),
+        color: Colors.white,
+        onPressed: () => Scaffold.of(context).openDrawer(),
+      ),
       actions: <Widget>[
         IconButton(
           icon: Icon(Icons.filter_list),

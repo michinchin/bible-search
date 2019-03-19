@@ -28,13 +28,10 @@ class InitialSearchPage extends StatelessWidget {
         },
         builder: (BuildContext context, InitialSearchViewModel vm) {
           final searchHistoryList = Container(
-            color: Colors.white,
             child: ListView.builder(
                 itemBuilder: (BuildContext context, int index) {
                   List<String> words = vm.searchHistory.reversed.toList();
                   return ListTileTheme(
-                    textColor: Colors.black,
-                    iconColor: Colors.black,
                     child: Dismissible(
                       key: Key(words[index]),
                       direction: DismissDirection.endToStart,
@@ -93,7 +90,7 @@ class InitialSearchPage extends StatelessWidget {
             child: Text(
               'SEARCH HISTORY',
               style: TextStyle(
-                color: Colors.grey[800],
+                color: vm.isDarkTheme ? Colors.grey[300] : Colors.grey[800],
                 fontFamily: 'Roboto',
                 fontSize: 18.0,
                 fontStyle: FontStyle.italic,
@@ -139,7 +136,7 @@ class InitialSearchPage extends StatelessWidget {
                   title: Text('Light/Dark Mode'),
                   onChanged: (b) {
                     DynamicTheme.of(context).setThemeData(ThemeData(
-                      primarySwatch: Colors.orange,
+                      primarySwatch: b ? Colors.teal : Colors.orange,
                       primaryColorBrightness: Brightness.dark,
                       brightness: b ? Brightness.dark : Brightness.light,
                     ));
@@ -173,7 +170,6 @@ class InitialSearchPage extends StatelessWidget {
           );
 
           return Scaffold(
-            backgroundColor: Colors.white,
             appBar: appBar,
             drawer: Drawer(
               child: _settingsList,

@@ -60,10 +60,7 @@ class FilterModel {
     var currLangList = translations.data.where((test) {
       return test.lang.id == currLang.id;
     }).toList();
-    if (currLangList.any((bt) => !bt.isSelected)) {
-      updateTranslations(translations);
-      // notifyListeners();
-    } else {
+    if (!currLangList.any((bt) => !bt.isSelected)) {
       final tl = selectLang(currLang, true, translations, languages);
       translations = tl[0];
       languages = tl[1];
