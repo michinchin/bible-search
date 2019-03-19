@@ -32,7 +32,7 @@ AppState _onError(AppState state, SearchErrorAction action) =>
     state.copyWith(hasError: true);
 
 AppState _onResult(AppState state, SearchResultAction action) =>
-    state.copyWith(results: action.res, isFetchingSearch: false, filteredResults: state.filteredResults ?? action.res);
+    state.copyWith(results: action.res, isFetchingSearch: false);
 
 AppState _onResultsChanged(AppState state, SetResultsAction action) =>
     state.copyWith(results: action.res);

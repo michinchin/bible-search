@@ -1,6 +1,6 @@
 import 'package:bible_search/data/votd_image.dart';
+import 'package:bible_search/main.dart';
 import 'package:bible_search/models/app_state.dart';
-import 'package:bible_search/presentation/results_page.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
@@ -194,30 +194,31 @@ class InitialSearchViewModel {
   final void Function(List<String> searchQueries) updateSearchHistory;
   final void Function(bool isDarkTheme) changeTheme;
 
-  InitialSearchViewModel(
-      {this.votdImage,
-      this.searchHistory,
-      this.isDarkTheme,
-      this.onSearchEntered,
-      this.updateSearchHistory,
-      this.changeTheme,
-      });
+  InitialSearchViewModel({
+    this.votdImage,
+    this.searchHistory,
+    this.isDarkTheme,
+    this.onSearchEntered,
+    this.updateSearchHistory,
+    this.changeTheme,
+  });
 
   static InitialSearchViewModel fromStore(Store<AppState> store) {
     return InitialSearchViewModel(
-        votdImage: store.state.votdImage,
-        searchHistory: store.state.searchHistory,
-        isDarkTheme: store.state.isDarkTheme,
-        onSearchEntered: (term) {
-          if (term.trim().length > 0) {
-            store.dispatch(SearchAction(term));
-          }
-        },
-        updateSearchHistory: (searchQueries) =>
-            store.dispatch(SetSearchHistoryAction(searchQuery: store.state.searchQuery,searchQueries: searchQueries)),
-        changeTheme: (isDarkTheme) =>
-            store.dispatch(SetThemeAction(isDarkTheme)),
-      );
+      votdImage: store.state.votdImage,
+      searchHistory: store.state.searchHistory,
+      isDarkTheme: store.state.isDarkTheme,
+      onSearchEntered: (term) {
+        if (term.trim().length > 0) {
+          store.dispatch(SearchAction(term));
+        }
+      },
+      updateSearchHistory: (searchQueries) => store.dispatch(
+          SetSearchHistoryAction(
+              searchQuery: store.state.searchQuery,
+              searchQueries: searchQueries)),
+      changeTheme: (isDarkTheme) => store.dispatch(SetThemeAction(isDarkTheme)),
+    );
   }
 
   /// override == operator so flutter only rebuilds widgets that need rebuilding
@@ -229,5 +230,5 @@ class InitialSearchViewModel {
 
   @override
   int get hashCode =>
-        votdImage.hashCode ^ searchHistory.hashCode ^isDarkTheme.hashCode;
+      votdImage.hashCode ^ searchHistory.hashCode ^ isDarkTheme.hashCode;
 }

@@ -27,6 +27,7 @@ final searchMiddleware = (
     translationIds: store.state.translations.formatIds(),
   ).then((res) {
     store.dispatch(SearchResultAction(res));
+    store.dispatch(SetFilteredResultsAction(filterModel.filterByBook(res, store.state.books)));
   }).catchError((e) {
     store.dispatch(SearchErrorAction());
   });
@@ -148,6 +149,7 @@ final selectionMiddleware = (
       store.dispatch(SetTestamentAction(bon[1], Test.OT));
       store.dispatch(SetTestamentAction(bon[2], Test.NT));
       store.dispatch(SetBookNamesAction(books));
+      store.dispatch(SetFilteredResultsAction(filterModel.filterByBook(store.state.results, books)));
       break;
     case Select.LANGUAGE:
       final tl = filterModel.selectLang(store.state.languages[action.index],

@@ -35,6 +35,7 @@ class HomeModel {
     prefs.setBool('theme', b);
   }
 
+
 final languages = <Language>[
   Language(a: 'en', name: "English", id: 0, isSelected: true),
   Language(a: 'es', name: "Español", id: 1, isSelected: true),

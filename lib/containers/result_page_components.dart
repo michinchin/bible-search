@@ -4,7 +4,6 @@ import 'package:bible_search/presentation/translation_book_filter.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:bible_search/presentation/results_page.dart';
-
 class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String title;
   final Function(String) update;
@@ -240,7 +239,8 @@ class CardView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var _controller = ScrollController();
-    var res = FilterModel().filterByBook(vm.searchResults, vm.bookNames);
+    var res = vm.filteredRes;
+    // var res = FilterModel().filterByBook(vm.searchResults, vm.bookNames);
     var container = Container(
       key: PageStorageKey(vm.searchQuery + '${res[0].ref}' + '${res.length}'),
       padding: EdgeInsets.all(10.0),
