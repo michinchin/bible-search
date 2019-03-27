@@ -4,6 +4,8 @@ import 'package:bible_search/presentation/translation_book_filter.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:bible_search/presentation/results_page.dart';
+import 'package:tec_native_ad/tec_native_ad.dart';
+
 class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String title;
   final Function(String) update;
@@ -171,7 +173,8 @@ class _SearchAppBarState extends State<SearchAppBar> {
                                                       SwitchListTile(
                                                           secondary: Icon(Icons
                                                               .lightbulb_outline),
-                                                          value: widget.isDarkTheme,
+                                                          value: widget
+                                                              .isDarkTheme,
                                                           title: Text(
                                                               'Light/Dark Mode'),
                                                           onChanged: (b) {
@@ -233,56 +236,97 @@ class _SearchAppBarState extends State<SearchAppBar> {
   }
 }
 
-class CardView extends StatelessWidget {
-  ResultsViewModel vm;
+class CardView extends StatefulWidget {
+  final ResultsViewModel vm;
   CardView(this.vm);
+
+  @override
+  State<StatefulWidget> createState() => _CardViewState();
+}
+
+class _CardViewState extends State<CardView> {
+  NativeAdController nativeAdController;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    nativeAdController = NativeAdController(
+        // test app id google provides
+        applicationId: 'ca-app-pub-5279916355700267/7203757709',
+        numberOfAds: 1,
+        updateLoadingState: updateLoadingState);
+  }
+
+  void updateLoadingState(bool loading) {
+    if (_loading != loading) {
+      setState(() {
+        _loading = loading;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var _controller = ScrollController();
-    var res = vm.filteredRes;
-    // var res = FilterModel().filterByBook(vm.searchResults, vm.bookNames);
+    var res = widget.vm.filteredRes;
     var container = Container(
-      key: PageStorageKey(vm.searchQuery + '${res[0].ref}' + '${res.length}'),
-      padding: EdgeInsets.all(10.0),
-      child: ListView.builder(
-        itemCount: res == null ? 1 : res.length + 1,
-        controller: _controller,
-        itemBuilder: (BuildContext context, int index) {
-          if (index == 0) {
-            return Container(
-              padding: EdgeInsets.all(10.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: RichText(
-                  text: TextSpan(
-                    style: Theme.of(context).textTheme.caption,
-                    children: [
-                      TextSpan(
-                        text: 'Showing ${res.length} results for ',
-                      ),
-                      TextSpan(
-                          text: '${vm.searchQuery}',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                    ],
-                  ),
+        key: PageStorageKey(
+            widget.vm.searchQuery + '${res[0].ref}' + '${res.length}'),
+        padding: EdgeInsets.all(10.0),
+        child: ListView(
+          controller: _controller,
+          children: _buildResults(res),
+        ));
+    return container;
+  }
+
+  List<Widget> _buildResults(List res) {
+    List<Widget> results = [];
+    for (var i = 0; i < res.length; i++) {
+      results.add(ResultCard(
+        index: i,
+        res: res[i],
+        keywords: widget.vm.searchQuery,
+        isInSelectionMode: widget.vm.isInSelectionMode,
+        selectCard: widget.vm.selectCard,
+        bookNames: widget.vm.bookNames,
+        toggleSelectionMode: widget.vm.changeToSelectionMode,
+      ));
+    }
+    if (res.length > 0) {
+      results.insert(
+          0,
+          Container(
+            padding: EdgeInsets.all(10.0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: RichText(
+                text: TextSpan(
+                  style: Theme.of(context).textTheme.caption,
+                  children: [
+                    TextSpan(
+                      text: 'Showing ${res.length} results for ',
+                    ),
+                    TextSpan(
+                        text: '${widget.vm.searchQuery}',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
                 ),
               ),
-            );
-          }
-          index -= 1;
-
-          return ResultCard(
-            index: index,
-            res: res[index],
-            keywords: vm.searchQuery,
-            isInSelectionMode: vm.isInSelectionMode,
-            selectCard: vm.selectCard,
-            bookNames: vm.bookNames,
-            toggleSelectionMode: vm.changeToSelectionMode,
-          );
-        },
-      ),
-    );
-    return container;
+            ),
+          ));
+      if (nativeAdController.adCount > 0 && res.length > 3) {
+        results.insert(
+            3,
+            TecNativeAd(
+              index: 0,
+              loadingIndicator: _loading
+                  ? const Center(child: const CircularProgressIndicator())
+                  : null,
+            ));
+      }
+    }
+    return results;
   }
 }

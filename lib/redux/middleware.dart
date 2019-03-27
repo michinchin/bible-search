@@ -15,6 +15,8 @@ final searchMiddleware = (
   SearchAction action,
   NextDispatcher next,
 ) {
+  // TODO: load new ads with each new search
+  // store array of NativeAds?
   store.dispatch(SearchLoadingAction());
   List<String> newSearchList = store.state.searchHistory;
   newSearchList.add(action.searchQuery);

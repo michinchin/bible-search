@@ -16,23 +16,8 @@ final store = Store<AppState>(
 );
 
 // final appId = 'ca-app-pub-5279916355700267~3348273170';
-// MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
-//   keywords: <String>['flutterio', 'beautiful apps'],
-//   contentUrl: 'https://flutter.io',
-//   childDirected: false,
-//   testDevices: <String>[], // Android emulators are considered test devices
-// );
-//   BannerAd myBanner =BannerAd(
-//     adUnitId: BannerAd.testAdUnitId,
-//   size: AdSize.smartBanner,
-//   targetingInfo: targetingInfo,
-//   listener: (MobileAdEvent event) {
-//     print("BannerAd event is $event");
-//   });
 
-void main() {
-  // FirebaseAdMob.instance.initialize(appId: appId);
-  
+void main() {  
   store.dispatch(InitHomeAction());
   store.dispatch(InitFilterAction());
   return runApp(BibleSearchApp(
