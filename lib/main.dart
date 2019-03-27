@@ -15,8 +15,6 @@ final store = Store<AppState>(
   middleware: middleware,
 );
 
-// final appId = 'ca-app-pub-5279916355700267~3348273170';
-
 void main() {  
   store.dispatch(InitHomeAction());
   store.dispatch(InitFilterAction());

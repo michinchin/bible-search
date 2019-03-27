@@ -5,7 +5,6 @@ import '../data/verse.dart';
 import '../tecarta.dart';
 
 class SearchResult {
-
   final String ref;
   final int bookId;
   final int chapterId;
@@ -34,28 +33,26 @@ class SearchResult {
     this.key,
   });
 
-  factory SearchResult.fromJson(Map<String,dynamic> json) {
+  factory SearchResult.fromJson(Map<String, dynamic> json) {
     final String ref = json['reference'];
     final v = <Verse>[];
     final a = json['verses'] as List<dynamic>;
     for (final b in a) {
-      if (b is Map<String,dynamic>) {
-        final verse = Verse.fromJson(b,ref);
-        if(verse != null) {
+      if (b is Map<String, dynamic>) {
+        final verse = Verse.fromJson(b, ref);
+        if (verse != null) {
           v.add(verse);
         }
       }
     }
     return SearchResult(
-      ref: ref,
-      bookId: json['bookId'] as int,
-      chapterId: json['chapterId'] as int,
-      verseId: json['verseId'] as int,
-      verses: v,
-      key: GlobalKey()
-    );
+        ref: ref,
+        bookId: json['bookId'] as int,
+        chapterId: json['chapterId'] as int,
+        verseId: json['verseId'] as int,
+        verses: v,
+        key: GlobalKey());
   }
-
 }
 
 class SearchResults {
@@ -66,7 +63,7 @@ class SearchResults {
     var d = <SearchResult>[];
     final a = json['searchResults'] as List<dynamic>;
     for (final b in a) {
-      if (b is Map<String,dynamic>) {
+      if (b is Map<String, dynamic>) {
         final res = SearchResult.fromJson(b);
         if (res != null) {
           d.add(res);
@@ -76,26 +73,41 @@ class SearchResults {
     return SearchResults(data: d);
   }
 
-   static Future<List<SearchResult>> fetch({String words, String translationIds}) async {
+  static Future<List<SearchResult>> fetch(
+      {String words, String translationIds}) async {
     final hostAndPath = '$kTBApiServer/search';
-    final json = await TecCache().jsonFromUrl(
-        url: 'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=${formatWords(words)}&book=0'+
-              '&bookset=0&exact=0&phrase=0&searchVolumes=$translationIds',
-        cachedPath: 'cache/${getCacheKey(words,translationIds)}.json',
-        requestType: 'post',
+    final cachePath = '$kTBStreamServer/cache';
+    final tecCache = TecCache();
+    final fullCachedPath =
+        'https://$cachePath/${getCacheKey(words, translationIds)}.gz';
+
+    final cacheJson = await tecCache.jsonFromUrl(
+      url: fullCachedPath,
+      requestType: 'get',
     );
-    if (json != null) {
-      return SearchResults.fromJson(json).data;
+
+    if (cacheJson != null) {
+      return SearchResults.fromJson(cacheJson).data;
     } else {
-      return SearchResults(data: []).data;
+      final json = await tecCache.jsonFromUrl(
+        url:
+            'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=${formatWords(words)}&book=0' +
+                '&bookset=0&exact=0&phrase=0&searchVolumes=$translationIds',
+        requestType: 'post',
+      );
+      if (json != null) {
+        return SearchResults.fromJson(json).data;
+      } else {
+        return SearchResults(data: []).data;
+      }
     }
   }
 }
 
-Map<String,String> urlEncodingExceptions = {
+Map<String, String> urlEncodingExceptions = {
   "’": "'", // UTF-8: E2 80 99
   "‘": "'", // UTF-8: E2 80 98
-  "‚": "", 
+  "‚": "",
   ",": "", // get rid of commas
   "‛": "'",
   "“": "\"", // UTF-8: E2 80 9C
@@ -108,33 +120,31 @@ Map<String,String> urlEncodingExceptions = {
   "‵": "'",
   "‶": "\"",
   "‷": "\"",
-  "–": "-",   // UTF-8: E2 80 93
+  "–": "-", // UTF-8: E2 80 93
   "‐": "-",
   "‒": "-",
   "—": "-", // UTF-8: E2 80 94
   "―": "-" // UTF-8: E2 80 95
 };
-final String base64Map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+final String base64Map =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
 
 String formatWords(String keywords) {
-  urlEncodingExceptions.forEach(
-    (k,v) => keywords = keywords.replaceAll(RegExp(k), v)
-  );
+  urlEncodingExceptions
+      .forEach((k, v) => keywords = keywords.replaceAll(RegExp(k), v));
   List<String> wordList = keywords.split(" ");
-  wordList.sort((a,b) => b.length.compareTo(a.length));
-  return wordList.length < 5 ? keywords : wordList.sublist(0,4).join(" ");
+  wordList.sort((a, b) => b.length.compareTo(a.length));
+  return wordList.length < 5 ? keywords : wordList.sublist(0, 4).join(" ");
 }
 
 String getCacheKey(String keywords, String translationIds) {
+  keywords = keywords.toLowerCase();
   var words = keywords.replaceAll(' ', '_');
-
+  words += '_';
   var encoded = '';
   final length = base64Map.length;
-  final volumeIds = translationIds
-    .split('|')
-    .toList()
-    .map((id)=>double.parse(id))
-    .toList();
+  final volumeIds =
+      translationIds.split('|').toList().map((id) => double.parse(id)).toList();
 
   volumeIds.sort();
   for (var i = 0; i < volumeIds.length; i++) {
@@ -144,5 +154,5 @@ String getCacheKey(String keywords, String translationIds) {
     volumeId -= digit.toInt() * length;
     encoded += base64Map[volumeId.toInt()];
   }
-  return words+encoded;
+  return words + encoded + '_0_0_0_0';
 }

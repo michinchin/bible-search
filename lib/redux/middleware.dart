@@ -16,12 +16,6 @@ final searchMiddleware = (
   NextDispatcher next,
 ) {
   store.dispatch(SearchLoadingAction());
-  List<String> newSearchList = store.state.searchHistory;
-  newSearchList.add(action.searchQuery);
-  store.dispatch(SetSearchHistoryAction(
-      searchQuery: action.searchQuery,
-      searchQueries:
-          newSearchList.reversed.toSet().toList().reversed.toList()));
   SearchResults.fetch(
     words: action.searchQuery,
     translationIds: store.state.translations.formatIds(),
@@ -32,6 +26,12 @@ final searchMiddleware = (
     store.dispatch(SearchResultAction([]));
     store.dispatch(SearchErrorAction());
   });
+  List<String> newSearchList = store.state.searchHistory;
+  newSearchList.add(action.searchQuery);
+  store.dispatch(SetSearchHistoryAction(
+      searchQuery: action.searchQuery,
+      searchQueries:
+          newSearchList.reversed.toSet().toList().reversed.toList()));
   next(action);
 };
 
