@@ -38,7 +38,9 @@ class BibleSearchApp extends StatelessWidget {
             defaultBrightness: Brightness.light,
             data: (brightness) => ThemeData(
                   primarySwatch: Colors.orange,
-                  primaryColorBrightness: Brightness.light,
+                  primaryColorBrightness: store.state.isDarkTheme
+                      ? Brightness.dark
+                      : Brightness.light,
                   brightness: store.state.isDarkTheme
                       ? Brightness.dark
                       : Brightness.light,

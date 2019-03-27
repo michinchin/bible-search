@@ -31,14 +31,20 @@ AppState _onLoad(AppState state, SearchLoadingAction action) =>
 AppState _onError(AppState state, SearchErrorAction action) =>
     state.copyWith(hasError: true);
 
-AppState _onResult(AppState state, SearchResultAction action) =>
-    state.copyWith(results: action.res, isFetchingSearch: false);
+AppState _onResult(AppState state, SearchResultAction action) {
+  if (action.res.length == 0) {
+    return state.copyWith(
+        results: [], isFetchingSearch: false, filteredResults: []);
+  } else {
+    return state.copyWith(results: action.res, isFetchingSearch: false);
+  }
+}
 
 AppState _onResultsChanged(AppState state, SetResultsAction action) =>
     state.copyWith(results: action.res);
 
 AppState _onFiltered(AppState state, SetFilteredResultsAction action) =>
-  state.copyWith(filteredResults: action.res);
+    state.copyWith(filteredResults: action.res);
 
 AppState _onSetSelectionMode(AppState state, SetSelectionModeAction action) {
   if (state.isInSelectionMode) {
@@ -83,4 +89,3 @@ AppState _onTestamentSet(AppState state, SetTestamentAction action) {
   }
   return state.copyWith(ntSelected: action.toggle);
 }
-

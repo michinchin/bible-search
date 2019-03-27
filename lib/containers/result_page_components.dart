@@ -268,14 +268,12 @@ class _CardViewState extends State<CardView> {
 
   @override
   Widget build(BuildContext context) {
-    var _controller = ScrollController();
     var res = widget.vm.filteredRes;
     var container = Container(
         key: PageStorageKey(
             widget.vm.searchQuery + '${res[0].ref}' + '${res.length}'),
         padding: EdgeInsets.all(10.0),
         child: ListView(
-          controller: _controller,
           children: _buildResults(res),
         ));
     return container;

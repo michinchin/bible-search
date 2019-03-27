@@ -23,6 +23,7 @@ class HomeModel {
 
   /// update the search history with current user prefs
   void updateSearchHistory(List<String> searchQueries) async {
+    searchQueries.removeWhere((s) => s.length == 0);
     await SharedPreferences.getInstance().then((prefs) {
       prefs.setStringList('searchHistory',
           searchQueries.reversed.toSet().toList().reversed.toList());

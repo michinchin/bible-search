@@ -86,7 +86,11 @@ class BibleTranslations {
 
   void selectTranslations(String id) {
     if (id.length == 0) {
-      return;
+      var tempData = this.data;
+      for (final t in tempData) {
+        t.isSelected = false;
+      }
+      this.data = tempData;
     } else {
       final arr = id.split('|').toList();
       final intArr = arr.map((e) => int.parse(e)).toList();

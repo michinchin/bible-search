@@ -15,8 +15,6 @@ final searchMiddleware = (
   SearchAction action,
   NextDispatcher next,
 ) {
-  // TODO: load new ads with each new search
-  // store array of NativeAds?
   store.dispatch(SearchLoadingAction());
   List<String> newSearchList = store.state.searchHistory;
   newSearchList.add(action.searchQuery);
@@ -31,6 +29,7 @@ final searchMiddleware = (
     store.dispatch(SearchResultAction(res));
     store.dispatch(SetFilteredResultsAction(filterModel.filterByBook(res, store.state.books)));
   }).catchError((e) {
+    store.dispatch(SearchResultAction([]));
     store.dispatch(SearchErrorAction());
   });
   next(action);
