@@ -1,7 +1,7 @@
 import 'package:bible_search/containers/result_card.dart';
-import 'package:bible_search/models/filter_model.dart';
 import 'package:bible_search/presentation/translation_book_filter.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:bible_search/presentation/results_page.dart';
 import 'package:tec_native_ad/tec_native_ad.dart';
@@ -84,7 +84,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
             AppBar(
               elevation: 0.0,
               brightness: Brightness.light,
-              backgroundColor: Colors.transparent,
+              backgroundColor: Theme.of(context).canvasColor,
               bottomOpacity: 0.0,
               toolbarOpacity: 0.0,
             ),
@@ -198,12 +198,6 @@ class _SearchAppBarState extends State<SearchAppBar> {
                                                             widget
                                                                 .changeTheme(b);
                                                           }),
-                                                      ListTile(
-                                                          leading: new Icon(
-                                                              Icons.videocam),
-                                                          title:
-                                                              new Text('Video'),
-                                                          onTap: () => {}),
                                                     ],
                                                   );
                                                 })
@@ -251,11 +245,13 @@ class _CardViewState extends State<CardView> {
   @override
   void initState() {
     super.initState();
-    nativeAdController = NativeAdController(
-        // test app id google provides
-        applicationId: 'ca-app-pub-5279916355700267/7203757709',
-        numberOfAds: 1,
-        updateLoadingState: updateLoadingState);
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      nativeAdController = NativeAdController(
+          // test app id google provides
+          applicationId: 'ca-app-pub-5279916355700267/7203757709',
+          numberOfAds: 1,
+          updateLoadingState: updateLoadingState);
+    }
   }
 
   void updateLoadingState(bool loading) {
@@ -314,7 +310,7 @@ class _CardViewState extends State<CardView> {
               ),
             ),
           ));
-      if (nativeAdController.adCount > 0 && res.length > 3) {
+      if (nativeAdController?.adCount ?? 0 > 0 && res.length > 3) {
         results.insert(
             3,
             TecNativeAd(

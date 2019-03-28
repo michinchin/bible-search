@@ -1,12 +1,11 @@
 import 'dart:core';
-import 'dart:io';
 import 'dart:math' as math;
 
+import 'package:bible_search/models/search_model.dart';
 import 'package:bible_search/presentation/all.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share/share.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../data/context.dart';
 import '../data/search_result.dart';
@@ -37,7 +36,14 @@ class ResultCard extends StatefulWidget {
 }
 
 class _ResultCardState extends State<ResultCard> {
+  var searchModel;
   var _currTag;
+
+  @override
+  initState(){
+    searchModel = SearchModel();
+    super.initState();
+  }
 
   _contextButtonPressed() {
     if (widget.res.verses[widget.res.currentVerseIndex].contextText.length ==
@@ -80,7 +86,7 @@ class _ResultCardState extends State<ResultCard> {
   _selectCard() {
     setState(() {
       widget.res.isSelected = !widget.res.isSelected;
-      widget.selectCard(widget.index,widget.res.isSelected);
+      widget.selectCard(widget.index, widget.res.isSelected);
     });
   }
 
@@ -109,168 +115,38 @@ class _ResultCardState extends State<ResultCard> {
     });
   }
 
-  _openTB() async {
-    var url = Platform.isIOS
-        ? 'bible://${widget.res.verses[widget.res.currentVerseIndex].a}' +
-            '/${widget.res.bookId}/${widget.res.chapterId}/${widget.res.verseId}'
-            //need a check to see if has bible app on android
-        : 'http://bible/${widget.res.verses[widget.res.currentVerseIndex].id}' +
-            '/${widget.res.bookId}/${widget.res.chapterId}/${widget.res.verseId}';
+ 
 
-    if (await canLaunch(url)) {
-      await launch(url, universalLinksOnly: false);
-    } else {
-      //couldn't launch, open app store
-      print('Could not launch $url');
-      _showAppStoreDialog();
-    }
-  }
-
-  void _showAppStoreDialog() {
-    // final navigatorKey = GlobalKey<NavigatorState>();
-    // final context = navigatorKey.currentState.overlay.context;
-    final dialog = AlertDialog(
-      title: Text('Download TecartaBible'),
-      content: Text(
-          'Easily navigate to scriptures in the Bible by downloading our Bible app.'),
-      actions: [
-        FlatButton(
-          child: Text('No Thanks'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        FlatButton(
-          child: Text('Okay'),
-          onPressed: () async {
-            var url = Platform.isIOS
-                ? 'itms-apps://itunes.apple.com/app/id325955298'
-                : 'https://play.google.com/store/apps/details?id=com.tecarta.TecartaBible';
-            if (await canLaunch(url)) {
-              try {
-                await launch(url);
-              } catch (e) {
-                Navigator.of(context).pop();
-                print(e);
-              }
-            } else {
-              Navigator.of(context).pop();
-            }
-          },
-        )
-      ],
-    );
-    showDialog(context: context, builder: (x) => dialog);
-  }
-
-  List<TextSpan> _formatWords(String paragraph) {
-    final List<String> contentText = paragraph.split(' ');
-    List<TextSpan> content = contentText.map((s) => TextSpan(text: s)).toList();
-    var contentCopy = <TextSpan>[];
-    var keywords = widget.keywords;
-    urlEncodingExceptions
-        .forEach((k, v) => keywords = keywords.replaceAll(RegExp(k), v));
-    final formattedKeywords = keywords.toLowerCase().split(' ');
-
-    //convert each contentText item to a TextSpan
-    // if matches a keyword, change to bold TextSpan
-    for (var i = 0; i < content.length; i++) {
-      var text = <TextSpan>[];
-      final w = content[i].text;
-      for (final search in formattedKeywords) {
-        if (w.toLowerCase().contains(search)) {
-          final start = w.toLowerCase().indexOf(search);
-          final end = start + search.length;
-          final prefix = w.substring(0, start);
-          final suffix = w.substring(end, w.length);
-          if (prefix.length > 0) {
-            text.add(TextSpan(text: prefix));
-          }
-          if (prefix.length == 0 && suffix.length == 0) {
-            text.add(TextSpan(
-                text: w + ' ', style: TextStyle(fontWeight: FontWeight.bold)));
-          } else {
-            suffix.length > 0
-                ? text.add(TextSpan(
-                    text: search,
-                    style: TextStyle(fontWeight: FontWeight.bold)))
-                : text.add(TextSpan(
-                    text: search + ' ',
-                    style: TextStyle(fontWeight: FontWeight.bold)));
-          }
-          if (suffix.length > 0) {
-            text.add(TextSpan(text: suffix + ' '));
-          }
-        }
-      }
-      (text.length > 0)
-          ? text.forEach((ts) {
-              contentCopy.add(ts);
-            })
-          : contentCopy.add(TextSpan(text: w + ' '));
-    }
-    return contentCopy;
-  }
-
+  
   @override
   Widget build(BuildContext context) {
-    final Text nonContextTitle = Text(
-        '${widget.res.ref} ${widget.res.verses[widget.res.currentVerseIndex].a}');
-    final Text contextTitle = Text(
-        '${widget.bookNames.where((book) => book.id == widget.res.bookId).first.name} ' +
-            '${widget.res.chapterId}:' +
-            '${widget.res.verses[widget.res.currentVerseIndex].verseIdx[0]}' +
-            '-${widget.res.verses[widget.res.currentVerseIndex].verseIdx[1]} ' +
-            '${widget.res.verses[widget.res.currentVerseIndex].a}');
-    final String content = !widget.res.contextExpanded
-        ? widget.res.verses[widget.res.currentVerseIndex].verseContent
-        : widget.res.verses[widget.res.currentVerseIndex].contextText;
-
-    final colorScheme = Theme.of(context).brightness == Brightness.dark
-        ? Colors.black
-        : Colors.white;
-
-    final oppColorScheme = Theme.of(context).brightness == Brightness.dark
-        ? Colors.white
-        : Colors.black;
-
-    final _formattedTitle = Text(
-      widget.res.contextExpanded ? contextTitle.data : nonContextTitle.data,
-      style: TextStyle(
-          fontWeight: FontWeight.bold,
-          color: widget.res.isSelected ? colorScheme : oppColorScheme),
+    final model = ResultCardModel(
+      res: widget.res,
+      keywords: widget.keywords,
+      bookNames: widget.bookNames,
+      context: context,
+      formatWords: searchModel.formatWords,
     );
-
-    final _formattedText = RichText(
-      text: TextSpan(
-        style: !widget.res.isSelected
-            ? Theme.of(context).textTheme.body1
-            : TextStyle(
-                color: colorScheme,
-              ),
-        children: _formatWords(content),
-      ),
-    );
-
-    final _iconColor = widget.res.isSelected ? colorScheme : oppColorScheme;
 
     final allButton = FlatButton(
       child: Text('ALL'),
       onPressed: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute<dynamic>(builder: (context) {
-          return AllPage(
-              title: widget.res.ref,
-              bcv: [
-                widget.res.bookId,
-                widget.res.chapterId,
-                widget.res.verseId
-              ],
-              formatWords: _formatWords,
-            );
-        }));
+        Navigator.of(context).push(MaterialPageRoute<dynamic>(
+            builder: (context) {
+              return AllPage(
+                res: widget.res,
+                bcv: [
+                  widget.res.bookId,
+                  widget.res.chapterId,
+                  widget.res.verseId
+                ],
+                model:searchModel,
+                keywords: widget.keywords,
+              );
+            },
+            fullscreenDialog: true));
       },
-      textColor: widget.res.isSelected ? colorScheme : oppColorScheme,
+      textColor: widget.res.isSelected ? model.colorScheme : model.oppColorScheme,
       splashColor: widget.res.isSelected
           ? Colors.transparent
           : Theme.of(context).accentColor,
@@ -288,14 +164,14 @@ class _ResultCardState extends State<ResultCard> {
           buttonColor = _currTag == each.id
               ? Theme.of(context).cardColor
               : Theme.of(context).accentColor;
-          textColor = _currTag == each.id ? oppColorScheme : colorScheme;
+          textColor = _currTag == each.id ? model.oppColorScheme : model.colorScheme;
         } else {
           buttonColor = _currTag == each.id
               ? Theme.of(context).accentColor
               : Colors.transparent;
           textColor = _currTag == each.id
               ? Theme.of(context).cardColor
-              : oppColorScheme;
+              : model.oppColorScheme;
         }
 
         buttons.add(FlatButton(
@@ -344,13 +220,13 @@ class _ResultCardState extends State<ResultCard> {
       ListTile(
         title: Padding(
             padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-            child: _formattedTitle),
-        subtitle: _formattedText,
+            child: model.formattedTitle),
+        subtitle: model.formattedText,
       ),
       Align(
           alignment: Alignment.centerRight,
           child: IconButton(
-            color: _iconColor,
+            color: model.iconColor,
             icon: Icon(Icons.expand_less),
             onPressed: _expandButtonPressed,
           )),
@@ -358,7 +234,7 @@ class _ResultCardState extends State<ResultCard> {
         ButtonTheme.bar(
           child: ButtonBar(alignment: MainAxisAlignment.start, children: [
             IconButton(
-              color: _iconColor,
+              color: model.iconColor,
               icon: Transform(
                 transform: new Matrix4.rotationZ(math.pi / 2),
                 alignment: FractionalOffset.center,
@@ -376,37 +252,37 @@ class _ResultCardState extends State<ResultCard> {
           child: ButtonBar(
             children: <Widget>[
               IconButton(
-                color: _iconColor,
+                color: model.iconColor,
                 icon: Icon(Icons.content_copy),
-                onPressed: () {
-                  Clipboard.setData(ClipboardData(
-                          text: _formattedTitle.data + '\n' + content))
-                      .then((_) {
-                    Scaffold.of(context).showSnackBar(
-                        SnackBar(content: Text('Successfully Copied!')));
-                  });
-                }, // set state here
+                onPressed: () => searchModel.copyPressed(text: model.formattedTitle.data + '\n' + model.content,context: context), // set state here
               ),
               IconButton(
-                color: _iconColor,
+                color: model.iconColor,
                 icon: Icon(Icons.share),
                 onPressed: () {
-                   String verseContent = widget.res.contextExpanded
-                      ? contextTitle.data +
+                  String verseContent = widget.res.contextExpanded
+                      ? model.contextTitle.data +
                           '\n' +
                           widget.res.verses[widget.res.currentVerseIndex]
                               .contextText
-                      : nonContextTitle.data +
+                      : model.nonContextTitle.data +
                           '\n' +
                           widget.res.verses[widget.res.currentVerseIndex]
                               .verseContent;
                   Share.share(verseContent);
-                }, // set state here
+                }, 
               ),
               IconButton(
-                color: _iconColor,
+                color: model.iconColor,
                 icon: Icon(Icons.exit_to_app),
-                onPressed: _openTB, // set state here
+                onPressed: () => searchModel.openTB(
+                  a: widget.res.verses[widget.res.currentVerseIndex].a,
+                  id: widget.res.verses[widget.res.currentVerseIndex].id,
+                  bookId: widget.res.bookId,
+                  chapterId: widget.res.chapterId,
+                  verseId: widget.res.verseId,
+                  context: context,
+                ), 
               ),
             ],
           ),
@@ -419,13 +295,13 @@ class _ResultCardState extends State<ResultCard> {
       ListTile(
         title: Padding(
             padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-            child: _formattedTitle),
-        subtitle: _formattedText,
+            child: model.formattedTitle),
+        subtitle: model.formattedText,
       ),
       Align(
           alignment: Alignment.centerRight,
           child: IconButton(
-            color: _iconColor,
+            color: model.iconColor,
             icon: Icon(Icons.expand_more),
             onPressed: () => _expandButtonPressed(),
           ))
@@ -454,5 +330,62 @@ class _ResultCardState extends State<ResultCard> {
         ),
       ),
     );
+  }
+}
+
+class ResultCardModel{
+  final SearchResult res;
+  final List bookNames;
+  final BuildContext context;
+  final List<TextSpan> Function(String, String) formatWords;
+  final String keywords;
+  Text nonContextTitle;
+  Text contextTitle;
+  String content;
+  Text formattedTitle;
+  RichText formattedText;
+  Color colorScheme;
+  Color oppColorScheme;
+  Color iconColor;
+
+  ResultCardModel({this.res, this.keywords, this.bookNames, this.context, this.formatWords}){
+    nonContextTitle = Text(
+        '${res.ref} ${res.verses[res.currentVerseIndex].a}');
+    contextTitle = Text(
+        '${bookNames.where((book) => book.id == res.bookId).first.name} ' +
+            '${res.chapterId}:' +
+            '${res.verses[res.currentVerseIndex].verseIdx[0]}' +
+            '-${res.verses[res.currentVerseIndex].verseIdx[1]} ' +
+            '${res.verses[res.currentVerseIndex].a}');
+    content  = !res.contextExpanded
+        ? res.verses[res.currentVerseIndex].verseContent
+        : res.verses[res.currentVerseIndex].contextText;
+
+  colorScheme = Theme.of(context).brightness == Brightness.dark
+        ? Colors.black
+        : Colors.white;
+
+     oppColorScheme = Theme.of(context).brightness == Brightness.dark
+        ? Colors.white
+        : Colors.black;
+    formattedTitle = Text(
+      res.contextExpanded ? contextTitle.data : nonContextTitle.data,
+      style: TextStyle(
+          fontWeight: FontWeight.bold,
+          color: res.isSelected ? colorScheme : oppColorScheme),
+    );
+
+    formattedText = RichText(
+      text: TextSpan(
+        style: !res.isSelected
+            ? Theme.of(context).textTheme.body1
+            : TextStyle(
+                color: colorScheme,
+              ),
+        children: formatWords(content,keywords),
+      ),
+    );
+
+      iconColor = res.isSelected ? colorScheme : oppColorScheme;
   }
 }

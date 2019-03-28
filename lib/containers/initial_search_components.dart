@@ -1,5 +1,4 @@
 import 'package:bible_search/presentation/translation_book_filter.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter/cupertino.dart';

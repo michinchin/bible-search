@@ -103,7 +103,7 @@ class AppState {
 
   String get selectedText{
     var text = "";
-    for (final each in this.results) {
+    for (final each in this.filteredResults) {
       final currVerse = each.verses[each.currentVerseIndex];
       if (each.isSelected && each.contextExpanded) {
         text +=

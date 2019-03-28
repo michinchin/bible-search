@@ -1,5 +1,4 @@
 import 'package:bible_search/data/votd_image.dart';
-import 'package:bible_search/main.dart';
 import 'package:bible_search/models/app_state.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
@@ -150,11 +149,6 @@ class InitialSearchPage extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: Icon(Icons.settings),
-                title: Text('Settings'),
-                onTap: () {},
-              ),
-              ListTile(
                 leading: Icon(Icons.remove_circle),
                 title: Text('Remove Ads'),
                 onTap: () {},
@@ -163,7 +157,29 @@ class InitialSearchPage extends StatelessWidget {
                 leading: Icon(Icons.clear_all),
                 title: Text('Clear Search History'),
                 onTap: () {
-                  vm.updateSearchHistory([]);
+                  showDialog(
+                      builder: (BuildContext context){ 
+                        return AlertDialog(
+                        title: Text('Are you sure?'),
+                        actions: <Widget>[
+                           FlatButton(
+                            child: Text("Cancel"),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          
+                          FlatButton(
+                            child: Text("Yes"),
+                            onPressed: () {
+                              vm.updateSearchHistory([]);
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                      }, context: context
+                    );
                 },
               ),
             ],
