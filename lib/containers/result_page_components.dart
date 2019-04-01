@@ -298,21 +298,23 @@ class BibleSearchDelegate extends SearchDelegate {
 
   @override
   ThemeData appBarTheme(BuildContext context) {
-    return Theme.of(context).brightness == Brightness.dark 
-    ? Theme.of(context)
-    : super.appBarTheme(context);
+    return Theme.of(context).brightness == Brightness.dark
+        ? Theme.of(context)
+        : super.appBarTheme(context);
   }
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: Icon(Icons.close),
-        onPressed: () {
-          query = '';
-        },
-      )
-    ];
+    return query.length > 0
+        ? [
+            IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                query = '';
+              },
+            )
+          ]
+        : [];
   }
 
   @override
@@ -334,6 +336,21 @@ class BibleSearchDelegate extends SearchDelegate {
     return Container();
   }
 
+  Widget _getFormattedSearchQueries(String outer, String inner){
+    final arr = outer.split(inner);
+    List<TextSpan> spans = [];
+    for (final each in arr) {
+      spans.add(TextSpan(text: each,style: TextStyle(color: Colors.grey)));
+      spans.add(TextSpan(text: inner, style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)));
+    }
+    spans.removeLast();
+    return RichText(
+      text: TextSpan(
+        children: spans,
+      ),
+    );
+  }
+
   @override
   Widget buildSuggestions(BuildContext context) {
     final List results = searchHistory
@@ -344,7 +361,7 @@ class BibleSearchDelegate extends SearchDelegate {
     return ListView(
       children: results
           .map<ListTile>((a) => ListTile(
-                title: Text(a),
+                title: query.length == 0 ? Text(a) : _getFormattedSearchQueries(a, query),
                 onTap: () {
                   query = a;
                   search(query);
