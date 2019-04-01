@@ -75,6 +75,9 @@ class SearchResults {
 
   static Future<List<SearchResult>> fetch(
       {String words, String translationIds}) async {
+    if ((words?.trim() ?? '').length == 0){
+      return SearchResults(data:[]).data;
+    }
     final hostAndPath = '$kTBApiServer/search';
     final cachePath = '$kTBStreamServer/cache';
     final tecCache = TecCache();
@@ -85,7 +88,6 @@ class SearchResults {
       url: fullCachedPath,
       requestType: 'get',
     );
-
     if (cacheJson != null) {
       return SearchResults.fromJson(cacheJson).data;
     } else {
@@ -138,7 +140,7 @@ String formatWords(String keywords) {
 }
 
 String getCacheKey(String keywords, String translationIds) {
-  keywords = keywords.toLowerCase();
+  keywords = keywords?.toLowerCase();
   var words = keywords.replaceAll(' ', '_');
   words += '_';
   var encoded = '';

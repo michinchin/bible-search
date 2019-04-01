@@ -7,28 +7,14 @@ import 'package:bible_search/presentation/results_page.dart';
 import 'package:tec_native_ad/tec_native_ad.dart';
 
 class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
-  final String title;
-  final Function(String) update;
+  final ResultsViewModel model;
   final Function(BuildContext, bool, String) shareSelection;
-  final bool isInSelectionMode;
-  final String Function() getText;
-  final Function() changeToSelectionMode;
-  final Function(bool) changeTheme;
-  final int numSelected;
-  final bool isDarkTheme;
 
-  SearchAppBar(
-      {Key key,
-      @required this.title,
-      @required this.update,
-      @required this.shareSelection,
-      @required this.getText,
-      this.isInSelectionMode = false,
-      @required this.changeToSelectionMode,
-      @required this.numSelected,
-      @required this.isDarkTheme,
-      @required this.changeTheme})
-      : super(key: key);
+  SearchAppBar({
+    Key key,
+    @required this.model,
+    @required this.shareSelection,
+  }) : super(key: key);
 
   Size get preferredSize {
     return new Size.fromHeight(kToolbarHeight);
@@ -40,32 +26,33 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _SearchAppBarState extends State<SearchAppBar> {
   // only expose a getter to prevent bad usage
-  TextEditingController _controller;
   bool _isInSelectionMode;
 
   @override
   initState() {
-    _isInSelectionMode = widget.isInSelectionMode;
-    _controller = TextEditingController(text: widget.title);
+    _isInSelectionMode = widget.model.isInSelectionMode;
     super.initState();
   }
 
   @override
   void didUpdateWidget(SearchAppBar oldWidget) {
-    _isInSelectionMode = widget.isInSelectionMode;
+    _isInSelectionMode = widget.model.isInSelectionMode;
     super.didUpdateWidget(oldWidget);
   }
 
-  void onFieldChange(String newValue) {
-    setState(() {
-      _controller.text = newValue;
-    });
+  void _showSearch() {
+    showSearch(
+      context: context,
+      delegate: BibleSearchDelegate(
+          searchHistory: widget.model.searchHistory,
+          search: widget.model.updateSearchResults),
+    );
   }
 
   void _changeToSelectionMode() {
     setState(() {
       _isInSelectionMode = !_isInSelectionMode;
-      widget.changeToSelectionMode();
+      widget.model.changeToSelectionMode();
     });
   }
 
@@ -106,17 +93,12 @@ class _SearchAppBarState extends State<SearchAppBar> {
                         ]),
                     child: Center(
                       child: TextField(
-                        controller: _controller,
-                        onChanged: (s) {
-                          setState(() {});
-                        },
-                        onSubmitted: (s) {
-                          setState(() {
-                            widget.update(s);
-                          });
-                        },
+                        enableInteractiveSelection: false,
+                        focusNode: FocusNode(),
+                        onTap: () => _showSearch(),
                         textAlign: TextAlign.left,
                         decoration: InputDecoration(
+                          hintText: widget.model.searchQuery ?? 'Search Here',
                           prefixIcon: IconButton(
                             icon: Icon(Icons.arrow_back),
                             onPressed: () => Navigator.of(context).pop(),
@@ -125,22 +107,6 @@ class _SearchAppBarState extends State<SearchAppBar> {
                           suffixIcon: Stack(
                               alignment: Alignment.centerRight,
                               children: [
-                                Padding(
-                                  padding: const EdgeInsetsDirectional.only(
-                                      end: 80.0),
-                                  child: (_controller.text.length > 0)
-                                      ? IconButton(
-                                          color:
-                                              Theme.of(context).disabledColor,
-                                          icon: Icon(Icons.close),
-                                          onPressed: () {
-                                            setState(() {
-                                              _controller.clear();
-                                            });
-                                          },
-                                        )
-                                      : null,
-                                ),
                                 Padding(
                                   padding: const EdgeInsetsDirectional.only(
                                       end: 40.0),
@@ -174,6 +140,8 @@ class _SearchAppBarState extends State<SearchAppBar> {
                                                           secondary: Icon(Icons
                                                               .lightbulb_outline),
                                                           value: widget
+                                                              .model
+                                                              .state
                                                               .isDarkTheme,
                                                           title: Text(
                                                               'Light/Dark Mode'),
@@ -195,7 +163,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                                                                   : Brightness
                                                                       .light,
                                                             ));
-                                                            widget
+                                                            widget.model
                                                                 .changeTheme(b);
                                                           }),
                                                     ],
@@ -209,7 +177,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                     ))),
           ])
         : AppBar(
-            title: Text('${widget.numSelected}'),
+            title: Text('${widget.model.state.numSelected}'),
             leading: IconButton(
               icon: Icon(Icons.close),
               onPressed: () => _changeToSelectionMode(),
@@ -217,13 +185,13 @@ class _SearchAppBarState extends State<SearchAppBar> {
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.content_copy),
-                onPressed: () =>
-                    widget.shareSelection(context, true, widget.getText()),
+                onPressed: () => widget.shareSelection(
+                    context, true, widget.model.getSelectedText()),
               ),
               IconButton(
                 icon: Icon(Icons.share),
-                onPressed: () =>
-                    widget.shareSelection(context, false, widget.getText()),
+                onPressed: () => widget.shareSelection(
+                    context, false, widget.model.getSelectedText()),
               )
             ],
           );
@@ -245,13 +213,11 @@ class _CardViewState extends State<CardView> {
   @override
   void initState() {
     super.initState();
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      nativeAdController = NativeAdController(
-          // test app id google provides
-          applicationId: 'ca-app-pub-5279916355700267/7203757709',
-          numberOfAds: 1,
-          updateLoadingState: updateLoadingState);
-    }
+    nativeAdController = NativeAdController(
+        // test app id google provides
+        applicationId: 'ca-app-pub-5279916355700267/7203757709',
+        numberOfAds: 1,
+        updateLoadingState: updateLoadingState);
   }
 
   void updateLoadingState(bool loading) {
@@ -310,7 +276,7 @@ class _CardViewState extends State<CardView> {
               ),
             ),
           ));
-      if (nativeAdController?.adCount ?? 0 > 0 && res.length > 3) {
+      if ((nativeAdController?.adCount ?? 0) > 0 && res.length > 3) {
         results.insert(
             3,
             TecNativeAd(
@@ -322,5 +288,70 @@ class _CardViewState extends State<CardView> {
       }
     }
     return results;
+  }
+}
+
+class BibleSearchDelegate extends SearchDelegate {
+  final List<String> searchHistory;
+  final Function(String) search;
+  BibleSearchDelegate({this.searchHistory, this.search});
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark 
+    ? Theme.of(context)
+    : super.appBarTheme(context);
+  }
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.close),
+        onPressed: () {
+          query = '';
+        },
+      )
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back_ios),
+      onPressed: () {
+        close(context, searchHistory.last);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    if (searchHistory.last != query) {
+      search(query);
+    }
+    close(context,null);
+    return Container();
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final List results = searchHistory
+        .where((a) => (a?.toLowerCase() ?? '').contains(query))
+        .toList()
+        .reversed
+        .toList();
+    return ListView(
+      children: results
+          .map<ListTile>((a) => ListTile(
+                title: Text(a),
+                onTap: () {
+                  query = a;
+                  search(query);
+                  close(context, null);
+                },
+              ))
+          .toList(),
+    );
   }
 }

@@ -96,15 +96,8 @@ class _ResultsPageState extends State<ResultsPage> {
         builder: (BuildContext context, ResultsViewModel vm) {
           return Scaffold(
               appBar: SearchAppBar(
-                title: vm.searchQuery,
-                update: vm.updateSearchResults,
-                getText: vm.getSelectedText,
+                model: vm,
                 shareSelection: _shareSelection,
-                numSelected: vm.state.numSelected,
-                isInSelectionMode: vm.isInSelectionMode,
-                changeToSelectionMode: vm.changeToSelectionMode,
-                isDarkTheme: vm.state.isDarkTheme,
-                changeTheme: vm.changeTheme,
               ),
               body: SafeArea(
                   child: GestureDetector(
@@ -120,7 +113,8 @@ class ResultsViewModel {
   final AppState state;
   final String searchQuery;
   final List<SearchResult> searchResults;
-    final List<SearchResult>filteredRes;
+  final List<SearchResult> filteredRes;
+  final List<String> searchHistory;
 
   final BibleTranslations translations;
   final List<Book> bookNames;
@@ -136,6 +130,7 @@ class ResultsViewModel {
     this.state,
     this.searchQuery,
     this.searchResults,
+    this.searchHistory,
     this.translations,
     this.bookNames,
     this.isInSelectionMode,
@@ -152,6 +147,7 @@ class ResultsViewModel {
       state: store.state,
       searchQuery: store.state.searchQuery,
       searchResults: store.state.results,
+      searchHistory: store.state.searchHistory,
       translations: store.state.translations,
       bookNames: store.state.books,
       isInSelectionMode: store.state.isInSelectionMode,
@@ -174,7 +170,8 @@ class ResultsViewModel {
       isInSelectionMode == other.isInSelectionMode &&
       state.numSelected == other.state.numSelected &&
       state.isDarkTheme == other.state.isDarkTheme &&
-      filteredRes == other.filteredRes;
+      filteredRes == other.filteredRes &&
+      searchHistory == other.searchHistory;
 
   @override
   int get hashCode =>
@@ -185,5 +182,6 @@ class ResultsViewModel {
       isInSelectionMode.hashCode ^
       state.numSelected.hashCode ^
       state.isDarkTheme.hashCode ^
-      filteredRes.hashCode;
+      filteredRes.hashCode ^
+      searchHistory.hashCode;
 }
