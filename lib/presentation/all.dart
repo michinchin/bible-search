@@ -47,20 +47,27 @@ class AllPage extends StatelessWidget {
                           '${res.ref} ${allResults[index].a}\n${allResults[index].text}';
                       return Card(
                           elevation: 2.0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
                           child: Container(
-                            padding: EdgeInsets.all(20.0),
+                            padding: EdgeInsets.all(15.0),
                             child: Row(
                               children: <Widget>[
                                 Expanded(
                                   child: Column(
-                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
-                                      Text(
-                                          store.state.translations.getFullName(
-                                                  allResults[index].id) +
-                                              '\n',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold)),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                            '\n'+ store.state.translations
+                                                    .getFullName(
+                                                        allResults[index].id) +
+                                                '\n',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold)),
+                                      ),
                                       RichText(
                                         text: TextSpan(
                                           style:
@@ -69,34 +76,65 @@ class AllPage extends StatelessWidget {
                                               allResults[index].text + '\n',
                                               keywords),
                                         ),
-                                      )
+                                      ),
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                onPressed: () =>
+                                                    model.copyPressed(
+                                                        text: text,
+                                                        context: context),
+                                                icon: Icon(Icons.content_copy),
+                                              ),
+                                              IconButton(
+                                                  onPressed: () =>
+                                                      Share.share(text),
+                                                  icon: Icon(Icons.share)),
+                                              IconButton(
+                                                onPressed: () => model.openTB(
+                                                      a: allResults[index].a,
+                                                      bookId: res.bookId,
+                                                      id: allResults[index].id,
+                                                      chapterId: res.chapterId,
+                                                      verseId: res.verseId,
+                                                      context: context,
+                                                    ),
+                                                icon: Icon(Icons.exit_to_app),
+                                              )
+                                            ]),
+                                      ),
                                     ],
                                   ),
                                 ),
-                                Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      IconButton(
-                                        onPressed: () => model.copyPressed(
-                                            text: text, context: context),
-                                        icon: Icon(Icons.content_copy),
-                                      ),
-                                      IconButton(
-                                          onPressed: () =>
-                                              Share.share(text),
-                                          icon: Icon(Icons.share)),
-                                      IconButton(
-                                        onPressed: () => model.openTB(
-                                              a: allResults[index].a,
-                                              bookId: res.bookId,
-                                              id: allResults[index].id,
-                                              chapterId: res.chapterId,
-                                              verseId: res.verseId,
-                                              context: context,
-                                            ),
-                                        icon: Icon(Icons.exit_to_app),
-                                      )
-                                    ]),
+                                // Row(
+                                //     mainAxisSize: MainAxisSize.min,
+                                //     children: [
+                                //       IconButton(
+                                //         onPressed: () => model.copyPressed(
+                                //             text: text, context: context),
+                                //         icon: Icon(Icons.content_copy),
+                                //       ),
+                                //       IconButton(
+                                //           onPressed: () =>
+                                //               Share.share(text),
+                                //           icon: Icon(Icons.share)),
+                                //       IconButton(
+                                //         onPressed: () => model.openTB(
+                                //               a: allResults[index].a,
+                                //               bookId: res.bookId,
+                                //               id: allResults[index].id,
+                                //               chapterId: res.chapterId,
+                                //               verseId: res.verseId,
+                                //               context: context,
+                                //             ),
+                                //         icon: Icon(Icons.exit_to_app),
+                                //       )
+                                //     ]),
                               ],
                             ),
                           ));

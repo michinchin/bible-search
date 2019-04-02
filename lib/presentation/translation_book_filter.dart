@@ -1,3 +1,4 @@
+import 'package:bible_search/containers/expandable_checkbox_list_tile.dart';
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/models/app_state.dart';
 import 'package:bible_search/redux/actions.dart';
@@ -21,76 +22,93 @@ class TranslationBookFilterPage extends StatelessWidget {
     return StoreConnector<AppState, FilterViewModel>(converter: (store) {
       return FilterViewModel.fromStore(store);
     }, builder: (BuildContext context, FilterViewModel vm) {
-      List<Widget> _createTranslationList() {
-        var _translationList = <Widget>[];
-
-        for (var i = 0; i < vm.translations.data.length; i++) {
-          _translationList.add(CheckboxListTile(
-            onChanged: (bool b) => vm.selectTranslation(b, i),
-            value: vm.translations.data[i].isSelected,
-            title: Text(vm.translations.data[i].a),
-            subtitle: Text('${vm.translations.data[i].name}'),
-            controlAffinity: ListTileControlAffinity.leading,
+      List<Widget> _getChildren(Language lang) {
+        List<Widget> _translationList = [];
+        final translations =
+            vm.translations.data.where((t) => t.lang.id == lang.id).toList();
+        for (var i = 0; i < translations.length; i++) {
+          _translationList.add(Padding(
+            padding: EdgeInsets.only(left: 15.0),
+            child: CheckboxListTile(
+              onChanged: (bool b) => vm.selectTranslation(
+                  b, vm.translations.data.indexOf(translations[i])),
+              value: translations[i].isSelected,
+              title: Text(translations[i].a),
+              subtitle: Text('${translations[i].name}'),
+              controlAffinity: ListTileControlAffinity.leading,
+            ),
           ));
-        }
-
-        for (var i = vm.languages.length - 1; i >= 0; i--) {
-          final lang = vm.languages[i];
-          _translationList.insert(
-              vm.translations.data.indexOf(vm.translations.data
-                  .firstWhere((test) => test.lang.a == lang.a)),
-              SwitchListTile(
-                onChanged: (bool b) {
-                  vm.selectLanguage(b, i);
-                },
-                value: lang.isSelected,
-                title: Text(lang.name),
-                secondary: Icon(Icons.library_books),
-              ));
         }
         return _translationList;
       }
 
-      Widget _buildTranslationWidgets() {
-        return Container(
-            padding: EdgeInsets.all(10.0),
-            child: ListView(
-              children: _createTranslationList(),
-            ));
+      List<Widget> _createLanguageList() {
+        var _languageList = <Widget>[];
+        for (var i = 0; i < vm.languages.length; i++) {
+          final lang = vm.languages[i];
+          _languageList.add(ExpandableCheckboxListTile(
+            controlAffinity: ListTileControlAffinity.leading,
+            onChanged: (bool b) {
+              vm.selectLanguage(b, i);
+            },
+            value: lang.isSelected,
+            title: Text(
+              lang.name,
+              style: Theme.of(context).textTheme.title,
+            ),
+            children: _getChildren(lang),
+            initiallyExpanded: lang.a == 'en' ? true : false,
+          ));
+        }
+        return _languageList;
       }
 
-      List<Widget> _createBookList({bool isOT}) {
+      List<Widget> _getBookChildren(bool isOT) {
         var _bookList = <Widget>[];
-        var isPortrait =
-            MediaQuery.of(context).orientation == Orientation.portrait;
-        _bookList.add(isOT
-            ? SwitchListTile(
-                onChanged: (bool b) {
-                  vm.selectBook(b, -2);
-                },
-                value: vm.otSelected,
-                title: Text(isPortrait ? 'OT' : 'Old Testament'),
-                secondary: Icon(Icons.library_books),
-              )
-            : SwitchListTile(
-                onChanged: (bool b) {
-                  vm.selectBook(b, -1);
-                },
-                value: vm.ntSelected,
-                title: Text(isPortrait ? 'NT' : 'New Testament'),
-                secondary: Icon(Icons.library_books),
-              ));
 
         for (var i = isOT ? 0 : 39;
             i < (isOT ? 39 : vm.bookNames.length);
             i++) {
-          _bookList.add(CheckboxListTile(
-            onChanged: (bool b) => vm.selectBook(b, i),
-            value: vm.bookNames[i].isSelected,
-            title: Text(vm.bookNames[i].name),
-            controlAffinity: ListTileControlAffinity.leading,
-          ));
+          _bookList.add(Padding(
+              padding: EdgeInsets.only(left: 15.0),
+              child: CheckboxListTile(
+                onChanged: (bool b) => vm.selectBook(b, i),
+                value: vm.bookNames[i].isSelected,
+                title: Text(vm.bookNames[i].name),
+                controlAffinity: ListTileControlAffinity.leading,
+              )));
         }
+        return _bookList;
+      }
+
+      List<Widget> _createBookList() {
+        var _bookList = <Widget>[];
+
+        _bookList.add(ExpandableCheckboxListTile(
+          controlAffinity: ListTileControlAffinity.leading,
+          onChanged: (bool b) {
+            vm.selectBook(b, -2);
+          },
+          value: vm.otSelected,
+          title: Text(
+            'Old Testament',
+            style: Theme.of(context).textTheme.title,
+          ),
+          children: _getBookChildren(true),
+        ));
+
+        _bookList.add(ExpandableCheckboxListTile(
+          controlAffinity: ListTileControlAffinity.leading,
+          onChanged: (bool b) {
+            vm.selectBook(b, -1);
+          },
+          value: vm.ntSelected,
+          title: Text(
+            'New Testament',
+            style: Theme.of(context).textTheme.title,
+          ),
+          children: _getBookChildren(false),
+        ));
         return _bookList;
       }
 
@@ -114,33 +132,14 @@ class TranslationBookFilterPage extends StatelessWidget {
           ),
           body: TabBarView(
             children: tabs.map((Tab tab) {
-              if (tab.text == "BOOK") {
-                return Container(
-                  child: Row(children: [
-                    Container(
-                      key: PageStorageKey(tab.text + 'OT'),
-                      height: MediaQuery.of(context).size.height,
-                      width: MediaQuery.of(context).size.width / 2,
-                      child: ListView(
-                        children: _createBookList(isOT: true),
-                      ),
-                    ),
-                    Container(
-                      key: PageStorageKey(tab.text + 'NT'),
-                      height: MediaQuery.of(context).size.height,
-                      width: MediaQuery.of(context).size.width / 2,
-                      child: ListView(
-                        children: _createBookList(isOT: false),
-                      ),
-                    ),
-                  ]),
-                );
-              } else {
-                return Container(
+              return Container(
                   key: PageStorageKey(tab.text),
-                  child: _buildTranslationWidgets(),
-                );
-              }
+                  padding: EdgeInsets.all(10.0),
+                  child: ListView(
+                    children: tab.text == "BOOK"
+                        ? _createBookList()
+                        : _createLanguageList(),
+                  ));
             }).toList(),
           ),
         ),

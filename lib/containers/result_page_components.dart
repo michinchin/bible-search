@@ -336,12 +336,13 @@ class BibleSearchDelegate extends SearchDelegate {
     return Container();
   }
 
-  Widget _getFormattedSearchQueries(String outer, String inner){
+  Widget _getFormattedSearchQueries(String outer, String inner, BuildContext context){
+    final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     final arr = outer.split(inner);
     List<TextSpan> spans = [];
     for (final each in arr) {
-      spans.add(TextSpan(text: each,style: TextStyle(color: Colors.grey)));
-      spans.add(TextSpan(text: inner, style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold)));
+      spans.add(TextSpan(text: each,style: TextStyle(color: isDarkTheme  ? Colors.grey[200] : Colors.grey)));
+      spans.add(TextSpan(text: inner, style: TextStyle(color: isDarkTheme  ? Colors.white : Colors.black,fontWeight: FontWeight.bold)));
     }
     spans.removeLast();
     return RichText(
@@ -361,7 +362,7 @@ class BibleSearchDelegate extends SearchDelegate {
     return ListView(
       children: results
           .map<ListTile>((a) => ListTile(
-                title: query.length == 0 ? Text(a) : _getFormattedSearchQueries(a, query),
+                title: query.length == 0 ? Text(a) : _getFormattedSearchQueries(a, query,context),
                 onTap: () {
                   query = a;
                   search(query);
