@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tec_cache/tec_cache.dart';
-
+import 'dart:core';
 import '../data/verse.dart';
 import '../tecarta.dart';
 
@@ -75,29 +75,32 @@ class SearchResults {
 
   static Future<List<SearchResult>> fetch(
       {String words, String translationIds}) async {
-    if ((words?.trim() ?? '').length == 0){
-      return SearchResults(data:[]).data;
+    if ((words?.trim() ?? '').length == 0) {
+      return SearchResults(data: []).data;
     }
     final hostAndPath = '$kTBApiServer/search';
     final cachePath = '$kTBStreamServer/cache';
     final tecCache = TecCache();
     final fullCachedPath =
         'https://$cachePath/${getCacheKey(words, translationIds)}.gz';
-
+    final fullPath =
+        'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=${formatWords(words)}&book=0' +
+            '&bookset=0&exact=0&phrase=0&searchVolumes=$translationIds';
     final cacheJson = await tecCache.jsonFromUrl(
       url: fullCachedPath,
       requestType: 'get',
     );
+
     if (cacheJson != null) {
+      debugPrint('Getting cached results from: ' + fullCachedPath);
       return SearchResults.fromJson(cacheJson).data;
     } else {
       final json = await tecCache.jsonFromUrl(
-        url:
-            'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=${formatWords(words)}&book=0' +
-                '&bookset=0&exact=0&phrase=0&searchVolumes=$translationIds',
+        url: fullPath,
         requestType: 'post',
       );
       if (json != null) {
+        debugPrint('Getting results from: ' + Uri.encodeFull(fullPath));
         return SearchResults.fromJson(json).data;
       } else {
         return SearchResults(data: []).data;
@@ -136,12 +139,17 @@ String formatWords(String keywords) {
       .forEach((k, v) => keywords = keywords.replaceAll(RegExp(k), v));
   List<String> wordList = keywords.split(" ");
   wordList.sort((a, b) => b.length.compareTo(a.length));
-  return wordList.length < 5 ? keywords : wordList.sublist(0, 4).join(" ");
+  return  wordList.sublist(0,wordList.length < 5 ? wordList.length : 4).join(" ");
 }
 
 String getCacheKey(String keywords, String translationIds) {
-  keywords = keywords?.toLowerCase();
+  keywords = keywords.toLowerCase();
+  keywords = formatWords(keywords);
+  // var klist = keywords.split(' ');
+  // klist.sort((f,l)=> f.length.compareTo(l.length));
+  // keywords = klist.join(' ');
   var words = keywords.replaceAll(' ', '_');
+
   words += '_';
   var encoded = '';
   final length = base64Map.length;

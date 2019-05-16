@@ -75,8 +75,6 @@ class SearchModel {
         .forEach((k, v) => keywords = keywords.replaceAll(RegExp(k), v));
     final formattedKeywords = keywords.toLowerCase().split(' ');
 
-    //convert each contentText item to a TextSpan
-    // if matches a keyword, change to bold TextSpan
     for (var i = 0; i < content.length; i++) {
       var text = <TextSpan>[];
       final w = content[i].text;

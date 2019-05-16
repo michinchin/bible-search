@@ -69,22 +69,46 @@ class TranslationBookFilterPage extends StatelessWidget {
         for (var i = isOT ? 0 : 39;
             i < (isOT ? 39 : vm.bookNames.length);
             i++) {
-          _bookList.add(Padding(
-              padding: EdgeInsets.only(left: 15.0),
-              child: CheckboxListTile(
-                onChanged: (bool b) => vm.selectBook(b, i),
-                value: vm.bookNames[i].isSelected,
-                title: Text(vm.bookNames[i].name),
-                controlAffinity: ListTileControlAffinity.leading,
-              )));
+          _bookList.add(ChoiceChip(
+            shape: StadiumBorder(
+                side: BorderSide(
+                    color: vm.bookNames[i].isSelected
+                        ? Theme.of(context).accentColor
+                        : Colors.black12)),
+            selectedColor: Theme.of(context).cardColor,
+            label: Text(
+              vm.bookNames[i].name,
+              style: TextStyle(
+                  fontSize: 12.0,
+                  color: vm.bookNames[i].isSelected
+                      ? Theme.of(context).accentColor
+                      : Colors.black45,
+                  fontWeight: vm.bookNames[i].isSelected
+                      ? FontWeight.bold
+                      : FontWeight.normal),
+            ),
+            backgroundColor: vm.bookNames[i].isSelected
+                ? Theme.of(context).cardColor
+                : Theme.of(context).cardColor,
+            onSelected: (bool b) => vm.selectBook(b, i),
+            selected: vm.bookNames[i].isSelected,
+          ));
         }
-        return _bookList;
+        return [
+          Wrap(
+              spacing: 5.0,
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              verticalDirection: VerticalDirection.down,
+              children: _bookList)
+        ];
       }
 
       List<Widget> _createBookList() {
         var _bookList = <Widget>[];
 
         _bookList.add(ExpandableCheckboxListTile(
+          initiallyExpanded: true,
           controlAffinity: ListTileControlAffinity.leading,
           onChanged: (bool b) {
             vm.selectBook(b, -2);
@@ -98,6 +122,7 @@ class TranslationBookFilterPage extends StatelessWidget {
         ));
 
         _bookList.add(ExpandableCheckboxListTile(
+          initiallyExpanded: true,
           controlAffinity: ListTileControlAffinity.leading,
           onChanged: (bool b) {
             vm.selectBook(b, -1);

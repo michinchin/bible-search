@@ -234,6 +234,7 @@ class _ResultCardState extends State<ResultCard> {
         ButtonTheme.bar(
           child: ButtonBar(alignment: MainAxisAlignment.start, children: [
             IconButton(
+              tooltip: "Context",
               color: model.iconColor,
               icon: Transform(
                 transform: new Matrix4.rotationZ(math.pi / 2),

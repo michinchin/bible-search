@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:bible_search/containers/result_card.dart';
+import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/presentation/translation_book_filter.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/foundation.dart';
@@ -120,7 +123,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                                         end: 0.0),
                                     child: IconButton(
                                       icon: Icon(Icons.more_horiz),
-                                      onPressed: () => {
+                                      onPressed: ()  {
                                             showModalBottomSheet(
                                                 context: context,
                                                 builder: (BuildContext c) {
@@ -168,7 +171,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                                                           }),
                                                     ],
                                                   );
-                                                })
+                                                });
                                           },
                                     )),
                               ]),
@@ -208,24 +211,15 @@ class CardView extends StatefulWidget {
 
 class _CardViewState extends State<CardView> {
   NativeAdController nativeAdController;
-  bool _loading = true;
+  final _adIndex = 3;
 
   @override
   void initState() {
     super.initState();
     nativeAdController = NativeAdController(
-        // test app id google provides
-        applicationId: 'ca-app-pub-5279916355700267/7203757709',
+        adUnitId: 'ca-app-pub-5279916355700267/7203757709',
         numberOfAds: 1,
-        updateLoadingState: updateLoadingState);
-  }
-
-  void updateLoadingState(bool loading) {
-    if (_loading != loading) {
-      setState(() {
-        _loading = loading;
-      });
-    }
+      );
   }
 
   @override
@@ -235,65 +229,63 @@ class _CardViewState extends State<CardView> {
         key: PageStorageKey(
             widget.vm.searchQuery + '${res[0].ref}' + '${res.length}'),
         padding: EdgeInsets.all(10.0),
-        child: ListView(
-          children: _buildResults(res),
+        child: ListView.builder(
+          itemBuilder: (context, i) {
+            if (i == 0) {
+              return Container(
+                  padding: EdgeInsets.all(10.0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: RichText(
+                      text: TextSpan(
+                        style: Theme.of(context).textTheme.caption,
+                        children: [
+                          TextSpan(
+                            text: 'Showing ${res.length} results for ',
+                          ),
+                          TextSpan(
+                              text: '${widget.vm.searchQuery}',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ));
+            } 
+            else if (i == _adIndex &&
+                (nativeAdController?.adCount ?? 0) > 0 &&
+                res.length > _adIndex) {
+              return TecNativeAd();
+            }
+            i -= 1;
+            if (i >= _adIndex && (nativeAdController?.adCount ?? 0) > 0) {
+              i -= 1;
+            }
+            if (i < res.length) {
+              return _buildRow(res[i], i);
+            }
+          },
         ));
     return container;
   }
 
-  List<Widget> _buildResults(List res) {
-    List<Widget> results = [];
-    for (var i = 0; i < res.length; i++) {
-      results.add(ResultCard(
-        index: i,
-        res: res[i],
-        keywords: widget.vm.searchQuery,
-        isInSelectionMode: widget.vm.isInSelectionMode,
-        selectCard: widget.vm.selectCard,
-        bookNames: widget.vm.bookNames,
-        toggleSelectionMode: widget.vm.changeToSelectionMode,
-      ));
-    }
-    if (res.length > 0) {
-      results.insert(
-          0,
-          Container(
-            padding: EdgeInsets.all(10.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: RichText(
-                text: TextSpan(
-                  style: Theme.of(context).textTheme.caption,
-                  children: [
-                    TextSpan(
-                      text: 'Showing ${res.length} results for ',
-                    ),
-                    TextSpan(
-                        text: '${widget.vm.searchQuery}',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                  ],
-                ),
-              ),
-            ),
-          ));
-      if ((nativeAdController?.adCount ?? 0) > 0 && res.length > 3) {
-        results.insert(
-            3,
-            TecNativeAd(
-              index: 0,
-              loadingIndicator: _loading
-                  ? const Center(child: const CircularProgressIndicator())
-                  : null,
-            ));
-      }
-    }
-    return results;
+  Widget _buildRow(SearchResult res, int i) {
+    return ResultCard(
+      index: i,
+      res: res,
+      keywords: widget.vm.searchQuery,
+      isInSelectionMode: widget.vm.isInSelectionMode,
+      selectCard: widget.vm.selectCard,
+      bookNames: widget.vm.bookNames,
+      toggleSelectionMode: widget.vm.changeToSelectionMode,
+    );
   }
 }
 
 class BibleSearchDelegate extends SearchDelegate {
   final List<String> searchHistory;
   final Function(String) search;
+  var _closeButton;
+
   BibleSearchDelegate({this.searchHistory, this.search});
 
   @override
@@ -319,30 +311,39 @@ class BibleSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return IconButton(
+    _closeButton = IconButton(
       icon: Icon(Icons.arrow_back_ios),
       onPressed: () {
         close(context, searchHistory.last);
       },
     );
+    return _closeButton;
   }
 
   @override
   Widget buildResults(BuildContext context) {
-    if (searchHistory.last != query) {
+    Future.delayed(Duration(microseconds: 10), () {
       search(query);
-    }
-    close(context,null);
+      close(context, null);
+    });
     return Container();
   }
 
-  Widget _getFormattedSearchQueries(String outer, String inner, BuildContext context){
+  Widget _getFormattedSearchQueries(
+      String outer, String inner, BuildContext context) {
     final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     final arr = outer.split(inner);
     List<TextSpan> spans = [];
     for (final each in arr) {
-      spans.add(TextSpan(text: each,style: TextStyle(color: isDarkTheme  ? Colors.grey[200] : Colors.grey)));
-      spans.add(TextSpan(text: inner, style: TextStyle(color: isDarkTheme  ? Colors.white : Colors.black,fontWeight: FontWeight.bold)));
+      spans.add(TextSpan(
+          text: each,
+          style:
+              TextStyle(color: isDarkTheme ? Colors.grey[200] : Colors.grey)));
+      spans.add(TextSpan(
+          text: inner,
+          style: TextStyle(
+              color: isDarkTheme ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold)));
     }
     spans.removeLast();
     return RichText(
@@ -362,7 +363,9 @@ class BibleSearchDelegate extends SearchDelegate {
     return ListView(
       children: results
           .map<ListTile>((a) => ListTile(
-                title: query.length == 0 ? Text(a) : _getFormattedSearchQueries(a, query,context),
+                title: query.length == 0
+                    ? Text(a)
+                    : _getFormattedSearchQueries(a, query, context),
                 onTap: () {
                   query = a;
                   search(query);
