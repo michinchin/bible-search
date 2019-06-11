@@ -7,7 +7,6 @@ import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:bible_search/presentation/results_page.dart';
-import 'package:tec_native_ad/tec_native_ad.dart';
 
 class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
   final ResultsViewModel model;
@@ -45,6 +44,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
 
   void _showSearch() {
     showSearch(
+      query: widget.model.searchQuery,
       context: context,
       delegate: BibleSearchDelegate(
           searchHistory: widget.model.searchHistory,
@@ -210,16 +210,16 @@ class CardView extends StatefulWidget {
 }
 
 class _CardViewState extends State<CardView> {
-  NativeAdController nativeAdController;
+  // NativeAdController nativeAdController;
   final _adIndex = 3;
 
   @override
   void initState() {
     super.initState();
-    nativeAdController = NativeAdController(
-        adUnitId: 'ca-app-pub-5279916355700267/7203757709',
-        numberOfAds: 1,
-      );
+    // nativeAdController = NativeAdController(
+    //     adUnitId: 'ca-app-pub-5279916355700267/7203757709',
+    //     numberOfAds: 1,
+    //   );
   }
 
   @override
@@ -251,15 +251,15 @@ class _CardViewState extends State<CardView> {
                     ),
                   ));
             } 
-            else if (i == _adIndex &&
-                (nativeAdController?.adCount ?? 0) > 0 &&
-                res.length > _adIndex) {
-              return TecNativeAd();
-            }
+            // else if (i == _adIndex &&
+            //     (nativeAdController?.adCount ?? 0) > 0 &&
+            //     res.length > _adIndex) {
+            //   return TecNativeAd();
+            // }
             i -= 1;
-            if (i >= _adIndex && (nativeAdController?.adCount ?? 0) > 0) {
-              i -= 1;
-            }
+            // if (i >= _adIndex && (nativeAdController?.adCount ?? 0) > 0) {
+            //   i -= 1;
+            // }
             if (i < res.length) {
               return _buildRow(res[i], i);
             }

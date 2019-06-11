@@ -19,8 +19,8 @@ dependencies:
   url_launcher: ^5.0.1
   tec_cache:
     path: ../shared/tec_cache
-  tec_native_ad:
-    path: ../shared/tec_native_ad
+  # tec_native_ad:
+  #   path: ../shared/tec_native_ad
   flutter: 
     sdk: flutter
   draggable_scrollbar: ^0.0.4
