@@ -1,4 +1,4 @@
-import '../tecarta.dart';
+import '../tec_settings.dart';
 import 'package:tec_cache/tec_cache.dart';
 
 final _year = DateTime.now().year;
@@ -6,8 +6,7 @@ final _jan1 = new DateTime.utc(_year, 1, 1);
 final _ordinalDay = DateTime.now().difference(_jan1).inDays;
 final _parameters = '/$kTBApiVersion/home/votd-$_year.json';
 
-class VOTDImage{
-  
+class VOTDImage {
   final String url;
 
   VOTDImage({this.url});
@@ -25,7 +24,7 @@ class VOTDImage{
 
   static Future<VOTDImage> fetch() async {
     final json = await TecCache().jsonFromUrl(
-        url: 'https://$kTBStreamServer$_parameters',
+      url: 'https://$kTBStreamServer$_parameters',
     );
     if (json != null) {
       return VOTDImage.fromJson(json);

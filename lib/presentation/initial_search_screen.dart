@@ -1,18 +1,21 @@
+import 'package:flutter/material.dart';
+
+import 'package:bible_search/containers/is_components.dart';
+
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
+
 import 'package:bible_search/data/votd_image.dart';
 import 'package:bible_search/models/app_state.dart';
 import 'package:bible_search/redux/actions.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:redux/redux.dart';
-import '../containers/initial_search_components.dart';
 
 // Initial Search Route (screen)
 //
 // This is the 'home' screen of the Bible Search app. It shows an app bar, a search bar,
 // and a list of recent searches.
 
-class InitialSearchPage extends StatelessWidget {
+class InitialSearchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _imageWidth = MediaQuery.of(context).size.width;
@@ -36,8 +39,11 @@ class InitialSearchPage extends StatelessWidget {
                       direction: DismissDirection.endToStart,
                       onDismissed: (direction) {
                         Scaffold.of(context).showSnackBar(SnackBar(
+                            backgroundColor: Theme.of(context).cardColor,
                             content: Text(
-                                'The search term "${words[index]}" has been removed')));
+                              'The search term "${words[index]}" has been removed',
+                              style: Theme.of(context).textTheme.body1,
+                            )));
                         words.removeWhere((w) => (w == words[index]));
                         vm.updateSearchHistory(words.reversed.toList());
                       },
@@ -158,28 +164,27 @@ class InitialSearchPage extends StatelessWidget {
                 title: Text('Clear Search History'),
                 onTap: () {
                   showDialog(
-                      builder: (BuildContext context){ 
+                      builder: (BuildContext context) {
                         return AlertDialog(
-                        title: Text('Are you sure?'),
-                        actions: <Widget>[
-                           FlatButton(
-                            child: Text("Cancel"),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          
-                          FlatButton(
-                            child: Text("Yes"),
-                            onPressed: () {
-                              vm.updateSearchHistory([]);
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                      }, context: context
-                    );
+                          title: Text('Are you sure?'),
+                          actions: <Widget>[
+                            FlatButton(
+                              child: Text("Cancel"),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                            FlatButton(
+                              child: Text("Yes"),
+                              onPressed: () {
+                                vm.updateSearchHistory([]);
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                      context: context);
                 },
               ),
             ],

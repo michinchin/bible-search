@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:tec_cache/tec_cache.dart';
 import 'dart:core';
+
+import 'package:tec_cache/tec_cache.dart';
+
 import '../data/verse.dart';
-import '../tecarta.dart';
+import '../tec_settings.dart';
 
 class SearchResult {
   final String ref;

@@ -1,15 +1,15 @@
 import 'dart:core';
 import 'dart:math' as math;
 
+import 'package:bible_search/data/context.dart';
+import 'package:bible_search/data/search_result.dart';
+import 'package:bible_search/data/verse.dart';
 import 'package:bible_search/models/search_model.dart';
-import 'package:bible_search/presentation/all.dart';
+import 'package:bible_search/presentation/all_translations_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share/share.dart';
 
-import '../data/context.dart';
-import '../data/search_result.dart';
-import '../data/verse.dart';
 
 class ResultCard extends StatefulWidget {
   final bool isInSelectionMode;
@@ -133,7 +133,7 @@ class _ResultCardState extends State<ResultCard> {
       onPressed: () {
         Navigator.of(context).push(MaterialPageRoute<dynamic>(
             builder: (context) {
-              return AllPage(
+              return AllTranslationsScreen(
                 res: widget.res,
                 bcv: [
                   widget.res.bookId,

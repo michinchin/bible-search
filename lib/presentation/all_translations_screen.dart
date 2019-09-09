@@ -1,17 +1,19 @@
+import 'package:flutter/material.dart';
+
+import 'package:share/share.dart';
+
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/main.dart';
 import 'package:bible_search/models/search_model.dart';
-import 'package:flutter/material.dart';
 import 'package:bible_search/Data/all_result.dart';
-import 'package:share/share.dart';
 
-class AllPage extends StatelessWidget {
+class AllTranslationsScreen extends StatelessWidget {
   final SearchResult res;
   final List bcv;
   final SearchModel model;
   final String keywords;
 
-  AllPage({this.bcv, this.res, this.model, this.keywords});
+  AllTranslationsScreen({this.bcv, this.res, this.model, this.keywords});
 
   @override
   Widget build(BuildContext context) {

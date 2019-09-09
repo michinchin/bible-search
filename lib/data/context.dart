@@ -1,4 +1,4 @@
-import 'package:bible_search/tecarta.dart';
+import 'package:bible_search/tec_settings.dart';
 import 'package:tec_cache/tec_cache.dart';
 
 class Context {

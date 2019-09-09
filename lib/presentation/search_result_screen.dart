@@ -1,24 +1,28 @@
+import 'package:bible_search/containers/sr_components.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'package:redux/redux.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:share/share.dart';
+
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/translation.dart';
+
 import 'package:bible_search/models/app_state.dart';
-import 'package:bible_search/containers/result_page_components.dart';
+
 import 'package:bible_search/redux/actions.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:redux/redux.dart';
 
-import 'package:share/share.dart';
-
-class ResultsPage extends StatefulWidget {
-  ResultsPage({Key key}) : super(key: key);
+class SearchResultScreen extends StatefulWidget {
+  SearchResultScreen({Key key}) : super(key: key);
 
   @override
-  _ResultsPageState createState() => _ResultsPageState();
+  _SearchResultScreenState createState() => _SearchResultScreenState();
 }
 
-class _ResultsPageState extends State<ResultsPage> {
+class _SearchResultScreenState extends State<SearchResultScreen> {
   void _shareSelection(BuildContext context, bool isCopy, String text) async {
     if (text.length > 0) {
       !isCopy
@@ -43,50 +47,10 @@ class _ResultsPageState extends State<ResultsPage> {
     );
   }
 
-  final _loadingView = Container(
-      padding: EdgeInsets.all(20.0),
-      child: Stack(children: [
-        ListView.builder(
-          itemCount: 15,
-          itemBuilder: (BuildContext context, int index) {
-            return Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Placeholder(
-                color: Theme.of(context).accentColor.withAlpha(100),
-                fallbackWidth: MediaQuery.of(context).size.width - 30,
-                fallbackHeight: MediaQuery.of(context).size.height / 5,
-              ),
-            );
-          },
-        ),
-        Center(
-          child: CircularProgressIndicator(),
-        )
-      ]));
-
-  Widget _noResultsView = Container(
-    padding: EdgeInsets.all(20.0),
-    child: Center(
-      child: Text(
-        'No Results',
-      ),
-    ),
-  );
-
   @override
   Widget build(BuildContext context) {
     //on translation change, the view should reload
     print('rebuilt ${DateTime.now().second}');
-
-    Widget getResultsView(ResultsViewModel vm) {
-      if (vm.state.isFetchingSearch) {
-        return _loadingView;
-      } else if (vm.filteredRes.length == 0) {
-        return _noResultsView;
-      } else if (!vm.state.isFetchingSearch && vm.filteredRes.length > 0) {
-        return CardView(vm);
-      }
-    }
 
     return StoreConnector<AppState, ResultsViewModel>(
         distinct: true,
@@ -95,16 +59,20 @@ class _ResultsPageState extends State<ResultsPage> {
         },
         builder: (BuildContext context, ResultsViewModel vm) {
           return Scaffold(
+              resizeToAvoidBottomInset: false,
               appBar: SearchAppBar(
                 model: vm,
                 shareSelection: _shareSelection,
               ),
-              body: SafeArea(
-                  child: GestureDetector(
+              body:  GestureDetector(
                       onTap: () {
                         FocusScope.of(context).requestFocus(FocusNode());
                       },
-                      child: getResultsView(vm))));
+                      child: vm.state.isFetchingSearch
+                          ? LoadingView()
+                          : vm.filteredRes.isEmpty
+                              ? NoResultsView()
+                              : CardView(vm)));
         });
   }
 }

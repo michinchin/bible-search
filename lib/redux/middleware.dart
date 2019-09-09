@@ -10,7 +10,7 @@ import 'package:bible_search/models/home_model.dart';
 final filterModel = FilterModel();
 final homeModel = HomeModel();
 
-final searchMiddleware = (
+Function searchMiddleware = (
   Store<AppState> store,
   SearchAction action,
   NextDispatcher next,
@@ -21,7 +21,8 @@ final searchMiddleware = (
     translationIds: store.state.translations.formatIds(),
   ).then((res) {
     store.dispatch(SearchResultAction(res));
-    store.dispatch(SetFilteredResultsAction(filterModel.filterByBook(res, store.state.books)));
+    store.dispatch(SetFilteredResultsAction(
+        filterModel.filterByBook(res, store.state.books)));
   }).catchError((e) {
     store.dispatch(SearchResultAction([]));
     store.dispatch(SearchErrorAction());
@@ -35,7 +36,7 @@ final searchMiddleware = (
   next(action);
 };
 
-final contextMiddleware = (
+Function contextMiddleware = (
   Store<AppState> store,
   ContextAction action,
   NextDispatcher next,
@@ -61,7 +62,7 @@ final contextMiddleware = (
 };
 
 /// Fetch verse of the day, init home page by loading theme and search history from user preferences, and load languages and bookNames
-final initHomeMiddleware = (
+Function initHomeMiddleware = (
   Store<AppState> store,
   InitHomeAction action,
   NextDispatcher next,
@@ -83,7 +84,7 @@ final initHomeMiddleware = (
   next(action);
 };
 
-final updateThemeMiddleware = (
+Function updateThemeMiddleware = (
   Store<AppState> store,
   SetThemeAction action,
   NextDispatcher next,
@@ -92,7 +93,7 @@ final updateThemeMiddleware = (
   next(action);
 };
 
-final updateSearchesMiddleware = (
+Function updateSearchesMiddleware = (
   Store<AppState> store,
   SetSearchHistoryAction action,
   NextDispatcher next,
@@ -101,7 +102,7 @@ final updateSearchesMiddleware = (
   next(action);
 };
 
-final initFilterMiddleware = (
+Function initFilterMiddleware = (
   Store<AppState> store,
   InitFilterAction action,
   NextDispatcher next,
@@ -114,7 +115,7 @@ final initFilterMiddleware = (
   next(action);
 };
 
-final updateTranslationsMiddleware = (
+Function updateTranslationsMiddleware = (
   Store<AppState> store,
   UpdateTranslationsAction action,
   NextDispatcher next,
@@ -126,7 +127,7 @@ final updateTranslationsMiddleware = (
   next(action);
 };
 
-final selectionMiddleware = (
+Function selectionMiddleware = (
   Store<AppState> store,
   SelectAction action,
   NextDispatcher next,
@@ -150,7 +151,8 @@ final selectionMiddleware = (
       store.dispatch(SetTestamentAction(bon[1], Test.OT));
       store.dispatch(SetTestamentAction(bon[2], Test.NT));
       store.dispatch(SetBookNamesAction(books));
-      store.dispatch(SetFilteredResultsAction(filterModel.filterByBook(store.state.results, books)));
+      store.dispatch(SetFilteredResultsAction(
+          filterModel.filterByBook(store.state.results, books)));
       break;
     case Select.LANGUAGE:
       final tl = filterModel.selectLang(store.state.languages[action.index],

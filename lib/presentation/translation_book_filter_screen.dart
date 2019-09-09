@@ -1,16 +1,20 @@
-import 'package:bible_search/containers/expandable_checkbox_list_tile.dart';
+import 'package:flutter/material.dart';
+
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
+
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/models/app_state.dart';
-import 'package:bible_search/redux/actions.dart';
-import 'package:flutter/material.dart';
 import 'package:bible_search/data/translation.dart';
-import 'package:redux/redux.dart';
-import 'package:flutter_redux/flutter_redux.dart';
 
-class TranslationBookFilterPage extends StatelessWidget {
+import 'package:bible_search/containers/f_components.dart';
+
+import 'package:bible_search/redux/actions.dart';
+
+class TranslationBookFilterScreen extends StatelessWidget {
   final int tabValue;
 
-  TranslationBookFilterPage({Key key, this.tabValue}) : super(key: key);
+  TranslationBookFilterScreen({Key key, this.tabValue}) : super(key: key);
 
   final List<Tab> tabs = <Tab>[
     Tab(text: 'BOOK'),

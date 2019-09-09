@@ -1,6 +1,6 @@
 import 'package:bible_search/models/app_state.dart';
-import 'package:bible_search/presentation/initial_search.dart';
-import 'package:bible_search/presentation/results_page.dart';
+import 'package:bible_search/presentation/initial_search_screen.dart';
+import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
@@ -47,11 +47,11 @@ class BibleSearchApp extends StatelessWidget {
               return MaterialApp(
                 initialRoute: '/',
                 routes: <String, WidgetBuilder>{
-                  '/results': (BuildContext context) => ResultsPage(),
+                  '/results': (BuildContext context) => SearchResultScreen(),
                 },
                 title: 'Bible Search',
                 theme: theme,
-                home: InitialSearchPage(),
+                home: InitialSearchScreen(),
               );
             }));
   }

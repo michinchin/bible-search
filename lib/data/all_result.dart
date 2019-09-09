@@ -1,4 +1,4 @@
-import 'package:bible_search/tecarta.dart';
+import 'package:bible_search/tec_settings.dart';
 import 'package:bible_search/data/translation.dart';
 import 'dart:async';
 import 'dart:convert' show json, utf8;
