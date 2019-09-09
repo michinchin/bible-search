@@ -9,13 +9,18 @@ import 'package:bible_search/redux/reducers.dart';
 import 'package:bible_search/redux/middleware.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
+import 'package:tec_util/tec_util.dart' as tec;
+
 final store = Store<AppState>(
   reducers,
   initialState: AppState.initial(),
   middleware: middleware,
 );
 
-void main() {  
+Future<void> main() async {
+  // Load preferences.
+  await tec.Prefs.shared.load();
+
   store.dispatch(InitHomeAction());
   store.dispatch(InitFilterAction());
   return runApp(BibleSearchApp(

@@ -13,26 +13,27 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
-  transparent_image: ^0.1.0
-  share: ^0.6.0+1
-  shared_preferences: ^0.5.1+1
-  url_launcher: ^5.0.1
-  tec_cache:
-    path: ../shared/tec_cache
-  # tec_native_ad:
-  #   path: ../shared/tec_native_ad
-  flutter: 
+  # Flutter default dependencies
+  flutter:
     sdk: flutter
-  draggable_scrollbar: ^0.0.4
+  cupertino_icons: ^0.1.2
+
+  #External dependencies
   connectivity: ^0.4.2
+  draggable_scrollbar: ^0.0.4
   dynamic_theme: ^1.0.1
   flutter_redux: ^0.5.3
   redux: ^3.0.0
-  # firebase_admob: ^0.8.0+3
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
+  share: ^0.6.0+1
+  shared_preferences: ^0.5.1+1
+  transparent_image: ^0.1.0
+  url_launcher: ^5.0.1
+  
+  #internal dependencies
+  tec_cache:
+    path: ../shared/tec_cache
+  tec_util:
+    path: ../shared/tec_util
 
 dev_dependencies:
   flutter_test:

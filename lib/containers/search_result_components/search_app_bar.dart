@@ -27,12 +27,10 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _SearchAppBarState extends State<SearchAppBar> {
   // only expose a getter to prevent bad usage
   bool _isInSelectionMode;
-  FocusNode _focusNode;
 
   @override
   initState() {
     _isInSelectionMode = widget.model.isInSelectionMode;
-    _focusNode = FocusNode();
     super.initState();
   }
 

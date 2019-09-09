@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:tec_util/tec_util.dart' as tec;
 
+import '../../tec_settings.dart';
 import 'keyword_text.dart';
 
 class BibleSearchDelegate extends SearchDelegate {
@@ -22,7 +24,9 @@ class BibleSearchDelegate extends SearchDelegate {
         ? [
             IconButton(
               icon: Icon(Icons.close),
-              onPressed: () {
+              onPressed: () async {
+                // int c = tec.Prefs.shared.getInt(adCounterPref, defaultValue: 0);
+                // await tec.Prefs.shared.setInt(adCounterPref, ++c);
                 query = '';
               },
             )
