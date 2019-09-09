@@ -6,14 +6,15 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SearchModel {
-  
-  void openTB({@required String a, @required int id,@required int bookId,@required int chapterId,@required int verseId,@required BuildContext context}) async {
-    var url = Platform.isIOS
-        ? 'bible://$a' +
-            '/$bookId/$chapterId/$verseId'
-        //need a check to see if has bible app on android
-        : 'bible/$id' +
-            '/$bookId/$chapterId/$verseId';
+  void openTB(
+      {@required String a,
+      @required int id,
+      @required int bookId,
+      @required int chapterId,
+      @required int verseId,
+      @required BuildContext context}) async {
+    var url = Platform.isIOS ? 'bible://$a' : 'bible://$id';
+    url += '/$bookId/$chapterId/$verseId';
 
     if (await canLaunch(url)) {
       await launch(url, universalLinksOnly: false);
@@ -25,7 +26,6 @@ class SearchModel {
   }
 
   void showAppStoreDialog(BuildContext context) {
-
     final dialog = AlertDialog(
       title: Text('Download TecartaBible'),
       content: Text(
@@ -50,9 +50,8 @@ class SearchModel {
                 Navigator.of(context).pop();
                 print(e);
               }
-            } else {
-              Navigator.of(context).pop();
             }
+            Navigator.of(context).pop();
           },
         )
       ],
@@ -60,7 +59,7 @@ class SearchModel {
     showDialog(context: context, builder: (x) => dialog);
   }
 
-  void copyPressed({@required String text,@required BuildContext context}) {
+  void copyPressed({@required String text, @required BuildContext context}) {
     Clipboard.setData(ClipboardData(text: text)).then((_) {
       Scaffold.of(context)
           .showSnackBar(SnackBar(content: Text('Successfully Copied!')));
@@ -112,5 +111,4 @@ class SearchModel {
     }
     return contentCopy;
   }
-
 }
