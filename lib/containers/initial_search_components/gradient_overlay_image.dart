@@ -37,11 +37,11 @@ class GradientOverlayImage extends StatelessWidget {
         fit: BoxFit.fill,
       ),
       foregroundDecoration: BoxDecoration(
-          gradient: new LinearGradient(
+          gradient:  LinearGradient(
         colors: [topColor, bottomColor],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        stops: [0.0, 0.5],
+        stops: const [0.0, 0.5],
         tileMode: TileMode.clamp,
       )),
     );
@@ -57,11 +57,11 @@ class GradientOverlayImage extends StatelessWidget {
         fit: BoxFit.fill,
       )),
       foregroundDecoration: BoxDecoration(
-          gradient: new LinearGradient(
+          gradient:  LinearGradient(
         colors: [topColor, bottomColor],
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        stops: [0.0, 0.5],
+        stops: const [0.0, 0.5],
         tileMode: TileMode.clamp,
       )),
     );

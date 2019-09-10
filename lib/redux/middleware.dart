@@ -1,4 +1,6 @@
+import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/context.dart';
+import 'package:bible_search/data/translation.dart';
 import 'package:bible_search/models/filter_model.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:bible_search/data/search_result.dart';
@@ -7,10 +9,12 @@ import 'package:redux/redux.dart';
 import 'package:bible_search/data/votd_image.dart';
 import 'package:bible_search/models/home_model.dart';
 
+import 'package:tec_util/tec_util.dart' as tec;
+
 final filterModel = FilterModel();
 final homeModel = HomeModel();
 
-Function searchMiddleware = (
+void searchMiddleware(
   Store<AppState> store,
   SearchAction action,
   NextDispatcher next,
@@ -20,36 +24,35 @@ Function searchMiddleware = (
     words: action.searchQuery,
     translationIds: store.state.translations.formatIds(),
   ).then((res) {
-    store.dispatch(SearchResultAction(res));
-    store.dispatch(SetFilteredResultsAction(
-        filterModel.filterByBook(res, store.state.books)));
-  }).catchError((e) {
-    store.dispatch(SearchResultAction([]));
-    store.dispatch(SearchErrorAction());
+    store
+      ..dispatch(SearchResultAction(res))
+      ..dispatch(SetFilteredResultsAction(
+          filterModel.filterByBook(res, store.state.books)));
+  }).catchError((dynamic e) {
+    store..dispatch(SearchResultAction([]))..dispatch(SearchErrorAction());
   });
-  List<String> newSearchList = store.state.searchHistory;
-  newSearchList.add(action.searchQuery);
+  final newSearchList = store.state.searchHistory..add(action.searchQuery);
   store.dispatch(SetSearchHistoryAction(
       searchQuery: action.searchQuery,
       searchQueries:
           newSearchList.reversed.toSet().toList().reversed.toList()));
   next(action);
-};
+}
 
-Function contextMiddleware = (
+void contextMiddleware(
   Store<AppState> store,
   ContextAction action,
   NextDispatcher next,
 ) {
   final res = store.state.results[action.idx];
-  if (res.verses[res.currentVerseIndex].contextText.length == 0) {
+  if (res.verses[res.currentVerseIndex].contextText.isEmpty) {
     Context.fetch(
             translation: res.verses[res.currentVerseIndex].id,
             book: res.bookId,
             chapter: res.chapterId,
             verse: res.verseId)
         .then((context) {
-      var results = store.state.results;
+      final results = store.state.results;
       results[action.idx].verses[res.currentVerseIndex].contextText =
           context.text;
       results[action.idx].verses[res.currentVerseIndex].verseIdx = [
@@ -59,10 +62,10 @@ Function contextMiddleware = (
       store.dispatch(SetResultsAction(results));
     });
   }
-};
+}
 
 /// Fetch verse of the day, init home page by loading theme and search history from user preferences, and load languages and bookNames
-Function initHomeMiddleware = (
+void initHomeMiddleware(
   Store<AppState> store,
   InitHomeAction action,
   NextDispatcher next,
@@ -70,99 +73,117 @@ Function initHomeMiddleware = (
   store.dispatch(ImageLoadingAction());
   VOTDImage.fetch().then((votd) {
     store.dispatch(ImageResultAction(votd));
-  }).catchError((e) {
+  }).catchError((dynamic e) {
     store.dispatch(ImageResultAction(VOTDImage(url: 'assets/appimage.jpg')));
   });
   homeModel.loadTheme().then((theme) {
-    store.dispatch(SetThemeAction(theme));
+    store.dispatch(SetThemeAction(isDarkTheme: theme));
   });
   homeModel.loadSearchHistory().then((searchHistory) {
     store.dispatch(SetSearchHistoryAction(searchQueries: searchHistory));
   });
-  store.dispatch(SetLanguagesAction(homeModel.languages));
-  store.dispatch(SetBookNamesAction(homeModel.bookNames));
+  store
+    ..dispatch(SetLanguagesAction(homeModel.languages))
+    ..dispatch(SetBookNamesAction(homeModel.bookNames));
   next(action);
-};
+}
 
-Function updateThemeMiddleware = (
+void updateThemeMiddleware(
   Store<AppState> store,
   SetThemeAction action,
   NextDispatcher next,
 ) {
-  homeModel.updateTheme(action.isDarkTheme);
+  homeModel.updateTheme(b: action.isDarkTheme);
   next(action);
-};
+}
 
-Function updateSearchesMiddleware = (
+void updateSearchesMiddleware(
   Store<AppState> store,
   SetSearchHistoryAction action,
   NextDispatcher next,
 ) {
   homeModel.updateSearchHistory(action.searchQueries);
   next(action);
-};
+}
 
-Function initFilterMiddleware = (
+void initFilterMiddleware(
   Store<AppState> store,
   InitFilterAction action,
   NextDispatcher next,
 ) {
   filterModel.loadTranslations().then((translations) {
-    var tl = filterModel.loadLanguagePref(translations, store.state.languages);
-    store.dispatch(SetTranslationsAction(tl[0]));
-    store.dispatch(SetLanguagesAction(tl[1]));
+    final tl =
+        filterModel.loadLanguagePref(translations, store.state.languages);
+    final t = tec.as<BibleTranslations>(tl[0]);
+    final l = tec.as<List<Language>>(tl[1]);
+    store..dispatch(SetTranslationsAction(t))..dispatch(SetLanguagesAction(l));
   });
   next(action);
-};
+}
 
-Function updateTranslationsMiddleware = (
+void updateTranslationsMiddleware(
   Store<AppState> store,
   UpdateTranslationsAction action,
   NextDispatcher next,
 ) {
   filterModel.updateTranslations(store.state.translations).then((translations) {
-    store.dispatch(SetTranslationsAction(translations));
-    store.dispatch(SearchAction(store.state.searchQuery));
+    store
+      ..dispatch(SetTranslationsAction(translations))
+      ..dispatch(SearchAction(store.state.searchQuery));
   });
   next(action);
-};
+}
 
-Function selectionMiddleware = (
+void selectionMiddleware(
   Store<AppState> store,
   SelectAction action,
   NextDispatcher next,
 ) {
   switch (action.select) {
-    case Select.TRANSLATION:
-      final tl = filterModel.chooseTranslation(action.toggle, action.index,
-          store.state.translations, store.state.languages);
-      store.dispatch(SetTranslationsAction(tl[0]));
-      store.dispatch(SetLanguagesAction(tl[1]));
-      store.dispatch(UpdateTranslationsAction());
+    case Select.translation:
+      final tl = filterModel.chooseTranslation(
+        action.index,
+        store.state.translations,
+        store.state.languages,
+        b: action.toggle,
+      );
+      final t = tec.as<BibleTranslations>(tl[0]);
+      final l = tec.as<List<Language>>(tl[1]);
+      store
+        ..dispatch(SetTranslationsAction(t))
+        ..dispatch(SetLanguagesAction(l))
+        ..dispatch(UpdateTranslationsAction());
       break;
-    case Select.BOOK:
-      var bon = filterModel.chooseBook(
+    case Select.book:
+      final bon = filterModel.chooseBook(
           b: action.toggle,
           i: action.index,
           bookNames: store.state.books,
           otSelected: store.state.otSelected,
           ntSelected: store.state.ntSelected);
-      final books = bon[0];
-      store.dispatch(SetTestamentAction(bon[1], Test.OT));
-      store.dispatch(SetTestamentAction(bon[2], Test.NT));
-      store.dispatch(SetBookNamesAction(books));
-      store.dispatch(SetFilteredResultsAction(
-          filterModel.filterByBook(store.state.results, books)));
+      final books = tec.as<List<Book>>(bon[0]);
+      final otOn = tec.as<bool>(bon[1]);
+      final ntOn = tec.as<bool>(bon[2]);
+      store
+        ..dispatch(SetTestamentAction(Test.oT, toggle: otOn))
+        ..dispatch(SetTestamentAction(Test.nT, toggle: ntOn))
+        ..dispatch(SetBookNamesAction(books))
+        ..dispatch(SetFilteredResultsAction(
+            filterModel.filterByBook(store.state.results, books)));
       break;
     case Select.LANGUAGE:
       final tl = filterModel.selectLang(store.state.languages[action.index],
-          action.toggle, store.state.translations, store.state.languages);
-      store.dispatch(SetTranslationsAction(tl[0]));
-      store.dispatch(SetLanguagesAction(tl[1]));
-      store.dispatch(UpdateTranslationsAction());
+          store.state.translations, store.state.languages,
+          b: action.toggle);
+      final t = tec.as<BibleTranslations>(tl[0]);
+      final l = tec.as<List<Language>>(tl[1]);
+      store
+        ..dispatch(SetTranslationsAction(t))
+        ..dispatch(SetLanguagesAction(l))
+        ..dispatch(UpdateTranslationsAction());
       break;
-    case Select.RESULT:
-      var results = store.state.results;
+    case Select.result:
+      final results = store.state.results;
       results[action.index].isSelected = action.toggle;
       store.dispatch(SetResultsAction(results));
       var numSelected = store.state.numSelected;
@@ -173,7 +194,7 @@ Function selectionMiddleware = (
       break;
   }
   next(action);
-};
+}
 
 final List<Middleware<AppState>> middleware = [
   TypedMiddleware<AppState, SearchAction>(searchMiddleware),

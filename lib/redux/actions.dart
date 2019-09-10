@@ -51,7 +51,7 @@ class ImageResultAction {
 
 class SetThemeAction {
   bool isDarkTheme;
-  SetThemeAction(this.isDarkTheme);
+  SetThemeAction({this.isDarkTheme});
 }
 
 class SetSearchHistoryAction {
@@ -78,10 +78,10 @@ class SetTranslationsAction {
 class SetTestamentAction {
   final bool toggle;
   final Test test;
-  SetTestamentAction(this.toggle,this.test);
+  SetTestamentAction(this.test,{this.toggle});
 }
 
-enum Test{OT, NT}
+enum Test{oT, nT}
 
 class UpdateTranslationsAction{}
 
@@ -93,12 +93,12 @@ class SelectAction {
   final bool toggle;
   final int index;
   // final dynamic item;
-  SelectAction(this.toggle, this.index, this.select);
+  SelectAction( this.index, this.select,{this.toggle});
 }
 
 enum Select {
-  TRANSLATION,
-  BOOK, //index indicates ot or nt (-2 or -1) or book index
-  LANGUAGE,
-  RESULT
+  translation,
+  book, //index indicates ot or nt (-2 or -1) or book index
+  language,
+  result
 }

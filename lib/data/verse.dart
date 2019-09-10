@@ -1,9 +1,10 @@
+import 'package:tec_util/tec_util.dart' as tec;
 
-class Verse{
+class Verse {
   final String title;
   final int id;
   final String a;
-  final verseContent;
+  final String verseContent;
   String contextText;
   List<int> verseIdx; //for when context expanded (v3-5)
 
@@ -16,13 +17,13 @@ class Verse{
     this.verseIdx,
   });
 
-  factory Verse.fromJson(Map<String, dynamic> json, String ref){
+  factory Verse.fromJson(Map<String, dynamic> json, String ref) {
     return Verse(
       title: ref,
-      id: json['id'] as int,
-      a: json['a'] as String,
-      verseContent: json['text'] as String,
-      verseIdx: [0,0],
+      id: tec.as<int>(json['id']),
+      a: tec.as<String>(json['a']),
+      verseContent: tec.as<String>(json['text']),
+      verseIdx: [0, 0],
     );
   }
 }

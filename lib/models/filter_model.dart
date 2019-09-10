@@ -1,22 +1,21 @@
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/translation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:bible_search/tec_settings.dart';
+import 'package:tec_util/tec_util.dart' as tec;
 
 class FilterModel {
   /// load translations chosen from user prefs
   Future<BibleTranslations> loadTranslations() async {
-    // TODO (What happens if can't connect to internet?) need to test
     final temp = await BibleTranslations.fetch();
     temp.data.sort((f, k) => f.lang.id.compareTo(k.lang.id));
     var translations = temp;
-    final prefs = await SharedPreferences.getInstance();
     //select only translations that are in the formatted Id
-    var translationIds = prefs.getString('translations');
+    final translationIds = tec.Prefs.shared.getString(translationsPref);
     if (translationIds == null ||
-        translationIds?.length == 0 ||
-        translationIds.trim().length == 0) {
-      prefs.setString('translations', temp.formatIds());
+        translationIds.isEmpty ||
+        translationIds.trim().isEmpty) {
+      await tec.Prefs.shared.setString(translationsPref, temp.formatIds());
       translations = temp;
     } else {
       translations.selectTranslations(translationIds);
@@ -29,11 +28,11 @@ class FilterModel {
   Future<BibleTranslations> updateTranslations(
       BibleTranslations translations) async {
     var translationIds = '';
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString('translations', translationIds = translations.formatIds());
-    
+    await tec.Prefs.shared
+        .setString(translationsPref, translationIds = translations.formatIds());
+
     translations.selectTranslations(translationIds);
-    
+
     return translations;
   }
 
@@ -48,12 +47,15 @@ class FilterModel {
         }
       }
     }
-    return [translations, languages];
+    return <dynamic>[translations, languages];
   }
 
   /// choose the translation in list and update translations in user prefs
   List chooseTranslation(
-      bool b, int i, BibleTranslations translations, List<Language> languages) {
+      int i, BibleTranslations translations, List<Language> languages,
+      {bool b}) {
+    BibleTranslations t;
+    List<Language> l;
     translations.data[i].isSelected = b;
     if (!b) {
       translations.data[i].lang.isSelected = b;
@@ -61,65 +63,82 @@ class FilterModel {
           .firstWhere((l) => l.id == translations.data[i].lang.id)
           .isSelected = b;
     }
-    var currLang = translations.data[i].lang;
-    var currLangList = translations.data.where((test) {
+    final currLang = translations.data[i].lang;
+    final currLangList = translations.data.where((test) {
       return test.lang.id == currLang.id;
     }).toList();
     if (!currLangList.any((bt) => !bt.isSelected)) {
-      final tl = selectLang(currLang, true, translations, languages);
-      translations = tl[0];
-      languages = tl[1];
+      final tl = selectLang(
+        currLang,
+        translations,
+        languages,
+        b: true,
+      );
+      t = tec.as<BibleTranslations>(tl[0]);
+      l = tec.as<List<Language>>(tl[1]);
     }
-    return [translations, languages];
+    return <dynamic>[t, l];
   }
 
   /// select the language and update translations in user prefs to represent which are chosen
-  List selectLang(Language lang, bool b, BibleTranslations translations,
-      List<Language> languages) {
-    translations.data.forEach((each) {
+  List selectLang(
+      Language lang, BibleTranslations translations, List<Language> languages,
+      {bool b}) {
+    for (final each in translations.data) {
       if (each.lang.id == lang.id) {
         each.isSelected = b;
       }
-    });
+    }
     languages.firstWhere((l) => l.id == lang.id).isSelected = b;
     updateTranslations(translations);
-    return [translations, languages];
+    return <dynamic>[translations, languages];
   }
 
   /// select a book of the bible and check for OT or NT selection
   List chooseBook(
       {bool b, int i, List<Book> bookNames, bool otSelected, bool ntSelected}) {
+    var modBookNames = bookNames;
+    var oT = otSelected;
+    var nT = ntSelected;
     if (i == -2) {
-      chooseTestament(true, bookNames, b);
-      otSelected = b;
+      chooseTestament(
+        bookNames,
+        b: b,
+        isOT: true,
+      );
+      oT = b;
     } else if (i == -1) {
-      chooseTestament(false, bookNames, b);
-      ntSelected = b;
+      chooseTestament(
+        bookNames,
+        b: b,
+        isOT: false,
+      );
+      nT = b;
     } else {
       bookNames[i].isSelected = b;
       if (!b) {
-        bookNames[i].isOT() ? otSelected = b : ntSelected = b;
+        bookNames[i].isOT() ? oT = b : nT = b;
       }
-      var isOT = bookNames[i].isOT();
-      var books = bookNames.where((bn) => bn.isOT() == isOT).toList();
+      final isOT = bookNames[i].isOT();
+      final books = bookNames.where((bn) => bn.isOT() == isOT).toList();
       if (!(books.any((b) => !b.isSelected))) {
-        bookNames = chooseTestament(isOT, bookNames, b);
+        modBookNames = chooseTestament(bookNames, b: b, isOT: isOT);
         if (isOT) {
-          otSelected = b;
+          oT = b;
         } else {
-          ntSelected = b;
+          nT = b;
         }
       }
     }
-    return [bookNames, otSelected, ntSelected];
+    return <dynamic>[modBookNames, oT, nT];
   }
 
-  List<Book> chooseTestament(bool isOT, List<Book> bookNames, bool b) {
-    bookNames.forEach((each) {
+  List<Book> chooseTestament(List<Book> bookNames, {bool b, bool isOT}) {
+    for (final each in bookNames) {
       if (isOT ? each.isOT() : !each.isOT()) {
         each.isSelected = b;
       }
-    });
+    }
     return bookNames;
   }
 

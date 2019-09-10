@@ -1,15 +1,14 @@
-
 import 'package:bible_search/presentation/translation_book_filter_screen.dart';
 import 'package:flutter/material.dart';
 
 class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double height;
 
-  ExtendedAppBar({Key key, @required this.height})
-      : super(key: key);
+  const ExtendedAppBar({Key key, @required this.height}) : super(key: key);
 
+  @override
   Size get preferredSize {
-    return new Size.fromHeight(height);
+    return Size.fromHeight(height);
   }
 
   @override
@@ -17,7 +16,7 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       brightness: Brightness.dark,
       centerTitle: false,
-      textTheme: TextTheme(),
+      textTheme: const TextTheme(),
       elevation: 0.0,
       title: RichText(
         text: TextSpan(
@@ -26,10 +25,10 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
             fontSize: 18.0,
           ),
           children: <TextSpan>[
-            TextSpan(text: 'Tecarta'),
+            const TextSpan(text: 'Tecarta'),
             TextSpan(
                 text: 'Bible', style: TextStyle(fontWeight: FontWeight.bold)),
-            TextSpan(text: ' Search')
+            const TextSpan(text: ' Search')
           ],
         ),
       ),
@@ -44,10 +43,9 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
           icon: Icon(Icons.filter_list),
           color: Colors.white,
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute<dynamic>(
-              builder: (BuildContext context) {
-                return TranslationBookFilterScreen(tabValue: 1);
-              },
+            Navigator.of(context)
+                .push<MaterialPageRoute<dynamic>>(MaterialPageRoute(
+              builder: (context) => TranslationBookFilterScreen(tabValue: 1),
               fullscreenDialog: true,
             ));
           },

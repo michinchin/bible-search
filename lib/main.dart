@@ -21,8 +21,7 @@ Future<void> main() async {
   // Load preferences.
   await tec.Prefs.shared.load();
 
-  store.dispatch(InitHomeAction());
-  store.dispatch(InitFilterAction());
+  store..dispatch(InitHomeAction())..dispatch(InitFilterAction());
   return runApp(BibleSearchApp(
     store: store,
   ));
@@ -31,7 +30,7 @@ Future<void> main() async {
 class BibleSearchApp extends StatelessWidget {
   final Store<AppState> store;
 
-  BibleSearchApp({Key key, this.store}) : super(key: key);
+  const BibleSearchApp({Key key, this.store}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +51,7 @@ class BibleSearchApp extends StatelessWidget {
               return MaterialApp(
                 initialRoute: '/',
                 routes: <String, WidgetBuilder>{
-                  '/results': (BuildContext context) => SearchResultScreen(),
+                  '/results': (context) => SearchResultScreen(),
                 },
                 title: 'Bible Search',
                 theme: theme,

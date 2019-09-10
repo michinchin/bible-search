@@ -4,10 +4,9 @@ import 'package:tec_util/tec_util.dart' as tec;
 import '../../tec_settings.dart';
 import 'keyword_text.dart';
 
-class BibleSearchDelegate extends SearchDelegate {
+class BibleSearchDelegate extends SearchDelegate<String> {
   final List<String> searchHistory;
   final Function(String) search;
-  var _closeButton;
 
   BibleSearchDelegate({this.searchHistory, this.search});
 
@@ -20,13 +19,13 @@ class BibleSearchDelegate extends SearchDelegate {
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    return query.length > 0
+    return query.isNotEmpty
         ? [
             IconButton(
               icon: Icon(Icons.close),
               onPressed: () async {
-                // int c = tec.Prefs.shared.getInt(adCounterPref, defaultValue: 0);
-                // await tec.Prefs.shared.setInt(adCounterPref, ++c);
+                var c = tec.Prefs.shared.getInt(adCounterPref, defaultValue: 0);
+                await tec.Prefs.shared.setInt(adCounterPref, ++c);
                 query = '';
               },
             )
@@ -36,13 +35,12 @@ class BibleSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    _closeButton = IconButton(
+    return IconButton(
       icon: Icon(Icons.arrow_back_ios),
       onPressed: () {
         close(context, searchHistory.last);
       },
     );
-    return _closeButton;
   }
 
   @override
@@ -56,15 +54,15 @@ class BibleSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final List results = searchHistory
+    final results = searchHistory
         .where((a) => (a?.toLowerCase() ?? '').contains(query))
         .toList()
         .reversed
         .toList();
     return ListView(
       children: results
-          .map<ListTile>((a) => ListTile(
-                title: query.length == 0
+          .map((a) => ListTile(
+                title: query.isEmpty
                     ? Text(a)
                     : KeywordText(outer: a, inner: query, c: context),
                 onTap: () {

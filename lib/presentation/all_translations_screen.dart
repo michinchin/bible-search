@@ -9,7 +9,7 @@ import 'package:bible_search/Data/all_result.dart';
 
 class AllTranslationsScreen extends StatelessWidget {
   final SearchResult res;
-  final List bcv;
+  final List<int> bcv;
   final SearchModel model;
   final String keywords;
 
@@ -17,10 +17,10 @@ class AllTranslationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var book = bcv[0];
-    var chapter = bcv[1];
-    var verse = bcv[2];
-    var _future = AllResults.fetch(
+    final book = bcv[0];
+    final chapter = bcv[1];
+    final verse = bcv[2];
+    final _future = AllResults.fetch(
         book: book,
         chapter: chapter,
         verse: verse,
@@ -29,7 +29,8 @@ class AllTranslationsScreen extends StatelessWidget {
     return FutureBuilder<AllResults>(
         future: _future,
         builder: (context, snapshot) {
-          final allResults = snapshot.data == null ? [] : snapshot.data.data;
+          final allResults =
+              snapshot.data == null ? <AllResult>[] : snapshot.data.data;
           return Scaffold(
             appBar: AppBar(
               title: GestureDetector(
@@ -40,15 +41,15 @@ class AllTranslationsScreen extends StatelessWidget {
                   icon: Icon(Icons.close)),
             ),
             body: Container(
-                padding: EdgeInsets.all(10.0),
-                child: allResults.length == 0
+                padding: const EdgeInsets.all(10.0),
+                child: allResults.isEmpty
                     ? Center(
-                        child: CircularProgressIndicator(),
+                        child: const CircularProgressIndicator(),
                       )
                     : ListView.builder(
                         itemCount: allResults.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          final String text =
+                        itemBuilder: (context, index) {
+                          final text =
                               '${res.ref} ${allResults[index].a}\n${allResults[index].text}';
                           return Card(
                               elevation: 2.0,
@@ -56,7 +57,7 @@ class AllTranslationsScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(15.0),
                               ),
                               child: Container(
-                                padding: EdgeInsets.all(15.0),
+                                padding: const EdgeInsets.all(15.0),
                                 child: Row(
                                   children: <Widget>[
                                     Expanded(
@@ -66,12 +67,7 @@ class AllTranslationsScreen extends StatelessWidget {
                                           Align(
                                             alignment: Alignment.centerLeft,
                                             child: Text(
-                                                '\n' +
-                                                    store.state.translations
-                                                        .getFullName(
-                                                            allResults[index]
-                                                                .id) +
-                                                    '\n',
+                                                '\n ${store.state.translations.getFullName(allResults[index].id)}\n',
                                                 style: TextStyle(
                                                     fontWeight:
                                                         FontWeight.bold)),
@@ -82,7 +78,7 @@ class AllTranslationsScreen extends StatelessWidget {
                                                   .textTheme
                                                   .body1,
                                               children: model.formatWords(
-                                                  allResults[index].text + '\n',
+                                                  '${allResults[index].text}\n',
                                                   keywords),
                                             ),
                                           ),
@@ -141,6 +137,7 @@ class AllTranslationsScreen extends StatelessWidget {
                                     //               a: allResults[index].a,
                                     //               bookId: res.bookId,
                                     //               id: allResults[index].id,
+
                                     //               chapterId: res.chapterId,
                                     //               verseId: res.verseId,
                                     //               context: context,

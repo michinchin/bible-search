@@ -10,14 +10,15 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
   final ResultsViewModel model;
   final Function(BuildContext, bool, String) shareSelection;
 
-  SearchAppBar({
+  const SearchAppBar({
     Key key,
     @required this.model,
     @required this.shareSelection,
   }) : super(key: key);
 
+  @override
   Size get preferredSize {
-    return new Size.fromHeight(kToolbarHeight);
+    return Size.fromHeight(kToolbarHeight);
   }
 
   @override
@@ -29,7 +30,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
   bool _isInSelectionMode;
 
   @override
-  initState() {
+  void initState() {
     _isInSelectionMode = widget.model.isInSelectionMode;
     super.initState();
   }
@@ -41,7 +42,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
   }
 
   void _showSearch() {
-    showSearch(
+    showSearch<void>(
       query: widget.model.searchQuery, //widget.model.searchQuery
       context: context,
       delegate: BibleSearchDelegate(
@@ -51,32 +52,30 @@ class _SearchAppBarState extends State<SearchAppBar> {
   }
 
   void _showModalSheet() {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
         context: context,
-        builder: (BuildContext c) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                leading: Icon(Icons.check_circle),
-                title: Text('Selection Mode'),
-                onTap: () => _changeToSelectionMode(),
-              ),
-              SwitchListTile(
-                  secondary: Icon(Icons.lightbulb_outline),
-                  value: widget.model.state.isDarkTheme,
-                  title: Text('Light/Dark Mode'),
-                  onChanged: (b) {
-                    DynamicTheme.of(context).setThemeData(ThemeData(
-                      primarySwatch: b ? Colors.teal : Colors.orange,
-                      primaryColorBrightness: Brightness.dark,
-                      brightness: b ? Brightness.dark : Brightness.light,
-                    ));
-                    widget.model.changeTheme(b);
-                  }),
-            ],
-          );
-        });
+        builder: (c) => Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  leading: Icon(Icons.check_circle),
+                  title: const Text('Selection Mode'),
+                  onTap: _changeToSelectionMode,
+                ),
+                SwitchListTile(
+                    secondary: Icon(Icons.lightbulb_outline),
+                    value: widget.model.state.isDarkTheme,
+                    title: const Text('Light/Dark Mode'),
+                    onChanged: (b) {
+                      DynamicTheme.of(context).setThemeData(ThemeData(
+                        primarySwatch: b ? Colors.teal : Colors.orange,
+                        primaryColorBrightness: Brightness.dark,
+                        brightness: b ? Brightness.dark : Brightness.light,
+                      ));
+                      widget.model.changeTheme(b);
+                    }),
+              ],
+            ));
   }
 
   void _changeToSelectionMode() {
@@ -87,10 +86,8 @@ class _SearchAppBarState extends State<SearchAppBar> {
   }
 
   void _navigateToFilter(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute<dynamic>(
-        builder: (BuildContext context) {
-          return TranslationBookFilterScreen(tabValue: 0);
-        },
+    Navigator.of(context).push<MaterialPageRoute>(MaterialPageRoute(
+        builder: (context) => TranslationBookFilterScreen(tabValue: 0),
         fullscreenDialog: true));
   }
 
@@ -106,7 +103,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
               toolbarOpacity: 0.0,
             ),
             SafeArea(
-              minimum: EdgeInsets.only(left: 20.0, right: 20.0),
+              minimum: const EdgeInsets.only(left: 20.0, right: 20.0),
               child: Container(
                 height: widget.preferredSize.height,
                 width: widget.preferredSize.width,
@@ -117,7 +114,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black38,
-                        offset: Offset(0, 5.0),
+                        offset: const Offset(0, 5.0),
                         blurRadius: 5.0,
                       ),
                     ]),
@@ -129,7 +126,11 @@ class _SearchAppBarState extends State<SearchAppBar> {
                   ),
                   title: InkWell(
                       onTap: _showSearch,
-                      child: Text(widget.model.searchQuery ?? 'Search Here', maxLines: 2,overflow: TextOverflow.ellipsis,)),
+                      child: Text(
+                        widget.model.searchQuery ?? 'Search Here',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      )),
                   trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                     IconButton(
                       icon: Icon(Icons.filter_list),
@@ -148,7 +149,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
             title: Text('${widget.model.state.numSelected}'),
             leading: IconButton(
               icon: Icon(Icons.close),
-              onPressed: () => _changeToSelectionMode(),
+              onPressed: _changeToSelectionMode,
             ),
             actions: <Widget>[
               IconButton(

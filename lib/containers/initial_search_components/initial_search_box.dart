@@ -20,7 +20,6 @@ class InitialSearchBox extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _InitialSearchBoxState();
-
 }
 
 class _InitialSearchBoxState extends State<InitialSearchBox> {
@@ -53,7 +52,7 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
               BoxShadow(
                 color: Colors.black26,
                 blurRadius: 5.0, // has the effect of softening the shadow
-                offset: Offset(
+                offset: const Offset(
                   0.0, // right
                   2.0, //left
                 ),
@@ -69,13 +68,13 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
                 },
                 textAlign: TextAlign.left,
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.only(left: 40.0, right: 40.0),
+                  contentPadding: const EdgeInsets.only(left: 40.0, right: 40.0),
                   hintText: 'Enter search terms',
                   border: InputBorder.none,
                   hintStyle: TextStyle(color: Colors.grey),
                 ),
                 controller: controller,
-                onSubmitted: (String s) {
+                onSubmitted: (s) {
                   widget.updateSearch(s);
                   Navigator.of(context).pushNamed('/results');
                 },
@@ -83,7 +82,7 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
             ),
             Align(
               alignment: Alignment.centerRight,
-              child: controller.text.length > 0
+              child: controller.text.isNotEmpty
                   ? IconButton(
                       splashColor: Colors.transparent,
                       icon: Icon(
@@ -104,12 +103,10 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
                 icon: Icon(
                   CupertinoIcons.search,
                 ),
-                onPressed: () => {},
+                onPressed: () => () {},
               ),
             )
           ]),
         ));
   }
 }
-
-

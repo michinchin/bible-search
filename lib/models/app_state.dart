@@ -14,7 +14,7 @@ class AppState {
   final List<String> searchHistory;
   final List<Language> languages;
   final List<Book> books;
-  
+
   final bool isFetchingSearch;
   final bool isLoadingImage;
   final bool isInSelectionMode;
@@ -45,78 +45,75 @@ class AppState {
   });
 
   factory AppState.initial() => AppState(
-      translations: BibleTranslations(data: []),
-      results: [],
-      filteredResults: [],
-      votdImage: null,
-      searchQuery: '',
-      searchHistory: [],
-      languages: [],
-      books: [],
-      isFetchingSearch: false,
-      isLoadingImage: false,
-      isInSelectionMode: false,
-      hasError: false,
-      isDarkTheme: false,
-      otSelected: true,
-      ntSelected: true,
-      numSelected: 0,);
-   
-  
-  AppState copyWith({
-    BibleTranslations translations,
-     List<SearchResult> results,
-     List<SearchResult> filteredResults,
-     VOTDImage votdImage,
-     String searchQuery,
-     List<String> searchHistory,
-     List<Language> languages,
-     List<Book> books,
-     bool isFetchingSearch,
-     bool isLoadingImage,
-     bool isInSelectionMode,
-     bool hasError,
-     bool isDarkTheme,
-     bool otSelected,
-     bool ntSelected,
-     int numSelected
-  }){
-    return new AppState(
-      translations: translations ?? this.translations,
-      results: results ?? this.results,
-      filteredResults: filteredResults ?? this.filteredResults,
-      votdImage: votdImage ?? this.votdImage,
-      searchQuery: searchQuery ?? this.searchQuery,
-      searchHistory: searchHistory ?? this.searchHistory,
-      languages: languages ?? this.languages,
-      books: books ?? this.books,
-      isFetchingSearch: isFetchingSearch ?? this.isFetchingSearch,
-      isLoadingImage: isLoadingImage ?? this.isLoadingImage,
-      isInSelectionMode: isInSelectionMode ?? this.isInSelectionMode,
-      hasError: hasError ?? this.hasError,
-      isDarkTheme: isDarkTheme ?? this.isDarkTheme,
-      otSelected: otSelected ?? this.otSelected,
-      ntSelected: ntSelected ?? this.ntSelected,
-      numSelected: numSelected ?? this.numSelected
-    );
+        translations: BibleTranslations(data: []),
+        results: const [],
+        filteredResults: const [],
+        votdImage: null,
+        searchQuery: '',
+        searchHistory: const [],
+        languages: const [],
+        books: const [],
+        isFetchingSearch: false,
+        isLoadingImage: false,
+        isInSelectionMode: false,
+        hasError: false,
+        isDarkTheme: false,
+        otSelected: true,
+        ntSelected: true,
+        numSelected: 0,
+      );
+
+  AppState copyWith(
+      {BibleTranslations translations,
+      List<SearchResult> results,
+      List<SearchResult> filteredResults,
+      VOTDImage votdImage,
+      String searchQuery,
+      List<String> searchHistory,
+      List<Language> languages,
+      List<Book> books,
+      bool isFetchingSearch,
+      bool isLoadingImage,
+      bool isInSelectionMode,
+      bool hasError,
+      bool isDarkTheme,
+      bool otSelected,
+      bool ntSelected,
+      int numSelected}) {
+    return AppState(
+        translations: translations ?? this.translations,
+        results: results ?? this.results,
+        filteredResults: filteredResults ?? this.filteredResults,
+        votdImage: votdImage ?? this.votdImage,
+        searchQuery: searchQuery ?? this.searchQuery,
+        searchHistory: searchHistory ?? this.searchHistory,
+        languages: languages ?? this.languages,
+        books: books ?? this.books,
+        isFetchingSearch: isFetchingSearch ?? this.isFetchingSearch,
+        isLoadingImage: isLoadingImage ?? this.isLoadingImage,
+        isInSelectionMode: isInSelectionMode ?? this.isInSelectionMode,
+        hasError: hasError ?? this.hasError,
+        isDarkTheme: isDarkTheme ?? this.isDarkTheme,
+        otSelected: otSelected ?? this.otSelected,
+        ntSelected: ntSelected ?? this.ntSelected,
+        numSelected: numSelected ?? this.numSelected);
   }
 
-  String get selectedText{
-    var text = "";
-    for (final each in this.filteredResults) {
+  String get selectedText {
+    var text = '';
+    for (final each in filteredResults) {
       final currVerse = each.verses[each.currentVerseIndex];
       if (each.isSelected && each.contextExpanded) {
-        text +=
-            '${this.books.where((book) => book.id == each.bookId).first.name} ' +
-                '${each.chapterId}:' +
-                '${each.verses[each.currentVerseIndex].verseIdx[0]}' +
-                '-${each.verses[each.currentVerseIndex].verseIdx[1]} ' +
-                '(${each.verses[each.currentVerseIndex].a})' +
-                '\n${currVerse.contextText}\n\n';
+        text += '${books.where((book) => book.id == each.bookId).first.name} '
+            '${each.chapterId}:'
+            '${each.verses[each.currentVerseIndex].verseIdx[0]}'
+            '-${each.verses[each.currentVerseIndex].verseIdx[1]} '
+            '(${each.verses[each.currentVerseIndex].a})'
+            '\n${currVerse.contextText}\n\n';
       } else if (each.isSelected) {
-        text += "${each.ref} (${currVerse.a})\n${currVerse.verseContent}\n\n";
+        text += '${each.ref} (${currVerse.a})\n${currVerse.verseContent}\n\n';
       } else {
-        text += "";
+        text += '';
       }
     }
     return text;

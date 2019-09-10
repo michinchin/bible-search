@@ -1,6 +1,7 @@
 import 'package:bible_search/models/home_model.dart';
 import 'package:bible_search/tec_settings.dart';
 import 'package:tec_cache/tec_cache.dart';
+import 'package:tec_util/tec_util.dart' as tec;
 
 class Language {
   final String a;
@@ -31,15 +32,15 @@ class BibleTranslation {
   // operator <(BibleTranslation bt) => lang != bt.lang;
 
   factory BibleTranslation.fromJson(Map<String, dynamic> json) {
-    final onSale = json['onsale'] as bool;
+    final onSale = tec.as<bool>(json['onsale']);
     if (onSale) {
       return BibleTranslation(
-        id: json['id'] as int,
-        name: json['name'] as String,
-        a: json['abbreviation'] as String,
+        id: tec.as<int>(json['id']),
+        name: tec.as<String>(json['name']),
+        a: tec.as<String>(json['abbreviation']),
         lang: HomeModel()
             .languages
-            .firstWhere((t) => t.a == (json['language'] as String)),
+            .firstWhere((t) => t.a == (tec.as<String>(json['language']))),
         isOnSale: onSale,
         isSelected: true,
       );
@@ -54,12 +55,12 @@ class BibleTranslations {
   BibleTranslations({this.data});
 
   factory BibleTranslations.fromJson(Map<String, dynamic> json) {
-    var d = <BibleTranslation>[];
-    final a = json['categories'] as List<dynamic>;
+    final d = <BibleTranslation>[];
+    final a = tec.as<List<dynamic>>(json['categories']);
     for (final b in a) {
       if (b is Map<String, dynamic>) {
         if (b['name'] == 'Bible Translations' || b['name'] == 'Español') {
-          for (final c in b['products']) {
+          for (final Map<String, dynamic> c in b['products']) {
             final res = BibleTranslation.fromJson(c);
             if (res != null) {
               d.add(res);
@@ -72,30 +73,30 @@ class BibleTranslations {
   }
 
   String formatIds() {
-    String formattedIds = "";
-    for (final each in this.data) {
+    var formattedIds = '';
+    for (final each in data) {
       if (each.isSelected && each.isOnSale) {
         formattedIds += '${each.id}|';
       }
     }
-    if (formattedIds.length > 0) {
-      var idx = formattedIds.lastIndexOf('|');
+    if (formattedIds.isNotEmpty) {
+      final idx = formattedIds.lastIndexOf('|');
       formattedIds = formattedIds.substring(0, idx);
     }
     return formattedIds;
   }
 
   void selectTranslations(String id) {
-    if (id.length == 0) {
-      var tempData = this.data;
+    if (id.isEmpty) {
+      final tempData = data;
       for (final t in tempData) {
         t.isSelected = false;
       }
-      this.data = tempData;
+      data = tempData;
     } else {
       final arr = id.split('|').toList();
-      final intArr = arr.map((e) => int.parse(e)).toList();
-      var tempData = this.data;
+      final intArr = arr.map(int.parse).toList();
+      final tempData = data;
       for (final t in tempData) {
         if (intArr.contains(t.id)) {
           t.isSelected = true;
@@ -103,12 +104,12 @@ class BibleTranslations {
           t.isSelected = false;
         }
       }
-      this.data = tempData;
+      data = tempData;
     }
   }
 
   String getFullName(int id) {
-    var tempData = this.data;
+    final tempData = data;
     return tempData
         .where((bt) {
           return bt.id == id;
@@ -118,7 +119,7 @@ class BibleTranslations {
   }
 
   static Future<BibleTranslations> fetch() async {
-    final fileName = 'WebSite.json.gz';
+    const fileName = 'WebSite.json.gz';
     final hostAndPath = '$kTBStreamServer/$kTBApiVersion/products-list';
     final json = await TecCache().jsonFromUrl(
         url: 'https://$hostAndPath/$fileName',

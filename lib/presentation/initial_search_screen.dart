@@ -21,18 +21,16 @@ class InitialSearchScreen extends StatelessWidget {
     final _imageWidth = MediaQuery.of(context).size.width;
     final _imageHeight = MediaQuery.of(context).size.height / 3;
     final _orientation = MediaQuery.of(context).orientation;
-    final _searchBarHeight = 50.0;
+    const  _searchBarHeight = 50.0;
 
     return StoreConnector<AppState, InitialSearchViewModel>(
         distinct: true,
-        converter: (store) {
-          return InitialSearchViewModel.fromStore(store);
-        },
-        builder: (BuildContext context, InitialSearchViewModel vm) {
+        converter: InitialSearchViewModel.fromStore,
+        builder: (context, vm) {
           final searchHistoryList = Container(
             child: ListView.builder(
-                itemBuilder: (BuildContext context, int index) {
-                  List<String> words = vm.searchHistory.reversed.toList();
+                itemBuilder: (context, index) {
+                  final words = vm.searchHistory.reversed.toList();
                   return ListTileTheme(
                     child: Dismissible(
                       key: Key(words[index]),
@@ -48,7 +46,7 @@ class InitialSearchScreen extends StatelessWidget {
                         vm.updateSearchHistory(words.reversed.toList());
                       },
                       background: Container(
-                        padding: EdgeInsets.only(right: 15.0),
+                        padding: const EdgeInsets.only(right: 15.0),
                         child: Align(
                             alignment: Alignment.centerRight,
                             child: Icon(Icons.delete)),
@@ -87,7 +85,7 @@ class InitialSearchScreen extends StatelessWidget {
           );
 
           final searchHistoryTitle = Container(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               left: 20.0,
               top: _searchBarHeight / 4,
             ),
@@ -132,13 +130,13 @@ class InitialSearchScreen extends StatelessWidget {
 
           final _settingsList = ListView(
             children: <Widget>[
-              DrawerHeader(
-                child: new Text('Settings'),
+              const DrawerHeader(
+                child:  Text('Settings'),
               ),
               SwitchListTile(
                   secondary: Icon(Icons.lightbulb_outline),
                   value: vm.isDarkTheme,
-                  title: Text('Light/Dark Mode'),
+                  title: const Text('Light/Dark Mode'),
                   onChanged: (b) {
                     DynamicTheme.of(context).setThemeData(ThemeData(
                       primarySwatch: b ? Colors.teal : Colors.orange,
@@ -149,33 +147,33 @@ class InitialSearchScreen extends StatelessWidget {
                   }),
               ListTile(
                 leading: Icon(Icons.more),
-                title: Text('About'),
+                title: const Text('About'),
                 onTap: () {
                   showAboutDialog(context: context);
                 },
               ),
               ListTile(
                 leading: Icon(Icons.remove_circle),
-                title: Text('Remove Ads'),
+                title: const Text('Remove Ads'),
                 onTap: () {},
               ),
               ListTile(
                 leading: Icon(Icons.clear_all),
-                title: Text('Clear Search History'),
+                title: const Text('Clear Search History'),
                 onTap: () {
-                  showDialog(
-                      builder: (BuildContext context) {
+                  showDialog<void>(
+                      builder: (context) {
                         return AlertDialog(
-                          title: Text('Are you sure?'),
+                          title: const Text('Are you sure?'),
                           actions: <Widget>[
                             FlatButton(
-                              child: Text("Cancel"),
+                              child: const Text('Cancel'),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
                             ),
                             FlatButton(
-                              child: Text("Yes"),
+                              child: const Text('Yes'),
                               onPressed: () {
                                 vm.updateSearchHistory([]);
                                 Navigator.of(context).pop();
@@ -230,7 +228,7 @@ class InitialSearchViewModel {
       searchHistory: store.state.searchHistory,
       isDarkTheme: store.state.isDarkTheme,
       onSearchEntered: (term) {
-        if (term.trim().length > 0) {
+        if (term.trim().isNotEmpty) {
           store.dispatch(SearchAction(term));
         }
       },
@@ -238,7 +236,7 @@ class InitialSearchViewModel {
           SetSearchHistoryAction(
               searchQuery: store.state.searchQuery,
               searchQueries: searchQueries)),
-      changeTheme: (isDarkTheme) => store.dispatch(SetThemeAction(isDarkTheme)),
+      changeTheme: (isDarkTheme) => store.dispatch(SetThemeAction(isDarkTheme: isDarkTheme)),
     );
   }
 

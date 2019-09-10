@@ -9,10 +9,10 @@ class ExpandableCheckboxListTile extends StatefulWidget {
   final Widget secondary;
   final bool initiallyExpanded;
 
-  ExpandableCheckboxListTile({
+  const ExpandableCheckboxListTile({
     Key key,
-    this.title,
-    this.children,
+    @required this.title,
+    @required this.children,
     this.onChanged,
     this.controlAffinity,
     this.value,

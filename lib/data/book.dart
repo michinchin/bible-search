@@ -11,7 +11,7 @@ class Book {
   });
 
   bool isOT(){
-    return id > 46 ? false : true;
+    return id <= 46;
   }
 
   Book getById(int id){

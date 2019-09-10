@@ -2,10 +2,9 @@ import 'package:bible_search/containers/search_result_components/result_card.dar
 import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:flutter/material.dart';
 
-
 class CardView extends StatefulWidget {
   final ResultsViewModel vm;
-  CardView(this.vm);
+  const CardView(this.vm);
 
   @override
   State<StatefulWidget> createState() => _CardViewState();
@@ -19,17 +18,17 @@ class _CardViewState extends State<CardView> {
 
   @override
   Widget build(BuildContext context) {
-    var res = widget.vm.filteredRes;
+    final res = widget.vm.filteredRes;
     return Container(
         key: PageStorageKey(
-            widget.vm.searchQuery + '${res[0].ref}' + '${res.length}'),
-        padding: EdgeInsets.all(10.0),
+            '${widget.vm.searchQuery}${res[0].ref}${res.length}'),
+        padding: const EdgeInsets.all(10.0),
         child: ListView.builder(
           itemCount: res.length + 1,
           itemBuilder: (context, i) {
             if (i == 0) {
               return Container(
-                  padding: EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(10.0),
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: RichText(

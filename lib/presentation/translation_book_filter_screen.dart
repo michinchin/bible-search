@@ -17,163 +17,163 @@ class TranslationBookFilterScreen extends StatelessWidget {
   TranslationBookFilterScreen({Key key, this.tabValue}) : super(key: key);
 
   final List<Tab> tabs = <Tab>[
-    Tab(text: 'BOOK'),
-    Tab(text: 'TRANSLATION'),
+    const Tab(text: 'BOOK'),
+    const Tab(text: 'TRANSLATION'),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, FilterViewModel>(converter: (store) {
-      return FilterViewModel.fromStore(store);
-    }, builder: (BuildContext context, FilterViewModel vm) {
-      List<Widget> _getChildren(Language lang) {
-        List<Widget> _translationList = [];
-        final translations =
-            vm.translations.data.where((t) => t.lang.id == lang.id).toList();
-        for (var i = 0; i < translations.length; i++) {
-          _translationList.add(Padding(
-            padding: EdgeInsets.only(left: 15.0),
-            child: CheckboxListTile(
-              onChanged: (bool b) => vm.selectTranslation(
-                  b, vm.translations.data.indexOf(translations[i])),
-              value: translations[i].isSelected,
-              title: Text(translations[i].a),
-              subtitle: Text('${translations[i].name}'),
-              controlAffinity: ListTileControlAffinity.leading,
+    return StoreConnector<AppState, FilterViewModel>(
+        converter: FilterViewModel.fromStore,
+        builder: (context, vm) {
+          List<Widget> _getChildren(Language lang) {
+            final _translationList = <Widget>[];
+            final translations = vm.translations.data
+                .where((t) => t.lang.id == lang.id)
+                .toList();
+            for (var i = 0; i < translations.length; i++) {
+              _translationList.add(Padding(
+                padding: const EdgeInsets.only(left: 15.0),
+                child: CheckboxListTile(
+                  onChanged: (b) => vm.selectTranslation(
+                      b, vm.translations.data.indexOf(translations[i])),
+                  value: translations[i].isSelected,
+                  title: Text(translations[i].a),
+                  subtitle: Text('${translations[i].name}'),
+                  controlAffinity: ListTileControlAffinity.leading,
+                ),
+              ));
+            }
+            return _translationList;
+          }
+
+          List<Widget> _createLanguageList() {
+            final _languageList = <Widget>[];
+            for (var i = 0; i < vm.languages.length; i++) {
+              final lang = vm.languages[i];
+              _languageList.add(ExpandableCheckboxListTile(
+                controlAffinity: ListTileControlAffinity.leading,
+                onChanged: (b) {
+                  vm.selectLanguage(b, i);
+                },
+                value: lang.isSelected,
+                title: Text(
+                  lang.name,
+                  style: Theme.of(context).textTheme.title,
+                ),
+                children: _getChildren(lang),
+                initiallyExpanded: lang.a == 'en',
+              ));
+            }
+            return _languageList;
+          }
+
+          List<Widget> _getBookChildren(bool isOT) {
+            final _bookList = <Widget>[];
+
+            for (var i = isOT ? 0 : 39;
+                i < (isOT ? 39 : vm.bookNames.length);
+                i++) {
+              _bookList.add(ChoiceChip(
+                shape: StadiumBorder(
+                    side: BorderSide(
+                        color: vm.bookNames[i].isSelected
+                            ? Theme.of(context).accentColor
+                            : Colors.black12)),
+                selectedColor: Theme.of(context).cardColor,
+                label: Text(
+                  vm.bookNames[i].name,
+                  style: TextStyle(
+                      fontSize: 12.0,
+                      color: vm.bookNames[i].isSelected
+                          ? Theme.of(context).accentColor
+                          : Colors.black45,
+                      fontWeight: vm.bookNames[i].isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal),
+                ),
+                backgroundColor: vm.bookNames[i].isSelected
+                    ? Theme.of(context).cardColor
+                    : Theme.of(context).cardColor,
+                onSelected: (b) => vm.selectBook(b, i),
+                selected: vm.bookNames[i].isSelected,
+              ));
+            }
+            return [
+              Wrap(
+                  spacing: 5.0,
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  verticalDirection: VerticalDirection.down,
+                  children: _bookList)
+            ];
+          }
+
+          List<Widget> _createBookList() {
+            final _bookList = <Widget>[
+              ExpandableCheckboxListTile(
+                initiallyExpanded: true,
+                controlAffinity: ListTileControlAffinity.leading,
+                onChanged: (b) {
+                  vm.selectBook(b, -2);
+                },
+                value: vm.otSelected,
+                title: Text(
+                  'Old Testament',
+                  style: Theme.of(context).textTheme.title,
+                ),
+                children: _getBookChildren(true),
+              ),
+              ExpandableCheckboxListTile(
+                initiallyExpanded: true,
+                controlAffinity: ListTileControlAffinity.leading,
+                onChanged: (b) {
+                  vm.selectBook(b, -1);
+                },
+                value: vm.ntSelected,
+                title: Text(
+                  'New Testament',
+                  style: Theme.of(context).textTheme.title,
+                ),
+                children: _getBookChildren(false),
+              )
+            ];
+            return _bookList;
+          }
+
+          return DefaultTabController(
+            initialIndex: tabValue,
+            length: tabs.length,
+            child: Scaffold(
+              appBar: AppBar(
+                title: GestureDetector(
+                    onVerticalDragDown: Navigator.of(context).pop,
+                    child: const Text('Filter')),
+                bottom: TabBar(
+                  tabs: tabs,
+                ),
+                leading: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: Icon(Icons.close),
+                ),
+              ),
+              body: TabBarView(
+                children: tabs.map((tab) {
+                  return Container(
+                      key: PageStorageKey(tab.text),
+                      padding: const EdgeInsets.all(10.0),
+                      child: ListView(
+                        children: tab.text == 'BOOK'
+                            ? _createBookList()
+                            : _createLanguageList(),
+                      ));
+                }).toList(),
+              ),
             ),
-          ));
-        }
-        return _translationList;
-      }
-
-      List<Widget> _createLanguageList() {
-        var _languageList = <Widget>[];
-        for (var i = 0; i < vm.languages.length; i++) {
-          final lang = vm.languages[i];
-          _languageList.add(ExpandableCheckboxListTile(
-            controlAffinity: ListTileControlAffinity.leading,
-            onChanged: (bool b) {
-              vm.selectLanguage(b, i);
-            },
-            value: lang.isSelected,
-            title: Text(
-              lang.name,
-              style: Theme.of(context).textTheme.title,
-            ),
-            children: _getChildren(lang),
-            initiallyExpanded: lang.a == 'en' ? true : false,
-          ));
-        }
-        return _languageList;
-      }
-
-      List<Widget> _getBookChildren(bool isOT) {
-        var _bookList = <Widget>[];
-
-        for (var i = isOT ? 0 : 39;
-            i < (isOT ? 39 : vm.bookNames.length);
-            i++) {
-          _bookList.add(ChoiceChip(
-            shape: StadiumBorder(
-                side: BorderSide(
-                    color: vm.bookNames[i].isSelected
-                        ? Theme.of(context).accentColor
-                        : Colors.black12)),
-            selectedColor: Theme.of(context).cardColor,
-            label: Text(
-              vm.bookNames[i].name,
-              style: TextStyle(
-                  fontSize: 12.0,
-                  color: vm.bookNames[i].isSelected
-                      ? Theme.of(context).accentColor
-                      : Colors.black45,
-                  fontWeight: vm.bookNames[i].isSelected
-                      ? FontWeight.bold
-                      : FontWeight.normal),
-            ),
-            backgroundColor: vm.bookNames[i].isSelected
-                ? Theme.of(context).cardColor
-                : Theme.of(context).cardColor,
-            onSelected: (bool b) => vm.selectBook(b, i),
-            selected: vm.bookNames[i].isSelected,
-          ));
-        }
-        return [
-          Wrap(
-              spacing: 5.0,
-              alignment: WrapAlignment.center,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              verticalDirection: VerticalDirection.down,
-              children: _bookList)
-        ];
-      }
-
-      List<Widget> _createBookList() {
-        var _bookList = <Widget>[];
-
-        _bookList.add(ExpandableCheckboxListTile(
-          initiallyExpanded: true,
-          controlAffinity: ListTileControlAffinity.leading,
-          onChanged: (bool b) {
-            vm.selectBook(b, -2);
-          },
-          value: vm.otSelected,
-          title: Text(
-            'Old Testament',
-            style: Theme.of(context).textTheme.title,
-          ),
-          children: _getBookChildren(true),
-        ));
-
-        _bookList.add(ExpandableCheckboxListTile(
-          initiallyExpanded: true,
-          controlAffinity: ListTileControlAffinity.leading,
-          onChanged: (bool b) {
-            vm.selectBook(b, -1);
-          },
-          value: vm.ntSelected,
-          title: Text(
-            'New Testament',
-            style: Theme.of(context).textTheme.title,
-          ),
-          children: _getBookChildren(false),
-        ));
-        return _bookList;
-      }
-
-      return DefaultTabController(
-        initialIndex: tabValue,
-        length: tabs.length,
-        child: Scaffold(
-          appBar: AppBar(
-            title: GestureDetector(
-                onVerticalDragDown: Navigator.of(context).pop,
-                child: Text("Filter")),
-            bottom: TabBar(
-              tabs: tabs,
-            ),
-            leading: IconButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              icon: Icon(Icons.close),
-            ),
-          ),
-          body: TabBarView(
-            children: tabs.map((Tab tab) {
-              return Container(
-                  key: PageStorageKey(tab.text),
-                  padding: EdgeInsets.all(10.0),
-                  child: ListView(
-                    children: tab.text == "BOOK"
-                        ? _createBookList()
-                        : _createLanguageList(),
-                  ));
-            }).toList(),
-          ),
-        ),
-      );
-    });
+          );
+        });
   }
 }
 
@@ -204,12 +204,13 @@ class FilterViewModel {
     return FilterViewModel(
       translations: store.state.translations,
       selectTranslation: (b, i) =>
-          store.dispatch(SelectAction(b, i, Select.TRANSLATION)),
+          store.dispatch(SelectAction(i, Select.TRANSLATION, toggle: b)),
       languages: store.state.languages,
       selectLanguage: (b, i) =>
-          store.dispatch(SelectAction(b, i, Select.LANGUAGE)),
+          store.dispatch(SelectAction(i, Select.LANGUAGE, toggle: b)),
       bookNames: store.state.books,
-      selectBook: (b, i) => store.dispatch(SelectAction(b, i, Select.BOOK)),
+      selectBook: (b, i) =>
+          store.dispatch(SelectAction(i, Select.BOOK, toggle: b)),
       otSelected: store.state.otSelected,
       ntSelected: store.state.ntSelected,
       updateSearch: () => store.dispatch(SearchAction(store.state.searchQuery)),

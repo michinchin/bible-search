@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'dart:math' as math;
 
+import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/context.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/verse.dart';
@@ -10,17 +11,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share/share.dart';
 
-
 class ResultCard extends StatefulWidget {
   final bool isInSelectionMode;
   final SearchResult res;
-  final toggleSelectionMode;
+  final VoidCallback toggleSelectionMode;
   final String keywords;
   final Function(int, bool) selectCard;
-  final bookNames;
+  final List<Book> bookNames;
   final int index;
 
-  ResultCard({
+  const ResultCard({
     Key key,
     @required this.res,
     @required this.toggleSelectionMode,
@@ -36,18 +36,17 @@ class ResultCard extends StatefulWidget {
 }
 
 class _ResultCardState extends State<ResultCard> {
-  var searchModel;
-  var _currTag;
+  SearchModel searchModel;
+  int _currTag;
 
   @override
-  initState(){
+  void initState() {
     searchModel = SearchModel();
     super.initState();
   }
 
-  _contextButtonPressed() {
-    if (widget.res.verses[widget.res.currentVerseIndex].contextText.length ==
-        0) {
+  void _contextButtonPressed() {
+    if (widget.res.verses[widget.res.currentVerseIndex].contextText.isEmpty) {
       Context.fetch(
         translation: widget.res.verses[widget.res.currentVerseIndex].id,
         book: widget.res.bookId,
@@ -72,30 +71,29 @@ class _ResultCardState extends State<ResultCard> {
     }
   }
 
-  _expandButtonPressed() {
+  void _expandButtonPressed() {
     setState(() {
       widget.res.isExpanded = !widget.res.isExpanded;
     });
   }
 
-  _selectionModeEnabled() {
+  void _selectionModeEnabled() {
     widget.toggleSelectionMode();
     _selectCard();
   }
 
-  _selectCard() {
+  void _selectCard() {
     setState(() {
       widget.res.isSelected = !widget.res.isSelected;
       widget.selectCard(widget.index, widget.res.isSelected);
     });
   }
 
-  _translationChanged(Verse each, int index) async {
+  Future<void> _translationChanged(Verse each, int index) async {
     widget.res.currentVerseIndex = index;
 
     if (widget.res.contextExpanded &&
-        widget.res.verses[widget.res.currentVerseIndex].contextText.length ==
-            0) {
+        widget.res.verses[widget.res.currentVerseIndex].contextText.isEmpty) {
       final context = await Context.fetch(
         translation: widget.res.verses[widget.res.currentVerseIndex].id,
         book: widget.res.bookId,
@@ -115,9 +113,6 @@ class _ResultCardState extends State<ResultCard> {
     });
   }
 
- 
-
-  
   @override
   Widget build(BuildContext context) {
     final model = ResultCardModel(
@@ -129,24 +124,25 @@ class _ResultCardState extends State<ResultCard> {
     );
 
     final allButton = FlatButton(
-      child: Text('ALL'),
+      child: const Text('ALL'),
       onPressed: () {
-        Navigator.of(context).push(MaterialPageRoute<dynamic>(
+        Navigator.of(context).push<MaterialPageRoute>(MaterialPageRoute(
             builder: (context) {
               return AllTranslationsScreen(
                 res: widget.res,
-                bcv: [
+                bcv: <int>[
                   widget.res.bookId,
                   widget.res.chapterId,
                   widget.res.verseId
                 ],
-                model:searchModel,
+                model: searchModel,
                 keywords: widget.keywords,
               );
             },
             fullscreenDialog: true));
       },
-      textColor: widget.res.isSelected ? model.colorScheme : model.oppColorScheme,
+      textColor:
+          widget.res.isSelected ? model.colorScheme : model.oppColorScheme,
       splashColor: widget.res.isSelected
           ? Colors.transparent
           : Theme.of(context).accentColor,
@@ -155,8 +151,8 @@ class _ResultCardState extends State<ResultCard> {
     Widget _buildButtonStack() {
       _currTag = widget.res.verses[widget.res.currentVerseIndex].id;
 
-      var buttons = <FlatButton>[];
-      for (int i = 0; i < widget.res.verses.length; i++) {
+      final buttons = <FlatButton>[];
+      for (var i = 0; i < widget.res.verses.length; i++) {
         final each = widget.res.verses[i];
         Color buttonColor;
         Color textColor;
@@ -164,7 +160,8 @@ class _ResultCardState extends State<ResultCard> {
           buttonColor = _currTag == each.id
               ? Theme.of(context).cardColor
               : Theme.of(context).accentColor;
-          textColor = _currTag == each.id ? model.oppColorScheme : model.colorScheme;
+          textColor =
+              _currTag == each.id ? model.oppColorScheme : model.colorScheme;
         } else {
           buttonColor = _currTag == each.id
               ? Theme.of(context).accentColor
@@ -181,9 +178,9 @@ class _ResultCardState extends State<ResultCard> {
           onPressed: () => _translationChanged(each, i),
         ));
       }
-      var rows = <Row>[];
-      var width = MediaQuery.of(context).size.width;
-      double currWidth = 0;
+      final rows = <Row>[];
+      final width = MediaQuery.of(context).size.width;
+      var currWidth = 0;
       var currButtons = <Expanded>[];
       for (final each in buttons) {
         currWidth += 100;
@@ -199,10 +196,11 @@ class _ResultCardState extends State<ResultCard> {
       }
       currWidth += 100;
       if (currWidth >= width) {
-        rows.add(Row(
-          children: currButtons,
-        ));
-        rows.add(Row(children: [allButton]));
+        rows
+          ..add(Row(
+            children: currButtons,
+          ))
+          ..add(Row(children: [allButton]));
       } else {
         currButtons.add(Expanded(child: allButton));
         rows.add(Row(
@@ -216,10 +214,10 @@ class _ResultCardState extends State<ResultCard> {
       ));
     }
 
-    List<Widget> _expandIcons = [
+    final _expandIcons = <Widget>[
       ListTile(
         title: Padding(
-            padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+            padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
             child: model.formattedTitle),
         subtitle: model.formattedText,
       ),
@@ -234,18 +232,16 @@ class _ResultCardState extends State<ResultCard> {
         ButtonTheme.bar(
           child: ButtonBar(alignment: MainAxisAlignment.start, children: [
             IconButton(
-              tooltip: "Context",
+              tooltip: 'Context',
               color: model.iconColor,
               icon: Transform(
-                transform: new Matrix4.rotationZ(math.pi / 2),
+                transform: Matrix4.rotationZ(math.pi / 2),
                 alignment: FractionalOffset.center,
                 child: widget.res.contextExpanded
                     ? Icon(Icons.unfold_less)
                     : Icon(Icons.unfold_more),
               ),
-              onPressed: () {
-                _contextButtonPressed();
-              },
+              onPressed: _contextButtonPressed,
             ),
           ]),
         ),
@@ -255,23 +251,23 @@ class _ResultCardState extends State<ResultCard> {
               IconButton(
                 color: model.iconColor,
                 icon: Icon(Icons.content_copy),
-                onPressed: () => searchModel.copyPressed(text: model.formattedTitle.data + '\n' + model.content,context: context), // set state here
+                onPressed: () => searchModel.copyPressed(
+                    text: '${model.formattedTitle.data}\n${model.content}',
+                    context: context), // set state here
               ),
               IconButton(
                 color: model.iconColor,
                 icon: Icon(Icons.share),
                 onPressed: () {
-                  String verseContent = widget.res.contextExpanded
-                      ? model.contextTitle.data +
-                          '\n' +
-                          widget.res.verses[widget.res.currentVerseIndex]
-                              .contextText
-                      : model.nonContextTitle.data +
-                          '\n' +
-                          widget.res.verses[widget.res.currentVerseIndex]
-                              .verseContent;
+                  final verseContent = widget.res.contextExpanded
+                      ? '${model.contextTitle.data}'
+                          '\n'
+                          '${widget.res.verses[widget.res.currentVerseIndex].contextText}'
+                      : '${model.nonContextTitle.data}'
+                          '\n'
+                          '${widget.res.verses[widget.res.currentVerseIndex].verseContent}';
                   Share.share(verseContent);
-                }, 
+                },
               ),
               IconButton(
                 color: model.iconColor,
@@ -283,7 +279,7 @@ class _ResultCardState extends State<ResultCard> {
                   chapterId: widget.res.chapterId,
                   verseId: widget.res.verseId,
                   context: context,
-                ), 
+                ),
               ),
             ],
           ),
@@ -292,10 +288,10 @@ class _ResultCardState extends State<ResultCard> {
       _buildButtonStack(),
     ];
 
-    List<Widget> _unexpandIcons = [
+    final _unexpandIcons = <Widget>[
       ListTile(
         title: Padding(
-            padding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+            padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
             child: model.formattedTitle),
         subtitle: model.formattedText,
       ),
@@ -304,7 +300,7 @@ class _ResultCardState extends State<ResultCard> {
           child: IconButton(
             color: model.iconColor,
             icon: Icon(Icons.expand_more),
-            onPressed: () => _expandButtonPressed(),
+            onPressed: _expandButtonPressed,
           ))
     ];
 
@@ -312,8 +308,9 @@ class _ResultCardState extends State<ResultCard> {
       borderRadius: BorderRadius.circular(15.0),
       onTap: () =>
           !widget.isInSelectionMode ? _expandButtonPressed() : _selectCard(),
-      onLongPress: () =>
-          !widget.isInSelectionMode ? _selectionModeEnabled() : {},
+      onLongPress: () {
+        if (widget.isInSelectionMode) _selectionModeEnabled();
+      },
       child: Card(
         elevation: 2.0,
         color: widget.res.isSelected
@@ -323,7 +320,7 @@ class _ResultCardState extends State<ResultCard> {
           borderRadius: BorderRadius.circular(15.0),
         ),
         child: Padding(
-          padding: EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(15.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: widget.res.isExpanded ? _expandIcons : _unexpandIcons,
@@ -334,9 +331,9 @@ class _ResultCardState extends State<ResultCard> {
   }
 }
 
-class ResultCardModel{
+class ResultCardModel {
   final SearchResult res;
-  final List bookNames;
+  final List<Book> bookNames;
   final BuildContext context;
   final List<TextSpan> Function(String, String) formatWords;
   final String keywords;
@@ -349,24 +346,26 @@ class ResultCardModel{
   Color oppColorScheme;
   Color iconColor;
 
-  ResultCardModel({this.res, this.keywords, this.bookNames, this.context, this.formatWords}){
-    nonContextTitle = Text(
-        '${res.ref} ${res.verses[res.currentVerseIndex].a}');
+  ResultCardModel(
+      {this.res,
+      this.keywords,
+      this.bookNames,
+      this.context,
+      this.formatWords}) {
+    nonContextTitle = Text('${res.ref} ${res.verses[res.currentVerseIndex].a}');
     contextTitle = Text(
-        '${bookNames.where((book) => book.id == res.bookId).first.name} ' +
-            '${res.chapterId}:' +
-            '${res.verses[res.currentVerseIndex].verseIdx[0]}' +
-            '-${res.verses[res.currentVerseIndex].verseIdx[1]} ' +
-            '${res.verses[res.currentVerseIndex].a}');
-    content  = !res.contextExpanded
+        '${bookNames.where((book) => book.id == res.bookId).first.name} ${res.chapterId}: '
+        '${res.verses[res.currentVerseIndex].verseIdx[0]} -${res.verses[res.currentVerseIndex].verseIdx[1]}'
+        '  ${res.verses[res.currentVerseIndex].a}');
+    content = !res.contextExpanded
         ? res.verses[res.currentVerseIndex].verseContent
         : res.verses[res.currentVerseIndex].contextText;
 
-  colorScheme = Theme.of(context).brightness == Brightness.dark
+    colorScheme = Theme.of(context).brightness == Brightness.dark
         ? Colors.black
         : Colors.white;
 
-     oppColorScheme = Theme.of(context).brightness == Brightness.dark
+    oppColorScheme = Theme.of(context).brightness == Brightness.dark
         ? Colors.white
         : Colors.black;
     formattedTitle = Text(
@@ -383,10 +382,10 @@ class ResultCardModel{
             : TextStyle(
                 color: colorScheme,
               ),
-        children: formatWords(content,keywords),
+        children: formatWords(content, keywords),
       ),
     );
 
-      iconColor = res.isSelected ? colorScheme : oppColorScheme;
+    iconColor = res.isSelected ? colorScheme : oppColorScheme;
   }
 }

@@ -4,3 +4,5 @@ const String kTBApiServer = 'api.tecartabible.com';
 const String kTBkey = 'toomanysecrets';
 
 const String adCounterPref = 'bs_adCounter';
+const String themePref = 'bs_theme';
+const String translationsPref = 'bs_translations';

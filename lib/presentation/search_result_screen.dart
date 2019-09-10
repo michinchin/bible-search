@@ -16,17 +16,18 @@ import 'package:bible_search/models/app_state.dart';
 import 'package:bible_search/redux/actions.dart';
 
 class SearchResultScreen extends StatefulWidget {
-  SearchResultScreen({Key key}) : super(key: key);
+  const SearchResultScreen({Key key}) : super(key: key);
 
   @override
   _SearchResultScreenState createState() => _SearchResultScreenState();
 }
 
 class _SearchResultScreenState extends State<SearchResultScreen> {
-  void _shareSelection(BuildContext context, bool isCopy, String text) async {
-    if (text.length > 0) {
+  Future<void> _shareSelection(
+      BuildContext context, bool isCopy, String text) async {
+    if (text.isNotEmpty) {
       !isCopy
-          ? Share.share(text)
+          ? await Share.share(text)
           : await Clipboard.setData(ClipboardData(text: text)).then((x) {
               _showToast(context, 'Copied!');
             });
@@ -54,25 +55,23 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
     return StoreConnector<AppState, ResultsViewModel>(
         distinct: true,
-        converter: (store) {
-          return ResultsViewModel.fromStore(store);
-        },
-        builder: (BuildContext context, ResultsViewModel vm) {
+        converter: ResultsViewModel.fromStore,
+        builder: (context, vm) {
           return Scaffold(
               resizeToAvoidBottomInset: false,
               appBar: SearchAppBar(
                 model: vm,
                 shareSelection: _shareSelection,
               ),
-              body:  GestureDetector(
-                      onTap: () {
-                        FocusScope.of(context).requestFocus(FocusNode());
-                      },
-                      child: vm.state.isFetchingSearch
-                          ? LoadingView()
-                          : vm.filteredRes.isEmpty
-                              ? NoResultsView()
-                              : CardView(vm)));
+              body: GestureDetector(
+                  onTap: () {
+                    FocusScope.of(context).requestFocus(FocusNode());
+                  },
+                  child: vm.state.isFetchingSearch
+                      ? LoadingView()
+                      : vm.filteredRes.isEmpty
+                          ? NoResultsView()
+                          : CardView(vm)));
         });
   }
 }
@@ -122,9 +121,9 @@ class ResultsViewModel {
       changeToSelectionMode: () => store.dispatch(SetSelectionModeAction()),
       updateSearchResults: (s) => store.dispatch(SearchAction(s)),
       selectCard: (idx, b) =>
-          store.dispatch(SelectAction(b, idx, Select.RESULT)),
+          store.dispatch(SelectAction(idx, Select.result, toggle: b)),
       getSelectedText: () => store.state.selectedText,
-      changeTheme: (b) => store.dispatch(SetThemeAction(b)),
+      changeTheme: (b) => store.dispatch(SetThemeAction(isDarkTheme: b)),
       filteredRes: store.state.filteredResults,
     );
   }

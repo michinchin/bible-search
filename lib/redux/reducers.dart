@@ -32,7 +32,7 @@ AppState _onError(AppState state, SearchErrorAction action) =>
     state.copyWith(hasError: true);
 
 AppState _onResult(AppState state, SearchResultAction action) {
-  if (action.res.length == 0) {
+  if (action.res.isEmpty) {
     return state.copyWith(
         results: [], isFetchingSearch: false, filteredResults: []);
   } else {
@@ -48,7 +48,7 @@ AppState _onFiltered(AppState state, SetFilteredResultsAction action) =>
 
 AppState _onSetSelectionMode(AppState state, SetSelectionModeAction action) {
   if (state.isInSelectionMode) {
-    var res = state.results;
+    final res = state.results;
     res.map((r) => r.isSelected = false).toList();
     return state.copyWith(
         isInSelectionMode: !state.isInSelectionMode,
@@ -84,7 +84,7 @@ AppState _onTranslationsSet(AppState state, SetTranslationsAction action) =>
     state.copyWith(translations: action.translations);
 
 AppState _onTestamentSet(AppState state, SetTestamentAction action) {
-  if (action.test == Test.OT) {
+  if (action.test == Test.oT) {
     return state.copyWith(otSelected: action.toggle);
   }
   return state.copyWith(ntSelected: action.toggle);

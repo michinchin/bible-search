@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:core';
 
+import 'package:flutter/material.dart';
+
 import 'package:tec_cache/tec_cache.dart';
+import 'package:tec_util/tec_util.dart' as tec;
 
 import '../data/verse.dart';
 import '../tec_settings.dart';
@@ -36,9 +38,9 @@ class SearchResult {
   });
 
   factory SearchResult.fromJson(Map<String, dynamic> json) {
-    final String ref = json['reference'];
+    final ref = tec.as<String>(json['reference']);
     final v = <Verse>[];
-    final a = json['verses'] as List<dynamic>;
+    final a = tec.as<List<dynamic>>(json['verses']);
     for (final b in a) {
       if (b is Map<String, dynamic>) {
         final verse = Verse.fromJson(b, ref);
@@ -49,10 +51,10 @@ class SearchResult {
     }
     return SearchResult(
         ref: ref,
-        bookId: json['bookId'] as int,
-        chapterId: json['chapterId'] as int,
-        verseId: json['verseId'] as int,
+        bookId: tec.as<int>(json['bookId']),
+        chapterId: tec.as<int>(json['chapterId']),
         verses: v,
+        verseId: tec.as<int>(json['verseId']),
         key: GlobalKey());
   }
 }
@@ -62,8 +64,8 @@ class SearchResults {
   SearchResults({this.data});
 
   factory SearchResults.fromJson(Map<String, dynamic> json) {
-    var d = <SearchResult>[];
-    final a = json['searchResults'] as List<dynamic>;
+    final d = <SearchResult>[];
+    final a = tec.as<List<dynamic>>(json['searchResults']);
     for (final b in a) {
       if (b is Map<String, dynamic>) {
         final res = SearchResult.fromJson(b);
@@ -77,7 +79,7 @@ class SearchResults {
 
   static Future<List<SearchResult>> fetch(
       {String words, String translationIds}) async {
-    if ((words?.trim() ?? '').length == 0) {
+    if ((words?.trim() ?? '').isEmpty) {
       return SearchResults(data: []).data;
     }
     final hostAndPath = '$kTBApiServer/search';
@@ -86,15 +88,15 @@ class SearchResults {
     final fullCachedPath =
         'https://$cachePath/${getCacheKey(words, translationIds)}.gz';
     final fullPath =
-        'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=${formatWords(words)}&book=0' +
-            '&bookset=0&exact=0&phrase=0&searchVolumes=$translationIds';
+        'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=${formatWords(words)}&book=0'
+        '&bookset=0&exact=0&phrase=0&searchVolumes=$translationIds';
     final cacheJson = await tecCache.jsonFromUrl(
       url: fullCachedPath,
       requestType: 'get',
     );
 
     if (cacheJson != null) {
-      debugPrint('Getting cached results from: ' + fullCachedPath);
+      debugPrint('Getting cached results from: $fullCachedPath');
       return SearchResults.fromJson(cacheJson).data;
     } else {
       final json = await tecCache.jsonFromUrl(
@@ -102,7 +104,7 @@ class SearchResults {
         requestType: 'post',
       );
       if (json != null) {
-        debugPrint('Getting results from: ' + Uri.encodeFull(fullPath));
+        debugPrint('Getting results from: ${Uri.encodeFull(fullPath)}');
         return SearchResults.fromJson(json).data;
       } else {
         return SearchResults(data: []).data;
@@ -112,59 +114,62 @@ class SearchResults {
 }
 
 Map<String, String> urlEncodingExceptions = {
-  "’": "'", // UTF-8: E2 80 99
-  "‘": "'", // UTF-8: E2 80 98
-  "‚": "",
-  ",": "", // get rid of commas
-  "‛": "'",
-  "“": "\"", // UTF-8: E2 80 9C
-  "”": "\"", // UTF-8: E2 80 9D
-  "„": "\"", // UTF-8: E2 80 9E
-  "‟": "\"",
-  "′": "'",
-  "″": "\"",
-  "‴": "\"",
-  "‵": "'",
-  "‶": "\"",
-  "‷": "\"",
-  "–": "-", // UTF-8: E2 80 93
-  "‐": "-",
-  "‒": "-",
-  "—": "-", // UTF-8: E2 80 94
-  "―": "-" // UTF-8: E2 80 95
+  '’': ''', // UTF-8: E2 80 99
+  '‘': ''', // UTF-8: E2 80 98
+  '‚': '',
+  ',': '', // get rid of commas
+  '‛': ''',
+  '“': '\"', // UTF-8: E2 80 9C
+  '”': '\"', // UTF-8: E2 80 9D
+  '„': '\"', // UTF-8: E2 80 9E
+  '‟': '\"',
+  '′': '\"',
+  '″': '\"',
+  '‴': '\"',
+  '‵': ''',
+  '‶': '\"',
+  '‷': '\"',
+  '–': '-', // UTF-8: E2 80 93
+  '‐': '-',
+  '‒': '-',
+  '—': '-', // UTF-8: E2 80 94
+  '―': '-' // UTF-8: E2 80 95
 };
-final String base64Map =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+const base64Map =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 
 String formatWords(String keywords) {
+  String modifiedKeywords;
   urlEncodingExceptions
-      .forEach((k, v) => keywords = keywords.replaceAll(RegExp(k), v));
-  List<String> wordList = keywords.split(" ");
-  wordList.sort((a, b) => b.length.compareTo(a.length));
-  return  wordList.sublist(0,wordList.length < 5 ? wordList.length : 4).join(" ");
+      .forEach((k, v) => modifiedKeywords = keywords.replaceAll(RegExp(k), v));
+  final wordList = modifiedKeywords.split(' ')
+    ..sort((a, b) => b.length.compareTo(a.length));
+  return wordList
+      .sublist(0, wordList.length < 5 ? wordList.length : 4)
+      .join(' ');
 }
 
 String getCacheKey(String keywords, String translationIds) {
-  keywords = keywords.toLowerCase();
-  keywords = formatWords(keywords);
+  String modKeywords;
+  modKeywords = keywords.toLowerCase();
+  modKeywords = formatWords(modKeywords);
   // var klist = keywords.split(' ');
   // klist.sort((f,l)=> f.length.compareTo(l.length));
   // keywords = klist.join(' ');
   var words = keywords.replaceAll(' ', '_');
 
   words += '_';
-  var encoded = '';
-  final length = base64Map.length;
+  final encoded = StringBuffer();
+  const length = base64Map.length;
   final volumeIds =
-      translationIds.split('|').toList().map((id) => double.parse(id)).toList();
+      translationIds.split('|').toList().map(double.parse).toList()..sort();
 
-  volumeIds.sort();
   for (var i = 0; i < volumeIds.length; i++) {
     var volumeId = volumeIds[i];
     final digit = volumeId / length;
-    encoded += base64Map[digit.toInt()];
+    encoded.write(base64Map[digit.toInt()]);
     volumeId -= digit.toInt() * length;
-    encoded += base64Map[volumeId.toInt()];
+    encoded.write(base64Map[volumeId.toInt()]);
   }
-  return words + encoded + '_0_0_0_0';
+  return '$words${encoded.toString()}0_0_0_0';
 }

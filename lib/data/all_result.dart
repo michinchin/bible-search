@@ -1,34 +1,40 @@
-import 'package:bible_search/tec_settings.dart';
-import 'package:bible_search/data/translation.dart';
 import 'dart:async';
 import 'dart:convert' show json, utf8;
 import 'dart:io';
 
-class AllResult{
+import 'package:bible_search/tec_settings.dart';
+import 'package:bible_search/data/translation.dart';
+import 'package:tec_util/tec_util.dart' as tec;
+
+class AllResult {
   final int id;
   final String a;
   final String text;
 
   const AllResult({this.id, this.a, this.text});
 
-  factory AllResult.fromJson(Map<String,dynamic> json) {
+  factory AllResult.fromJson(Map<String, dynamic> json) {
+    final id = tec.as<int>(json['id']);
+    final abbreviation = tec.as<String>(json['a']);
+    final text = tec.as<String>(json['text']);
+
     return AllResult(
-      id: json['id'] as int,
-      a: json['a'] as String,
-      text: json['text'] as String,
+      id: id,
+      a: abbreviation,
+      text: text,
     );
   }
 }
 
-class AllResults{
+class AllResults {
   var data = <AllResult>[];
 
   AllResults({this.data});
 
-  factory AllResults.fromJson(List< dynamic> json) {
-    var d = <AllResult>[];
+  factory AllResults.fromJson(List<dynamic> json) {
+    final d = <AllResult>[];
     for (final b in json) {
-      if (b is Map<String,dynamic>) {
+      if (b is Map<String, dynamic>) {
         final res = AllResult.fromJson(b);
         if (res != null) {
           d.add(res);
@@ -38,17 +44,21 @@ class AllResults{
     return AllResults(data: d);
   }
 
-  static Future<AllResults> fetch({int book, int chapter, int verse, BibleTranslations translations}) async {
+  static Future<AllResults> fetch(
+      {int book,
+      int chapter,
+      int verse,
+      BibleTranslations translations}) async {
     final json = await getAllResponse(
       auth: kTBApiServer,
       unencodedPath: '/allverses',
       queryParameters: {
-        'key' : kTBkey,
-        'version' : kTBApiVersion,
-        'volumes' : translations.formatIds(),
-        'book' : '$book',
-        'chapter' : '$chapter',
-        'verse' : '$verse',
+        'key': kTBkey,
+        'version': kTBApiVersion,
+        'volumes': translations.formatIds(),
+        'book': '$book',
+        'chapter': '$chapter',
+        'verse': '$verse',
       },
     );
     if (json != null) {
@@ -58,8 +68,10 @@ class AllResults{
     }
   }
 
-
-  static Future<List<dynamic>> getAllResponse({String auth, String unencodedPath, Map<String,String> queryParameters}) async {
+  static Future<List<dynamic>> getAllResponse(
+      {String auth,
+      String unencodedPath,
+      Map<String, String> queryParameters}) async {
     final uri = Uri.https(auth, unencodedPath, queryParameters);
     final jsonResponse = await _getAllJson(uri);
 
@@ -71,7 +83,7 @@ class AllResults{
   }
 
   static Future<List<dynamic>> _getAllJson(Uri uri) async {
-    final HttpClient _httpClient = HttpClient();
+    final _httpClient = HttpClient();
     try {
       final httpRequest = await _httpClient.getUrl(uri);
       final httpResponse = await httpRequest.close();
@@ -82,11 +94,11 @@ class AllResults{
       // `String`.
       final responseBody = await httpResponse.transform(utf8.decoder).join();
       // Finally, the string is parsed into a JSON object.
-      return json.decode(responseBody);
+      final response = tec.as<Future<List<dynamic>>>(json.decode(responseBody));
+      return response;
     } on Exception catch (e) {
       print('$e');
       return null;
     }
   }
 }
-

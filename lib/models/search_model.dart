@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SearchModel {
-  void openTB(
+  Future<void> openTB(
       {@required String a,
       @required int id,
       @required int bookId,
@@ -27,20 +27,20 @@ class SearchModel {
 
   void showAppStoreDialog(BuildContext context) {
     final dialog = AlertDialog(
-      title: Text('Download TecartaBible'),
-      content: Text(
+      title: const Text('Download TecartaBible'),
+      content: const Text(
           'Easily navigate to scriptures in the Bible by downloading our Bible app.'),
       actions: [
         FlatButton(
-          child: Text('No Thanks'),
+          child: const Text('No Thanks'),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         FlatButton(
-          child: Text('Okay'),
+          child: const Text('Okay'),
           onPressed: () async {
-            var url = Platform.isIOS
+            final url = Platform.isIOS
                 ? 'itms-apps://itunes.apple.com/app/id325955298'
                 : 'https://play.google.com/store/apps/details?id=com.tecarta.TecartaBible';
             if (await canLaunch(url)) {
@@ -56,26 +56,27 @@ class SearchModel {
         )
       ],
     );
-    showDialog(context: context, builder: (x) => dialog);
+    showDialog<void>(context: context, builder: (x) => dialog);
   }
 
   void copyPressed({@required String text, @required BuildContext context}) {
     Clipboard.setData(ClipboardData(text: text)).then((_) {
       Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text('Successfully Copied!')));
+          .showSnackBar(SnackBar(content: const Text('Successfully Copied!')));
     });
   }
 
   List<TextSpan> formatWords(String paragraph, String keywords) {
-    final List<String> contentText = paragraph.split(' ');
-    List<TextSpan> content = contentText.map((s) => TextSpan(text: s)).toList();
-    var contentCopy = <TextSpan>[];
+    final contentText = paragraph.split(' ');
+    final content = contentText.map((s) => TextSpan(text: s)).toList();
+    final contentCopy = <TextSpan>[];
+    String modKeywords;
     urlEncodingExceptions
-        .forEach((k, v) => keywords = keywords.replaceAll(RegExp(k), v));
-    final formattedKeywords = keywords.toLowerCase().split(' ');
+        .forEach((k, v) => modKeywords = keywords.replaceAll(RegExp(k), v));
+    final formattedKeywords = modKeywords.toLowerCase().split(' ');
 
     for (var i = 0; i < content.length; i++) {
-      var text = <TextSpan>[];
+      final text = <TextSpan>[];
       final w = content[i].text;
       for (final search in formattedKeywords) {
         if (w.toLowerCase().contains(search)) {
@@ -83,31 +84,29 @@ class SearchModel {
           final end = start + search.length;
           final prefix = w.substring(0, start);
           final suffix = w.substring(end, w.length);
-          if (prefix.length > 0) {
+          if (prefix.isNotEmpty) {
             text.add(TextSpan(text: prefix));
           }
-          if (prefix.length == 0 && suffix.length == 0) {
+          if (prefix.isEmpty && suffix.isEmpty) {
             text.add(TextSpan(
-                text: w + ' ', style: TextStyle(fontWeight: FontWeight.bold)));
+                text: '$w ', style: TextStyle(fontWeight: FontWeight.bold)));
           } else {
-            suffix.length > 0
+            suffix.isNotEmpty
                 ? text.add(TextSpan(
                     text: search,
                     style: TextStyle(fontWeight: FontWeight.bold)))
                 : text.add(TextSpan(
-                    text: search + ' ',
+                    text: '$search ',
                     style: TextStyle(fontWeight: FontWeight.bold)));
           }
-          if (suffix.length > 0) {
-            text.add(TextSpan(text: suffix + ' '));
+          if (suffix.isNotEmpty) {
+            text.add(TextSpan(text: '$suffix '));
           }
         }
       }
-      (text.length > 0)
-          ? text.forEach((ts) {
-              contentCopy.add(ts);
-            })
-          : contentCopy.add(TextSpan(text: w + ' '));
+      (text.isNotEmpty)
+          ? text.forEach(contentCopy.add)
+          : contentCopy.add(TextSpan(text: '$w '));
     }
     return contentCopy;
   }
