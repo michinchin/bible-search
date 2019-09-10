@@ -42,7 +42,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
   }
 
   void _showSearch() {
-    showSearch<void>(
+    showSearch<String>(
       query: widget.model.searchQuery, //widget.model.searchQuery
       context: context,
       delegate: BibleSearchDelegate(

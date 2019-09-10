@@ -76,7 +76,7 @@ class AllResults {
     final jsonResponse = await _getAllJson(uri);
 
     if (jsonResponse == null) {
-      print('Error retrieving json.');
+      print('Error retrieving json. URL:${uri.toString()}');
       return null;
     }
     return jsonResponse;
@@ -94,7 +94,7 @@ class AllResults {
       // `String`.
       final responseBody = await httpResponse.transform(utf8.decoder).join();
       // Finally, the string is parsed into a JSON object.
-      final response = tec.as<Future<List<dynamic>>>(json.decode(responseBody));
+      final response = tec.as<List<dynamic>>(json.decode(responseBody));
       return response;
     } on Exception catch (e) {
       print('$e');

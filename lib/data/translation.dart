@@ -29,8 +29,6 @@ class BibleTranslation {
     this.isSelected,
   });
 
-  // operator <(BibleTranslation bt) => lang != bt.lang;
-
   factory BibleTranslation.fromJson(Map<String, dynamic> json) {
     final onSale = tec.as<bool>(json['onsale']);
     if (onSale) {

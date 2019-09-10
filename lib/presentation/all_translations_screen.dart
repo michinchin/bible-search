@@ -1,3 +1,4 @@
+import 'package:bible_search/containers/search_result_components/no_results_view.dart';
 import 'package:flutter/material.dart';
 
 import 'package:share/share.dart';
@@ -31,6 +32,7 @@ class AllTranslationsScreen extends StatelessWidget {
         builder: (context, snapshot) {
           final allResults =
               snapshot.data == null ? <AllResult>[] : snapshot.data.data;
+
           return Scaffold(
             appBar: AppBar(
               title: GestureDetector(
@@ -43,9 +45,11 @@ class AllTranslationsScreen extends StatelessWidget {
             body: Container(
                 padding: const EdgeInsets.all(10.0),
                 child: allResults.isEmpty
-                    ? Center(
-                        child: const CircularProgressIndicator(),
-                      )
+                    ? snapshot.connectionState == ConnectionState.done
+                        ? NoResultsView()
+                        : Center(
+                            child: const CircularProgressIndicator(),
+                          )
                     : ListView.builder(
                         itemCount: allResults.length,
                         itemBuilder: (context, index) {
