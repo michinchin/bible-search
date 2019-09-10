@@ -13,7 +13,7 @@ class AllTranslationsScreen extends StatelessWidget {
   final SearchModel model;
   final String keywords;
 
-  AllTranslationsScreen({this.bcv, this.res, this.model, this.keywords});
+  const AllTranslationsScreen({this.bcv, this.res, this.model, this.keywords});
 
   @override
   Widget build(BuildContext context) {

@@ -171,7 +171,7 @@ void selectionMiddleware(
         ..dispatch(SetFilteredResultsAction(
             filterModel.filterByBook(store.state.results, books)));
       break;
-    case Select.LANGUAGE:
+    case Select.language:
       final tl = filterModel.selectLang(store.state.languages[action.index],
           store.state.translations, store.state.languages,
           b: action.toggle);

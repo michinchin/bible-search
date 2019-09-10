@@ -85,7 +85,7 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
               child: controller.text.isNotEmpty
                   ? IconButton(
                       splashColor: Colors.transparent,
-                      icon: Icon(
+                      icon: const Icon(
                         CupertinoIcons.clear_circled,
                       ),
                       onPressed: () {
