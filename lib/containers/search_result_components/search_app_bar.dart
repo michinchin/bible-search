@@ -1,9 +1,10 @@
-import 'package:bible_search/presentation/translation_book_filter_screen.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:bible_search/presentation/search_result_screen.dart';
+import 'package:flutter/foundation.dart';
 
+import 'package:dynamic_theme/dynamic_theme.dart';
+
+import 'package:bible_search/presentation/search_result_screen.dart';
+import 'package:bible_search/presentation/translation_book_filter_screen.dart';
 import 'bible_search_delegate.dart';
 
 class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -122,7 +123,10 @@ class _SearchAppBarState extends State<SearchAppBar> {
                   contentPadding: const EdgeInsets.all(0),
                   leading: IconButton(
                     icon: Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () {
+                      //TODO: show interstitial
+                      Navigator.of(context).pop();
+                    },
                   ),
                   title: InkWell(
                       onTap: _showSearch,

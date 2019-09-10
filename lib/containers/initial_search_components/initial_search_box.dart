@@ -64,11 +64,12 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
             Center(
               child: TextField(
                 onChanged: (s) {
-                  setState(() {});
+                  setState(() {}); //for clear button to show
                 },
                 textAlign: TextAlign.left,
                 decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.only(left: 40.0, right: 40.0),
+                  contentPadding:
+                      const EdgeInsets.only(left: 40.0, right: 40.0),
                   hintText: 'Enter search terms',
                   border: InputBorder.none,
                   hintStyle: TextStyle(color: Colors.grey),
@@ -103,7 +104,7 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
                 icon: Icon(
                   CupertinoIcons.search,
                 ),
-                onPressed: () => () {},
+                onPressed: () {},
               ),
             )
           ]),

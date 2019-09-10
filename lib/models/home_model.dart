@@ -15,13 +15,13 @@ class HomeModel {
 
   /// load the search history from user prefs
   Future<List<String>> loadSearchHistory() async {
-    return tec.Prefs.shared.getStringList('searchHistory') ?? [];
+    return tec.Prefs.shared.getStringList(searchHistoryPref) ?? [];
   }
 
   /// update the search history with current user prefs
   Future<void> updateSearchHistory(List<String> searchQueries) async {
     searchQueries.removeWhere((s) => (s?.length ?? 0) == 0);
-    await tec.Prefs.shared.setStringList('searchHistory',
+    await tec.Prefs.shared.setStringList(searchHistoryPref,
         searchQueries.reversed.toSet().toList().reversed.toList());
   }
 

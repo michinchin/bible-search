@@ -118,7 +118,7 @@ class BibleTranslations {
 
   static Future<BibleTranslations> fetch() async {
     const fileName = 'WebSite.json.gz';
-    final hostAndPath = '$kTBStreamServer/$kTBApiVersion/products-list';
+    const hostAndPath = '$kTBStreamServer/$kTBApiVersion/products-list';
     final json = await TecCache().jsonFromUrl(
         url: 'https://$hostAndPath/$fileName',
         bundlePath: 'assets/Translation.json');

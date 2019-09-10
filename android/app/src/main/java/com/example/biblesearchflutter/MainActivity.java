@@ -1,4 +1,4 @@
-package com.example.biblesearchflutter;
+package com.bibleapplabs.biblesearchflutter;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

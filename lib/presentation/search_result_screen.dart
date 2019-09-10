@@ -1,4 +1,5 @@
 import 'package:bible_search/containers/sr_components.dart';
+import 'package:bible_search/tec_settings.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:share/share.dart';
+
+import 'package:tec_util/tec_util.dart' as tec;
 
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
@@ -23,6 +26,20 @@ class SearchResultScreen extends StatefulWidget {
 }
 
 class _SearchResultScreenState extends State<SearchResultScreen> {
+  tec.TecInterstitialAd _interstitialAd;
+
+  @override
+  void initState() {
+    _interstitialAd = tec.TecInterstitialAd(adUnitId: prefInterstitialAdId);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _interstitialAd.show(minViewTime: Duration(seconds: 30));
+    super.dispose();
+  }
+
   Future<void> _shareSelection(
       BuildContext context, bool isCopy, String text) async {
     if (text.isNotEmpty) {

@@ -82,8 +82,8 @@ class SearchResults {
     if ((words?.trim() ?? '').isEmpty) {
       return SearchResults(data: []).data;
     }
-    final hostAndPath = '$kTBApiServer/search';
-    final cachePath = '$kTBStreamServer/cache';
+    const hostAndPath = '$kTBApiServer/search';
+    const cachePath = '$kTBStreamServer/cache';
     final tecCache = TecCache();
     final fullCachedPath =
         'https://$cachePath/${getCacheKey(words, translationIds)}.gz';
