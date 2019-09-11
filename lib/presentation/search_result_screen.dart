@@ -1,5 +1,6 @@
 import 'package:bible_search/containers/sr_components.dart';
-import 'package:bible_search/tec_settings.dart';
+import 'package:bible_search/labels.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -36,7 +37,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   @override
   void dispose() {
-    _interstitialAd.show(minViewTime: Duration(seconds: 30));
+    if (!kDebugMode) {
+      _interstitialAd.show();
+    }
     super.dispose();
   }
 
@@ -65,6 +68,17 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
+  void _showSearch(ResultsViewModel vm) {
+    showSearch<String>(
+      query: vm.searchQuery, //widget.model.searchQuery
+      context: context,
+      delegate: BibleSearchDelegate(
+          searchHistory: vm.searchHistory,
+          search: vm.updateSearchResults,
+          interstitial: _interstitialAd),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     //on translation change, the view should reload
@@ -79,6 +93,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               appBar: SearchAppBar(
                 model: vm,
                 shareSelection: _shareSelection,
+                showSearch: () => _showSearch(vm),
               ),
               body: GestureDetector(
                   onTap: () {

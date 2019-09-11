@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert' show json, utf8;
 import 'dart:io';
 
-import 'package:bible_search/tec_settings.dart';
+import 'package:bible_search/labels.dart';
 import 'package:bible_search/data/translation.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 

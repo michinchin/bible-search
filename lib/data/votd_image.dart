@@ -1,7 +1,7 @@
 import 'package:tec_cache/tec_cache.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 
-import '../tec_settings.dart';
+import '../labels.dart';
 
 final _year = DateTime.now().year;
 final _jan1 = DateTime.utc(_year, 1, 1);

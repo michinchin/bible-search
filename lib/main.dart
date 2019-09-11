@@ -2,7 +2,7 @@ import 'package:bible_search/models/app_state.dart';
 import 'package:bible_search/presentation/initial_search_screen.dart';
 import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:bible_search/redux/actions.dart';
-import 'package:bible_search/tec_settings.dart';
+import 'package:bible_search/labels.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:redux/redux.dart';

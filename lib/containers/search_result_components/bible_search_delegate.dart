@@ -1,14 +1,36 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 
-import '../../tec_settings.dart';
+import '../../labels.dart';
 import 'keyword_text.dart';
 
 class BibleSearchDelegate extends SearchDelegate<String> {
   final List<String> searchHistory;
   final Function(String) search;
+  final tec.TecInterstitialAd interstitial;
 
-  BibleSearchDelegate({this.searchHistory, this.search});
+  BibleSearchDelegate(
+      {@required this.searchHistory, @required this.search, this.interstitial});
+
+  void _checkForAd() {
+    if (tec.Prefs.shared.getInt(adCounterPref) >= maxSearchesBeforeAd &&
+        !kDebugMode) {
+      interstitial.show();
+      tec.Prefs.shared.setInt(adCounterPref, 0);
+    }
+  }
+
+  Future<void> _updateViewAdCounter() async {
+    var c = tec.Prefs.shared.getInt(adCounterPref, defaultValue: 0);
+    await tec.Prefs.shared.setInt(adCounterPref, ++c);
+  }
+
+  @override
+  void close(BuildContext context, String result) {
+    _checkForAd();
+    super.close(context, result);
+  }
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -23,9 +45,7 @@ class BibleSearchDelegate extends SearchDelegate<String> {
         ? [
             IconButton(
               icon: Icon(Icons.close),
-              onPressed: () async {
-                var c = tec.Prefs.shared.getInt(adCounterPref, defaultValue: 0);
-                await tec.Prefs.shared.setInt(adCounterPref, ++c);
+              onPressed: () {
                 query = '';
               },
             )
@@ -34,12 +54,18 @@ class BibleSearchDelegate extends SearchDelegate<String> {
   }
 
   @override
+  set query(String value) {
+    if (value.isEmpty) {
+      _updateViewAdCounter();
+    }
+    super.query = value;
+  }
+
+  @override
   Widget buildLeading(BuildContext context) {
     return IconButton(
       icon: Icon(Icons.arrow_back_ios),
-      onPressed: () {
-        close(context, searchHistory.last);
-      },
+      onPressed: () => close(context, searchHistory.last),
     );
   }
 

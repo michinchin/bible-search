@@ -3,18 +3,20 @@ import 'package:flutter/foundation.dart';
 
 import 'package:dynamic_theme/dynamic_theme.dart';
 
+
 import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:bible_search/presentation/translation_book_filter_screen.dart';
-import 'bible_search_delegate.dart';
 
 class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
   final ResultsViewModel model;
   final Function(BuildContext, bool, String) shareSelection;
+  final VoidCallback showSearch;
 
   const SearchAppBar({
     Key key,
     @required this.model,
     @required this.shareSelection,
+    @required this.showSearch
   }) : super(key: key);
 
   @override
@@ -40,16 +42,6 @@ class _SearchAppBarState extends State<SearchAppBar> {
   void didUpdateWidget(SearchAppBar oldWidget) {
     _isInSelectionMode = widget.model.isInSelectionMode;
     super.didUpdateWidget(oldWidget);
-  }
-
-  void _showSearch() {
-    showSearch<String>(
-      query: widget.model.searchQuery, //widget.model.searchQuery
-      context: context,
-      delegate: BibleSearchDelegate(
-          searchHistory: widget.model.searchHistory,
-          search: widget.model.updateSearchResults),
-    );
   }
 
   void _showModalSheet() {
@@ -122,14 +114,10 @@ class _SearchAppBarState extends State<SearchAppBar> {
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(0),
                   leading: IconButton(
-                    icon: Icon(Icons.arrow_back),
-                    onPressed: () {
-                      //TODO: show interstitial
-                      Navigator.of(context).pop();
-                    },
-                  ),
+                      icon: Icon(Icons.arrow_back),
+                      onPressed: () => Navigator.of(context).pop()),
                   title: InkWell(
-                      onTap: _showSearch,
+                      onTap: widget.showSearch,
                       child: Text(
                         widget.model.searchQuery ?? 'Search Here',
                         maxLines: 2,

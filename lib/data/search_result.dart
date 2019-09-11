@@ -6,7 +6,7 @@ import 'package:tec_cache/tec_cache.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 
 import '../data/verse.dart';
-import '../tec_settings.dart';
+import '../labels.dart';
 
 class SearchResult {
   final String ref;

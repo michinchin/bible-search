@@ -1,6 +1,6 @@
 import 'package:bible_search/data/translation.dart';
 import 'package:bible_search/data/book.dart';
-import 'package:bible_search/tec_settings.dart';
+import 'package:bible_search/labels.dart';
 
 import 'package:tec_util/tec_util.dart' as tec;
 
