@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "166969813908",
+    "firebase_url": "https://bible-search-88edd.firebaseio.com",
+    "project_id": "bible-search-88edd",
+    "storage_bucket": "bible-search-88edd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166969813908:android:f15c2b16e1969308047d81",
+        "android_client_info": {
+          "package_name": "com.tecarta.biblesearch"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "166969813908-jumh4th4t8m4v77qjru99u9mv8om12qt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDapHM8himNPs9saD0QtCFiqUO9KuCizXA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "166969813908-jumh4th4t8m4v77qjru99u9mv8om12qt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "166969813908-u5nvkehu7vov17pbrqmtiucfc4n01bla.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.tecarta.tb-biblesearch",
+                "app_store_id": "1436076950"
+              }
+            }
+          ]
+        }
+      },
+      "admob_app_id": "ca-app-pub-5279916355700267~6403892871"
+    }
+  ],
+  "configuration_version": "1"
+}

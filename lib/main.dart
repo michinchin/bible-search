@@ -24,7 +24,6 @@ Future<void> main() async {
   // Load preferences.
   await tec.Prefs.shared.load();
   await FirebaseAdMob.instance.initialize(appId: prefAdmobAppId);
-
   store..dispatch(InitHomeAction())..dispatch(InitFilterAction());
   return runApp(BibleSearchApp(
     store: store,

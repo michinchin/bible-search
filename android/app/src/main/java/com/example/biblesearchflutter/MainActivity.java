@@ -1,4 +1,4 @@
-package com.bibleapplabs.biblesearchflutter;
+package com.tecarta.biblesearch;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

@@ -10,6 +10,7 @@ const String adCounterPref = 'bs_adCounter';
 const String themePref = 'bs_theme';
 const String translationsPref = 'bs_translations';
 const String searchHistoryPref = 'bs_searchHistory';
+const String removedAdsPref = 'bs_removeAds';
 
 const int maxSearchesBeforeAd = 5;
 

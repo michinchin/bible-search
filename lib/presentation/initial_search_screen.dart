@@ -1,10 +1,14 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:bible_search/containers/initial_search_components/home_drawer.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bible_search/containers/is_components.dart';
 
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:redux/redux.dart';
-import 'package:dynamic_theme/dynamic_theme.dart';
 
 import 'package:bible_search/data/votd_image.dart';
 import 'package:bible_search/models/app_state.dart';
@@ -15,17 +19,43 @@ import 'package:bible_search/redux/actions.dart';
 // This is the 'home' screen of the Bible Search app. It shows an app bar, a search bar,
 // and a list of recent searches.
 
-class InitialSearchScreen extends StatelessWidget {
+class InitialSearchScreen extends StatefulWidget {
+  @override
+  _InitialSearchScreenState createState() => _InitialSearchScreenState();
+}
+
+class _InitialSearchScreenState extends State<InitialSearchScreen> {  
+  StreamSubscription<List<PurchaseDetails>> _subscription;
+
+  @override
+  void initState() {
+    final purchaseUpdates =
+        InAppPurchaseConnection.instance.purchaseUpdatedStream;
+    _subscription = purchaseUpdates.listen(_handlePurchaseUpdates);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+
+  void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetails) {
+    debugPrint(purchaseDetails.first.status == PurchaseStatus.purchased
+        ? 'purchased'
+        : 'not purchased');
+  }
   @override
   Widget build(BuildContext context) {
     final _imageWidth = MediaQuery.of(context).size.width;
     final _imageHeight = MediaQuery.of(context).size.height / 3;
     final _orientation = MediaQuery.of(context).orientation;
-    const  _searchBarHeight = 50.0;
+    const _searchBarHeight = 50.0;
 
     return StoreConnector<AppState, InitialSearchViewModel>(
         distinct: true,
-        converter: InitialSearchViewModel.fromStore,
+        converter: (store) => InitialSearchViewModel(store),
         builder: (context, vm) {
           final searchHistoryList = Container(
             child: ListView.builder(
@@ -128,71 +158,9 @@ class InitialSearchScreen extends StatelessWidget {
                 ],
               ));
 
-          final _settingsList = ListView(
-            children: <Widget>[
-              const DrawerHeader(
-                child:  Text('Settings'),
-              ),
-              SwitchListTile(
-                  secondary: Icon(Icons.lightbulb_outline),
-                  value: vm.isDarkTheme,
-                  title: const Text('Light/Dark Mode'),
-                  onChanged: (b) {
-                    DynamicTheme.of(context).setThemeData(ThemeData(
-                      primarySwatch: b ? Colors.teal : Colors.orange,
-                      primaryColorBrightness: Brightness.dark,
-                      brightness: b ? Brightness.dark : Brightness.light,
-                    ));
-                    vm.changeTheme(b);
-                  }),
-              ListTile(
-                leading: Icon(Icons.more),
-                title: const Text('About'),
-                onTap: () {
-                  showAboutDialog(context: context);
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.remove_circle),
-                title: const Text('Remove Ads'),
-                onTap: () {},
-              ),
-              ListTile(
-                leading: Icon(Icons.clear_all),
-                title: const Text('Clear Search History'),
-                onTap: () {
-                  showDialog<void>(
-                      builder: (context) {
-                        return AlertDialog(
-                          title: const Text('Are you sure?'),
-                          actions: <Widget>[
-                            FlatButton(
-                              child: const Text('Cancel'),
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                            FlatButton(
-                              child: const Text('Yes'),
-                              onPressed: () {
-                                vm.updateSearchHistory([]);
-                                Navigator.of(context).pop();
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                      context: context);
-                },
-              ),
-            ],
-          );
-
           return Scaffold(
             appBar: appBar,
-            drawer: Drawer(
-              child: _settingsList,
-            ),
+            drawer: HomeDrawer(vm),
             body: Stack(
               children: [
                 SafeArea(
@@ -206,38 +174,59 @@ class InitialSearchScreen extends StatelessWidget {
 }
 
 class InitialSearchViewModel {
-  final VOTDImage votdImage;
-  final List<String> searchHistory;
-  final bool isDarkTheme;
-  final void Function(String term) onSearchEntered;
-  final void Function(List<String> searchQueries) updateSearchHistory;
-  final void Function(bool isDarkTheme) changeTheme;
+  final Store<AppState> store;
+  VOTDImage votdImage;
+  List<String> searchHistory;
+  bool isDarkTheme;
+  void Function(String term) onSearchEntered;
+  void Function(List<String> searchQueries) updateSearchHistory;
+  void Function(bool isDarkTheme) changeTheme;
+  void Function(BuildContext c) removeAds;
 
-  InitialSearchViewModel({
-    this.votdImage,
-    this.searchHistory,
-    this.isDarkTheme,
-    this.onSearchEntered,
-    this.updateSearchHistory,
-    this.changeTheme,
-  });
+  InitialSearchViewModel(this.store) {
+    votdImage = store.state.votdImage;
+    searchHistory = store.state.searchHistory;
+    isDarkTheme = store.state.isDarkTheme;
+    onSearchEntered = _onSearchEntered;
+    updateSearchHistory = _updateSearchHistory;
+    changeTheme = _changeTheme;
+    removeAds = _removeAds;
+  }
 
-  static InitialSearchViewModel fromStore(Store<AppState> store) {
-    return InitialSearchViewModel(
-      votdImage: store.state.votdImage,
-      searchHistory: store.state.searchHistory,
-      isDarkTheme: store.state.isDarkTheme,
-      onSearchEntered: (term) {
-        if (term.trim().isNotEmpty) {
-          store.dispatch(SearchAction(term));
-        }
-      },
-      updateSearchHistory: (searchQueries) => store.dispatch(
-          SetSearchHistoryAction(
-              searchQuery: store.state.searchQuery,
-              searchQueries: searchQueries)),
-      changeTheme: (isDarkTheme) => store.dispatch(SetThemeAction(isDarkTheme: isDarkTheme)),
-    );
+  void _onSearchEntered(String term) {
+    if (term.trim().isNotEmpty) {
+      store.dispatch(SearchAction(term));
+    }
+  }
+
+  void _changeTheme(bool isDarkTheme) =>
+      store.dispatch(SetThemeAction(isDarkTheme: isDarkTheme));
+
+  void _updateSearchHistory(List<String> searchQueries) =>
+      store.dispatch(SetSearchHistoryAction(
+          searchQuery: store.state.searchQuery, searchQueries: searchQueries));
+
+  Future<void> _removeAds(BuildContext c) async {
+    final available = await InAppPurchaseConnection.instance.isAvailable();
+    final appStore = Platform.isAndroid ? 'Google Play Store' : 'App Store';
+    if (!available) {
+      await showDialog<void>(
+          context: c,
+          builder: (c) => AlertDialog(
+                title: Text('The $appStore is currently unavailable'),
+              ));
+    } else {
+        
+      final _kIds =
+          <String>['upgrade'] //ignore: prefer_collection_literals
+              .toSet();
+      final response =
+          await InAppPurchaseConnection.instance.queryProductDetails(_kIds);
+      if (response.notFoundIDs.isNotEmpty) {
+        // Handle the error.
+      }
+      var products = response.productDetails;
+    }
   }
 
   /// override == operator so flutter only rebuilds widgets that need rebuilding
