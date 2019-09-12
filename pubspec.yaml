@@ -18,7 +18,7 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^0.1.2
 
-  #External dependencies
+  # External dependencies
   connectivity: ^0.4.2
   draggable_scrollbar: ^0.0.4
   dynamic_theme: ^1.0.1
@@ -29,7 +29,9 @@ dependencies:
   transparent_image: ^0.1.0
   url_launcher: ^5.0.1
   
-  #internal dependencies
+  # Internal dependencies
+  tec_ads:
+    path: ../shared/tec_ads
   tec_cache:
     path: ../shared/tec_cache
   tec_util:

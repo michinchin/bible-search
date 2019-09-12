@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import 'package:tec_ads/tec_ads.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 
 import '../../labels.dart';
@@ -8,7 +10,7 @@ import 'keyword_text.dart';
 class BibleSearchDelegate extends SearchDelegate<String> {
   final List<String> searchHistory;
   final Function(String) search;
-  final tec.TecInterstitialAd interstitial;
+  final TecInterstitialAd interstitial;
 
   BibleSearchDelegate(
       {@required this.searchHistory, @required this.search, this.interstitial});

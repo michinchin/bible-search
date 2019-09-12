@@ -9,7 +9,7 @@ import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:share/share.dart';
 
-import 'package:tec_util/tec_util.dart' as tec;
+import 'package:tec_ads/tec_ads.dart';
 
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
@@ -27,11 +27,11 @@ class SearchResultScreen extends StatefulWidget {
 }
 
 class _SearchResultScreenState extends State<SearchResultScreen> {
-  tec.TecInterstitialAd _interstitialAd;
+  TecInterstitialAd _interstitialAd;
 
   @override
   void initState() {
-    _interstitialAd = tec.TecInterstitialAd(adUnitId: prefInterstitialAdId);
+    _interstitialAd = TecInterstitialAd(adUnitId: prefInterstitialAdId);
     super.initState();
   }
 
