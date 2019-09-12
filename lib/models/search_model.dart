@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:tec_util/tec_util.dart' as tec;
 
 class SearchModel {
   Future<void> openTB(
@@ -61,9 +64,66 @@ class SearchModel {
 
   void copyPressed({@required String text, @required BuildContext context}) {
     Clipboard.setData(ClipboardData(text: text)).then((_) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: const Text('Successfully Copied!')));
+      _showToast(context, 'Successfully Copied!');
     });
+  }
+
+  Future<void> shareSelection(
+      {@required BuildContext context,
+      @required ShareVerse verse,
+      bool isCopy = false}) async {
+    final res = verse.shareVerse;
+    final currVerseIdx = res.currentVerseIndex;
+    final v = res.verses[currVerseIdx];
+
+    final params = <String, dynamic>{
+      'volume': '${v.id}',
+      'resid':
+          '${verse.books.firstWhere((b) => b.id == res.bookId).name}+${res.chapterId}:${res.verseId}',
+    };
+
+    final url = Uri(
+            scheme: 'https',
+            host: 'tecartabible.com',
+            path: '/share',
+            queryParameters: params)
+        .toString();
+
+    final shortUrl = await tec.shortenUrl(url);
+
+    debugPrint('Share URL: $url\nShort: $shortUrl');
+
+    if (verse.selectedText.isNotEmpty) {
+      if (!isCopy) {
+        try {
+          await Share.share('${verse.selectedText}$shortUrl');
+        } catch (e) {
+          print('ERROR sharing verse: $e');
+        }
+      } else {
+        await Clipboard.setData(
+                ClipboardData(text: '${verse.selectedText}$shortUrl'))
+            .then((x) {
+          _showToast(context, 'Successfully Copied!');
+        });
+      }
+    } else {
+      _showToast(context, 'Please make a selection');
+    }
+  }
+
+  void _showToast(BuildContext context, String label) {
+    final scaffold = Scaffold.of(context);
+    scaffold.showSnackBar(
+      SnackBar(
+        backgroundColor: Theme.of(context).cardColor,
+        content: Text(label, style: Theme.of(context).textTheme.body1),
+        action: SnackBarAction(
+            label: 'CLOSE',
+            textColor: Theme.of(context).accentColor,
+            onPressed: scaffold.hideCurrentSnackBar),
+      ),
+    );
   }
 
   List<TextSpan> formatWords(String paragraph, String keywords) {
@@ -110,4 +170,37 @@ class SearchModel {
     }
     return contentCopy;
   }
+}
+
+class ShareVerse {
+  final List<SearchResult> results;
+  final List<Book> books;
+
+  const ShareVerse({this.results, this.books});
+
+  String get selectedText {
+    var text = '';
+    for (final each in results) {
+      final currVerse = each.verses[each.currentVerseIndex];
+      if (each.isSelected && each.contextExpanded) {
+        text += '${books.firstWhere((book) => book.id == each.bookId).name} '
+            '${each.chapterId}:'
+            '${each.verses[each.currentVerseIndex].verseIdx[0]}'
+            '-${each.verses[each.currentVerseIndex].verseIdx[1]} '
+            '(${each.verses[each.currentVerseIndex].a})'
+            '\n${currVerse.contextText}\n\n';
+      } else if (each.isSelected) {
+        text += '${each.ref} (${currVerse.a})\n${currVerse.verseContent}\n\n';
+      } else {
+        text += '';
+      }
+    }
+    return text;
+  }
+
+  int get volumeId => books.firstWhere((b) => b.id == shareVerse.bookId).id;
+
+  SearchResult get shareVerse =>
+      results?.firstWhere((r) => r.isSelected) ??
+      results[results.first.currentVerseIndex];
 }

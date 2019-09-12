@@ -1,23 +1,18 @@
+import 'package:bible_search/models/search_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:dynamic_theme/dynamic_theme.dart';
-
 
 import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:bible_search/presentation/translation_book_filter_screen.dart';
 
 class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
   final ResultsViewModel model;
-  final Function(BuildContext, bool, String) shareSelection;
   final VoidCallback showSearch;
 
-  const SearchAppBar({
-    Key key,
-    @required this.model,
-    @required this.shareSelection,
-    @required this.showSearch
-  }) : super(key: key);
+  const SearchAppBar({Key key, @required this.model, @required this.showSearch})
+      : super(key: key);
 
   @override
   Size get preferredSize {
@@ -31,10 +26,12 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _SearchAppBarState extends State<SearchAppBar> {
   // only expose a getter to prevent bad usage
   bool _isInSelectionMode;
+  SearchModel sm;
 
   @override
   void initState() {
     _isInSelectionMode = widget.model.isInSelectionMode;
+    sm = SearchModel();
     super.initState();
   }
 
@@ -146,13 +143,20 @@ class _SearchAppBarState extends State<SearchAppBar> {
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.content_copy),
-                onPressed: () => widget.shareSelection(
-                    context, true, widget.model.getSelectedText()),
+                onPressed: () => sm.shareSelection(
+                    context: context,
+                    verse: ShareVerse(
+                        books: widget.model.bookNames,
+                        results: widget.model.filteredRes),
+                    isCopy: true),
               ),
               IconButton(
                 icon: Icon(Icons.share),
-                onPressed: () => widget.shareSelection(
-                    context, false, widget.model.getSelectedText()),
+                onPressed: () => sm.shareSelection(
+                    context: context,
+                    verse: ShareVerse(
+                        books: widget.model.bookNames,
+                        results: widget.model.filteredRes)),
               )
             ],
           );

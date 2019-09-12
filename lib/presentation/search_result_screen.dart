@@ -1,13 +1,12 @@
 import 'package:bible_search/containers/sr_components.dart';
 import 'package:bible_search/labels.dart';
+import 'package:bible_search/models/search_model.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:share/share.dart';
 
 import 'package:tec_ads/tec_ads.dart';
 
@@ -43,34 +42,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     super.dispose();
   }
 
-  Future<void> _shareSelection(
-      BuildContext context, bool isCopy, String text) async {
-    if (text.isNotEmpty) {
-      !isCopy
-          ? await Share.share(text)
-          : await Clipboard.setData(ClipboardData(text: text)).then((x) {
-              _showToast(context, 'Copied!');
-            });
-    } else {
-      _showToast(context, 'Please make a selection');
-    }
-  }
 
-  void _showToast(BuildContext context, String label) {
-    final scaffold = Scaffold.of(context);
-    scaffold.showSnackBar(
-      SnackBar(
-        backgroundColor: Theme.of(context).cardColor,
-        content: Text(label, style: Theme.of(context).textTheme.body1),
-        action: SnackBarAction(
-            label: 'CLOSE', onPressed: scaffold.hideCurrentSnackBar),
-      ),
-    );
-  }
 
   void _showSearch(ResultsViewModel vm) {
     showSearch<String>(
-      query: vm.searchQuery, //widget.model.searchQuery
+      query: vm.searchQuery,
       context: context,
       delegate: BibleSearchDelegate(
           searchHistory: vm.searchHistory,
@@ -92,7 +68,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               resizeToAvoidBottomInset: false,
               appBar: SearchAppBar(
                 model: vm,
-                shareSelection: _shareSelection,
                 showSearch: () => _showSearch(vm),
               ),
               body: GestureDetector(
@@ -122,7 +97,7 @@ class ResultsViewModel {
   final VoidCallback changeToSelectionMode;
   final Function(String) updateSearchResults;
   final Function(int, bool) selectCard;
-  final String Function() getSelectedText;
+  final ShareVerse Function() getShareVerse;
   final Function(bool) changeTheme;
 
   const ResultsViewModel({
@@ -137,7 +112,7 @@ class ResultsViewModel {
     this.updateSearchResults,
     this.filteredRes,
     this.selectCard,
-    this.getSelectedText,
+    this.getShareVerse,
     this.changeTheme,
   });
 
@@ -154,7 +129,8 @@ class ResultsViewModel {
       updateSearchResults: (s) => store.dispatch(SearchAction(s)),
       selectCard: (idx, b) =>
           store.dispatch(SelectAction(idx, Select.result, toggle: b)),
-      getSelectedText: () => store.state.selectedText,
+      getShareVerse: () =>
+          ShareVerse(books: store.state.books, results: store.state.results),
       changeTheme: (b) => store.dispatch(SetThemeAction(isDarkTheme: b)),
       filteredRes: store.state.filteredResults,
     );

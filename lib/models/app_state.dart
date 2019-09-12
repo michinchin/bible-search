@@ -105,24 +105,4 @@ class AppState {
         ntSelected: ntSelected ?? this.ntSelected,
         numSelected: numSelected ?? this.numSelected);
   }
-
-  String get selectedText {
-    var text = '';
-    for (final each in filteredResults) {
-      final currVerse = each.verses[each.currentVerseIndex];
-      if (each.isSelected && each.contextExpanded) {
-        text += '${books.where((book) => book.id == each.bookId).first.name} '
-            '${each.chapterId}:'
-            '${each.verses[each.currentVerseIndex].verseIdx[0]}'
-            '-${each.verses[each.currentVerseIndex].verseIdx[1]} '
-            '(${each.verses[each.currentVerseIndex].a})'
-            '\n${currVerse.contextText}\n\n';
-      } else if (each.isSelected) {
-        text += '${each.ref} (${currVerse.a})\n${currVerse.verseContent}\n\n';
-      } else {
-        text += '';
-      }
-    }
-    return text;
-  }
 }

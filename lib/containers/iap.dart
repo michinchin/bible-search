@@ -101,7 +101,7 @@ class _InAppPurchaseDialogState extends State<InAppPurchaseDialog> {
 
   PurchaseDetails _hasPurchased(String productId) {
     if (_purchases.isNotEmpty) {
-      _purchases.firstWhere((p) => p.productID == productId);
+      return _purchases.firstWhere((p) => p.productID == productId);
     }
     return null;
   }
@@ -116,7 +116,7 @@ class _InAppPurchaseDialogState extends State<InAppPurchaseDialog> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15)),
               title:
-                  const Text('Would you like to pay a small fee for no ads?'),
+                  const Text('Would you like to pay a small fee to not see ads?'),
               actions: <Widget>[
                 FlatButton(
                     onPressed: () => Navigator.of(context).pop(),

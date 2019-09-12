@@ -9,7 +9,6 @@ import 'package:bible_search/models/search_model.dart';
 import 'package:bible_search/presentation/all_translations_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:share/share.dart';
 
 class ResultCard extends StatefulWidget {
   final bool isInSelectionMode;
@@ -249,24 +248,35 @@ class _ResultCardState extends State<ResultCard> {
           child: ButtonBar(
             children: <Widget>[
               IconButton(
-                color: model.iconColor,
-                icon: Icon(Icons.content_copy),
-                onPressed: () => searchModel.copyPressed(
-                    text: '${model.formattedTitle.data}\n${model.content}',
-                    context: context), // set state here
-              ),
+                  color: model.iconColor,
+                  icon: Icon(Icons.content_copy),
+                  onPressed: () => searchModel.shareSelection(
+                      context: context,
+                      verse: ShareVerse(
+                          books: widget.bookNames,
+                          results: [widget.res.copyWith(isSelected: true)], ),
+                      isCopy: true)
+                  // searchModel.copyPressed(
+                  //     text: '${model.formattedTitle.data}\n${model.content}',
+                  //     context: context), // set state here
+                  ),
               IconButton(
                 color: model.iconColor,
                 icon: Icon(Icons.share),
                 onPressed: () {
-                  final verseContent = widget.res.contextExpanded
-                      ? '${model.contextTitle.data}'
-                          '\n'
-                          '${widget.res.verses[widget.res.currentVerseIndex].contextText}'
-                      : '${model.nonContextTitle.data}'
-                          '\n'
-                          '${widget.res.verses[widget.res.currentVerseIndex].verseContent}';
-                  Share.share(verseContent);
+                  // final verseContent = widget.res.contextExpanded
+                  //     ? '${model.contextTitle.data}'
+                  //         '\n'
+                  //         '${widget.res.verses[widget.res.currentVerseIndex].contextText}'
+                  //     : '${model.nonContextTitle.data}'
+                  //         '\n'
+                  //         '${widget.res.verses[widget.res.currentVerseIndex].verseContent}';
+                  // Share.share(verseContent);
+                  searchModel.shareSelection(
+                      context: context,
+                      verse: ShareVerse(
+                          books: widget.bookNames,
+                          results: [widget.res.copyWith(isSelected: true)]));
                 },
               ),
               IconButton(

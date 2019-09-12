@@ -37,6 +37,36 @@ class SearchResult {
     this.key,
   });
 
+  SearchResult copyWith({
+    String ref,
+    int bookId,
+    int chapterId,
+    int verseId,
+    List<Verse> verses,
+    bool contextExpanded,
+    bool compareExpanded,
+    bool isExpanded,
+    bool isSelected,
+    int currentVerseIndex,
+    String fullText,
+    GlobalKey key,
+  }) =>
+      SearchResult(
+        ref: ref ?? this.ref,
+        bookId: bookId ?? this.bookId,
+        chapterId: chapterId ?? this.chapterId,
+        verseId: verseId ?? this.verseId,
+        verses: verses ?? this.verses,
+        contextExpanded: contextExpanded ?? this.contextExpanded,
+        compareExpanded: compareExpanded ?? this.compareExpanded,
+        isExpanded: isExpanded ?? this.isExpanded,
+        isSelected: isSelected ?? this.isSelected,
+        currentVerseIndex: currentVerseIndex ?? this.currentVerseIndex,
+        fullText: fullText ?? this.fullText,
+        key: key ?? this.key,
+
+      );
+
   factory SearchResult.fromJson(Map<String, dynamic> json) {
     final ref = tec.as<String>(json['reference']);
     final v = <Verse>[];
