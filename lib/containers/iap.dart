@@ -94,6 +94,7 @@ class _InAppPurchaseDialogState extends State<InAppPurchaseDialog> {
   }
 
   void _buyProduct() {
+    Navigator.of(context).maybePop();
     final purchaseParam = PurchaseParam(productDetails: _products.first);
     iap.buyNonConsumable(purchaseParam: purchaseParam);
   }
@@ -102,6 +103,7 @@ class _InAppPurchaseDialogState extends State<InAppPurchaseDialog> {
     if (_purchases.isNotEmpty) {
       _purchases.firstWhere((p) => p.productID == productId);
     }
+    return null;
   }
 
   @override
@@ -111,6 +113,8 @@ class _InAppPurchaseDialogState extends State<InAppPurchaseDialog> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
               title:
                   const Text('Would you like to pay a small fee for no ads?'),
               actions: <Widget>[

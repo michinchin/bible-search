@@ -28,13 +28,7 @@ class HomeDrawer extends StatelessWidget {
                 ));
                 vm.changeTheme(b);
               }),
-          ListTile(
-            leading: Icon(Icons.more),
-            title: const Text('About'),
-            onTap: () {
-              showAboutDialog(context: context);
-            },
-          ),
+        
           ListTile(
               leading: Icon(Icons.remove_circle),
               title: const Text('Remove Ads'),
@@ -68,6 +62,14 @@ class HomeDrawer extends StatelessWidget {
                     );
                   },
                   context: context);
+            },
+          ),
+            ListTile(
+            leading: Icon(Icons.help_outline),
+            title: const Text('Help & Feedback'),
+            onTap: () async {
+              await Navigator.of(context).maybePop();
+              await vm.emailFeedback(context);
             },
           ),
         ],

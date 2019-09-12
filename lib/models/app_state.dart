@@ -3,9 +3,12 @@ import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/translation.dart';
 import 'package:bible_search/data/votd_image.dart';
 import 'package:meta/meta.dart';
+import 'package:tec_util/tec_util.dart' as tec;
 
 @immutable
 class AppState {
+  final tec.DeviceInfo deviceInfo;
+
   final BibleTranslations translations;
   final List<SearchResult> results;
   final List<SearchResult> filteredResults;
@@ -26,6 +29,7 @@ class AppState {
   final int numSelected;
 
   const AppState({
+    this.deviceInfo,
     this.translations,
     this.results,
     this.filteredResults,
@@ -44,7 +48,8 @@ class AppState {
     this.numSelected,
   });
 
-  factory AppState.initial() => AppState(
+  factory AppState.initial({tec.DeviceInfo deviceInfo}) => AppState(
+        deviceInfo: deviceInfo,
         translations: BibleTranslations(data: []),
         results: const [],
         filteredResults: const [],
@@ -64,7 +69,8 @@ class AppState {
       );
 
   AppState copyWith(
-      {BibleTranslations translations,
+      {tec.DeviceInfo deviceInfo,
+      BibleTranslations translations,
       List<SearchResult> results,
       List<SearchResult> filteredResults,
       VOTDImage votdImage,
@@ -81,6 +87,7 @@ class AppState {
       bool ntSelected,
       int numSelected}) {
     return AppState(
+        deviceInfo: deviceInfo ?? this.deviceInfo,
         translations: translations ?? this.translations,
         results: results ?? this.results,
         filteredResults: filteredResults ?? this.filteredResults,

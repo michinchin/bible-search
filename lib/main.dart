@@ -14,17 +14,24 @@ import 'package:firebase_admob/firebase_admob.dart';
 
 import 'package:tec_util/tec_util.dart' as tec;
 
-final store = Store<AppState>(
-  reducers,
-  initialState: AppState.initial(),
-  middleware: middleware,
-);
-
 Future<void> main() async {
   // Load preferences.
   await tec.Prefs.shared.load();
+
+  // Load device info
+  final di = await tec.DeviceInfo.fetch();
+  print('Running on ${di.productName} with ${tec.DeviceInfo.os} ${di.version}');
+
   await FirebaseAdMob.instance.initialize(appId: prefAdmobAppId);
-  store..dispatch(InitHomeAction())..dispatch(InitFilterAction());
+
+  final store = Store<AppState>(
+    reducers,
+    initialState: AppState.initial(deviceInfo: di),
+    middleware: middleware,
+  )
+    ..dispatch(InitHomeAction())
+    ..dispatch(InitFilterAction());
+
   return runApp(BibleSearchApp(
     store: store,
   ));

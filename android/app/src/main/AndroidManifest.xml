@@ -16,6 +16,11 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="bible_search"
         android:icon="@mipmap/ic_launcher">
+
+        <meta-data
+        android:name="com.google.android.gms.ads.APPLICATION_ID"
+        android:value="ca-app-pub-5279916355700267~6403892871"/>
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

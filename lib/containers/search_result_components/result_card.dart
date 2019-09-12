@@ -309,7 +309,7 @@ class _ResultCardState extends State<ResultCard> {
       onTap: () =>
           !widget.isInSelectionMode ? _expandButtonPressed() : _selectCard(),
       onLongPress: () {
-        if (widget.isInSelectionMode) _selectionModeEnabled();
+        if (!widget.isInSelectionMode) _selectionModeEnabled();
       },
       child: Card(
         elevation: 2.0,

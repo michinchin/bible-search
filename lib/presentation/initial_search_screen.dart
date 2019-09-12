@@ -5,6 +5,8 @@ import 'package:bible_search/containers/initial_search_components/home_drawer.da
 import 'package:flutter/material.dart';
 
 import 'package:bible_search/containers/is_components.dart';
+import 'package:tec_util/tec_util.dart' as tec;
+import 'package:url_launcher/url_launcher.dart' as launcher;
 
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -24,7 +26,7 @@ class InitialSearchScreen extends StatefulWidget {
   _InitialSearchScreenState createState() => _InitialSearchScreenState();
 }
 
-class _InitialSearchScreenState extends State<InitialSearchScreen> {  
+class _InitialSearchScreenState extends State<InitialSearchScreen> {
   StreamSubscription<List<PurchaseDetails>> _subscription;
 
   @override
@@ -46,6 +48,7 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
         ? 'purchased'
         : 'not purchased');
   }
+
   @override
   Widget build(BuildContext context) {
     final _imageWidth = MediaQuery.of(context).size.width;
@@ -180,8 +183,8 @@ class InitialSearchViewModel {
   bool isDarkTheme;
   void Function(String term) onSearchEntered;
   void Function(List<String> searchQueries) updateSearchHistory;
+  Future<void> Function(BuildContext c) emailFeedback;
   void Function(bool isDarkTheme) changeTheme;
-  void Function(BuildContext c) removeAds;
 
   InitialSearchViewModel(this.store) {
     votdImage = store.state.votdImage;
@@ -190,7 +193,7 @@ class InitialSearchViewModel {
     onSearchEntered = _onSearchEntered;
     updateSearchHistory = _updateSearchHistory;
     changeTheme = _changeTheme;
-    removeAds = _removeAds;
+    emailFeedback = _emailFeedback;
   }
 
   void _onSearchEntered(String term) {
@@ -206,27 +209,39 @@ class InitialSearchViewModel {
       store.dispatch(SetSearchHistoryAction(
           searchQuery: store.state.searchQuery, searchQueries: searchQueries));
 
-  Future<void> _removeAds(BuildContext c) async {
-    final available = await InAppPurchaseConnection.instance.isAvailable();
-    final appStore = Platform.isAndroid ? 'Google Play Store' : 'App Store';
-    if (!available) {
-      await showDialog<void>(
-          context: c,
-          builder: (c) => AlertDialog(
-                title: Text('The $appStore is currently unavailable'),
-              ));
-    } else {
-        
-      final _kIds =
-          <String>['upgrade'] //ignore: prefer_collection_literals
-              .toSet();
-      final response =
-          await InAppPurchaseConnection.instance.queryProductDetails(_kIds);
-      if (response.notFoundIDs.isNotEmpty) {
-        // Handle the error.
-      }
-      var products = response.productDetails;
+
+  /// Opens the native email UI with an email for questions or comments.
+  Future<void> _emailFeedback(BuildContext context) async {
+    var email = 'biblesupport@tecarta.com';
+    if (!Platform.isIOS) {
+      email = 'androidsupport@tecarta.com';
     }
+
+    final subject = 'Feedback regarding Bible Search! '
+        'with ${tec.DeviceInfo.os}';
+
+    const body = 'I have the following question or comment:\n\n\n';
+
+    final url = Uri.encodeFull('mailto:$email?subject=$subject&body=$body');
+
+    try {
+      if (await launcher.canLaunch(url)) {
+        await launcher.launch(url, forceSafariVC: false, forceWebView: false);
+      }
+    } catch (e) {
+      final msg = 'Error emailing: ${e.toString()}';
+      showSnackBarMessage(context, msg);
+      print(msg);
+    }
+  }
+
+  /// Shows a snack bar message.
+  void showSnackBarMessage(BuildContext context, String message) {
+    Navigator.pop(context); // Dismiss the drawer.
+    if (message == null) return;
+    Scaffold.of(context)?.showSnackBar(SnackBar(
+      content: Text(message),
+    ));
   }
 
   /// override == operator so flutter only rebuilds widgets that need rebuilding

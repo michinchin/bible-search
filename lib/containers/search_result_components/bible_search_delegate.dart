@@ -16,7 +16,7 @@ class BibleSearchDelegate extends SearchDelegate<String> {
       {@required this.searchHistory, @required this.search, this.interstitial});
 
   void _checkForAd() {
-    if (tec.Prefs.shared.getInt(adCounterPref) >= maxSearchesBeforeAd &&
+    if (tec.Prefs.shared.getInt(adCounterPref, defaultValue: 0) >= maxSearchesBeforeAd &&
         !kDebugMode) {
       interstitial.show();
       tec.Prefs.shared.setInt(adCounterPref, 0);
