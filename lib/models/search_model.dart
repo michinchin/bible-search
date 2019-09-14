@@ -127,48 +127,29 @@ class SearchModel {
   }
 
   List<TextSpan> formatWords(String paragraph, String keywords) {
-    final contentText = paragraph.split(' ');
-    final content = contentText.map((s) => TextSpan(text: s)).toList();
-    final contentCopy = <TextSpan>[];
+    final content = <TextSpan>[];
+    var modPar = paragraph;
     String modKeywords;
+
     urlEncodingExceptions
         .forEach((k, v) => modKeywords = keywords.replaceAll(RegExp(k), v));
-    final formattedKeywords = modKeywords.toLowerCase().split(' ');
-
-    for (var i = 0; i < content.length; i++) {
-      final text = <TextSpan>[];
-      final w = content[i].text;
-      for (final search in formattedKeywords) {
-        if (w.toLowerCase().contains(search)) {
-          final start = w.toLowerCase().indexOf(search);
-          final end = start + search.length;
-          final prefix = w.substring(0, start);
-          final suffix = w.substring(end, w.length);
-          if (prefix.isNotEmpty) {
-            text.add(TextSpan(text: prefix));
-          }
-          if (prefix.isEmpty && suffix.isEmpty) {
-            text.add(TextSpan(
-                text: '$w ', style: TextStyle(fontWeight: FontWeight.bold)));
-          } else {
-            suffix.isNotEmpty
-                ? text.add(TextSpan(
-                    text: search,
-                    style: TextStyle(fontWeight: FontWeight.bold)))
-                : text.add(TextSpan(
-                    text: '$search ',
-                    style: TextStyle(fontWeight: FontWeight.bold)));
-          }
-          if (suffix.isNotEmpty) {
-            text.add(TextSpan(text: '$suffix '));
-          }
-        }
-      }
-      (text.isNotEmpty)
-          ? text.forEach(contentCopy.add)
-          : contentCopy.add(TextSpan(text: '$w '));
+    final formattedKeywords = modKeywords.split(' ');
+    final lFormattedKeywords = modKeywords.toLowerCase().split(' ');
+    for (final keyword in formattedKeywords) {
+      final regex = RegExp(keyword, caseSensitive: false);
+      modPar = modPar.replaceAll(regex, '\*$keyword\*');
     }
-    return contentCopy;
+
+    final arr = modPar.split('\*');
+    for (var i = 0; i < arr.length; i++) {
+      if (lFormattedKeywords.contains(arr[i].toLowerCase())) {
+        content.add(TextSpan(
+            text: arr[i], style: TextStyle(fontWeight: FontWeight.bold)));
+      } else {
+        content.add(TextSpan(text: arr[i]));
+      }
+    }
+    return content;
   }
 }
 

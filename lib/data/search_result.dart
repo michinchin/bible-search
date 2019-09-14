@@ -64,7 +64,6 @@ class SearchResult {
         currentVerseIndex: currentVerseIndex ?? this.currentVerseIndex,
         fullText: fullText ?? this.fullText,
         key: key ?? this.key,
-
       );
 
   factory SearchResult.fromJson(Map<String, dynamic> json) {
@@ -110,15 +109,15 @@ class SearchResults {
   static Future<List<SearchResult>> fetch(
       {String words, String translationIds}) async {
     if ((words?.trim() ?? '').isEmpty) {
-      return SearchResults(data: []).data;
+      return [];
     }
     const hostAndPath = '$kTBApiServer/search';
     const cachePath = '$kTBStreamServer/cache';
     final tecCache = TecCache();
     final fullCachedPath =
-        'https://$cachePath/${getCacheKey(words, translationIds)}.gz';
+        'https://$cachePath/${_getCacheKey(words, translationIds)}.gz';
     final fullPath =
-        'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=${formatWords(words)}&book=0'
+        'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=${_formatWords(words)}&book=0'
         '&bookset=0&exact=0&phrase=0&searchVolumes=$translationIds';
     final cacheJson = await tecCache.jsonFromUrl(
       url: fullCachedPath,
@@ -137,7 +136,8 @@ class SearchResults {
         debugPrint('Getting results from: ${Uri.encodeFull(fullPath)}');
         return SearchResults.fromJson(json).data;
       } else {
-        return SearchResults(data: []).data;
+        return Future.error(
+            'Error getting results from: ${Uri.encodeFull(fullPath)}');
       }
     }
   }
@@ -168,10 +168,19 @@ Map<String, String> urlEncodingExceptions = {
 const base64Map =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 
-String formatWords(String keywords) {
+String _formatWords(String keywords) {
   String modifiedKeywords;
+  final currQuery = keywords.toLowerCase();
+  final regex = RegExp(r' *[0-9]? *\w+ *[0-9]+');
+  final matches = regex.allMatches(currQuery).toList();
+
+  if (matches.isNotEmpty) {
+    return _formatRefs(currQuery);
+  }
+
   urlEncodingExceptions
       .forEach((k, v) => modifiedKeywords = keywords.replaceAll(RegExp(k), v));
+
   final wordList = modifiedKeywords.split(' ')
     ..sort((a, b) => b.length.compareTo(a.length));
   return wordList
@@ -179,10 +188,28 @@ String formatWords(String keywords) {
       .join(' ');
 }
 
-String getCacheKey(String keywords, String translationIds) {
+String _formatRefs(String query) {
+  final regex = RegExp(r' *[0-9]? *\w+');
+
+  final arr = regex.allMatches(query).toList();
+  if (arr.isNotEmpty) {
+    final shortRef = arr[0].group(0);
+    if (extraBookNames.containsKey(shortRef)) {
+      final bookId = extraBookNames[shortRef];
+      final fullBookName =
+          bookNames.keys.firstWhere((k) => bookNames[k] == bookId);
+      final fixedQuery = query.replaceAll(shortRef, fullBookName);
+
+      return fixedQuery;
+    }
+  }
+  return query;
+}
+
+String _getCacheKey(String keywords, String translationIds) {
   String modKeywords;
   modKeywords = keywords.toLowerCase();
-  modKeywords = formatWords(modKeywords);
+  modKeywords = _formatWords(modKeywords);
   // var klist = keywords.split(' ');
   // klist.sort((f,l)=> f.length.compareTo(l.length));
   // keywords = klist.join(' ');

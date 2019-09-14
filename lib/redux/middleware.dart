@@ -28,8 +28,9 @@ void searchMiddleware(
       ..dispatch(SearchResultAction(res))
       ..dispatch(SetFilteredResultsAction(
           filterModel.filterByBook(res, store.state.books)));
-  }).catchError((dynamic e) {
-    store..dispatch(SearchResultAction([]))..dispatch(SearchErrorAction());
+  }).catchError((dynamic e) {   
+     store..dispatch(SearchResultAction([]))..dispatch(SearchErrorAction());
+    // store.dispatch(SearchErrorAction());
   });
   final newSearchList = store.state.searchHistory..add(action.searchQuery);
   store.dispatch(SetSearchHistoryAction(

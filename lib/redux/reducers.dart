@@ -29,14 +29,18 @@ AppState _onLoad(AppState state, SearchLoadingAction action) =>
     state.copyWith(isFetchingSearch: true);
 
 AppState _onError(AppState state, SearchErrorAction action) =>
-    state.copyWith(hasError: true);
+    state.copyWith(hasError: true, isFetchingSearch: false);
 
 AppState _onResult(AppState state, SearchResultAction action) {
   if (action.res.isEmpty) {
     return state.copyWith(
-        results: [], isFetchingSearch: false, filteredResults: []);
+        results: [],
+        isFetchingSearch: false,
+        filteredResults: [],
+        hasError: false);
   } else {
-    return state.copyWith(results: action.res, isFetchingSearch: false);
+    return state.copyWith(
+        results: action.res, isFetchingSearch: false, hasError: false);
   }
 }
 

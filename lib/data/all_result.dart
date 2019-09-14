@@ -49,22 +49,26 @@ class AllResults {
       int chapter,
       int verse,
       BibleTranslations translations}) async {
-    final json = await getAllResponse(
-      auth: kTBApiServer,
-      unencodedPath: '/allverses',
-      queryParameters: {
-        'key': kTBkey,
-        'version': kTBApiVersion,
-        'volumes': translations.formatIds(),
-        'book': '$book',
-        'chapter': '$chapter',
-        'verse': '$verse',
-      },
-    );
-    if (json != null) {
-      return AllResults.fromJson(json);
-    } else {
-      return AllResults(data: []);
+    try {
+      final json = await getAllResponse(
+        auth: kTBApiServer,
+        unencodedPath: '/allverses',
+        queryParameters: {
+          'key': kTBkey,
+          'version': kTBApiVersion,
+          'volumes': translations.formatIds(),
+          'book': '$book',
+          'chapter': '$chapter',
+          'verse': '$verse',
+        },
+      );
+      if (json != null) {
+        return AllResults.fromJson(json);
+      } else {
+        return AllResults(data: []);
+      }
+    } catch (e) {
+      return Future.error(e);
     }
   }
 
@@ -76,8 +80,7 @@ class AllResults {
     final jsonResponse = await _getAllJson(uri);
 
     if (jsonResponse == null) {
-      print('Error retrieving json. URL:${uri.toString()}');
-      return null;
+      return Future.error('Error retrieving json. URL:${uri.toString()}');
     }
     return jsonResponse;
   }

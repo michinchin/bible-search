@@ -42,8 +42,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     super.dispose();
   }
 
-
-
   void _showSearch(ResultsViewModel vm) {
     showSearch<String>(
       query: vm.searchQuery,
@@ -76,9 +74,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   },
                   child: vm.state.isFetchingSearch
                       ? LoadingView()
-                      : vm.filteredRes.isEmpty
-                          ? NoResultsView()
-                          : CardView(vm)));
+                      : vm.state.hasError
+                          ? const NoResultsView(
+                              'No active internet connection. '
+                              '\nPlease connect to WiFi for'
+                              '\nsearch results :)'
+                              '')
+                          : vm.filteredRes.isEmpty
+                              ? const NoResultsView()
+                              : CardView(vm)));
         });
   }
 }
