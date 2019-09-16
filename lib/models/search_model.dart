@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:diacritic/diacritic.dart';
 
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
@@ -126,18 +127,29 @@ class SearchModel {
     );
   }
 
-  List<TextSpan> formatWords(String paragraph, String keywords) {
+  List<TextSpan> formatWords(String verseText, String searchWords) {
+    final bold = <int, int>{};
+    final verse = removeDiacritics(verseText);
+
     final content = <TextSpan>[];
-    var modPar = paragraph;
-    String modKeywords;
+    var modPar = verse;
+    var modKeywords = searchWords;
 
     urlEncodingExceptions
-        .forEach((k, v) => modKeywords = keywords.replaceAll(RegExp(k), v));
-    final formattedKeywords = modKeywords.split(' ');
+        .forEach((k, v) => modKeywords = modKeywords.replaceAll(RegExp(k), v));
+    final formattedKeywords = modKeywords.split(' ')
+      ..sort((s, t) => s.length.compareTo(t.length));
     final lFormattedKeywords = modKeywords.toLowerCase().split(' ');
+    
+
     for (final keyword in formattedKeywords) {
-      final regex = RegExp(keyword, caseSensitive: false);
-      modPar = modPar.replaceAll(regex, '\*$keyword\*');
+      if (keyword.length > 3) {
+        final regex = RegExp(keyword, caseSensitive: false, unicode: true);
+        modPar = modPar.replaceAll(regex, '\*$keyword\*');
+      } else {
+        final regex = RegExp(' $keyword ', caseSensitive: false);
+        modPar = modPar.replaceAll(regex, ' \*$keyword\* ');
+      }
     }
 
     final arr = modPar.split('\*');

@@ -144,11 +144,11 @@ class SearchResults {
 }
 
 Map<String, String> urlEncodingExceptions = {
-  '’': ''', // UTF-8: E2 80 99
-  '‘': ''', // UTF-8: E2 80 98
+  '’': '\'', // UTF-8: E2 80 99
+  '‘': '\'', // UTF-8: E2 80 98
   '‚': '',
   ',': '', // get rid of commas
-  '‛': ''',
+  '‛': '\'',
   '“': '\"', // UTF-8: E2 80 9C
   '”': '\"', // UTF-8: E2 80 9D
   '„': '\"', // UTF-8: E2 80 9E
@@ -156,7 +156,7 @@ Map<String, String> urlEncodingExceptions = {
   '′': '\"',
   '″': '\"',
   '‴': '\"',
-  '‵': ''',
+  '‵': '\'',
   '‶': '\"',
   '‷': '\"',
   '–': '-', // UTF-8: E2 80 93
@@ -169,7 +169,7 @@ const base64Map =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 
 String _formatWords(String keywords) {
-  String modifiedKeywords;
+  var modifiedKeywords = keywords;
   final currQuery = keywords.toLowerCase();
   final regex = RegExp(r' *[0-9]? *\w+ *[0-9]+');
   final matches = regex.allMatches(currQuery).toList();
@@ -178,8 +178,8 @@ String _formatWords(String keywords) {
     return _formatRefs(currQuery);
   }
 
-  urlEncodingExceptions
-      .forEach((k, v) => modifiedKeywords = keywords.replaceAll(RegExp(k), v));
+  urlEncodingExceptions.forEach((k, v) => modifiedKeywords =
+      modifiedKeywords.replaceAll(RegExp(k), v));
 
   final wordList = modifiedKeywords.split(' ')
     ..sort((a, b) => b.length.compareTo(a.length));
