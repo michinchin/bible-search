@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
+import 'package:tec_util/tec_util.dart' as tec;
+
 import 'package:tec_ads/tec_ads.dart';
 
 import 'package:bible_search/data/book.dart';
@@ -36,7 +38,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
   @override
   void dispose() {
-    if (!kDebugMode) {
+    if (!kDebugMode &&
+        !tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)) {
       _interstitialAd.show();
     }
     super.dispose();

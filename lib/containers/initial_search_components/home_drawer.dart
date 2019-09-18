@@ -1,7 +1,9 @@
 import 'package:bible_search/containers/iap.dart';
+import 'package:bible_search/labels.dart';
 import 'package:bible_search/presentation/initial_search_screen.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:tec_util/tec_util.dart' as tec;
 
 class HomeDrawer extends StatelessWidget {
   final InitialSearchViewModel vm;
@@ -28,12 +30,13 @@ class HomeDrawer extends StatelessWidget {
                 ));
                 vm.changeTheme(b);
               }),
-        
-          ListTile(
-              leading: Icon(Icons.remove_circle),
-              title: const Text('Remove Ads'),
-              onTap: () => showDialog<void>(
-                  context: context, builder: (c) => InAppPurchaseDialog())),
+          !tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)
+              ? ListTile(
+                  leading: Icon(Icons.remove_circle),
+                  title: const Text('Remove Ads'),
+                  onTap: () => showDialog<void>(
+                      context: context, builder: (c) => InAppPurchaseDialog()))
+              : Container(),
           ListTile(
             leading: Icon(Icons.clear_all),
             title: const Text('Clear Search History'),
@@ -64,7 +67,7 @@ class HomeDrawer extends StatelessWidget {
                   context: context);
             },
           ),
-            ListTile(
+          ListTile(
             leading: Icon(Icons.help_outline),
             title: const Text('Help & Feedback'),
             onTap: () async {

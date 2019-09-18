@@ -164,13 +164,7 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
           return Scaffold(
             appBar: appBar,
             drawer: HomeDrawer(vm),
-            body: Stack(
-              children: [
-                SafeArea(
-                  child: seachHistoryListWithTitle,
-                ),
-              ],
-            ),
+            body: seachHistoryListWithTitle,
           );
         });
   }
@@ -208,7 +202,6 @@ class InitialSearchViewModel {
   void _updateSearchHistory(List<String> searchQueries) =>
       store.dispatch(SetSearchHistoryAction(
           searchQuery: store.state.searchQuery, searchQueries: searchQueries));
-
 
   /// Opens the native email UI with an email for questions or comments.
   Future<void> _emailFeedback(BuildContext context) async {

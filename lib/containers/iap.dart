@@ -95,8 +95,10 @@ class _InAppPurchaseDialogState extends State<InAppPurchaseDialog> {
 
   void _buyProduct() {
     Navigator.of(context).maybePop();
-    final purchaseParam = PurchaseParam(productDetails: _products.first);
-    iap.buyNonConsumable(purchaseParam: purchaseParam);
+    if (tec.isNotNullOrEmpty(_products)) {
+      final purchaseParam = PurchaseParam(productDetails: _products.first);
+      iap.buyNonConsumable(purchaseParam: purchaseParam);
+    }
   }
 
   PurchaseDetails _hasPurchased(String productId) {
@@ -115,8 +117,8 @@ class _InAppPurchaseDialogState extends State<InAppPurchaseDialog> {
             return AlertDialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15)),
-              title:
-                  const Text('Would you like to pay a small fee to not see ads?'),
+              title: const Text(
+                  'Would you like to pay a small fee to not see ads?'),
               actions: <Widget>[
                 FlatButton(
                     onPressed: () => Navigator.of(context).pop(),

@@ -125,7 +125,7 @@ class _ResultCardState extends State<ResultCard> {
     final allButton = FlatButton(
       child: const Text('ALL'),
       onPressed: () {
-        Navigator.of(context).push<bool>(MaterialPageRoute(
+        Navigator.of(context).push<void>(MaterialPageRoute(
             builder: (context) {
               return AllTranslationsScreen(
                 res: widget.res,

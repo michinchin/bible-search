@@ -128,7 +128,6 @@ class SearchModel {
   }
 
   List<TextSpan> formatWords(String verseText, String searchWords) {
-    final bold = <int, int>{};
     final verse = removeDiacritics(verseText);
 
     final content = <TextSpan>[];
@@ -140,21 +139,20 @@ class SearchModel {
     final formattedKeywords = modKeywords.split(' ')
       ..sort((s, t) => s.length.compareTo(t.length));
     final lFormattedKeywords = modKeywords.toLowerCase().split(' ');
-    
 
     for (final keyword in formattedKeywords) {
       if (keyword.length > 3) {
         final regex = RegExp(keyword, caseSensitive: false, unicode: true);
-        modPar = modPar.replaceAll(regex, '\*$keyword\*');
+        modPar = modPar.replaceAllMapped(regex, (s) => '\*${s.group(0)}\*');
       } else {
         final regex = RegExp(' $keyword ', caseSensitive: false);
-        modPar = modPar.replaceAll(regex, ' \*$keyword\* ');
+        modPar = modPar.replaceAllMapped(regex, (s) => '\*${s.group(0)}\*');
       }
     }
 
     final arr = modPar.split('\*');
     for (var i = 0; i < arr.length; i++) {
-      if (lFormattedKeywords.contains(arr[i].toLowerCase())) {
+      if (lFormattedKeywords.contains(arr[i].trim().toLowerCase())) {
         content.add(TextSpan(
             text: arr[i], style: TextStyle(fontWeight: FontWeight.bold)));
       } else {

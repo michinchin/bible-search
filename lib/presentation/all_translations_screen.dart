@@ -41,12 +41,7 @@ class AllTranslationsScreen extends StatelessWidget {
 
                 return Scaffold(
                   appBar: AppBar(
-                    title: GestureDetector(
-                        onVerticalDragDown: Navigator.of(context).pop,
-                        child: Text(res.ref)),
-                    leading: IconButton(
-                        onPressed: () => Navigator.of(context).pop(true),
-                        icon: Icon(Icons.close)),
+                    title: Text(res.ref),
                   ),
                   body: Container(
                       padding: const EdgeInsets.all(10.0),
