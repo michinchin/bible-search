@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:bible_search/containers/initial_search_components/home_drawer.dart';
 import 'package:bible_search/labels.dart';
+import 'package:bible_search/models/iap.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bible_search/containers/is_components.dart';
@@ -27,30 +28,25 @@ class InitialSearchScreen extends StatefulWidget {
   _InitialSearchScreenState createState() => _InitialSearchScreenState();
 }
 
+const removeAdsId = 'inapp.7004';
+
 class _InitialSearchScreenState extends State<InitialSearchScreen> {
-  StreamSubscription<List<PurchaseDetails>> _subscription;
 
   @override
   void initState() {
-    final purchaseUpdates =
-        InAppPurchaseConnection.instance.purchaseUpdatedStream;
-    _subscription = purchaseUpdates.listen(_handlePurchaseUpdates);
+    InAppPurchase.init(_purchaseHandler);
     super.initState();
+  }
+
+  void _purchaseHandler(String inAppId) {
+    if (inAppId == removeAdsId) {
+      tec.Prefs.shared.setBool(removedAdsPref, true);
+    }
   }
 
   @override
   void dispose() {
-    _subscription.cancel();
     super.dispose();
-  }
-
-  void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetails) {
-    debugPrint(purchaseDetails.first.status == PurchaseStatus.purchased
-        ? 'purchased'
-        : 'not purchased');
-    if (purchaseDetails.first.status == PurchaseStatus.purchased) {
-      tec.Prefs.shared.setBool(removedAdsPref, true);
-    }
   }
 
   @override

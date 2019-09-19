@@ -51,8 +51,8 @@ class AllTranslationsScreen extends StatelessWidget {
                                   'No active internet connection. Please connect to WiFi :)')
                               : snapshot.connectionState == ConnectionState.done
                                   ? const NoResultsView('No results :(')
-                                  : Center(
-                                      child: const CircularProgressIndicator(),
+                                  : const Center(
+                                      child: CircularProgressIndicator(),
                                     )
                           : ListView.builder(
                               itemCount: allResults.length,

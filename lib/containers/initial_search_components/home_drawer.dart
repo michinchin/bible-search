@@ -1,4 +1,4 @@
-import 'package:bible_search/containers/iap.dart';
+import 'package:bible_search/containers/iap_dialog.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/presentation/initial_search_screen.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
@@ -21,7 +21,7 @@ class HomeDrawer extends StatelessWidget {
           SwitchListTile(
               secondary: Icon(Icons.lightbulb_outline),
               value: vm.isDarkTheme,
-              title: const Text('Light/Dark Mode'),
+              title: const Text('Dark Mode'),
               onChanged: (b) {
                 DynamicTheme.of(context).setThemeData(ThemeData(
                   primarySwatch: b ? Colors.teal : Colors.orange,

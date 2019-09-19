@@ -73,7 +73,7 @@ class BibleSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    Future.delayed(Duration(microseconds: 10), () {
+    Future.delayed(const Duration(microseconds: 10), () {
       search(query);
       close(context, null);
     });

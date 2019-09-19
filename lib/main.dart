@@ -15,6 +15,8 @@ import 'package:firebase_admob/firebase_admob.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   // Load preferences.
   await tec.Prefs.shared.load();
 

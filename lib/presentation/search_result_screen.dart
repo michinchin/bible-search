@@ -123,7 +123,7 @@ class ResultsViewModel {
     this.changeTheme,
   });
 
-  static ResultsViewModel fromStore(Store<AppState> store) {
+static ResultsViewModel fromStore(Store<AppState> store) {
     return ResultsViewModel(
       state: store.state,
       searchQuery: store.state.searchQuery,

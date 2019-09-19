@@ -18,8 +18,8 @@ class LoadingView extends StatelessWidget {
             );
           },
         ),
-        Center(
-          child: const CircularProgressIndicator(),
+        const Center(
+          child: CircularProgressIndicator(),
         )
       ]));
 }

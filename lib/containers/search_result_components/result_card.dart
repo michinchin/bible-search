@@ -228,71 +228,68 @@ class _ResultCardState extends State<ResultCard> {
             onPressed: _expandButtonPressed,
           )),
       Stack(children: [
-        ButtonTheme.bar(
-          child: ButtonBar(alignment: MainAxisAlignment.start, children: [
-            IconButton(
-              tooltip: 'Context',
-              color: model.iconColor,
-              icon: Transform(
-                transform: Matrix4.rotationZ(math.pi / 2),
-                alignment: FractionalOffset.center,
-                child: widget.res.contextExpanded
-                    ? Icon(Icons.unfold_less)
-                    : Icon(Icons.unfold_more),
-              ),
-              onPressed: _contextButtonPressed,
+        ButtonBar(alignment: MainAxisAlignment.start, children: [
+          IconButton(
+            tooltip: 'Context',
+            color: model.iconColor,
+            icon: Transform(
+              transform: Matrix4.rotationZ(math.pi / 2),
+              alignment: FractionalOffset.center,
+              child: widget.res.contextExpanded
+                  ? Icon(Icons.unfold_less)
+                  : Icon(Icons.unfold_more),
             ),
-          ]),
-        ),
-        ButtonTheme.bar(
-          child: ButtonBar(
-            children: <Widget>[
-              IconButton(
-                  color: model.iconColor,
-                  icon: Icon(Icons.content_copy),
-                  onPressed: () => searchModel.shareSelection(
-                      context: context,
-                      verse: ShareVerse(
-                          books: widget.bookNames,
-                          results: [widget.res.copyWith(isSelected: true)], ),
-                      isCopy: true)
-                  // searchModel.copyPressed(
-                  //     text: '${model.formattedTitle.data}\n${model.content}',
-                  //     context: context), // set state here
-                  ),
-              IconButton(
-                color: model.iconColor,
-                icon: Icon(Icons.share),
-                onPressed: () {
-                  // final verseContent = widget.res.contextExpanded
-                  //     ? '${model.contextTitle.data}'
-                  //         '\n'
-                  //         '${widget.res.verses[widget.res.currentVerseIndex].contextText}'
-                  //     : '${model.nonContextTitle.data}'
-                  //         '\n'
-                  //         '${widget.res.verses[widget.res.currentVerseIndex].verseContent}';
-                  // Share.share(verseContent);
-                  searchModel.shareSelection(
-                      context: context,
-                      verse: ShareVerse(
-                          books: widget.bookNames,
-                          results: [widget.res.copyWith(isSelected: true)]));
-                },
-              ),
-              IconButton(
-                color: model.iconColor,
-                icon: Icon(Icons.exit_to_app),
-                onPressed: () => searchModel.openTB(
-                  a: widget.res.verses[widget.res.currentVerseIndex].a,
-                  id: widget.res.verses[widget.res.currentVerseIndex].id,
-                  bookId: widget.res.bookId,
-                  chapterId: widget.res.chapterId,
-                  verseId: widget.res.verseId,
-                  context: context,
-                ),
-              ),
-            ],
+            onPressed: _contextButtonPressed,
           ),
+        ]),
+        ButtonBar(
+          children: <Widget>[
+            IconButton(
+                color: model.iconColor,
+                icon: Icon(Icons.content_copy),
+                onPressed: () => searchModel.shareSelection(
+                    context: context,
+                    verse: ShareVerse(
+                      books: widget.bookNames,
+                      results: [widget.res.copyWith(isSelected: true)],
+                    ),
+                    isCopy: true)
+                // searchModel.copyPressed(
+                //     text: '${model.formattedTitle.data}\n${model.content}',
+                //     context: context), // set state here
+                ),
+            IconButton(
+              color: model.iconColor,
+              icon: Icon(Icons.share),
+              onPressed: () {
+                // final verseContent = widget.res.contextExpanded
+                //     ? '${model.contextTitle.data}'
+                //         '\n'
+                //         '${widget.res.verses[widget.res.currentVerseIndex].contextText}'
+                //     : '${model.nonContextTitle.data}'
+                //         '\n'
+                //         '${widget.res.verses[widget.res.currentVerseIndex].verseContent}';
+                // Share.share(verseContent);
+                searchModel.shareSelection(
+                    context: context,
+                    verse: ShareVerse(
+                        books: widget.bookNames,
+                        results: [widget.res.copyWith(isSelected: true)]));
+              },
+            ),
+            IconButton(
+              color: model.iconColor,
+              icon: Icon(Icons.exit_to_app),
+              onPressed: () => searchModel.openTB(
+                a: widget.res.verses[widget.res.currentVerseIndex].a,
+                id: widget.res.verses[widget.res.currentVerseIndex].id,
+                bookId: widget.res.bookId,
+                chapterId: widget.res.chapterId,
+                verseId: widget.res.verseId,
+                context: context,
+              ),
+            ),
+          ],
         ),
       ]),
       _buildButtonStack(),
