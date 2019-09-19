@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:bible_search/containers/initial_search_components/home_drawer.dart';
+import 'package:bible_search/labels.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bible_search/containers/is_components.dart';
@@ -47,6 +48,9 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
     debugPrint(purchaseDetails.first.status == PurchaseStatus.purchased
         ? 'purchased'
         : 'not purchased');
+    if (purchaseDetails.first.status == PurchaseStatus.purchased) {
+      tec.Prefs.shared.setBool(removedAdsPref, true);
+    }
   }
 
   @override

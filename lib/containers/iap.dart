@@ -50,20 +50,20 @@ class _InAppPurchaseDialogState extends State<InAppPurchaseDialog> {
 
       final purchaseUpdates = iap.purchaseUpdatedStream;
       _subscription = purchaseUpdates.listen(_handlePurchaseUpdates);
-    } else {}
+    }
   }
 
   void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetails) {
     debugPrint('New Purchases!');
     setState(() {
-      _purchases = purchaseDetails;
+      _purchases.addAll(purchaseDetails);
     });
     _verifyPurchases();
   }
 
   Future<void> _verifyPurchases() async {
     final purchase = _hasPurchased(id);
-    if (purchase != null && purchase.status == PurchaseStatus.purchased) {
+    if (purchase != null) {
       await tec.Prefs.shared.setBool(removedAdsPref, true);
     }
   }
@@ -88,9 +88,11 @@ class _InAppPurchaseDialogState extends State<InAppPurchaseDialog> {
         await iap.completePurchase(purchase);
       }
     }
-    setState(() {
-      _purchases = response.pastPurchases;
-    });
+    if (response.pastPurchases != null && response.pastPurchases.isNotEmpty) {
+      setState(() {
+        _purchases = response.pastPurchases;
+      });
+    }
   }
 
   void _buyProduct() {
@@ -98,6 +100,7 @@ class _InAppPurchaseDialogState extends State<InAppPurchaseDialog> {
     if (tec.isNotNullOrEmpty(_products)) {
       final purchaseParam = PurchaseParam(productDetails: _products.first);
       iap.buyNonConsumable(purchaseParam: purchaseParam);
+      _getPastPurchases();
     }
   }
 
