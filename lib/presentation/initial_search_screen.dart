@@ -214,10 +214,12 @@ class InitialSearchViewModel {
     if (!Platform.isIOS) {
       email = 'androidsupport@tecarta.com';
     }
+    final di = await tec.DeviceInfo.fetch();
+    print(
+        'Running on ${di.productName} with ${tec.DeviceInfo.os} ${di.version}');
 
     final subject = 'Feedback regarding Bible Search! '
-        'with ${tec.DeviceInfo.os}';
-
+        'with ${di.productName} ${tec.DeviceInfo.os} ${di.version}';
     const body = 'I have the following question or comment:\n\n\n';
 
     final url = Uri.encodeFull('mailto:$email?subject=$subject&body=$body');
