@@ -1,40 +1,62 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
-class InAppPurchase {
-  static InAppPurchase _iap;
+class InAppPurchases {
+  static InAppPurchases _iap;
   StreamSubscription<List<PurchaseDetails>> _subscription;
   Function _purchaseHandler;
 
   static void init(Function purchaseHandler) {
-    _iap ??= InAppPurchase();
+    _iap ??= InAppPurchases();
     _iap._purchaseHandler = purchaseHandler;
   }
 
-  static Future<void> purchase(String productId, { bool consumable : true }) async {
-    //ignore: prefer_collection_literals
-    final ids = <String>[productId].toSet();
-
-    final response =
-        await InAppPurchaseConnection.instance.queryProductDetails(ids);
-
-    if (response.notFoundIDs.isNotEmpty) {
-      debugPrint('Could not retrieve products');
-      return;
+  static void restorePurchases() {
+    if (_iap != null) {
+      _iap._restorePurchases();
     }
+  }
 
-    final purchaseParam =
-        PurchaseParam(productDetails: response.productDetails.first);
-
-    if (consumable) {
-      await InAppPurchaseConnection.instance
-          .buyConsumable(purchaseParam: purchaseParam);
+  static void purchase(String productId, {bool consumable = true}) {
+    if (_iap != null) {
+      _iap._purchase(productId, consumable);
     }
-    else {
-      await InAppPurchaseConnection.instance
-          .buyNonConsumable(purchaseParam: purchaseParam);
+  }
+
+  Future<void> _purchase(String productId, bool consumable) async {
+    final available = await InAppPurchaseConnection.instance.isAvailable();
+
+    if (available) {
+      //ignore: prefer_collection_literals
+      final ids = <String>[productId].toSet();
+
+      final response =
+      await InAppPurchaseConnection.instance.queryProductDetails(ids);
+
+      if (response.notFoundIDs.isNotEmpty) {
+        print('Could not retrieve products');
+        return;
+      }
+
+      var sandbox = false;
+
+      assert(() {
+        sandbox = true;
+        return true;
+      }());
+
+      final purchaseParam = PurchaseParam(
+          productDetails: response.productDetails.first,
+          sandboxTesting: sandbox);
+
+      if (consumable) {
+        await InAppPurchaseConnection.instance
+            .buyConsumable(purchaseParam: purchaseParam);
+      } else {
+        await InAppPurchaseConnection.instance
+            .buyNonConsumable(purchaseParam: purchaseParam);
+      }
     }
   }
 
@@ -42,26 +64,31 @@ class InAppPurchase {
     _subscription.cancel();
   }
 
-  InAppPurchase() {
+  InAppPurchases() {
     final purchaseUpdates =
         InAppPurchaseConnection.instance.purchaseUpdatedStream;
     _subscription = purchaseUpdates.listen(_handlePurchaseUpdates);
 
     InAppPurchaseConnection.instance.isAvailable().then((available) {
       if (!available) {
-        debugPrint('Unable to initialize inapps...');
+        print('Unable to initialize inapps...');
         return;
       }
+    });
+  }
 
-      InAppPurchaseConnection.instance.queryPastPurchases().then((response) {
-        if (response.error != null) {
-          // Handle the error.
-          debugPrint('Unable to retrieve past purchases...');
-        }
-        else {
-          _handlePurchaseUpdates(response.pastPurchases);
-        }
-      });
+  void _restorePurchases() {
+    InAppPurchaseConnection.instance.isAvailable().then((available) {
+      if (available) {
+        InAppPurchaseConnection.instance.queryPastPurchases().then((response) {
+          if (response.error != null) {
+            // Handle the error.
+            print('Unable to restore purchases...');
+          } else {
+            _handlePurchaseUpdates(response.pastPurchases);
+          }
+        });
+      }
     });
   }
 
@@ -69,14 +96,16 @@ class InAppPurchase {
     if (_purchaseHandler != null) {
       for (final details in purchaseDetails) {
         // status is null when it's a past purchase...
-        if (details.status == PurchaseStatus.purchased || details.status == null) {
-          _purchaseHandler(details.productID);
+        if (details.status == PurchaseStatus.purchased ||
+            details.status == null) {
 
-//          if (Platform.isIOS) {
-//            // Mark that you've delivered the purchase. Only the App Store requires
-//            // this final confirmation.
-//            InAppPurchaseConnection.instance.completePurchase(purchase);
-//          }
+          if (details.skPaymentTransaction != null) {
+            // Mark that you've delivered the purchase. Only the App Store requires
+            // this final confirmation.
+            InAppPurchaseConnection.instance.completePurchase(details);
+          }
+
+          _purchaseHandler(details.productID);
         }
       }
     }

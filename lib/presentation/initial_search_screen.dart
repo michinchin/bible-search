@@ -28,13 +28,18 @@ class InitialSearchScreen extends StatefulWidget {
   _InitialSearchScreenState createState() => _InitialSearchScreenState();
 }
 
-const removeAdsId = 'inapp.7004';
+final removeAdsId =
+    (Platform.isIOS) ? 'com.tecarta.tbbiblesearch.7004' : 'inapp.7004';
 
 class _InitialSearchScreenState extends State<InitialSearchScreen> {
-
   @override
   void initState() {
-    InAppPurchase.init(_purchaseHandler);
+    InAppPurchases.init(_purchaseHandler);
+
+    if (Platform.isAndroid) {
+      InAppPurchases.restorePurchases();
+    }
+
     super.initState();
   }
 

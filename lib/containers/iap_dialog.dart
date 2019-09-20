@@ -9,7 +9,7 @@ class InAppPurchaseDialog extends StatefulWidget {
 
 class _InAppPurchaseDialogState extends State<InAppPurchaseDialog> {
   void _buyProduct() {
-    InAppPurchase.purchase(removeAdsId);
+    InAppPurchases.purchase(removeAdsId);
     Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
   }
 
