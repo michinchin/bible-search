@@ -228,5 +228,5 @@ String _getCacheKey(String keywords, String translationIds) {
     volumeId -= digit.toInt() * length;
     encoded.write(base64Map[volumeId.toInt()]);
   }
-  return '$words${encoded.toString()}0_0_0_0';
+  return '$words${encoded.toString()}_0_0_0_0';
 }
