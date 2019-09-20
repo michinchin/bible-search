@@ -1,5 +1,5 @@
+import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/iap.dart';
-import 'package:bible_search/presentation/initial_search_screen.dart';
 import 'package:flutter/material.dart';
 
 class InAppPurchaseDialog extends StatefulWidget {

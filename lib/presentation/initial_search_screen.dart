@@ -11,10 +11,8 @@ import 'package:tec_util/tec_util.dart' as tec;
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:redux/redux.dart';
 
-import 'package:bible_search/data/votd_image.dart';
 import 'package:bible_search/models/app_state.dart';
 import 'package:bible_search/redux/actions.dart';
 
@@ -27,9 +25,6 @@ class InitialSearchScreen extends StatefulWidget {
   @override
   _InitialSearchScreenState createState() => _InitialSearchScreenState();
 }
-
-final removeAdsId =
-    (Platform.isIOS) ? 'com.tecarta.tbbiblesearch.7004' : 'inapp.7004';
 
 class _InitialSearchScreenState extends State<InitialSearchScreen> {
   @override
@@ -107,8 +102,8 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
           );
 
           final gradientAppBarImage = GradientOverlayImage(
-            fromOnline: vm.votdImage != null,
-            path: vm.votdImage?.url ?? 'assets/appimage.jpg',
+            fromOnline: false,
+            path: vm.votdString,
             width: _imageWidth,
             height: _imageHeight,
             topColor: Colors.black,
@@ -177,7 +172,8 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
 
 class InitialSearchViewModel {
   final Store<AppState> store;
-  VOTDImage votdImage;
+  // VOTDImage votdImage;
+  String votdString;
   List<String> searchHistory;
   bool isDarkTheme;
   void Function(String term) onSearchEntered;
@@ -186,13 +182,21 @@ class InitialSearchViewModel {
   void Function(bool isDarkTheme) changeTheme;
 
   InitialSearchViewModel(this.store) {
-    votdImage = store.state.votdImage;
+    // votdImage = store.state.votdImage;
+    votdString = _ordinalDayAsset();
     searchHistory = store.state.searchHistory;
     isDarkTheme = store.state.isDarkTheme;
     onSearchEntered = _onSearchEntered;
     updateSearchHistory = _updateSearchHistory;
     changeTheme = _changeTheme;
     emailFeedback = _emailFeedback;
+  }
+
+  String _ordinalDayAsset() {
+    final _year = DateTime.now().year;
+    final _jan1 = DateTime.utc(_year, 1, 1);
+    final _ordinalDay = DateTime.now().difference(_jan1).inDays;
+    return 'assets/$_ordinalDay.jpg';
   }
 
   void _onSearchEntered(String term) {
@@ -247,11 +251,11 @@ class InitialSearchViewModel {
   /// override == operator so flutter only rebuilds widgets that need rebuilding
   @override
   bool operator ==(dynamic other) =>
-      votdImage == other.votdImage &&
-      searchHistory == other.searchHistory &&
-      isDarkTheme == other.isDarkTheme;
+      // votdImage == other.votdImage &&
+      searchHistory == other.searchHistory && isDarkTheme == other.isDarkTheme;
 
   @override
   int get hashCode =>
-      votdImage.hashCode ^ searchHistory.hashCode ^ isDarkTheme.hashCode;
+      // votdImage.hashCode ^
+      searchHistory.hashCode ^ isDarkTheme.hashCode;
 }

@@ -11,7 +11,7 @@ final reducers = combineReducers<AppState>([
 
   /// Init Home Reducers
   TypedReducer<AppState, ImageLoadingAction>(_onImageLoad),
-  TypedReducer<AppState, ImageResultAction>(_onImageLoaded),
+  // TypedReducer<AppState, ImageResultAction>(_onImageLoaded),
   TypedReducer<AppState, SetThemeAction>(_onThemeSet),
   TypedReducer<AppState, SetSearchHistoryAction>(_onSearchHistorySet),
 
@@ -68,8 +68,8 @@ AppState _onSelected(AppState state, SetNumSelectedAction action) =>
 AppState _onImageLoad(AppState state, ImageLoadingAction action) =>
     state.copyWith(isLoadingImage: true);
 
-AppState _onImageLoaded(AppState state, ImageResultAction action) =>
-    state.copyWith(votdImage: action.votdImage);
+// AppState _onImageLoaded(AppState state, ImageResultAction action) =>
+//     state.copyWith(votdImage: action.votdImage);
 
 AppState _onThemeSet(AppState state, SetThemeAction action) =>
     state.copyWith(isDarkTheme: action.isDarkTheme);

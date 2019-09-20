@@ -14,6 +14,9 @@ const String removedAdsPref = 'bs_removeAds';
 
 const int maxSearchesBeforeAd = 5;
 
+final removeAdsId =
+    (Platform.isIOS) ? 'com.tecarta.tbbiblesearch.7004' : 'inapp.7004';
+
 final prefInterstitialAdId = Platform.isAndroid
     ? 'ca-app-pub-5279916355700267/3575410635'
     : 'ca-app-pub-5279916355700267/9566103912';

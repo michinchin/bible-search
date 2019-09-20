@@ -1,7 +1,6 @@
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/translation.dart';
-import 'package:bible_search/data/votd_image.dart';
 
 /// Search Actions
 class SearchAction {
@@ -44,10 +43,10 @@ class InitHomeAction {}
 
 class ImageLoadingAction {}
 
-class ImageResultAction {
-  final VOTDImage votdImage;
-  ImageResultAction(this.votdImage);
-}
+// class ImageResultAction {
+//   final VOTDImage votdImage;
+//   ImageResultAction(this.votdImage);
+// }
 
 class SetThemeAction {
   bool isDarkTheme;

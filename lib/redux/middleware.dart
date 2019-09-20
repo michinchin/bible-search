@@ -6,7 +6,6 @@ import 'package:bible_search/redux/actions.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/models/app_state.dart';
 import 'package:redux/redux.dart';
-import 'package:bible_search/data/votd_image.dart';
 import 'package:bible_search/models/home_model.dart';
 
 import 'package:tec_util/tec_util.dart' as tec;
@@ -71,12 +70,12 @@ void initHomeMiddleware(
   InitHomeAction action,
   NextDispatcher next,
 ) {
-  store.dispatch(ImageLoadingAction());
-  VOTDImage.fetch().then((votd) {
-    store.dispatch(ImageResultAction(votd));
-  }).catchError((dynamic e) {
-    store.dispatch(ImageResultAction(VOTDImage(url: 'assets/appimage.jpg')));
-  });
+  // store.dispatch(ImageLoadingAction());
+  // VOTDImage.fetch().then((votd) {
+  //   store.dispatch(ImageResultAction(votd));
+  // }).catchError((dynamic e) {
+  //   store.dispatch(ImageResultAction(VOTDImage(url: 'assets/appimage.jpg')));
+  // });
   homeModel.loadTheme().then((theme) {
     store.dispatch(SetThemeAction(isDarkTheme: theme));
   });
