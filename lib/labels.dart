@@ -25,6 +25,21 @@ final prefAdmobAppId = Platform.isAndroid
     ? 'ca-app-pub-5279916355700267~6403892871'
     : 'ca-app-pub-5279916355700267~3348273170';
 
+const defaultSearchHistory = <String>[
+  'God\'s word',
+  'Jeremiah 29:11',
+  'hope',
+  'healing',
+  'grace',
+  'faith',
+  'forgiveness',
+  'Jesus',
+  'prayer',
+  'John 3:16',
+  'love',
+  'seek and you will find',
+];
+
 const extraBookNames = {
   'ge': 1,
   'gen': 1,

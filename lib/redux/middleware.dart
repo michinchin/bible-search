@@ -31,7 +31,7 @@ void searchMiddleware(
      store..dispatch(SearchResultAction([]))..dispatch(SearchErrorAction());
     // store.dispatch(SearchErrorAction());
   });
-  final newSearchList = store.state.searchHistory..add(action.searchQuery);
+  final newSearchList = List<String>.from(store.state.searchHistory)..add(action.searchQuery);
   store.dispatch(SetSearchHistoryAction(
       searchQuery: action.searchQuery,
       searchQueries:

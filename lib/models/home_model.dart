@@ -15,14 +15,21 @@ class HomeModel {
 
   /// load the search history from user prefs
   Future<List<String>> loadSearchHistory() async {
-    return tec.Prefs.shared.getStringList(searchHistoryPref) ?? [];
+    var sh = tec.Prefs.shared
+        .getStringList(searchHistoryPref, defaultValue: defaultSearchHistory);
+    if (sh.length > 100) {
+      sh = sh.take(100).toList();
+      await tec.Prefs.shared.setStringList(searchHistoryPref, sh);
+    }
+    return sh.isEmpty ? defaultSearchHistory : sh;
   }
 
   /// update the search history with current user prefs
   Future<void> updateSearchHistory(List<String> searchQueries) async {
-    searchQueries.removeWhere((s) => (s?.length ?? 0) == 0);
+    final sq = List<String>.from(searchQueries)
+      ..removeWhere((s) => (s?.length ?? 0) == 0);
     await tec.Prefs.shared.setStringList(searchHistoryPref,
-        searchQueries.reversed.toSet().toList().reversed.toList());
+        sq.reversed.toSet().toList().reversed.toList());
   }
 
   /// update the current theme in user prefs
