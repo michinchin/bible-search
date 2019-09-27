@@ -46,16 +46,17 @@ class BibleSearchApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final darkTheme = store.state.isDarkTheme || MediaQuery.of(context).platformBrightness == Brightness.dark;
     return StoreProvider<AppState>(
         store: store,
         child: DynamicTheme(
             defaultBrightness: Brightness.light,
             data: (brightness) => ThemeData(
                   primarySwatch: Colors.orange,
-                  primaryColorBrightness: store.state.isDarkTheme
+                  primaryColorBrightness: darkTheme
                       ? Brightness.dark
                       : Brightness.light,
-                  brightness: store.state.isDarkTheme
+                  brightness: darkTheme
                       ? Brightness.dark
                       : Brightness.light,
                 ),
