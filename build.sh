@@ -1,7 +1,7 @@
 # this version
 VERSION=1.0.0
 
-cd devotionals
+cd bible_search
 flutter upgrade
 flutter clean
 flutter pub upgrade
