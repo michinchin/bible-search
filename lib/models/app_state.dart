@@ -25,6 +25,7 @@ class AppState {
   final bool isDarkTheme;
   final bool otSelected;
   final bool ntSelected;
+  final bool hasNoTranslationsSelected;
 
   final int numSelected;
 
@@ -41,6 +42,7 @@ class AppState {
     this.isFetchingSearch,
     this.isLoadingImage,
     this.isInSelectionMode,
+    this.hasNoTranslationsSelected,
     this.hasError,
     this.isDarkTheme,
     this.otSelected,
@@ -61,6 +63,7 @@ class AppState {
         isFetchingSearch: false,
         isLoadingImage: false,
         isInSelectionMode: false,
+        hasNoTranslationsSelected: false,
         hasError: false,
         isDarkTheme: false,
         otSelected: true,
@@ -81,6 +84,7 @@ class AppState {
       bool isFetchingSearch,
       bool isLoadingImage,
       bool isInSelectionMode,
+      bool hasNoTranslationsSelected,
       bool hasError,
       bool isDarkTheme,
       bool otSelected,
@@ -99,6 +103,8 @@ class AppState {
         isFetchingSearch: isFetchingSearch ?? this.isFetchingSearch,
         isLoadingImage: isLoadingImage ?? this.isLoadingImage,
         isInSelectionMode: isInSelectionMode ?? this.isInSelectionMode,
+        hasNoTranslationsSelected:
+            hasNoTranslationsSelected ?? this.hasNoTranslationsSelected,
         hasError: hasError ?? this.hasError,
         isDarkTheme: isDarkTheme ?? this.isDarkTheme,
         otSelected: otSelected ?? this.otSelected,

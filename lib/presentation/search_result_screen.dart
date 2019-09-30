@@ -77,15 +77,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                   },
                   child: vm.state.isFetchingSearch
                       ? LoadingView()
-                      : vm.state.hasError
-                          ? const NoResultsView(
-                              'No active internet connection. '
-                              '\nPlease connect to WiFi for'
-                              '\nsearch results :)'
-                              '')
-                          : vm.filteredRes.isEmpty
-                              ? const NoResultsView()
-                              : CardView(vm)));
+                      : vm.filteredRes.isEmpty
+                          ? NoResultsView(
+                              hasError: vm.state.hasError,
+                              hasNoTranslations:
+                                  vm.state.hasNoTranslationsSelected,
+                            )
+                          : CardView(vm)));
         });
   }
 }
@@ -123,7 +121,7 @@ class ResultsViewModel {
     this.changeTheme,
   });
 
-static ResultsViewModel fromStore(Store<AppState> store) {
+  static ResultsViewModel fromStore(Store<AppState> store) {
     return ResultsViewModel(
       state: store.state,
       searchQuery: store.state.searchQuery,

@@ -12,6 +12,8 @@ class SearchLoadingAction {}
 
 class SearchErrorAction {}
 
+class SearchNoTranslationsAction{}
+
 class SearchResultAction {
   final List<SearchResult> res;
   SearchResultAction(this.res);

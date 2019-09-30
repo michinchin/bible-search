@@ -73,26 +73,29 @@ class SearchModel {
       {@required BuildContext context,
       @required ShareVerse verse,
       bool isCopy = false}) async {
-    final res = verse.shareVerse;
-    final currVerseIdx = res.currentVerseIndex;
-    final v = res.verses[currVerseIdx];
+    var shortUrl = '';
+    if (!verse.multipleSelected) {
+      final res = verse.shareVerse;
+      final currVerseIdx = res.currentVerseIndex;
+      final v = res.verses[currVerseIdx];
 
-    final params = <String, dynamic>{
-      'volume': '${v.id}',
-      'resid':
-          '${verse.books.firstWhere((b) => b.id == res.bookId).name}+${res.chapterId}:${res.verseId}',
-    };
+      final params = <String, dynamic>{
+        'volume': '${v.id}',
+        'resid':
+            '${verse.books.firstWhere((b) => b.id == res.bookId).name}+${res.chapterId}:${res.verseId}',
+      };
 
-    final url = Uri(
-            scheme: 'https',
-            host: 'tecartabible.com',
-            path: '/share',
-            queryParameters: params)
-        .toString();
+      final url = Uri(
+              scheme: 'https',
+              host: 'tecartabible.com',
+              path: '/share',
+              queryParameters: params)
+          .toString();
 
-    final shortUrl = await tec.shortenUrl(url);
+      shortUrl = await tec.shortenUrl(url);
 
-    debugPrint('Share URL: $url\nShort: $shortUrl');
+      debugPrint('Share URL: $url\nShort: $shortUrl');
+    }
 
     if (verse.selectedText.isNotEmpty) {
       if (!isCopy) {
@@ -188,6 +191,9 @@ class ShareVerse {
     }
     return text;
   }
+
+  bool get multipleSelected =>
+      results.where((r) => r.isSelected).toList().length > 1;
 
   int get volumeId => books.firstWhere((b) => b.id == shareVerse.bookId).id;
 

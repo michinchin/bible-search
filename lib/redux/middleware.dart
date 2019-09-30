@@ -19,19 +19,28 @@ void searchMiddleware(
   NextDispatcher next,
 ) {
   store.dispatch(SearchLoadingAction());
-  SearchResults.fetch(
-    words: action.searchQuery,
-    translationIds: store.state.translations.formatIds(),
-  ).then((res) {
+  final translationIds = store.state.translations.formatIds();
+  if (translationIds.isNotEmpty) {
+    SearchResults.fetch(
+      words: action.searchQuery,
+      translationIds: translationIds,
+    ).then((res) {
+      store
+        ..dispatch(SearchResultAction(res))
+        ..dispatch(SetFilteredResultsAction(
+            filterModel.filterByBook(res, store.state.books)));
+    }).catchError((dynamic e) {
+      store..dispatch(SearchResultAction([]))..dispatch(SearchErrorAction());
+      // store.dispatch(SearchErrorAction());
+    });
+  } else {
     store
-      ..dispatch(SearchResultAction(res))
-      ..dispatch(SetFilteredResultsAction(
-          filterModel.filterByBook(res, store.state.books)));
-  }).catchError((dynamic e) {   
-     store..dispatch(SearchResultAction([]))..dispatch(SearchErrorAction());
-    // store.dispatch(SearchErrorAction());
-  });
-  final newSearchList = List<String>.from(store.state.searchHistory)..add(action.searchQuery);
+      ..dispatch(SearchResultAction([]))
+      ..dispatch(SearchNoTranslationsAction());
+  }
+
+  final newSearchList = List<String>.from(store.state.searchHistory)
+    ..add(action.searchQuery);
   store.dispatch(SetSearchHistoryAction(
       searchQuery: action.searchQuery,
       searchQueries:
