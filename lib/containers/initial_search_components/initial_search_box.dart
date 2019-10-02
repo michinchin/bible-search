@@ -78,6 +78,7 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
                 onSubmitted: (s) {
                   widget.updateSearch(s);
                   Navigator.of(context).pushNamed('/results');
+                  controller.clear();
                 },
               ),
             ),

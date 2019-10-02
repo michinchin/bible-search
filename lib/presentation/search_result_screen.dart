@@ -4,6 +4,7 @@ import 'package:bible_search/models/search_model.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -60,7 +61,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   Widget build(BuildContext context) {
     //on translation change, the view should reload
     print('rebuilt ${DateTime.now().second}');
-
+    SystemChrome.setSystemUIOverlayStyle(
+        Theme.of(context).brightness == Brightness.light
+            ? SystemUiOverlayStyle.dark
+            : SystemUiOverlayStyle.light);
     return StoreConnector<AppState, ResultsViewModel>(
         distinct: true,
         converter: ResultsViewModel.fromStore,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bible_search/models/search_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -52,10 +54,12 @@ class _SearchAppBarState extends State<SearchAppBar> {
                   title: const Text('Selection Mode'),
                   onTap: _changeToSelectionMode,
                 ),
-                SwitchListTile(
+                SwitchListTile.adaptive(
                     secondary: Icon(Icons.lightbulb_outline),
                     value: widget.model.state.isDarkTheme,
-                    title: const Text('Light/Dark Mode'),
+                    title: Text(widget.model.state.isDarkTheme
+                        ? 'Dark Mode'
+                        : 'Light Mode'),
                     onChanged: (b) {
                       DynamicTheme.of(context).setThemeData(ThemeData(
                         primarySwatch: b ? Colors.teal : Colors.orange,
@@ -63,6 +67,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                         brightness: b ? Brightness.dark : Brightness.light,
                       ));
                       widget.model.changeTheme(b);
+                      Navigator.of(context).pop();
                     }),
               ],
             ));
@@ -73,6 +78,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
       _isInSelectionMode = !_isInSelectionMode;
       widget.model.changeToSelectionMode();
     });
+    Navigator.of(context).pop();
   }
 
   void _navigateToFilter(BuildContext context) {
@@ -110,9 +116,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                     ]),
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(0),
-                  leading: IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () => Navigator.of(context).pop()),
+                  leading: const BackButton(),
                   title: InkWell(
                       onTap: widget.showSearch,
                       child: Text(
@@ -126,7 +130,9 @@ class _SearchAppBarState extends State<SearchAppBar> {
                       onPressed: () => _navigateToFilter(context),
                     ),
                     IconButton(
-                      icon: Icon(Icons.more_horiz),
+                      icon: Platform.isAndroid
+                          ? const Icon(Icons.more_vert)
+                          : const Icon(Icons.more_horiz),
                       onPressed: _showModalSheet,
                     )
                   ]),

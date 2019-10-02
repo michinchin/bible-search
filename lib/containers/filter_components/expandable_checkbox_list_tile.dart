@@ -8,6 +8,7 @@ class ExpandableCheckboxListTile extends StatefulWidget {
   final bool value;
   final Widget secondary;
   final bool initiallyExpanded;
+  final Color color;
 
   const ExpandableCheckboxListTile({
     Key key,
@@ -18,6 +19,7 @@ class ExpandableCheckboxListTile extends StatefulWidget {
     this.value,
     this.secondary,
     this.initiallyExpanded = false,
+    this.color = Colors.white,
   })  : assert(title != null),
   assert(children != null),
         super(key: key);
@@ -39,6 +41,7 @@ class _ExpandableCheckboxListTileState
   @override
   Widget build(BuildContext context) {
     final topicListTile = CheckboxListTile(
+      checkColor: widget.color,
       title: widget.title,
       value: widget.value,
       controlAffinity: widget.controlAffinity,

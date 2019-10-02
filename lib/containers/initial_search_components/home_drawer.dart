@@ -2,6 +2,7 @@ import 'package:bible_search/containers/iap_dialog.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/presentation/initial_search_screen.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 
@@ -18,10 +19,10 @@ class HomeDrawer extends StatelessWidget {
           const DrawerHeader(
             child: Text('Settings'),
           ),
-          SwitchListTile(
+          SwitchListTile.adaptive(
               secondary: Icon(Icons.lightbulb_outline),
               value: vm.isDarkTheme,
-              title: const Text('Dark Mode'),
+              title: Text(vm.isDarkTheme ? 'Dark Mode' : 'Light Mode'),
               onChanged: (b) {
                 DynamicTheme.of(context).setThemeData(ThemeData(
                   primarySwatch: b ? Colors.teal : Colors.orange,

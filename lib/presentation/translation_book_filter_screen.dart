@@ -35,6 +35,9 @@ class TranslationBookFilterScreen extends StatelessWidget {
               _translationList.add(Padding(
                 padding: const EdgeInsets.only(left: 15.0),
                 child: CheckboxListTile(
+                  checkColor: Theme.of(context).brightness == Brightness.dark
+                      ? ThemeData.dark().cardColor
+                      : null,
                   onChanged: (b) => vm.selectTranslation(
                       b, vm.translations.data.indexOf(translations[i])),
                   value: translations[i].isSelected,
@@ -52,6 +55,9 @@ class TranslationBookFilterScreen extends StatelessWidget {
             for (var i = 0; i < vm.languages.length; i++) {
               final lang = vm.languages[i];
               _languageList.add(ExpandableCheckboxListTile(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? ThemeData.dark().cardColor
+                    : null,
                 controlAffinity: ListTileControlAffinity.leading,
                 onChanged: (b) {
                   vm.selectLanguage(b, i);
@@ -112,6 +118,9 @@ class TranslationBookFilterScreen extends StatelessWidget {
           List<Widget> _createBookList() {
             final _bookList = <Widget>[
               ExpandableCheckboxListTile(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? ThemeData.dark().cardColor
+                    : null,
                 initiallyExpanded: true,
                 controlAffinity: ListTileControlAffinity.leading,
                 onChanged: (b) {
@@ -126,6 +135,9 @@ class TranslationBookFilterScreen extends StatelessWidget {
               ),
               ExpandableCheckboxListTile(
                 initiallyExpanded: true,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? ThemeData.dark().cardColor
+                    : null,
                 controlAffinity: ListTileControlAffinity.leading,
                 onChanged: (b) {
                   vm.selectBook(b, -1);
