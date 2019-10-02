@@ -177,40 +177,41 @@ class _ResultCardState extends State<ResultCard> {
           onPressed: () => _translationChanged(each, i),
         ));
       }
-      final rows = <Row>[];
-      final width = MediaQuery.of(context).size.width;
-      var currWidth = 0;
-      var currButtons = <Expanded>[];
-      for (final each in buttons) {
-        currWidth += 100;
-        if (currWidth >= width) {
-          currWidth = 0;
-          rows.add(Row(
-            children: currButtons,
-          ));
-          currButtons = <Expanded>[];
-        } else {
-          currButtons.add(Expanded(child: each));
-        }
-      }
-      currWidth += 100;
-      if (currWidth >= width) {
-        rows
-          ..add(Row(
-            children: currButtons,
-          ))
-          ..add(Row(children: [allButton]));
-      } else {
-        currButtons.add(Expanded(child: allButton));
-        rows.add(Row(
-          children: currButtons,
-        ));
-      }
+      // final rows = <Row>[];
+      // final width = MediaQuery.of(context).size.width;
+      // var currWidth = 0;
+      // var currButtons = <Expanded>[];
+      // for (final each in buttons) {
+      //   currWidth += 100;
+      //   if (currWidth >= width) {
+      //     currWidth = 0;
+      //     rows.add(Row(
+      //       children: currButtons,
+      //     ));
+      //     currButtons = <Expanded>[];
+      //   } else {
+      //     currButtons.add(Expanded(child: each));
+      //   }
+      // }
+      // currWidth += 100;
+      // if (currWidth >= width) {
+      //   rows
+      //     ..add(Row(
+      //       children: currButtons,
+      //     ))
+      //     ..add(Row(children: [allButton]));
+      // } else {
+      //   currButtons.add(Expanded(child: allButton));
+      //   rows.add(Row(
+      //     children: currButtons,
+      //   ));
+      // }
       //if already at its max then don't add allButton, add allButton to the next line
-      return Center(
-          child: Column(
-        children: rows,
-      ));
+      // return Center(
+      //     child: Column(
+      //   children: rows,
+      // ));
+      return Wrap(children: buttons..add(allButton));
     }
 
     final _expandIcons = <Widget>[
