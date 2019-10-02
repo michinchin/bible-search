@@ -93,7 +93,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
         ? Stack(children: [
             AppBar(
               elevation: 0.0,
-              brightness: Brightness.light,
+              brightness: Theme.of(context).brightness,
               backgroundColor: Theme.of(context).canvasColor,
               bottomOpacity: 0.0,
               toolbarOpacity: 0.0,

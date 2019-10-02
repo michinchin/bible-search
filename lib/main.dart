@@ -5,6 +5,7 @@ import 'package:bible_search/redux/actions.dart';
 import 'package:bible_search/labels.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
+import 'package:flutter/services.dart';
 import 'package:redux/redux.dart';
 import 'package:bible_search/redux/reducers.dart';
 import 'package:bible_search/redux/middleware.dart';
@@ -47,18 +48,18 @@ class BibleSearchApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final darkTheme = store.state.isDarkTheme;
+    
+    // SystemChrome.setSystemUIOverlayStyle(darkOverlayStyle);
+
     return StoreProvider<AppState>(
         store: store,
         child: DynamicTheme(
             defaultBrightness: Brightness.light,
             data: (brightness) => ThemeData(
                   primarySwatch: Colors.orange,
-                  primaryColorBrightness: darkTheme
-                      ? Brightness.dark
-                      : Brightness.light,
-                  brightness: darkTheme
-                      ? Brightness.dark
-                      : Brightness.light,
+                  primaryColorBrightness:
+                      darkTheme ? Brightness.dark : Brightness.light,
+                  brightness: darkTheme ? Brightness.dark : Brightness.light,
                 ),
             themedWidgetBuilder: (context, theme) {
               return MaterialApp(

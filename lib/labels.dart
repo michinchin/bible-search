@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 const String kTBStreamServer = 'cf-stream.tecartabible.com';
 const String kTBApiVersion = '7';
 const String kTBApiServer = 'api.tecartabible.com';
@@ -12,6 +15,23 @@ const String translationsPref = 'bs_translations';
 const String searchHistoryPref = 'bs_searchHistory';
 const String removedAdsPref = 'bs_removeAds';
 
+const darkOverlayStyle = SystemUiOverlayStyle(
+  statusBarColor: Colors.transparent, // was null
+  statusBarBrightness: Brightness.light,
+  statusBarIconBrightness: Brightness.dark,
+  systemNavigationBarColor: Color(0xFFFFFFFF), // was Color(0xFF000000)
+  systemNavigationBarDividerColor: null,
+  systemNavigationBarIconBrightness: Brightness.dark, // was Brightness.light
+);
+
+const lightOverlayStyle = SystemUiOverlayStyle(
+  statusBarColor: Colors.transparent, // was null
+  statusBarBrightness: Brightness.dark,
+  statusBarIconBrightness: Brightness.light,
+  systemNavigationBarColor: Color(0xFF000000),
+  systemNavigationBarDividerColor: null,
+  systemNavigationBarIconBrightness: Brightness.light,
+);
 const int maxSearchesBeforeAd = 5;
 
 final removeAdsId =

@@ -1,5 +1,7 @@
+import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/app_state.dart';
 import 'package:bible_search/redux/actions.dart';
+import 'package:flutter/services.dart';
 import 'package:redux/redux.dart';
 
 final reducers = combineReducers<AppState>([
@@ -84,8 +86,11 @@ AppState _onImageLoad(AppState state, ImageLoadingAction action) =>
 // AppState _onImageLoaded(AppState state, ImageResultAction action) =>
 //     state.copyWith(votdImage: action.votdImage);
 
-AppState _onThemeSet(AppState state, SetThemeAction action) =>
-    state.copyWith(isDarkTheme: action.isDarkTheme);
+AppState _onThemeSet(AppState state, SetThemeAction action) {
+  print('set dark');
+  SystemChrome.setSystemUIOverlayStyle(action.isDarkTheme ? lightOverlayStyle:darkOverlayStyle);
+  return state.copyWith(isDarkTheme: action.isDarkTheme);
+}
 
 AppState _onSearchHistorySet(AppState state, SetSearchHistoryAction action) =>
     state.copyWith(

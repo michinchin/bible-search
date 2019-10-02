@@ -61,10 +61,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   Widget build(BuildContext context) {
     //on translation change, the view should reload
     print('rebuilt ${DateTime.now().second}');
-    SystemChrome.setSystemUIOverlayStyle(
-        Theme.of(context).brightness == Brightness.light
-            ? SystemUiOverlayStyle.dark
-            : SystemUiOverlayStyle.light);
+
     return StoreConnector<AppState, ResultsViewModel>(
         distinct: true,
         converter: ResultsViewModel.fromStore,
