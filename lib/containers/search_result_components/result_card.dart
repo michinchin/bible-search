@@ -1,12 +1,13 @@
 import 'dart:core';
-import 'dart:math' as math;
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/context.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/verse.dart';
 import 'package:bible_search/models/search_model.dart';
 import 'package:bible_search/presentation/all_translations_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -123,6 +124,7 @@ class _ResultCardState extends State<ResultCard> {
     );
 
     final allButton = FlatButton(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: const Text('ALL'),
       onPressed: () {
         Navigator.of(context).push<void>(MaterialPageRoute(
@@ -171,13 +173,58 @@ class _ResultCardState extends State<ResultCard> {
         }
 
         buttons.add(FlatButton(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: Text(each.a),
           textColor: textColor,
           color: buttonColor, //currently chosen, pass tag
           onPressed: () => _translationChanged(each, i),
         ));
       }
-      return Wrap(children: buttons..add(allButton));
+      final rows = <Row>[];
+      final width = MediaQuery.of(context).size.width;
+      var currWidth = 0;
+      var currButtons = <Expanded>[];
+      for (final each in buttons) {
+        currWidth += 140;
+        if (currWidth >= width) {
+          currWidth = 0;
+          rows.add(Row(
+            children: currButtons..add(Expanded(child: each)),
+          ));
+          currButtons = <Expanded>[];
+        } else {
+          currButtons.add(Expanded(child: each));
+        }
+      }
+      currWidth += 100;
+      if (currWidth >= width) {
+        rows
+          ..add(Row(
+            children: currButtons,
+          ))
+          ..add(Row(children: [allButton]));
+      } else {
+        currButtons.add(Expanded(child: allButton));
+        rows.add(Row(
+          children: currButtons,
+        ));
+      }
+      // if already at its max then don't add allButton, add allButton to the next line
+      return Container(
+          alignment: Alignment.center,
+          margin: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
+          child: Column(
+            children: rows,
+          ));
+
+      // return Container(
+      //   alignment: Alignment.centerLeft,
+      //   padding: const EdgeInsets.only(left: 5, right: 5, bottom: 10),
+      //   child: Wrap(
+      //       alignment: WrapAlignment.spaceAround,
+      //       children: buttons..add(allButton)),
+      // );
     }
 
     final _expandIcons = <Widget>[
@@ -199,9 +246,8 @@ class _ResultCardState extends State<ResultCard> {
           IconButton(
             tooltip: 'Context',
             color: model.iconColor,
-            icon: Transform(
-              transform: Matrix4.rotationZ(math.pi / 2),
-              alignment: FractionalOffset.center,
+            icon: RotatedBox(
+              quarterTurns: 1,
               child: widget.res.contextExpanded
                   ? Icon(Icons.unfold_less)
                   : Icon(Icons.unfold_more),
@@ -294,7 +340,7 @@ class _ResultCardState extends State<ResultCard> {
           borderRadius: BorderRadius.circular(15.0),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: widget.res.isExpanded ? _expandIcons : _unexpandIcons,
@@ -311,11 +357,11 @@ class ResultCardModel {
   final BuildContext context;
   final List<TextSpan> Function(String, String) formatWords;
   final String keywords;
-  Text nonContextTitle;
-  Text contextTitle;
+  AutoSizeText nonContextTitle;
+  AutoSizeText contextTitle;
   String content;
   Text formattedTitle;
-  RichText formattedText;
+  AutoSizeText formattedText;
   Color colorScheme;
   Color oppColorScheme;
   Color iconColor;
@@ -326,11 +372,14 @@ class ResultCardModel {
       this.bookNames,
       this.context,
       this.formatWords}) {
-    nonContextTitle = Text('${res.ref} ${res.verses[res.currentVerseIndex].a}');
-    contextTitle = Text(
-        '${bookNames.where((book) => book.id == res.bookId).first.name} ${res.chapterId}: '
-        '${res.verses[res.currentVerseIndex].verseIdx[0]} -${res.verses[res.currentVerseIndex].verseIdx[1]}'
-        '  ${res.verses[res.currentVerseIndex].a}');
+    nonContextTitle = AutoSizeText(
+      '${res.ref} ${res.verses[res.currentVerseIndex].a}',
+    );
+    contextTitle = AutoSizeText(
+      '${bookNames.where((book) => book.id == res.bookId).first.name} ${res.chapterId}: '
+      '${res.verses[res.currentVerseIndex].verseIdx[0]} -${res.verses[res.currentVerseIndex].verseIdx[1]}'
+      '  ${res.verses[res.currentVerseIndex].a}',
+    );
     content = !res.contextExpanded
         ? res.verses[res.currentVerseIndex].verseContent
         : res.verses[res.currentVerseIndex].contextText;
@@ -349,8 +398,8 @@ class ResultCardModel {
           color: res.isSelected ? colorScheme : oppColorScheme),
     );
 
-    formattedText = RichText(
-      text: TextSpan(
+    formattedText = AutoSizeText.rich(
+      TextSpan(
         style: !res.isSelected
             ? Theme.of(context).textTheme.body1
             : TextStyle(

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class KeywordText extends StatelessWidget {
@@ -25,8 +26,8 @@ class KeywordText extends StatelessWidget {
         ));
     }
     spans.removeLast();
-    return RichText(
-      text: TextSpan(
+    return AutoSizeText.rich(
+      TextSpan(
         children: spans,
       ),
     );

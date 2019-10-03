@@ -88,7 +88,7 @@ AppState _onImageLoad(AppState state, ImageLoadingAction action) =>
 
 AppState _onThemeSet(AppState state, SetThemeAction action) {
   print('set dark');
-  SystemChrome.setSystemUIOverlayStyle(action.isDarkTheme ? lightOverlayStyle:darkOverlayStyle);
+  SystemChrome.setSystemUIOverlayStyle(action.isDarkTheme ? lightOverlayStyle : darkOverlayStyle);
   return state.copyWith(isDarkTheme: action.isDarkTheme);
 }
 

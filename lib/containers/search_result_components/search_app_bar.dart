@@ -52,7 +52,10 @@ class _SearchAppBarState extends State<SearchAppBar> {
                 ListTile(
                   leading: Icon(Icons.check_circle),
                   title: const Text('Selection Mode'),
-                  onTap: _changeToSelectionMode,
+                  onTap: () {
+                    _changeToSelectionMode();
+                    Navigator.of(context).pop();
+                  },
                 ),
                 SwitchListTile.adaptive(
                     secondary: Icon(Icons.lightbulb_outline),
@@ -78,7 +81,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
       _isInSelectionMode = !_isInSelectionMode;
       widget.model.changeToSelectionMode();
     });
-    Navigator.of(context).pop();
+    // Navigator.of(context).pop();
   }
 
   void _navigateToFilter(BuildContext context) {

@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bible_search/containers/search_result_components/no_results_view.dart';
 import 'package:bible_search/models/app_state.dart';
 import 'package:flutter/material.dart';
@@ -46,103 +47,85 @@ class AllTranslationsScreen extends StatelessWidget {
                   body: Container(
                       padding: const EdgeInsets.all(10.0),
                       child: allResults.isEmpty
-                         ? snapshot.connectionState == ConnectionState.done
-                                  ? NoResultsView(hasError: snapshot.hasError)
-                                  : const Center(
-                                      child: CircularProgressIndicator(),
-                                    )
+                          ? snapshot.connectionState == ConnectionState.done
+                              ? NoResultsView(hasError: snapshot.hasError)
+                              : const Center(
+                                  child: CircularProgressIndicator(),
+                                )
                           : ListView.builder(
                               itemCount: allResults.length,
                               itemBuilder: (context, index) {
                                 final text =
                                     '${res.ref} ${allResults[index].a}\n${allResults[index].text}';
-                                return Card(
-                                    elevation: 2.0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                    ),
-                                    child: Container(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: <Widget>[
-                                                Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                      '\n ${vm.store.state.translations.getFullName(allResults[index].id)}\n',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                ),
-                                                RichText(
-                                                  text: TextSpan(
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .body1,
-                                                    children: model.formatWords(
-                                                        '${allResults[index].text}\n',
-                                                        keywords),
-                                                  ),
-                                                ),
-                                                Align(
-                                                  alignment:
-                                                      Alignment.centerRight,
-                                                  child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        IconButton(
-                                                          onPressed: () =>
-                                                              model.copyPressed(
-                                                                  text: text,
-                                                                  context:
-                                                                      context),
-                                                          icon: Icon(Icons
-                                                              .content_copy),
-                                                        ),
-                                                        IconButton(
-                                                            onPressed: () =>
-                                                                Share.share(
-                                                                    text),
-                                                            icon: Icon(
-                                                                Icons.share)),
-                                                        IconButton(
-                                                          onPressed: () =>
-                                                              model.openTB(
-                                                            a: allResults[index]
-                                                                .a,
-                                                            bookId: res.bookId,
-                                                            id: allResults[
-                                                                    index]
-                                                                .id,
-                                                            chapterId:
-                                                                res.chapterId,
-                                                            verseId:
-                                                                res.verseId,
-                                                            context: context,
-                                                          ),
-                                                          icon: Icon(Icons
-                                                              .exit_to_app),
-                                                        )
-                                                      ]),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ));
+                                return _AllResultCard(
+                                  title:
+                                      '\n ${vm.store.state.translations.getFullName(allResults[index].id)}\n',
+                                  subtitle: model.formatWords(
+                                      '${allResults[index].text}\n', keywords),
+                                  copy: () => model.copyPressed(
+                                      text: text, context: context),
+                                  share: () => Share.share(text),
+                                  openInTB: () => model.openTB(
+                                    a: allResults[index].a,
+                                    bookId: res.bookId,
+                                    id: allResults[index].id,
+                                    chapterId: res.chapterId,
+                                    verseId: res.verseId,
+                                    context: context,
+                                  ),
+                                );
                               })),
                 );
               });
         });
+  }
+}
+
+class _AllResultCard extends StatelessWidget {
+  final String title;
+  final List<InlineSpan> subtitle;
+  final VoidCallback copy;
+  final VoidCallback share;
+  final VoidCallback openInTB;
+  const _AllResultCard(
+      {this.title, this.subtitle, this.copy, this.share, this.openInTB});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        elevation: 2.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: Container(
+          padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              AutoSizeText(title,
+                  style: TextStyle(fontWeight: FontWeight.bold)),
+              AutoSizeText.rich(
+                TextSpan(
+                    style: Theme.of(context).textTheme.body1,
+                    children: subtitle),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: ButtonBar(mainAxisSize: MainAxisSize.min, children: [
+                  IconButton(
+                    onPressed: copy,
+                    icon: Icon(Icons.content_copy),
+                  ),
+                  IconButton(onPressed: share, icon: Icon(Icons.share)),
+                  IconButton(
+                    onPressed: openInTB,
+                    icon: Icon(Icons.exit_to_app),
+                  )
+                ]),
+              ),
+            ],
+          ),
+        ));
   }
 }
 

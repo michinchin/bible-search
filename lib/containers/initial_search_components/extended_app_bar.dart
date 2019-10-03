@@ -20,7 +20,7 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0.0,
       title: RichText(
         text: TextSpan(
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 18.0,
           ),

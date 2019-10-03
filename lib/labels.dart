@@ -19,7 +19,7 @@ const darkOverlayStyle = SystemUiOverlayStyle(
   statusBarColor: Colors.transparent, // was null
   statusBarBrightness: Brightness.light,
   statusBarIconBrightness: Brightness.dark,
-  systemNavigationBarColor: Color(0xFFFFFFFF), // was Color(0xFF000000)
+  systemNavigationBarColor: Color(0xFAFAFAFA), // was Color(0xFF000000)
   systemNavigationBarDividerColor: null,
   systemNavigationBarIconBrightness: Brightness.dark, // was Brightness.light
 );
@@ -28,7 +28,7 @@ const lightOverlayStyle = SystemUiOverlayStyle(
   statusBarColor: Colors.transparent, // was null
   statusBarBrightness: Brightness.dark,
   statusBarIconBrightness: Brightness.light,
-  systemNavigationBarColor: Color(0xFF000000),
+  systemNavigationBarColor: Color(0xFF303030),
   systemNavigationBarDividerColor: null,
   systemNavigationBarIconBrightness: Brightness.light,
 );
