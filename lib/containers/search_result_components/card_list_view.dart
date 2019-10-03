@@ -25,7 +25,7 @@ class _CardViewState extends State<CardView> {
       child: Container(
           key: PageStorageKey(
               '${widget.vm.searchQuery}${res[0].ref}${res.length}'),
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.only(left: 10, top: 10, right: 10),
           child: ListView.builder(
             itemCount: res.length + 1,
             itemBuilder: (context, i) {
