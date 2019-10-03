@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bible_search/containers/initial_search_components/home_drawer.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/iap.dart';
+import 'package:bible_search/version.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bible_search/containers/is_components.dart';
@@ -221,8 +222,9 @@ class InitialSearchViewModel {
     final di = await tec.DeviceInfo.fetch();
     print(
         'Running on ${di.productName} with ${tec.DeviceInfo.os} ${di.version}');
-
-    final subject = 'Feedback regarding Bible Search! '
+    final version =
+        (appVersion == 'DEBUG-VERSION' ? '(debug version)' : 'v$appVersion');
+    final subject = 'Feedback regarding Bible Search! $version'
         'with ${di.productName} ${tec.DeviceInfo.os} ${di.version}';
     const body = 'I have the following question or comment:\n\n\n';
 

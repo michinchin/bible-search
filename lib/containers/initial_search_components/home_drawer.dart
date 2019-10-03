@@ -1,6 +1,7 @@
 import 'package:bible_search/containers/iap_dialog.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/presentation/initial_search_screen.dart';
+import 'package:bible_search/version.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -75,6 +76,10 @@ class HomeDrawer extends StatelessWidget {
               await Navigator.of(context).maybePop();
               await vm.emailFeedback(context);
             },
+          ),
+          ListTile(
+            leading: Icon(Icons.info_outline),
+            title: Text('Version: $appVersion'),
           ),
         ],
       ),

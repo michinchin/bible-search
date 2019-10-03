@@ -64,6 +64,7 @@ class BibleSearchApp extends StatelessWidget {
             themedWidgetBuilder: (context, theme) {
               return MaterialApp(
                 initialRoute: '/',
+                debugShowCheckedModeBanner: false,
                 routes: <String, WidgetBuilder>{
                   '/results': (context) => const SearchResultScreen(),
                 },
