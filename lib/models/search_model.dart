@@ -144,7 +144,7 @@ class SearchModel {
     final lFormattedKeywords = modKeywords.toLowerCase().split(' ');
 
     for (final keyword in formattedKeywords) {
-      if (keyword.length > 3) {
+      if (keyword.length >= 3) {
         final regex = RegExp(keyword, caseSensitive: false, unicode: true);
         modPar = modPar.replaceAllMapped(regex, (s) => '\*${s.group(0)}\*');
       } else {
