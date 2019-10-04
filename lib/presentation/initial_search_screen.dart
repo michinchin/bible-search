@@ -224,7 +224,7 @@ class InitialSearchViewModel {
         'Running on ${di.productName} with ${tec.DeviceInfo.os} ${di.version}');
     final version =
         (appVersion == 'DEBUG-VERSION' ? '(debug version)' : 'v$appVersion');
-    final subject = 'Feedback regarding Bible Search! $version'
+    final subject = 'Feedback regarding Bible Search! $version '
         'with ${di.productName} ${tec.DeviceInfo.os} ${di.version}';
     const body = 'I have the following question or comment:\n\n\n';
 
