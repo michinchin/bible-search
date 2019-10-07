@@ -23,7 +23,7 @@ class HomeDrawer extends StatelessWidget {
           SwitchListTile.adaptive(
               secondary: Icon(Icons.lightbulb_outline),
               value: vm.isDarkTheme,
-              title: Text(vm.isDarkTheme ? 'Dark Mode' : 'Light Mode'),
+              title: const Text('Dark Mode'),
               onChanged: (b) {
                 DynamicTheme.of(context).setThemeData(ThemeData(
                   primarySwatch: b ? Colors.teal : Colors.orange,

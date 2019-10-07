@@ -26,133 +26,6 @@ class TranslationBookFilterScreen extends StatelessWidget {
     return StoreConnector<AppState, FilterViewModel>(
         converter: FilterViewModel.fromStore,
         builder: (context, vm) {
-          List<Widget> _getChildren(Language lang) {
-            final _translationList = <Widget>[];
-            final translations = vm.translations.data
-                .where((t) => t.lang.id == lang.id)
-                .toList();
-            for (var i = 0; i < translations.length; i++) {
-              _translationList.add(Padding(
-                padding: const EdgeInsets.only(left: 15.0),
-                child: CheckboxListTile(
-                  checkColor: Theme.of(context).brightness == Brightness.dark
-                      ? ThemeData.dark().cardColor
-                      : null,
-                  onChanged: (b) => vm.selectTranslation(
-                      b, vm.translations.data.indexOf(translations[i])),
-                  value: translations[i].isSelected,
-                  title: Text(translations[i].a),
-                  subtitle: Text('${translations[i].name}'),
-                  controlAffinity: ListTileControlAffinity.leading,
-                ),
-              ));
-            }
-            return _translationList;
-          }
-
-          List<Widget> _createLanguageList() {
-            final _languageList = <Widget>[];
-            for (var i = 0; i < vm.languages.length; i++) {
-              final lang = vm.languages[i];
-              _languageList.add(ExpandableCheckboxListTile(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? ThemeData.dark().cardColor
-                    : null,
-                controlAffinity: ListTileControlAffinity.leading,
-                onChanged: (b) {
-                  vm.selectLanguage(b, i);
-                },
-                value: lang.isSelected,
-                title: Text(
-                  lang.name,
-                  style: Theme.of(context).textTheme.title,
-                ),
-                children: _getChildren(lang),
-                initiallyExpanded: lang.a == 'en',
-              ));
-            }
-            return _languageList;
-          }
-
-          List<Widget> _getBookChildren(bool isOT) {
-            final _bookList = <Widget>[];
-
-            for (var i = isOT ? 0 : 39;
-                i < (isOT ? 39 : vm.bookNames.length);
-                i++) {
-              _bookList.add(ChoiceChip(
-                shape: StadiumBorder(
-                    side: BorderSide(
-                        color: vm.bookNames[i].isSelected
-                            ? Theme.of(context).accentColor
-                            : Colors.black12)),
-                selectedColor: Theme.of(context).cardColor,
-                label: Text(
-                  vm.bookNames[i].name,
-                  style: TextStyle(
-                      fontSize: 12.0,
-                      color: vm.bookNames[i].isSelected
-                          ? Theme.of(context).accentColor
-                          : Colors.black45,
-                      fontWeight: vm.bookNames[i].isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal),
-                ),
-                backgroundColor: vm.bookNames[i].isSelected
-                    ? Theme.of(context).cardColor
-                    : Theme.of(context).cardColor,
-                onSelected: (b) => vm.selectBook(b, i),
-                selected: vm.bookNames[i].isSelected,
-              ));
-            }
-            return [
-              Wrap(
-                  spacing: 5.0,
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  verticalDirection: VerticalDirection.down,
-                  children: _bookList)
-            ];
-          }
-
-          List<Widget> _createBookList() {
-            final _bookList = <Widget>[
-              ExpandableCheckboxListTile(
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? ThemeData.dark().cardColor
-                    : null,
-                initiallyExpanded: true,
-                controlAffinity: ListTileControlAffinity.leading,
-                onChanged: (b) {
-                  vm.selectBook(b, -2);
-                },
-                value: vm.otSelected,
-                title: Text(
-                  'Old Testament',
-                  style: Theme.of(context).textTheme.title,
-                ),
-                children: _getBookChildren(true),
-              ),
-              ExpandableCheckboxListTile(
-                initiallyExpanded: true,
-                color: Theme.of(context).brightness == Brightness.dark
-                    ? ThemeData.dark().cardColor
-                    : null,
-                controlAffinity: ListTileControlAffinity.leading,
-                onChanged: (b) {
-                  vm.selectBook(b, -1);
-                },
-                value: vm.ntSelected,
-                title: Text(
-                  'New Testament',
-                  style: Theme.of(context).textTheme.title,
-                ),
-                children: _getBookChildren(false),
-              )
-            ];
-            return _bookList;
-          }
-
           return DefaultTabController(
             initialIndex: tabValue,
             length: tabs.length,
@@ -176,11 +49,8 @@ class TranslationBookFilterScreen extends StatelessWidget {
                   return Container(
                       key: PageStorageKey(tab.text),
                       padding: const EdgeInsets.all(10.0),
-                      child: ListView(
-                        children: tab.text == 'BOOK'
-                            ? _createBookList()
-                            : _createLanguageList(),
-                      ));
+                      child:
+                          tab.text == 'BOOK' ? BookList(vm) : LanguageList(vm));
                 }).toList(),
               ),
             ),

@@ -97,7 +97,7 @@ class FilterModel {
   /// select a book of the bible and check for OT or NT selection
   List chooseBook(
       {bool b, int i, List<Book> bookNames, bool otSelected, bool ntSelected}) {
-    var modBookNames = bookNames;
+    var modBookNames = List<Book>.from(bookNames);
     var oT = otSelected;
     var nT = ntSelected;
     if (i == -2) {
@@ -115,19 +115,35 @@ class FilterModel {
       );
       nT = b;
     } else {
-      bookNames[i].isSelected = b;
+      //deselect all if one selected
       if (!b) {
         bookNames[i].isOT() ? oT = b : nT = b;
       }
+      //is OT
       final isOT = bookNames[i].isOT();
       final books = bookNames.where((bn) => bn.isOT() == isOT).toList();
-      if (!(books.any((b) => !b.isSelected))) {
+
+      if (!books.any((b) => !b.isSelected) && !b) {
         modBookNames = chooseTestament(bookNames, b: b, isOT: isOT);
         if (isOT) {
           oT = b;
         } else {
           nT = b;
         }
+        modBookNames[i].isSelected = !b;
+        return <dynamic>[modBookNames, oT, nT];
+      }
+
+      modBookNames[i].isSelected = b;
+      if (!(books.any((bk) => !bk.isSelected))) {
+        // final books = bookNames.where((bn) => bn.isOT() == isOT).toList();
+        modBookNames = chooseTestament(bookNames, b: b, isOT: isOT);
+        if (isOT) {
+          oT = b;
+        } else {
+          nT = b;
+        }
+        modBookNames[i].isSelected = b;
       }
     }
     return <dynamic>[modBookNames, oT, nT];

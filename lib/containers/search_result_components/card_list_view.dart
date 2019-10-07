@@ -46,7 +46,7 @@ class _CardViewState extends State<CardView> {
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                           ],
                         ),
-                        maxFontSize: 12,
+                        minFontSize: 14,
                       ),
                     ));
               }

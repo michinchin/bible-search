@@ -32,7 +32,9 @@ const lightOverlayStyle = SystemUiOverlayStyle(
   systemNavigationBarDividerColor: null,
   systemNavigationBarIconBrightness: Brightness.light,
 );
+
 const int maxSearchesBeforeAd = 5;
+const double defaultMinFontSize = 15;
 
 final removeAdsId =
     (Platform.isIOS) ? 'com.tecarta.tbbiblesearch.7004' : 'inapp.7004';

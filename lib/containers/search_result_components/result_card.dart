@@ -5,6 +5,7 @@ import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/context.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/verse.dart';
+import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/search_model.dart';
 import 'package:bible_search/presentation/all_translations_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -197,13 +198,13 @@ class _ResultCardState extends State<ResultCard> {
           currButtons.add(Expanded(child: each));
         }
       }
-      currWidth += 100;
+      currWidth += 140;
       if (currWidth >= width) {
         rows
           ..add(Row(
             children: currButtons,
           ))
-          ..add(Row(children: [allButton]));
+          ..add(Row(children: [Expanded(child: allButton)]));
       } else {
         currButtons.add(Expanded(child: allButton));
         rows.add(Row(
@@ -374,11 +375,13 @@ class ResultCardModel {
       this.formatWords}) {
     nonContextTitle = AutoSizeText(
       '${res.ref} ${res.verses[res.currentVerseIndex].a}',
+      minFontSize: defaultMinFontSize,
     );
     contextTitle = AutoSizeText(
       '${bookNames.where((book) => book.id == res.bookId).first.name} ${res.chapterId}: '
-      '${res.verses[res.currentVerseIndex].verseIdx[0]} -${res.verses[res.currentVerseIndex].verseIdx[1]}'
+      '${res.verses[res.currentVerseIndex].verseIdx[0]}-${res.verses[res.currentVerseIndex].verseIdx[1]}'
       '  ${res.verses[res.currentVerseIndex].a}',
+      minFontSize: defaultMinFontSize,
     );
     content = !res.contextExpanded
         ? res.verses[res.currentVerseIndex].verseContent
@@ -407,6 +410,7 @@ class ResultCardModel {
               ),
         children: formatWords(content, keywords),
       ),
+      minFontSize: defaultMinFontSize,
     );
 
     iconColor = res.isSelected ? colorScheme : oppColorScheme;
