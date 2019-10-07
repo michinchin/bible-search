@@ -1,3 +1,4 @@
+import 'package:bible_search/containers/initial_search_components/home_drawer.dart';
 import 'package:bible_search/containers/sr_components.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/search_model.dart';
@@ -67,6 +68,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         builder: (context, vm) {
           return Scaffold(
               resizeToAvoidBottomInset: false,
+              drawer: const HomeDrawer(isResultPage: true,),
               appBar: SearchAppBar(
                 model: vm,
                 showSearch: () => _showSearch(vm),

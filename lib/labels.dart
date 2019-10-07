@@ -35,6 +35,8 @@ const lightOverlayStyle = SystemUiOverlayStyle(
 
 const int maxSearchesBeforeAd = 5;
 const double defaultMinFontSize = 15;
+const double minFontSizeDescription = 16;
+const double minFontSizeTitle = 18;
 
 final removeAdsId =
     (Platform.isIOS) ? 'com.tecarta.tbbiblesearch.7004' : 'inapp.7004';

@@ -375,13 +375,13 @@ class ResultCardModel {
       this.formatWords}) {
     nonContextTitle = AutoSizeText(
       '${res.ref} ${res.verses[res.currentVerseIndex].a}',
-      minFontSize: defaultMinFontSize,
+      minFontSize: minFontSizeTitle,
     );
     contextTitle = AutoSizeText(
-      '${bookNames.where((book) => book.id == res.bookId).first.name} ${res.chapterId}: '
+      '${bookNames.where((book) => book.id == res.bookId).first.name} ${res.chapterId}:'
       '${res.verses[res.currentVerseIndex].verseIdx[0]}-${res.verses[res.currentVerseIndex].verseIdx[1]}'
       '  ${res.verses[res.currentVerseIndex].a}',
-      minFontSize: defaultMinFontSize,
+      minFontSize: minFontSizeTitle,
     );
     content = !res.contextExpanded
         ? res.verses[res.currentVerseIndex].verseContent
@@ -410,9 +410,8 @@ class ResultCardModel {
               ),
         children: formatWords(content, keywords),
       ),
-      minFontSize: defaultMinFontSize,
+      minFontSize: minFontSizeDescription,
     );
-
     iconColor = res.isSelected ? colorScheme : oppColorScheme;
   }
 }

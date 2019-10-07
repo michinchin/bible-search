@@ -1,10 +1,8 @@
-import 'dart:io';
-
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/search_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-
-import 'package:dynamic_theme/dynamic_theme.dart';
 
 import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:bible_search/presentation/translation_book_filter_screen.dart';
@@ -43,36 +41,36 @@ class _SearchAppBarState extends State<SearchAppBar> {
     super.didUpdateWidget(oldWidget);
   }
 
-  void _showModalSheet() {
-    showModalBottomSheet<void>(
-        context: context,
-        builder: (c) => Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ListTile(
-                  leading: Icon(Icons.check_circle),
-                  title: const Text('Selection Mode'),
-                  onTap: () {
-                    _changeToSelectionMode();
-                    Navigator.of(context).pop();
-                  },
-                ),
-                SwitchListTile.adaptive(
-                    secondary: Icon(Icons.lightbulb_outline),
-                    value: widget.model.state.isDarkTheme,
-                    title: const Text('Dark Mode'),
-                    onChanged: (b) {
-                      DynamicTheme.of(context).setThemeData(ThemeData(
-                        primarySwatch: b ? Colors.teal : Colors.orange,
-                        primaryColorBrightness: Brightness.dark,
-                        brightness: b ? Brightness.dark : Brightness.light,
-                      ));
-                      widget.model.changeTheme(b);
-                      Navigator.of(context).pop();
-                    }),
-              ],
-            ));
-  }
+  // void _showModalSheet() {
+  //   showModalBottomSheet<void>(
+  //       context: context,
+  //       builder: (c) => Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: <Widget>[
+  //               ListTile(
+  //                 leading: Icon(Icons.check_circle),
+  //                 title: const Text('Selection Mode'),
+  //                 onTap: () {
+  //                   _changeToSelectionMode();
+  //                   Navigator.of(context).pop();
+  //                 },
+  //               ),
+  //               SwitchListTile.adaptive(
+  //                   secondary: Icon(Icons.lightbulb_outline),
+  //                   value: widget.model.state.isDarkTheme,
+  //                   title: const Text('Dark Mode'),
+  //                   onChanged: (b) {
+  //                     DynamicTheme.of(context).setThemeData(ThemeData(
+  //                       primarySwatch: b ? Colors.teal : Colors.orange,
+  //                       primaryColorBrightness: Brightness.dark,
+  //                       brightness: b ? Brightness.dark : Brightness.light,
+  //                     ));
+  //                     widget.model.changeTheme(b);
+  //                     Navigator.of(context).pop();
+  //                   }),
+  //             ],
+  //           ));
+  // }
 
   void _changeToSelectionMode() {
     setState(() {
@@ -93,12 +91,15 @@ class _SearchAppBarState extends State<SearchAppBar> {
     return !_isInSelectionMode
         ? Stack(children: [
             AppBar(
-              elevation: 0.0,
-              brightness: Theme.of(context).brightness,
-              backgroundColor: Theme.of(context).canvasColor,
-              bottomOpacity: 0.0,
-              toolbarOpacity: 0.0,
-            ),
+                elevation: 0.0,
+                brightness: Theme.of(context).brightness,
+                backgroundColor: Theme.of(context).canvasColor,
+                bottomOpacity: 0.0,
+                toolbarOpacity: 0.0,
+                leading: BackButton(
+                  onPressed: () {},
+                  color: Colors.transparent,
+                )),
             SafeArea(
               minimum: const EdgeInsets.only(left: 20.0, right: 20.0),
               child: Container(
@@ -117,25 +118,25 @@ class _SearchAppBarState extends State<SearchAppBar> {
                     ]),
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(0),
-                  leading: const BackButton(),
+                  leading: IconButton(
+                    icon: Icon(Icons.menu),
+                    onPressed: () => Scaffold.of(context).openDrawer(),
+                  ),
                   title: InkWell(
                       onTap: widget.showSearch,
-                      child: Text(
+                      child: AutoSizeText(
                         widget.model.searchQuery ?? 'Search Here',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                        minFontSize: minFontSizeTitle,
                       )),
                   trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                    IconButton(
+                      icon: Icon(Icons.check_circle_outline),
+                      onPressed: _changeToSelectionMode,
+                    ),
                     IconButton(
                       icon: Icon(Icons.filter_list),
                       onPressed: () => _navigateToFilter(context),
                     ),
-                    IconButton(
-                      icon: Platform.isAndroid
-                          ? const Icon(Icons.more_vert)
-                          : const Icon(Icons.more_horiz),
-                      onPressed: _showModalSheet,
-                    )
                   ]),
                 ),
               ),
@@ -149,22 +150,32 @@ class _SearchAppBarState extends State<SearchAppBar> {
             ),
             actions: <Widget>[
               IconButton(
-                icon: Icon(Icons.content_copy),
-                onPressed: () => sm.shareSelection(
-                    context: context,
-                    verse: ShareVerse(
-                        books: widget.model.bookNames,
-                        results: widget.model.filteredRes),
-                    isCopy: true),
-              ),
+                  icon: Icon(Icons.content_copy),
+                  onPressed: () async {
+                    // final hasfinishedCopy =
+                    await sm.shareSelection(
+                        context: context,
+                        verse: ShareVerse(
+                            books: widget.model.bookNames,
+                            results: widget.model.filteredRes),
+                        isCopy: true);
+                    // if (hasfinishedCopy) {
+                    //   _changeToSelectionMode();
+                    // }
+                  }),
               IconButton(
-                icon: Icon(Icons.share),
-                onPressed: () => sm.shareSelection(
-                    context: context,
-                    verse: ShareVerse(
-                        books: widget.model.bookNames,
-                        results: widget.model.filteredRes)),
-              )
+                  icon: Icon(Icons.share),
+                  onPressed: () async {
+                    // final hasFinishedShare =
+                    await sm.shareSelection(
+                        context: context,
+                        verse: ShareVerse(
+                            books: widget.model.bookNames,
+                            results: widget.model.filteredRes));
+                    // if (hasFinishedShare) {
+                    //   _changeToSelectionMode();
+                    // }
+                  })
             ],
           );
   }

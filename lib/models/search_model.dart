@@ -69,7 +69,7 @@ class SearchModel {
     });
   }
 
-  Future<void> shareSelection(
+  Future<bool> shareSelection(
       {@required BuildContext context,
       @required ShareVerse verse,
       bool isCopy = false}) async {
@@ -101,6 +101,7 @@ class SearchModel {
       if (!isCopy) {
         try {
           await Share.share('${verse.selectedText}$shortUrl');
+          return true;
         } catch (e) {
           print('ERROR sharing verse: $e');
         }
@@ -110,10 +111,12 @@ class SearchModel {
             .then((x) {
           _showToast(context, 'Successfully Copied!');
         });
+        return true;
       }
     } else {
       _showToast(context, 'Please make a selection');
     }
+    return false;
   }
 
   void _showToast(BuildContext context, String label) {

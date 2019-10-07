@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bible_search/containers/search_result_components/no_results_view.dart';
+import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -102,12 +103,16 @@ class _AllResultCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              AutoSizeText(title,
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              AutoSizeText(
+                title,
+                style: TextStyle(fontWeight: FontWeight.bold),
+                minFontSize: minFontSizeTitle,
+              ),
               AutoSizeText.rich(
                 TextSpan(
                     style: Theme.of(context).textTheme.body1,
                     children: subtitle),
+                minFontSize: minFontSizeDescription,
               ),
               Align(
                 alignment: Alignment.centerRight,

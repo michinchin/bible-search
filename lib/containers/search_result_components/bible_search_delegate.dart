@@ -65,8 +65,7 @@ class BibleSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: Icon(Icons.arrow_back_ios),
+    return BackButton(
       onPressed: () => close(context, searchHistory.last),
     );
   }

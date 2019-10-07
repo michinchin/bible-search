@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bible_search/containers/search_result_components/result_card.dart';
+import 'package:bible_search/labels.dart';
 import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -46,7 +47,7 @@ class _CardViewState extends State<CardView> {
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                           ],
                         ),
-                        minFontSize: 14,
+                        minFontSize: defaultMinFontSize,
                       ),
                     ));
               }

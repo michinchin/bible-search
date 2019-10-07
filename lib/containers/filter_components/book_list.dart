@@ -1,4 +1,3 @@
-import 'package:bible_search/containers/filter_components/expandable_checkbox_list_tile.dart';
 import 'package:bible_search/presentation/translation_book_filter_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -20,58 +19,16 @@ class BookList extends StatelessWidget {
         vm,
         isOT: true,
       ),
-
       SwitchListTile.adaptive(
         title: const Text('New Testament'),
         onChanged: (b) => vm.selectBook(b, -1),
         value: vm.ntSelected,
         activeColor: Theme.of(context).accentColor,
       ),
-
       _BookChildren(
         vm,
         isOT: false,
       )
-      // ExpandableCheckboxListTile(
-      //   color: Theme.of(context).brightness == Brightness.dark
-      //       ? ThemeData.dark().cardColor
-      //       : null,
-      //   initiallyExpanded: true,
-      //   controlAffinity: ListTileControlAffinity.leading,
-      //   onChanged: (b) {
-      //     vm.selectBook(b, -2);
-      //   },
-      //   value: vm.otSelected,
-      //   title: Text(
-      //     'Old Testament',
-      //     style: Theme.of(context).textTheme.title,
-      //   ),
-      //   children: [
-      // _BookChildren(
-      //   vm,
-      //   isOT: true,
-      // )
-      //   ],
-      // ),
-
-      // ExpandableCheckboxListTile(
-      //   initiallyExpanded: true,
-      //   color: Theme.of(context).brightness == Brightness.dark
-      //       ? ThemeData.dark().cardColor
-      //       : null,
-      //   controlAffinity: ListTileControlAffinity.leading,
-      //   onChanged: (b) {
-      //     vm.selectBook(b, -1);
-      //   },
-      //   value: vm.ntSelected,
-      //   title: Text(
-      //     'New Testament',
-      //     style: Theme.of(context).textTheme.title,
-      //   ),
-      //   children: [
-
-      //   ],
-      // )
     ]);
   }
 }
@@ -96,7 +53,6 @@ class _BookChildren extends StatelessWidget {
         label: Text(
           vm.bookNames[i].name,
           style: TextStyle(
-              fontSize: 12.0,
               color: vm.bookNames[i].isSelected
                   ? Theme.of(context).brightness == Brightness.dark
                       ? ThemeData.dark().cardColor
@@ -115,10 +71,6 @@ class _BookChildren extends StatelessWidget {
     }
 
     return Wrap(
-        spacing: 5.0,
-        alignment: WrapAlignment.center,
-        // crossAxisAlignment: WrapCrossAlignment.center,
-        // verticalDirection: VerticalDirection.down,
-        children: _bookList);
+        spacing: 5.0, alignment: WrapAlignment.center, children: _bookList);
   }
 }

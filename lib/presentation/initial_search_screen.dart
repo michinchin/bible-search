@@ -164,7 +164,7 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
 
           return Scaffold(
             appBar: appBar,
-            drawer: HomeDrawer(vm),
+            drawer: const HomeDrawer(),
             body: SafeArea(bottom: false, child: seachHistoryListWithTitle),
           );
         });
