@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bible_search/presentation/translation_book_filter_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +11,10 @@ class BookList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(children: [
       SwitchListTile.adaptive(
-        title: const Text('Old Testament'),
+        title: const AutoSizeText(
+          'Old Testament',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         onChanged: (b) => vm.selectBook(b, -2),
         value: vm.otSelected,
         activeColor: Theme.of(context).accentColor,
@@ -20,7 +24,10 @@ class BookList extends StatelessWidget {
         isOT: true,
       ),
       SwitchListTile.adaptive(
-        title: const Text('New Testament'),
+        title: const AutoSizeText(
+          'New Testament',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         onChanged: (b) => vm.selectBook(b, -1),
         value: vm.ntSelected,
         activeColor: Theme.of(context).accentColor,
@@ -53,12 +60,14 @@ class _BookChildren extends StatelessWidget {
         label: Text(
           vm.bookNames[i].name,
           style: TextStyle(
-            color: vm.bookNames[i].isSelected
-                ? Theme.of(context).brightness == Brightness.dark
-                    ? ThemeData.dark().cardColor
-                    : Colors.white
-                : Theme.of(context).accentColor,
-          ),
+              color: vm.bookNames[i].isSelected
+                  ? Theme.of(context).brightness == Brightness.dark
+                      ? ThemeData.dark().cardColor
+                      : Colors.white
+                  : Theme.of(context).accentColor,
+              fontWeight: vm.bookNames[i].isSelected
+                  ? FontWeight.bold
+                  : FontWeight.normal),
         ),
         backgroundColor: vm.bookNames[i].isSelected
             ? Theme.of(context).accentColor

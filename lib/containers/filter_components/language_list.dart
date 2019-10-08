@@ -22,9 +22,9 @@ class LanguageList extends StatelessWidget {
           vm.selectLanguage(b, i);
         },
         value: lang.isSelected,
-        title: Text(
+        title: AutoSizeText(
           lang.name,
-          // style: Theme.of(context).textTheme.title,
+          style: Theme.of(context).textTheme.title,
         ),
         children: [_LanguageChildren(vm, lang: lang)],
         initiallyExpanded: lang.a == 'en',
@@ -56,19 +56,15 @@ class _LanguageChildren extends StatelessWidget {
           title: AutoSizeText.rich(
             TextSpan(children: [
               TextSpan(
-                text: '${translations[i].a}\t',
-                // style: TextStyle(fontWeight: FontWeight.bold)
-              ),
+                  text: '${translations[i].a}\t',
+                  style: TextStyle(fontWeight: FontWeight.bold)),
               TextSpan(
                 text: translations[i].name,
-                style: TextStyle(
-                    fontWeight: FontWeight.w300,
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic),
+                style:
+                    const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
               ),
             ]),
           ),
-          // subtitle: Text('${translations[i].name}'),
           controlAffinity: ListTileControlAffinity.leading,
         ),
       ));

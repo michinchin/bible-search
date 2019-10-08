@@ -99,7 +99,6 @@ class _AppBindingObserverState extends State<_AppBindingObserver>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     print('App state changed to $state');
-    SystemChrome.setSystemUIOverlayStyle(widget.store.state.isDarkTheme ? darkOverlay : lightOverlay);
     widget.store.dispatch(StateChangeAction(state: state));
   }
 

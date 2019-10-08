@@ -1,10 +1,12 @@
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/context.dart';
 import 'package:bible_search/data/translation.dart';
+import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/filter_model.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/models/app_state.dart';
+import 'package:flutter/services.dart';
 import 'package:redux/redux.dart';
 import 'package:bible_search/models/home_model.dart';
 
@@ -94,6 +96,16 @@ void initHomeMiddleware(
   store
     ..dispatch(SetLanguagesAction(homeModel.languages))
     ..dispatch(SetBookNamesAction(homeModel.bookNames));
+  next(action);
+}
+
+void updateStateMiddleware(
+  Store<AppState> store,
+  StateChangeAction action,
+  NextDispatcher next,
+) {
+  SystemChrome.setSystemUIOverlayStyle(
+      store.state.isDarkTheme ? darkOverlay : lightOverlay);
   next(action);
 }
 
@@ -209,6 +221,7 @@ final List<Middleware<AppState>> middleware = [
   TypedMiddleware<AppState, SearchAction>(searchMiddleware),
   TypedMiddleware<AppState, InitHomeAction>(initHomeMiddleware),
   TypedMiddleware<AppState, SetThemeAction>(updateThemeMiddleware),
+  TypedMiddleware<AppState, StateChangeAction>(updateStateMiddleware),
   TypedMiddleware<AppState, SetSearchHistoryAction>(updateSearchesMiddleware),
   TypedMiddleware<AppState, InitFilterAction>(initFilterMiddleware),
   TypedMiddleware<AppState, UpdateTranslationsAction>(
