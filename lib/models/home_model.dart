@@ -17,8 +17,8 @@ class HomeModel {
   Future<List<String>> loadSearchHistory() async {
     var sh = tec.Prefs.shared
         .getStringList(searchHistoryPref, defaultValue: defaultSearchHistory);
-    if (sh.length > 100) {
-      sh = sh.take(100).toList();
+    if (sh.length > searchHistoryMaxNum) {
+      sh = sh.take(searchHistoryMaxNum).toList();
       await tec.Prefs.shared.setStringList(searchHistoryPref, sh);
     }
     return sh.isEmpty ? defaultSearchHistory : sh;

@@ -229,19 +229,23 @@ class _ResultCardState extends State<ResultCard> {
     }
 
     final _expandIcons = <Widget>[
-      ListTile(
-        title: Padding(
-            padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-            child: model.formattedTitle),
-        subtitle: model.formattedText,
-      ),
-      Align(
-          alignment: Alignment.centerRight,
-          child: IconButton(
-            color: model.iconColor,
-            icon: Icon(Icons.expand_less),
-            onPressed: _expandButtonPressed,
-          )),
+      Row(children: [
+        Expanded(
+          child: ListTile(
+            title: Padding(
+                padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                child: model.formattedTitle),
+            subtitle: model.formattedText,
+          ),
+        ),
+        Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              color: model.iconColor,
+              icon: Icon(Icons.expand_less),
+              onPressed: _expandButtonPressed,
+            ))
+      ]),
       Stack(children: [
         ButtonBar(alignment: MainAxisAlignment.start, children: [
           IconButton(
@@ -310,19 +314,25 @@ class _ResultCardState extends State<ResultCard> {
     ];
 
     final _unexpandIcons = <Widget>[
-      ListTile(
-        title: Padding(
-            padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-            child: model.formattedTitle),
-        subtitle: model.formattedText,
-      ),
-      Align(
-          alignment: Alignment.centerRight,
-          child: IconButton(
-            color: model.iconColor,
-            icon: Icon(Icons.expand_more),
-            onPressed: _expandButtonPressed,
-          ))
+      Row(children: <Widget>[
+        Expanded(
+          child: ListTile(
+            title: Padding(
+                padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                child: model.formattedTitle),
+            subtitle: Padding(
+                padding: const EdgeInsets.only(bottom: 15.0),
+                child: model.formattedText),
+          ),
+        ),
+        Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              color: model.iconColor,
+              icon: Icon(Icons.expand_more),
+              onPressed: _expandButtonPressed,
+            ))
+      ])
     ];
 
     return InkWell(

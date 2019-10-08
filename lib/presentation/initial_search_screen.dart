@@ -8,6 +8,8 @@ import 'package:bible_search/version.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bible_search/containers/is_components.dart';
+import 'package:oktoast/oktoast.dart';
+import 'package:share/share.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
@@ -28,8 +30,12 @@ class InitialSearchScreen extends StatefulWidget {
 }
 
 class _InitialSearchScreenState extends State<InitialSearchScreen> {
+  GlobalKey<ScaffoldState> _globalKey;
+  DateTime currentBackPressTime;
+
   @override
   void initState() {
+    _globalKey = GlobalKey();
     InAppPurchases.init(_purchaseHandler);
 
     if (Platform.isAndroid) {
@@ -50,6 +56,44 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
     super.dispose();
   }
 
+  Future<bool> onWillPop() {
+    if (Platform.isAndroid && !_globalKey.currentState.isDrawerOpen) {
+      final now = DateTime.now();
+      const seconds = 3;
+
+      if (currentBackPressTime == null ||
+          now.difference(currentBackPressTime) >
+              const Duration(seconds: seconds)) {
+        currentBackPressTime = now;
+        tecShowToast('Tap back again to exit');
+        return Future.value(false);
+      }
+    }
+
+    return Future.value(true);
+  }
+
+  void tecShowToast(String message) {
+    final widget = Container(
+      margin: const EdgeInsets.only(
+          left: 50.0, right: 50.0, top: 50.0, bottom: 0.0),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(235, 0, 134, 248),
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      padding: const EdgeInsets.all(16.0),
+      child: ClipRect(
+        child: Text(
+          message,
+          style: const TextStyle(color: Colors.white),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+
+    showToastWidget(widget, position: ToastPosition.bottom);
+  }
+
   @override
   Widget build(BuildContext context) {
     final _imageWidth = MediaQuery.of(context).size.width;
@@ -61,111 +105,53 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
         distinct: true,
         converter: (store) => InitialSearchViewModel(store),
         builder: (context, vm) {
-          final searchHistoryList = Container(
-            child: ListView.builder(
-                itemBuilder: (context, index) {
-                  final words = vm.searchHistory.reversed.toList();
-                  return ListTileTheme(
-                    child: Dismissible(
-                      key: Key(words[index]),
-                      direction: DismissDirection.endToStart,
-                      onDismissed: (direction) {
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                            backgroundColor: Theme.of(context).cardColor,
-                            content: Text(
-                              'The search term "${words[index]}" has been removed',
-                              style: Theme.of(context).textTheme.body1,
-                            )));
-                        words.removeWhere((w) => (w == words[index]));
-                        vm.updateSearchHistory(words.reversed.toList());
-                      },
-                      background: Container(
-                        padding: const EdgeInsets.only(right: 15.0),
-                        child: Align(
-                            alignment: Alignment.centerRight,
-                            child: Icon(Icons.delete)),
-                        color: Colors.red,
-                      ),
-                      child: ListTile(
-                        title: Text(
-                          '${words[index]}',
-                        ),
-                        leading: Icon(Icons.access_time),
-                        onTap: () {
-                          vm.onSearchEntered(words[index]);
-                          Navigator.of(context).pushNamed('/results');
-                        },
-                      ),
-                    ),
-                  );
-                },
-                itemCount: vm.searchHistory?.length ?? 0),
-          );
-
-          final gradientAppBarImage = GradientOverlayImage(
-            fromOnline: false,
-            path: vm.votdString,
-            width: _imageWidth,
-            height: _imageHeight,
-            topColor: Colors.black,
-            bottomColor: Colors.transparent,
-          );
-
-          final searchBox = InitialSearchBox(
-            orientation: _orientation,
-            height: _searchBarHeight,
-            imageHeight: _imageHeight,
-            updateSearch: vm.onSearchEntered,
-          );
-
-          final searchHistoryTitle = Container(
-            padding: const EdgeInsets.only(
-              left: 20.0,
-              top: _searchBarHeight / 4,
-            ),
-            color: Colors.transparent,
-            child: Text(
-              'SEARCH HISTORY',
-              style: TextStyle(
-                color: vm.isDarkTheme ? Colors.grey[300] : Colors.grey[800],
-                fontFamily: 'Roboto',
-                fontSize: 18.0,
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          );
-
-          final seachHistoryListWithTitle = Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              searchHistoryTitle,
-              Expanded(child: searchHistoryList),
-            ],
-          );
-
           final ps = Size.fromHeight(_orientation == Orientation.portrait
               ? _imageHeight
               : _imageHeight + _searchBarHeight / 2);
-
           final appBar = PreferredSize(
               preferredSize: ps,
               child: Stack(
                 children: <Widget>[
-                  gradientAppBarImage,
+                  GradientOverlayImage(
+                    fromOnline: false,
+                    path: vm.votdString,
+                    width: _imageWidth,
+                    height: _imageHeight,
+                    topColor: Colors.black,
+                    bottomColor: Colors.transparent,
+                  ),
                   ExtendedAppBar(
                     height: _imageHeight,
                   ),
-                  searchBox,
+                  InitialSearchBox(
+                    orientation: _orientation,
+                    height: _searchBarHeight,
+                    imageHeight: _imageHeight,
+                    updateSearch: vm.onSearchEntered,
+                  ),
                 ],
               ));
 
           return Scaffold(
+            key: _globalKey,
             appBar: appBar,
             drawer: const HomeDrawer(),
-            body: SafeArea(bottom: false, child: seachHistoryListWithTitle),
+            body: WillPopScope(
+                onWillPop: onWillPop,
+                child: SafeArea(
+                    bottom: false,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          const SearchHistoryTitle(_searchBarHeight),
+                          Expanded(
+                              child: SearchHistoryList(
+                                  searchHistory: vm.searchHistory,
+                                  onSearchEntered: vm.onSearchEntered,
+                                  updateSearchHistory: vm.updateSearchHistory))
+                        ]))),
           );
         });
   }
@@ -180,6 +166,7 @@ class InitialSearchViewModel {
   void Function(String term) onSearchEntered;
   void Function(List<String> searchQueries) updateSearchHistory;
   Future<void> Function(BuildContext c) emailFeedback;
+  Future<void> Function(BuildContext c) shareApp;
   void Function(bool isDarkTheme) changeTheme;
 
   InitialSearchViewModel(this.store) {
@@ -191,6 +178,7 @@ class InitialSearchViewModel {
     updateSearchHistory = _updateSearchHistory;
     changeTheme = _changeTheme;
     emailFeedback = _emailFeedback;
+    shareApp = _shareApp;
   }
 
   String _ordinalDayAsset() {
@@ -239,6 +227,20 @@ class InitialSearchViewModel {
       showSnackBarMessage(context, msg);
       print(msg);
     }
+  }
+
+  Future<void> _shareApp(BuildContext context) async {
+    String storeUrl;
+    if (Platform.isAndroid) {
+      storeUrl =
+          'https://play.google.com/store/apps/details?id=com.tecarta.biblesearch';
+    } else if (Platform.isIOS) {
+      storeUrl = 'https://apps.apple.com/us/app/bible-search/id1436076950';
+    } else {
+      return;
+    }
+    final shortUrl = await tec.shortenUrl(storeUrl);
+    await Share.share(shortUrl);
   }
 
   /// Shows a snack bar message.

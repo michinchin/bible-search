@@ -53,14 +53,12 @@ class _BookChildren extends StatelessWidget {
         label: Text(
           vm.bookNames[i].name,
           style: TextStyle(
-              color: vm.bookNames[i].isSelected
-                  ? Theme.of(context).brightness == Brightness.dark
-                      ? ThemeData.dark().cardColor
-                      : Colors.white
-                  : Theme.of(context).accentColor,
-              fontWeight: vm.bookNames[i].isSelected
-                  ? FontWeight.bold
-                  : FontWeight.normal),
+            color: vm.bookNames[i].isSelected
+                ? Theme.of(context).brightness == Brightness.dark
+                    ? ThemeData.dark().cardColor
+                    : Colors.white
+                : Theme.of(context).accentColor,
+          ),
         ),
         backgroundColor: vm.bookNames[i].isSelected
             ? Theme.of(context).accentColor

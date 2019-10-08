@@ -36,6 +36,35 @@ class HomeDrawer extends StatelessWidget {
                         },
                       )
                     : Container(),
+                !tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)
+                    ? ListTile(
+                        leading: Icon(Icons.money_off),
+                        title: const Text('Remove Ads'),
+                        onTap: () => showDialog<void>(
+                            context: context,
+                            builder: (c) => InAppPurchaseDialog()))
+                    : Container(),
+                ListTile(
+                  leading: Icon(Icons.mobile_screen_share),
+                  title: const Text('Share App'),
+                  onTap: () async {
+                    await Navigator.of(context).maybePop();
+                    await vm.shareApp(context);
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  leading: Icon(Icons.help_outline),
+                  title: const Text('Help & Feedback'),
+                  onTap: () async {
+                    await Navigator.of(context).maybePop();
+                    await vm.emailFeedback(context);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.info_outline),
+                  title: Text('Version: $appVersion'),
+                ),
                 SwitchListTile.adaptive(
                     secondary: Icon(Icons.lightbulb_outline),
                     activeColor: Theme.of(context).accentColor,
@@ -49,56 +78,6 @@ class HomeDrawer extends StatelessWidget {
                       ));
                       vm.changeTheme(b);
                     }),
-                !tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)
-                    ? ListTile(
-                        leading: Icon(Icons.remove_circle),
-                        title: const Text('Remove Ads'),
-                        onTap: () => showDialog<void>(
-                            context: context,
-                            builder: (c) => InAppPurchaseDialog()))
-                    : Container(),
-                ListTile(
-                  leading: Icon(Icons.clear_all),
-                  title: const Text('Clear Search History'),
-                  onTap: () {
-                    showDialog<void>(
-                        builder: (context) {
-                          return AlertDialog(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15)),
-                            title: const Text('Are you sure?'),
-                            actions: <Widget>[
-                              FlatButton(
-                                child: const Text('Cancel'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              FlatButton(
-                                child: const Text('Yes'),
-                                onPressed: () {
-                                  vm.updateSearchHistory([]);
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                        context: context);
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.help_outline),
-                  title: const Text('Help & Feedback'),
-                  onTap: () async {
-                    await Navigator.of(context).maybePop();
-                    await vm.emailFeedback(context);
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.info_outline),
-                  title: Text('Version: $appVersion'),
-                ),
               ],
             ),
           );

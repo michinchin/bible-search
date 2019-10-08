@@ -1,6 +1,7 @@
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/translation.dart';
+import 'package:flutter/material.dart';
 
 /// Search Actions
 class SearchAction {
@@ -12,39 +13,44 @@ class SearchLoadingAction {}
 
 class SearchErrorAction {}
 
-class SearchNoTranslationsAction{}
+class SearchNoTranslationsAction {}
 
 class SearchResultAction {
   final List<SearchResult> res;
   SearchResultAction(this.res);
 }
 
-class SetResultsAction{
+class SetResultsAction {
   final List<SearchResult> res;
   SetResultsAction(this.res);
 }
 
-class SetFilteredResultsAction{
+class SetFilteredResultsAction {
   final List<SearchResult> res;
   SetFilteredResultsAction(this.res);
 }
 
-class SetNumSelectedAction{
+class SetNumSelectedAction {
   final int numSelected;
   SetNumSelectedAction(this.numSelected);
 }
-class ContextAction{
+
+class ContextAction {
   final int idx;
   ContextAction(this.idx);
 }
 
-class SetSelectionModeAction{}
+class SetSelectionModeAction {}
 
 /// Init Home Actions
 class InitHomeAction {}
 
 class ImageLoadingAction {}
 
+class StateChangeAction {
+  AppLifecycleState state;
+  StateChangeAction({this.state});
+}
 // class ImageResultAction {
 //   final VOTDImage votdImage;
 //   ImageResultAction(this.votdImage);
@@ -58,7 +64,7 @@ class SetThemeAction {
 class SetSearchHistoryAction {
   final String searchQuery;
   final List<String> searchQueries;
-  SetSearchHistoryAction({this.searchQuery = '',this.searchQueries});
+  SetSearchHistoryAction({this.searchQuery = '', this.searchQueries});
 }
 
 class SetLanguagesAction {
@@ -79,12 +85,12 @@ class SetTranslationsAction {
 class SetTestamentAction {
   final bool toggle;
   final Test test;
-  SetTestamentAction(this.test,{this.toggle});
+  SetTestamentAction(this.test, {this.toggle});
 }
 
-enum Test{oT, nT}
+enum Test { oT, nT }
 
-class UpdateTranslationsAction{}
+class UpdateTranslationsAction {}
 
 /// Init Filter Actions
 class InitFilterAction {}
@@ -94,7 +100,7 @@ class SelectAction {
   final bool toggle;
   final int index;
   // final dynamic item;
-  SelectAction( this.index, this.select,{this.toggle});
+  SelectAction(this.index, this.select, {this.toggle});
 }
 
 enum Select {

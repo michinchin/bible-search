@@ -66,26 +66,30 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         distinct: true,
         converter: ResultsViewModel.fromStore,
         builder: (context, vm) {
-          return Scaffold(
-              resizeToAvoidBottomInset: false,
-              drawer: const HomeDrawer(isResultPage: true,),
-              appBar: SearchAppBar(
-                model: vm,
-                showSearch: () => _showSearch(vm),
-              ),
-              body: GestureDetector(
-                  onTap: () {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                  },
-                  child: vm.state.isFetchingSearch
-                      ? LoadingView()
-                      : vm.filteredRes.isEmpty
-                          ? NoResultsView(
-                              hasError: vm.state.hasError,
-                              hasNoTranslations:
-                                  vm.state.hasNoTranslationsSelected,
-                            )
-                          : CardView(vm)));
+          return WillPopScope(
+              onWillPop: () => Future.value(false),
+              child: Scaffold(
+                  resizeToAvoidBottomInset: false,
+                  drawer: const HomeDrawer(
+                    isResultPage: true,
+                  ),
+                  appBar: SearchAppBar(
+                    model: vm,
+                    showSearch: () => _showSearch(vm),
+                  ),
+                  body: GestureDetector(
+                      onTap: () {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                      },
+                      child: vm.state.isFetchingSearch
+                          ? LoadingView()
+                          : vm.filteredRes.isEmpty
+                              ? NoResultsView(
+                                  hasError: vm.state.hasError,
+                                  hasNoTranslations:
+                                      vm.state.hasNoTranslationsSelected,
+                                )
+                              : CardView(vm))));
         });
   }
 }

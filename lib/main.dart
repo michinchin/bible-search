@@ -29,7 +29,8 @@ Future<void> main() async {
 
   final store = Store<AppState>(
     reducers,
-    initialState: AppState.initial(deviceInfo: di),
+    initialState:
+        AppState.initial(deviceInfo: di, state: AppLifecycleState.inactive),
     middleware: middleware,
   )
     ..dispatch(InitHomeAction())
@@ -48,8 +49,6 @@ class BibleSearchApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final darkTheme = store.state.isDarkTheme;
-    
-    // SystemChrome.setSystemUIOverlayStyle(darkOverlayStyle);
 
     return StoreProvider<AppState>(
         store: store,
@@ -70,8 +69,40 @@ class BibleSearchApp extends StatelessWidget {
                 },
                 title: 'Bible Search',
                 theme: theme,
-                home: InitialSearchScreen(),
+                home: _AppBindingObserver(store),
               );
             }));
   }
+}
+
+class _AppBindingObserver extends StatefulWidget {
+  final Store<AppState> store;
+  const _AppBindingObserver(this.store);
+  @override
+  _AppBindingObserverState createState() => _AppBindingObserverState();
+}
+
+class _AppBindingObserverState extends State<_AppBindingObserver>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print('App state changed to $state');
+    SystemChrome.setSystemUIOverlayStyle(widget.store.state.isDarkTheme ? darkOverlay : lightOverlay);
+    widget.store.dispatch(StateChangeAction(state: state));
+  }
+
+  @override
+  Widget build(BuildContext context) => InitialSearchScreen();
 }

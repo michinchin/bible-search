@@ -31,9 +31,10 @@ class BibleTranslation {
 
   factory BibleTranslation.fromJson(Map<String, dynamic> json) {
     final onSale = tec.as<bool>(json['onsale']);
-    if (onSale) {
+    final id = tec.as<int>(json['id']);
+    if (onSale && (id < 300 || id >= 400)) {
       return BibleTranslation(
-        id: tec.as<int>(json['id']),
+        id: id,
         name: tec.as<String>(json['name']),
         a: tec.as<String>(json['abbreviation']),
         lang: HomeModel()
@@ -119,9 +120,11 @@ class BibleTranslations {
   static Future<BibleTranslations> fetch() async {
     const fileName = 'WebSite.json.gz';
     const hostAndPath = '$kTBStreamServer/$kTBApiVersion/products-list';
-    final json = await TecCache().jsonFromUrl(
-        url: 'https://$hostAndPath/$fileName',
-        bundlePath: 'assets/Translation.json');
+    final tecCache = TecCache();
+    final json =
+        await tecCache.jsonFromFile(cachedPath: 'assets/Translation.json') ??
+            await TecCache().jsonFromUrl(url: 'https://$hostAndPath/$fileName');
+
     if (json != null) {
       return BibleTranslations.fromJson(json);
     } else {

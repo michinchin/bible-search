@@ -14,6 +14,7 @@ final reducers = combineReducers<AppState>([
 
   /// Init Home Reducers
   TypedReducer<AppState, ImageLoadingAction>(_onImageLoad),
+  TypedReducer<AppState, StateChangeAction>(_onStateChange),
   // TypedReducer<AppState, ImageResultAction>(_onImageLoaded),
   TypedReducer<AppState, SetThemeAction>(_onThemeSet),
   TypedReducer<AppState, SetSearchHistoryAction>(_onSearchHistorySet),
@@ -82,13 +83,16 @@ AppState _onSelected(AppState state, SetNumSelectedAction action) =>
 
 AppState _onImageLoad(AppState state, ImageLoadingAction action) =>
     state.copyWith(isLoadingImage: true);
-
+    
+AppState _onStateChange(AppState state, StateChangeAction action) =>
+    state.copyWith(state: action.state);
 // AppState _onImageLoaded(AppState state, ImageResultAction action) =>
 //     state.copyWith(votdImage: action.votdImage);
 
 AppState _onThemeSet(AppState state, SetThemeAction action) {
   print('set dark');
-  SystemChrome.setSystemUIOverlayStyle(action.isDarkTheme ? lightOverlayStyle : darkOverlayStyle);
+  SystemChrome.setSystemUIOverlayStyle(
+      action.isDarkTheme ? darkOverlay : lightOverlay);
   return state.copyWith(isDarkTheme: action.isDarkTheme);
 }
 

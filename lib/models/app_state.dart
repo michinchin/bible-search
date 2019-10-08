@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/translation.dart';
@@ -8,6 +10,7 @@ import 'package:tec_util/tec_util.dart' as tec;
 @immutable
 class AppState {
   final tec.DeviceInfo deviceInfo;
+  final AppLifecycleState state;
 
   final BibleTranslations translations;
   final List<SearchResult> results;
@@ -31,6 +34,7 @@ class AppState {
 
   const AppState({
     this.deviceInfo,
+    this.state,
     this.translations,
     this.results,
     this.filteredResults,
@@ -50,8 +54,11 @@ class AppState {
     this.numSelected,
   });
 
-  factory AppState.initial({tec.DeviceInfo deviceInfo}) => AppState(
+  factory AppState.initial(
+          {tec.DeviceInfo deviceInfo, AppLifecycleState state}) =>
+      AppState(
         deviceInfo: deviceInfo,
+        state: state,
         translations: BibleTranslations(data: []),
         results: const [],
         filteredResults: const [],
@@ -73,6 +80,7 @@ class AppState {
 
   AppState copyWith(
       {tec.DeviceInfo deviceInfo,
+      AppLifecycleState state,
       BibleTranslations translations,
       List<SearchResult> results,
       List<SearchResult> filteredResults,
@@ -92,6 +100,7 @@ class AppState {
       int numSelected}) {
     return AppState(
         deviceInfo: deviceInfo ?? this.deviceInfo,
+        state: state ?? this.state,
         translations: translations ?? this.translations,
         results: results ?? this.results,
         filteredResults: filteredResults ?? this.filteredResults,
