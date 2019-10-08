@@ -1,10 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:tec_ads/tec_ads.dart';
-import 'package:tec_util/tec_util.dart' as tec;
 
-import '../../labels.dart';
+import 'package:tec_ads/tec_ads.dart';
 import 'keyword_text.dart';
 
 class BibleSearchDelegate extends SearchDelegate<String> {
@@ -14,25 +12,6 @@ class BibleSearchDelegate extends SearchDelegate<String> {
 
   BibleSearchDelegate(
       {@required this.searchHistory, @required this.search, this.interstitial});
-
-  void _checkForAd() {
-    if (tec.Prefs.shared.getInt(adCounterPref, defaultValue: 0) >= maxSearchesBeforeAd &&
-        !kDebugMode && !tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)) {
-      interstitial.show();
-      tec.Prefs.shared.setInt(adCounterPref, 0);
-    }
-  }
-
-  Future<void> _updateViewAdCounter() async {
-    var c = tec.Prefs.shared.getInt(adCounterPref, defaultValue: 0);
-    await tec.Prefs.shared.setInt(adCounterPref, ++c);
-  }
-
-  @override
-  void close(BuildContext context, String result) {
-    _checkForAd();
-    super.close(context, result);
-  }
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -53,14 +32,6 @@ class BibleSearchDelegate extends SearchDelegate<String> {
             )
           ]
         : [];
-  }
-
-  @override
-  set query(String value) {
-    if (value.isEmpty) {
-      _updateViewAdCounter();
-    }
-    super.query = value;
   }
 
   @override

@@ -1,6 +1,8 @@
 import 'package:bible_search/data/translation.dart';
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/labels.dart';
+import 'package:flutter/foundation.dart';
+import 'package:tec_ads/tec_ads.dart';
 
 import 'package:tec_util/tec_util.dart' as tec;
 
@@ -28,13 +30,45 @@ class HomeModel {
   Future<void> updateSearchHistory(List<String> searchQueries) async {
     final sq = List<String>.from(searchQueries)
       ..removeWhere((s) => (s?.length ?? 0) == 0);
-    await tec.Prefs.shared.setStringList(searchHistoryPref,
-        sq.reversed.toSet().toList().reversed.toList());
+    await tec.Prefs.shared.setStringList(
+        searchHistoryPref, sq.reversed.toSet().toList().reversed.toList());
   }
 
   /// update the current theme in user prefs
   Future<void> updateTheme({bool b}) async {
     await tec.Prefs.shared.setBool(themePref, b);
+  }
+
+  /// Should we show ad?
+  bool get shouldShowAd {
+    var lastTimeAdShown = tec.Prefs.shared.getString(lastTimeAdShownPref);
+    if (lastTimeAdShown == null) {
+      tec.Prefs.shared
+          .setString(lastTimeAdShownPref, DateTime.now().toIso8601String());
+      lastTimeAdShown = DateTime.now().toIso8601String();
+    }
+
+    final iapNotPurchased =
+        !tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false);
+    final timeSinceLastAd =
+        DateTime.now().difference(DateTime.parse(lastTimeAdShown));
+
+    if (timeSinceLastAd >= timeBetweenAds && !kDebugMode && iapNotPurchased) {
+      tec.Prefs.shared
+          .setString(lastTimeAdShownPref, DateTime.now().toIso8601String());
+      return true;
+    }
+    return false;
+  }
+
+  void showAd() {
+    // var ntimesSearched =
+    //     tec.Prefs.shared.getInt(numberOfTimesSearchPref, defaultValue: 0);
+    // tec.Prefs.shared.setInt(numberOfTimesSearchPref, ++ntimesSearched);
+    
+    if (shouldShowAd) {
+      TecInterstitialAd(adUnitId: prefInterstitialAdId).show();
+    }
   }
 
   final languages = <Language>[

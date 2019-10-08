@@ -12,6 +12,7 @@ import 'package:bible_search/redux/middleware.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 import 'package:firebase_admob/firebase_admob.dart';
+import 'package:tec_ads/tec_ads.dart';
 
 import 'package:tec_util/tec_util.dart' as tec;
 

@@ -230,17 +230,17 @@ class InitialSearchViewModel {
   }
 
   Future<void> _shareApp(BuildContext context) async {
-    String storeUrl;
-    if (Platform.isAndroid) {
-      storeUrl =
-          'https://play.google.com/store/apps/details?id=com.tecarta.biblesearch';
-    } else if (Platform.isIOS) {
-      storeUrl = 'https://apps.apple.com/us/app/bible-search/id1436076950';
-    } else {
-      return;
-    }
-    final shortUrl = await tec.shortenUrl(storeUrl);
-    await Share.share(shortUrl);
+    // String storeUrl;
+    // if (Platform.isAndroid) {
+    //   storeUrl =
+    //       'https://play.google.com/store/apps/details?id=com.tecarta.biblesearch';
+    // } else if (Platform.isIOS) {
+    //   storeUrl = 'https://apps.apple.com/us/app/bible-search/id1436076950';
+    // } else {
+    //   return;
+    // }
+    // final shortUrl = await tec.shortenUrl(storeUrl);
+    await Share.share('http://tbibl.es/search');
   }
 
   /// Shows a snack bar message.

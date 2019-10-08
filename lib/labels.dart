@@ -9,11 +9,12 @@ const String kTBApiServer = 'api.tecartabible.com';
 const String kTBkey = 'toomanysecrets';
 
 // bs = Bible Search
-const String adCounterPref = 'bs_adCounter';
+const String lastTimeAdShownPref = 'bs_adShownTime';
 const String themePref = 'bs_theme';
 const String translationsPref = 'bs_translations';
 const String searchHistoryPref = 'bs_searchHistory';
 const String removedAdsPref = 'bs_removeAds';
+const String numberOfTimesSearchPref = 'bs_numberOfTimesSearch';
 
 final lightOverlay = SystemUiOverlayStyle(
   statusBarColor: Colors.transparent, // was null
@@ -34,11 +35,11 @@ const darkOverlay = SystemUiOverlayStyle(
   systemNavigationBarIconBrightness: Brightness.light,
 );
 
-const int maxSearchesBeforeAd = 5;
 const double defaultMinFontSize = 15;
 const double minFontSizeDescription = 16;
 const double minFontSizeTitle = 18;
 const int searchHistoryMaxNum = 100;
+const Duration timeBetweenAds = Duration(hours: 1);
 
 final removeAdsId =
     (Platform.isIOS) ? 'com.tecarta.tbbiblesearch.7004' : 'inapp.7004';

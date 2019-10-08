@@ -6,6 +6,7 @@ class InitialSearchBox extends StatefulWidget {
   final double height;
   final double imageHeight;
   final Function(String) updateSearch;
+  
 
   const InitialSearchBox({
     Key key,

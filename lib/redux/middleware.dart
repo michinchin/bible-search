@@ -47,6 +47,9 @@ void searchMiddleware(
       searchQuery: action.searchQuery,
       searchQueries:
           newSearchList.reversed.toSet().toList().reversed.toList()));
+  
+  homeModel.showAd();
+
   next(action);
 }
 

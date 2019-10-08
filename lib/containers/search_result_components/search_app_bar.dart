@@ -126,7 +126,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                       onTap: widget.showSearch,
                       child: AutoSizeText(
                         widget.model.searchQuery ?? 'Search Here',
-                        minFontSize: minFontSizeTitle,
+                        minFontSize: minFontSizeDescription,
                       )),
                   trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                     IconButton(
@@ -143,7 +143,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
             ),
           ])
         : AppBar(
-            title: Text('${widget.model.state.numSelected}'),
+            title: AutoSizeText('${widget.model.state.numSelected}'),
             leading: IconButton(
               icon: Icon(Icons.close),
               onPressed: _changeToSelectionMode,

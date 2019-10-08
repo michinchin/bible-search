@@ -1,18 +1,15 @@
 import 'package:bible_search/containers/initial_search_components/home_drawer.dart';
 import 'package:bible_search/containers/sr_components.dart';
-import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/search_model.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 
-import 'package:redux/redux.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-
+import 'package:bible_search/labels.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 
-import 'package:tec_ads/tec_ads.dart';
-
+import 'package:redux/redux.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/translation.dart';
@@ -29,31 +26,15 @@ class SearchResultScreen extends StatefulWidget {
 }
 
 class _SearchResultScreenState extends State<SearchResultScreen> {
-  TecInterstitialAd _interstitialAd;
-
-  @override
-  void initState() {
-    _interstitialAd = TecInterstitialAd(adUnitId: prefInterstitialAdId);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    if (!kDebugMode &&
-        !tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)) {
-      _interstitialAd.show();
-    }
-    super.dispose();
-  }
 
   void _showSearch(ResultsViewModel vm) {
     showSearch<String>(
       query: vm.searchQuery,
       context: context,
       delegate: BibleSearchDelegate(
-          searchHistory: vm.searchHistory,
-          search: vm.updateSearchResults,
-          interstitial: _interstitialAd),
+        searchHistory: vm.searchHistory,
+        search: vm.updateSearchResults,
+      ),
     );
   }
 
@@ -66,30 +47,26 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         distinct: true,
         converter: ResultsViewModel.fromStore,
         builder: (context, vm) {
-          return WillPopScope(
-              onWillPop: () => Future.value(false),
-              child: Scaffold(
-                  resizeToAvoidBottomInset: false,
-                  drawer: const HomeDrawer(
-                    isResultPage: true,
-                  ),
-                  appBar: SearchAppBar(
-                    model: vm,
-                    showSearch: () => _showSearch(vm),
-                  ),
-                  body: GestureDetector(
-                      onTap: () {
-                        FocusScope.of(context).requestFocus(FocusNode());
-                      },
-                      child: vm.state.isFetchingSearch
-                          ? LoadingView()
-                          : vm.filteredRes.isEmpty
-                              ? NoResultsView(
-                                  hasError: vm.state.hasError,
-                                  hasNoTranslations:
-                                      vm.state.hasNoTranslationsSelected,
-                                )
-                              : CardView(vm))));
+          return Scaffold(
+              resizeToAvoidBottomInset: false,
+              drawer: const HomeDrawer(
+                isResultPage: true,
+              ),
+              appBar: SearchAppBar(
+                model: vm,
+                showSearch: () => _showSearch(vm),
+              ),
+              body: WillPopScope(
+                  onWillPop: () => Future.value(false),
+                  child: vm.state.isFetchingSearch
+                      ? LoadingView()
+                      : vm.filteredRes.isEmpty
+                          ? NoResultsView(
+                              hasError: vm.state.hasError,
+                              hasNoTranslations:
+                                  vm.state.hasNoTranslationsSelected,
+                            )
+                          : CardView(vm)));
         });
   }
 }
