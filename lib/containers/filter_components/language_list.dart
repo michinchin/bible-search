@@ -1,5 +1,7 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bible_search/containers/filter_components/expandable_checkbox_list_tile.dart';
 import 'package:bible_search/data/translation.dart';
+import 'package:bible_search/labels.dart';
 import 'package:bible_search/presentation/translation_book_filter_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +24,7 @@ class LanguageList extends StatelessWidget {
         value: lang.isSelected,
         title: Text(
           lang.name,
-          style: Theme.of(context).textTheme.title,
+          // style: Theme.of(context).textTheme.title,
         ),
         children: [_LanguageChildren(vm, lang: lang)],
         initiallyExpanded: lang.a == 'en',
@@ -51,8 +53,22 @@ class _LanguageChildren extends StatelessWidget {
           onChanged: (b) => vm.selectTranslation(
               b, vm.translations.data.indexOf(translations[i])),
           value: translations[i].isSelected,
-          title: Text(translations[i].a),
-          subtitle: Text('${translations[i].name}'),
+          title: AutoSizeText.rich(
+            TextSpan(children: [
+              TextSpan(
+                text: '${translations[i].a}\t',
+                // style: TextStyle(fontWeight: FontWeight.bold)
+              ),
+              TextSpan(
+                text: translations[i].name,
+                style: TextStyle(
+                    fontWeight: FontWeight.w300,
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic),
+              ),
+            ]),
+          ),
+          // subtitle: Text('${translations[i].name}'),
           controlAffinity: ListTileControlAffinity.leading,
         ),
       ));
