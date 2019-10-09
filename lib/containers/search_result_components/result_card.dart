@@ -140,7 +140,7 @@ class _ResultCardState extends State<ResultCard> {
   }
 
   Future<bool> _onDismiss(String id) {
-    FeatureDiscovery.markStepComplete(context,id);
+    FeatureDiscovery.markStepComplete(context, id);
     return Future.value(false);
   }
 
@@ -329,7 +329,8 @@ class _ResultCardState extends State<ResultCard> {
               featureId: 'open_in_TB',
               title: const Text('Open in Tecarta Bible'),
               description: const Text(
-                  'Study out the scripture in context with one of the top Study Bible apps!'),
+                  'Need more study tools? Quickly flip over to Tecarta Bible to read full chapters, '
+                  'take notes, explore maps, listen to audio and get help with verse explanations!'),
               tapTarget: Icon(Icons.exit_to_app, color: Colors.black),
               child: IconButton(
                   color: model.iconColor,
