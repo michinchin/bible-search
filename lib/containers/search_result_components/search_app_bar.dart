@@ -5,7 +5,6 @@ import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
-
 import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:bible_search/presentation/translation_book_filter_screen.dart';
 import 'package:flutter/scheduler.dart';
@@ -89,8 +88,8 @@ class _SearchAppBarState extends State<SearchAppBar> {
         fullscreenDialog: true));
   }
 
-  Future<bool> _onDismiss() {
-    FeatureDiscovery.completeStep(context);
+  Future<bool> _onDismiss(String id) {
+    FeatureDiscovery.markStepComplete(context, id);
     return Future.value(false);
   }
 
@@ -126,20 +125,9 @@ class _SearchAppBarState extends State<SearchAppBar> {
                     ]),
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(0),
-                  leading: DescribedFeatureOverlay(
-                    onDismiss: _onDismiss,
-                    featureId: 'menu',
-                    title: const Text('Menu'),
-                    description: const Text(
-                        'Tap here to return to the home page, remove ads, share app, or ask for help! (Check out dark mode as well)'),
-                    tapTarget: Icon(
-                      Icons.menu,
-                      color: Colors.black,
-                    ),
-                    child: IconButton(
-                      icon: Icon(Icons.menu),
-                      onPressed: () => Scaffold.of(context).openDrawer(),
-                    ),
+                  leading: IconButton(
+                    icon: Icon(Icons.menu),
+                    onPressed: () => Scaffold.of(context).openDrawer(),
                   ),
                   title: InkWell(
                       onTap: widget.showSearch,
@@ -150,14 +138,14 @@ class _SearchAppBarState extends State<SearchAppBar> {
                   trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                     DescribedFeatureOverlay(
                       featureId: 'selection_mode',
-                      onDismiss: _onDismiss,
+                      onDismiss: () => _onDismiss('selection_mode'),
                       tapTarget: Icon(
                         Icons.check_circle_outline,
                         color: Colors.black,
                       ),
                       title: const Text('Selection Mode'),
                       description: const Text(
-                          'Tap here to enter selection mode. Select multiple scripture verses and create personal bible studies to share!'),
+                          'Tap here to enter selection mode. Select multiple scripture verses to copy or share!'),
                       child: IconButton(
                         icon: Icon(Icons.check_circle_outline),
                         onPressed: _changeToSelectionMode,
@@ -169,7 +157,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                         Icons.filter_list,
                         color: Colors.black,
                       ),
-                      onDismiss: _onDismiss,
+                      onDismiss: () => _onDismiss('filter'),
                       title: const Text('Filter'),
                       description: const Text(
                           'Check out the filter page! Filter search results by translation and books of the Bible'),

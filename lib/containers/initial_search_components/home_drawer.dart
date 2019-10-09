@@ -27,12 +27,12 @@ class HomeDrawer extends StatelessWidget {
                 ),
                 isResultPage
                     ? ListTile(
-                        leading: Icon(Icons.history),
-                        title: const Text('Search History'),
+                        leading: Icon(Icons.home),
+                        title: const Text('Home'),
                         onTap: () {
-                          while (Navigator.of(context).canPop()) {
-                            Navigator.of(context).pop();
-                          }
+                          Navigator.of(context).pop();
+                          Future.delayed(const Duration(milliseconds: 250),
+                              () => Navigator.of(context).pop());                   
                         },
                       )
                     : Container(),
@@ -53,18 +53,6 @@ class HomeDrawer extends StatelessWidget {
                   },
                 ),
                 const Divider(),
-                ListTile(
-                  leading: Icon(Icons.help_outline),
-                  title: const Text('Help & Feedback'),
-                  onTap: () async {
-                    await Navigator.of(context).maybePop();
-                    await vm.emailFeedback(context);
-                  },
-                ),
-                ListTile(
-                  leading: Icon(Icons.info_outline),
-                  title: Text('Version: $appVersion'),
-                ),
                 SwitchListTile.adaptive(
                     secondary: Icon(Icons.lightbulb_outline),
                     activeColor: Theme.of(context).accentColor,
@@ -78,6 +66,19 @@ class HomeDrawer extends StatelessWidget {
                       ));
                       vm.changeTheme(b);
                     }),
+                const Divider(),
+                ListTile(
+                  leading: Icon(Icons.help_outline),
+                  title: const Text('Help & Feedback'),
+                  onTap: () async {
+                    await Navigator.of(context).maybePop();
+                    await vm.emailFeedback(context);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.info_outline),
+                  title: Text('Version: $appVersion'),
+                ),
               ],
             ),
           );

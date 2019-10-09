@@ -9,14 +9,11 @@ class FilterModel {
   Future<BibleTranslations> loadTranslations() async {
     final temp = await BibleTranslations.fetch();
     temp.data.sort((f, k) => f.lang.id.compareTo(k.lang.id));
-    var translations = temp;
+    final translations = temp;
     //select only translations that are in the formatted Id
     final translationIds = tec.Prefs.shared.getString(translationsPref);
-    if (translationIds == null ||
-        translationIds.isEmpty ||
-        translationIds.trim().isEmpty) {
+    if (translationIds == null || translationIds.trim().isEmpty) {
       await tec.Prefs.shared.setString(translationsPref, temp.formatIds());
-      translations = temp;
     } else {
       translations.selectTranslations(translationIds);
     }

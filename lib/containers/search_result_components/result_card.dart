@@ -139,8 +139,8 @@ class _ResultCardState extends State<ResultCard> {
     });
   }
 
-  Future<bool> _onDismiss() {
-    FeatureDiscovery.completeStep(context);
+  Future<bool> _onDismiss(String id) {
+    FeatureDiscovery.markStepComplete(context,id);
     return Future.value(false);
   }
 
@@ -279,7 +279,7 @@ class _ResultCardState extends State<ResultCard> {
       Stack(children: [
         ButtonBar(alignment: MainAxisAlignment.start, children: [
           DescribedFeatureOverlay(
-            onDismiss: _onDismiss,
+            onDismiss: () => _onDismiss('context'),
             featureId: 'context',
             title: const Text('Give Context'),
             description: const Text(
@@ -303,46 +303,28 @@ class _ResultCardState extends State<ResultCard> {
         ]),
         ButtonBar(
           children: <Widget>[
-            DescribedFeatureOverlay(
-              onDismiss: _onDismiss,
-              featureId: 'copy',
-              title: const Text('Copy'),
-              description: const Text('Tap here to copy the verse.'),
-              tapTarget: Icon(Icons.content_copy, color: Colors.black),
-              child: IconButton(
-                  color: model.iconColor,
-                  icon: Icon(Icons.content_copy),
-                  onPressed: _onCopy
-                  // searchModel.copyPressed(
-                  //     text: '${model.formattedTitle.data}\n${model.content}',
-                  //     context: context), // set state here
-                  ),
-            ),
-            DescribedFeatureOverlay(
-              onDismiss: _onDismiss,
-              featureId: 'share',
-              title: const Text('Share'),
-              description: const Text(
-                  'Tap here to share this verse with your friends and family!'),
-              tapTarget: Icon(
-                Icons.share,
-                color: Colors.black,
-              ),
-              child: IconButton(
-                  color: model.iconColor,
-                  icon: Icon(Icons.share),
-                  onPressed: _onShare
-                  // final verseContent = widget.res.contextExpanded
-                  //     ? '${model.contextTitle.data}'
-                  //         '\n'
-                  //         '${widget.res.verses[widget.res.currentVerseIndex].contextText}'
-                  //     : '${model.nonContextTitle.data}'
-                  //         '\n'
-                  //         '${widget.res.verses[widget.res.currentVerseIndex].verseContent}';
-                  // Share.share(verseContent);
+            IconButton(
+                color: model.iconColor,
+                icon: Icon(Icons.content_copy),
+                onPressed: _onCopy
+                // searchModel.copyPressed(
+                //     text: '${model.formattedTitle.data}\n${model.content}',
+                //     context: context), // set state here
+                ),
+            IconButton(
+                color: model.iconColor,
+                icon: Icon(Icons.share),
+                onPressed: _onShare
+                // final verseContent = widget.res.contextExpanded
+                //     ? '${model.contextTitle.data}'
+                //         '\n'
+                //         '${widget.res.verses[widget.res.currentVerseIndex].contextText}'
+                //     : '${model.nonContextTitle.data}'
+                //         '\n'
+                //         '${widget.res.verses[widget.res.currentVerseIndex].verseContent}';
+                // Share.share(verseContent);
 
-                  ),
-            ),
+                ),
             DescribedFeatureOverlay(
               featureId: 'open_in_TB',
               title: const Text('Open in Tecarta Bible'),
@@ -375,7 +357,7 @@ class _ResultCardState extends State<ResultCard> {
         Align(
             alignment: Alignment.centerRight,
             child: DescribedFeatureOverlay(
-              onDismiss: _onDismiss,
+              onDismiss: () => _onDismiss('expand'),
               featureId: 'expand',
               title: const Text('Expand'),
               description: const Text(

@@ -33,17 +33,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           (duration) => Future.delayed(const Duration(seconds: 1), () {
                 FeatureDiscovery.discoverFeatures(
                   context,
-                  <String>{
-                    'menu',
-                    'selection_mode',
-                    'filter',
-                    'context',
-                    'copy',
-                    'share',
-                    'open_in_TB'
-                  },
+                  <String>{'selection_mode', 'filter', 'context', 'open_in_TB'},
                 );
               }));
+      tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
     }
     super.initState();
   }

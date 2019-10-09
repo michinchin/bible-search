@@ -41,10 +41,6 @@ Future<void> searchMiddleware(
       store..dispatch(SearchResultAction([]))..dispatch(SearchErrorAction());
       // store.dispatch(SearchErrorAction());
     });
-    if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true)) {
-      res[0].isExpanded = true;
-      await tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
-    }
     store
       ..dispatch(SearchResultAction(res))
       ..dispatch(SetFilteredResultsAction(
