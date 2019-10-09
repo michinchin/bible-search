@@ -105,7 +105,7 @@ class _AllResultCard extends StatelessWidget {
             children: <Widget>[
               AutoSizeText(
                 title,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
                 minFontSize: minFontSizeTitle,
               ),
               AutoSizeText.rich(

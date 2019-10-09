@@ -19,16 +19,16 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
       textTheme: const TextTheme(),
       elevation: 0.0,
       title: RichText(
-        text: TextSpan(
-          style: const TextStyle(
+        text: const TextSpan(
+          style: TextStyle(
             color: Colors.white,
             fontSize: 18.0,
           ),
           children: <TextSpan>[
-            const TextSpan(text: 'Tecarta'),
+            TextSpan(text: 'Tecarta'),
             TextSpan(
                 text: 'Bible', style: TextStyle(fontWeight: FontWeight.bold)),
-            const TextSpan(text: ' Search')
+            TextSpan(text: ' Search')
           ],
         ),
       ),

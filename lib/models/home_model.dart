@@ -2,7 +2,6 @@ import 'package:bible_search/data/translation.dart';
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/labels.dart';
 import 'package:flutter/foundation.dart';
-import 'package:tec_ads/tec_ads.dart';
 
 import 'package:tec_util/tec_util.dart' as tec;
 
@@ -59,16 +58,6 @@ class HomeModel {
       return true;
     }
     return false;
-  }
-
-  void showAd() {
-    // var ntimesSearched =
-    //     tec.Prefs.shared.getInt(numberOfTimesSearchPref, defaultValue: 0);
-    // tec.Prefs.shared.setInt(numberOfTimesSearchPref, ++ntimesSearched);
-    
-    if (shouldShowAd) {
-      TecInterstitialAd(adUnitId: prefInterstitialAdId).show();
-    }
   }
 
   final languages = <Language>[

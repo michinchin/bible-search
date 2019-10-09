@@ -5,9 +5,6 @@ import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 
-import 'package:bible_search/labels.dart';
-import 'package:tec_util/tec_util.dart' as tec;
-
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:bible_search/data/book.dart';

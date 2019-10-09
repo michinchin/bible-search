@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bible_search/containers/filter_components/expandable_checkbox_list_tile.dart';
 import 'package:bible_search/data/translation.dart';
-import 'package:bible_search/labels.dart';
 import 'package:bible_search/presentation/translation_book_filter_screen.dart';
 import 'package:flutter/material.dart';
 

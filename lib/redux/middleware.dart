@@ -9,47 +9,51 @@ import 'package:bible_search/models/app_state.dart';
 import 'package:flutter/services.dart';
 import 'package:redux/redux.dart';
 import 'package:bible_search/models/home_model.dart';
+import 'package:tec_ads/tec_ads.dart';
 
 import 'package:tec_util/tec_util.dart' as tec;
 
 final filterModel = FilterModel();
 final homeModel = HomeModel();
 
-void searchMiddleware(
+Future<void> searchMiddleware(
   Store<AppState> store,
   SearchAction action,
   NextDispatcher next,
-) {
+) async {
+  TecInterstitialAd ad;
+  if (homeModel.shouldShowAd) {
+    ad = TecInterstitialAd(adUnitId: prefInterstitialAdId);
+  }
   store.dispatch(SearchLoadingAction());
   final translationIds = store.state.translations.formatIds();
   if (translationIds.isNotEmpty) {
-    SearchResults.fetch(
+    final newSearchList = List<String>.from(store.state.searchHistory)
+      ..add(action.searchQuery);
+    store.dispatch(SetSearchHistoryAction(
+        searchQuery: action.searchQuery,
+        searchQueries:
+            newSearchList.reversed.toSet().toList().reversed.toList()));
+    final res = await SearchResults.fetch(
       words: action.searchQuery,
       translationIds: translationIds,
-    ).then((res) {
-      store
-        ..dispatch(SearchResultAction(res))
-        ..dispatch(SetFilteredResultsAction(
-            filterModel.filterByBook(res, store.state.books)));
-    }).catchError((dynamic e) {
+    ).catchError((dynamic e) {
       store..dispatch(SearchResultAction([]))..dispatch(SearchErrorAction());
       // store.dispatch(SearchErrorAction());
     });
+    store
+      ..dispatch(SearchResultAction(res))
+      ..dispatch(SetFilteredResultsAction(
+          filterModel.filterByBook(res, store.state.books)));
   } else {
     store
       ..dispatch(SearchResultAction([]))
       ..dispatch(SearchNoTranslationsAction());
   }
 
-  final newSearchList = List<String>.from(store.state.searchHistory)
-    ..add(action.searchQuery);
-  store.dispatch(SetSearchHistoryAction(
-      searchQuery: action.searchQuery,
-      searchQueries:
-          newSearchList.reversed.toSet().toList().reversed.toList()));
-  
-  homeModel.showAd();
-
+  if (ad != null) {
+    await ad.show();
+  }
   next(action);
 }
 
@@ -90,15 +94,15 @@ void initHomeMiddleware(
   // }).catchError((dynamic e) {
   //   store.dispatch(ImageResultAction(VOTDImage(url: 'assets/appimage.jpg')));
   // });
+  store
+    ..dispatch(SetLanguagesAction(homeModel.languages))
+    ..dispatch(SetBookNamesAction(homeModel.bookNames));
   homeModel.loadTheme().then((theme) {
     store.dispatch(SetThemeAction(isDarkTheme: theme));
   });
   homeModel.loadSearchHistory().then((searchHistory) {
     store.dispatch(SetSearchHistoryAction(searchQueries: searchHistory));
   });
-  store
-    ..dispatch(SetLanguagesAction(homeModel.languages))
-    ..dispatch(SetBookNamesAction(homeModel.bookNames));
   next(action);
 }
 

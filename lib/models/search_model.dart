@@ -160,7 +160,7 @@ class SearchModel {
     for (var i = 0; i < arr.length; i++) {
       if (lFormattedKeywords.contains(arr[i].trim().toLowerCase())) {
         content.add(TextSpan(
-            text: arr[i], style: TextStyle(fontWeight: FontWeight.bold)));
+            text: arr[i], style: const TextStyle(fontWeight: FontWeight.bold)));
       } else {
         content.add(TextSpan(text: arr[i]));
       }
