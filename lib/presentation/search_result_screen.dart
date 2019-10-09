@@ -1,9 +1,12 @@
 import 'package:bible_search/containers/initial_search_components/home_drawer.dart';
 import 'package:bible_search/containers/sr_components.dart';
+import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/search_model.dart';
+import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
+import 'package:tec_util/tec_util.dart' as tec;
 
 import 'package:redux/redux.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -23,6 +26,27 @@ class SearchResultScreen extends StatefulWidget {
 }
 
 class _SearchResultScreenState extends State<SearchResultScreen> {
+  @override
+  void initState() {
+    if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true)) {
+      WidgetsBinding.instance.addPostFrameCallback(
+          (duration) => Future.delayed(const Duration(seconds: 1), () {
+                FeatureDiscovery.discoverFeatures(
+                  context,
+                  <String>{
+                    'menu',
+                    'selection_mode',
+                    'filter',
+                    'context',
+                    'copy',
+                    'share',
+                    'open_in_TB'
+                  },
+                );
+              }));
+    }
+    super.initState();
+  }
 
   void _showSearch(ResultsViewModel vm) {
     showSearch<String>(

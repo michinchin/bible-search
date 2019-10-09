@@ -41,6 +41,10 @@ Future<void> searchMiddleware(
       store..dispatch(SearchResultAction([]))..dispatch(SearchErrorAction());
       // store.dispatch(SearchErrorAction());
     });
+    if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true)) {
+      res[0].isExpanded = true;
+      await tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
+    }
     store
       ..dispatch(SearchResultAction(res))
       ..dispatch(SetFilteredResultsAction(
@@ -94,15 +98,16 @@ void initHomeMiddleware(
   // }).catchError((dynamic e) {
   //   store.dispatch(ImageResultAction(VOTDImage(url: 'assets/appimage.jpg')));
   // });
-  store
-    ..dispatch(SetLanguagesAction(homeModel.languages))
-    ..dispatch(SetBookNamesAction(homeModel.bookNames));
+
   homeModel.loadTheme().then((theme) {
     store.dispatch(SetThemeAction(isDarkTheme: theme));
   });
   homeModel.loadSearchHistory().then((searchHistory) {
     store.dispatch(SetSearchHistoryAction(searchQueries: searchHistory));
   });
+  store
+    ..dispatch(SetLanguagesAction(homeModel.languages))
+    ..dispatch(SetBookNamesAction(homeModel.bookNames));
   next(action);
 }
 
@@ -134,18 +139,16 @@ void updateSearchesMiddleware(
   next(action);
 }
 
-void initFilterMiddleware(
+Future<void> initFilterMiddleware(
   Store<AppState> store,
   InitFilterAction action,
   NextDispatcher next,
-) {
-  filterModel.loadTranslations().then((translations) {
-    final tl =
-        filterModel.loadLanguagePref(translations, store.state.languages);
-    final t = tec.as<BibleTranslations>(tl[0]);
-    final l = tec.as<List<Language>>(tl[1]);
-    store..dispatch(SetTranslationsAction(t))..dispatch(SetLanguagesAction(l));
-  });
+) async {
+  final translations = await filterModel.loadTranslations();
+  final tl = filterModel.loadLanguagePref(translations, store.state.languages);
+  final t = tec.as<BibleTranslations>(tl[0]);
+  final l = tec.as<List<Language>>(tl[1]);
+  store..dispatch(SetTranslationsAction(t))..dispatch(SetLanguagesAction(l));
   next(action);
 }
 

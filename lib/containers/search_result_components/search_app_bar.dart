@@ -1,11 +1,14 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/search_model.dart';
+import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
+
 import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:bible_search/presentation/translation_book_filter_screen.dart';
+import 'package:flutter/scheduler.dart';
 
 class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
   final ResultsViewModel model;
@@ -86,6 +89,11 @@ class _SearchAppBarState extends State<SearchAppBar> {
         fullscreenDialog: true));
   }
 
+  Future<bool> _onDismiss() {
+    FeatureDiscovery.completeStep(context);
+    return Future.value(false);
+  }
+
   @override
   Widget build(BuildContext context) {
     return !_isInSelectionMode
@@ -118,9 +126,20 @@ class _SearchAppBarState extends State<SearchAppBar> {
                     ]),
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(0),
-                  leading: IconButton(
-                    icon: Icon(Icons.menu),
-                    onPressed: () => Scaffold.of(context).openDrawer(),
+                  leading: DescribedFeatureOverlay(
+                    onDismiss: _onDismiss,
+                    featureId: 'menu',
+                    title: const Text('Menu'),
+                    description: const Text(
+                        'Tap here to return to the home page, remove ads, share app, or ask for help! (Check out dark mode as well)'),
+                    tapTarget: Icon(
+                      Icons.menu,
+                      color: Colors.black,
+                    ),
+                    child: IconButton(
+                      icon: Icon(Icons.menu),
+                      onPressed: () => Scaffold.of(context).openDrawer(),
+                    ),
                   ),
                   title: InkWell(
                       onTap: widget.showSearch,
@@ -129,13 +148,35 @@ class _SearchAppBarState extends State<SearchAppBar> {
                         minFontSize: minFontSizeDescription,
                       )),
                   trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                    IconButton(
-                      icon: Icon(Icons.check_circle_outline),
-                      onPressed: _changeToSelectionMode,
+                    DescribedFeatureOverlay(
+                      featureId: 'selection_mode',
+                      onDismiss: _onDismiss,
+                      tapTarget: Icon(
+                        Icons.check_circle_outline,
+                        color: Colors.black,
+                      ),
+                      title: const Text('Selection Mode'),
+                      description: const Text(
+                          'Tap here to enter selection mode. Select multiple scripture verses and create personal bible studies to share!'),
+                      child: IconButton(
+                        icon: Icon(Icons.check_circle_outline),
+                        onPressed: _changeToSelectionMode,
+                      ),
                     ),
-                    IconButton(
-                      icon: Icon(Icons.filter_list),
-                      onPressed: () => _navigateToFilter(context),
+                    DescribedFeatureOverlay(
+                      featureId: 'filter',
+                      tapTarget: Icon(
+                        Icons.filter_list,
+                        color: Colors.black,
+                      ),
+                      onDismiss: _onDismiss,
+                      title: const Text('Filter'),
+                      description: const Text(
+                          'Check out the filter page! Filter search results by translation and books of the Bible'),
+                      child: IconButton(
+                        icon: Icon(Icons.filter_list),
+                        onPressed: () => _navigateToFilter(context),
+                      ),
                     ),
                   ]),
                 ),

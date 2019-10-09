@@ -8,8 +8,10 @@ import 'package:bible_search/data/verse.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/search_model.dart';
 import 'package:bible_search/presentation/all_translations_screen.dart';
+import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
 class ResultCard extends StatefulWidget {
@@ -90,6 +92,29 @@ class _ResultCardState extends State<ResultCard> {
     });
   }
 
+  void _onCopy() => searchModel.shareSelection(
+      context: context,
+      verse: ShareVerse(
+        books: widget.bookNames,
+        results: [widget.res.copyWith(isSelected: true)],
+      ),
+      isCopy: true);
+
+  void _onShare() => searchModel.shareSelection(
+      context: context,
+      verse: ShareVerse(
+          books: widget.bookNames,
+          results: [widget.res.copyWith(isSelected: true)]));
+
+  void _openInTB() => searchModel.openTB(
+        a: widget.res.verses[widget.res.currentVerseIndex].a,
+        id: widget.res.verses[widget.res.currentVerseIndex].id,
+        bookId: widget.res.bookId,
+        chapterId: widget.res.chapterId,
+        verseId: widget.res.verseId,
+        context: context,
+      );
+
   Future<void> _translationChanged(Verse each, int index) async {
     widget.res.currentVerseIndex = index;
 
@@ -112,6 +137,11 @@ class _ResultCardState extends State<ResultCard> {
     setState(() {
       _currTag = each.id;
     });
+  }
+
+  Future<bool> _onDismiss() {
+    FeatureDiscovery.completeStep(context);
+    return Future.value(false);
   }
 
   @override
@@ -248,64 +278,81 @@ class _ResultCardState extends State<ResultCard> {
       ]),
       Stack(children: [
         ButtonBar(alignment: MainAxisAlignment.start, children: [
-          IconButton(
-            tooltip: 'Context',
-            color: model.iconColor,
-            icon: RotatedBox(
+          DescribedFeatureOverlay(
+            onDismiss: _onDismiss,
+            featureId: 'context',
+            title: const Text('Give Context'),
+            description: const Text(
+                'Tap here to view the surrounding verses of this scripture'),
+            tapTarget: RotatedBox(
               quarterTurns: 1,
-              child: widget.res.contextExpanded
-                  ? Icon(Icons.unfold_less)
-                  : Icon(Icons.unfold_more),
+              child: Icon(Icons.unfold_more, color: Colors.black),
             ),
-            onPressed: _contextButtonPressed,
+            child: IconButton(
+              tooltip: 'Context',
+              color: model.iconColor,
+              icon: RotatedBox(
+                quarterTurns: 1,
+                child: widget.res.contextExpanded
+                    ? Icon(Icons.unfold_less)
+                    : Icon(Icons.unfold_more),
+              ),
+              onPressed: _contextButtonPressed,
+            ),
           ),
         ]),
         ButtonBar(
           children: <Widget>[
-            IconButton(
-                color: model.iconColor,
-                icon: Icon(Icons.content_copy),
-                onPressed: () => searchModel.shareSelection(
-                    context: context,
-                    verse: ShareVerse(
-                      books: widget.bookNames,
-                      results: [widget.res.copyWith(isSelected: true)],
-                    ),
-                    isCopy: true)
-                // searchModel.copyPressed(
-                //     text: '${model.formattedTitle.data}\n${model.content}',
-                //     context: context), // set state here
-                ),
-            IconButton(
-              color: model.iconColor,
-              icon: Icon(Icons.share),
-              onPressed: () {
-                // final verseContent = widget.res.contextExpanded
-                //     ? '${model.contextTitle.data}'
-                //         '\n'
-                //         '${widget.res.verses[widget.res.currentVerseIndex].contextText}'
-                //     : '${model.nonContextTitle.data}'
-                //         '\n'
-                //         '${widget.res.verses[widget.res.currentVerseIndex].verseContent}';
-                // Share.share(verseContent);
-                searchModel.shareSelection(
-                    context: context,
-                    verse: ShareVerse(
-                        books: widget.bookNames,
-                        results: [widget.res.copyWith(isSelected: true)]));
-              },
+            DescribedFeatureOverlay(
+              onDismiss: _onDismiss,
+              featureId: 'copy',
+              title: const Text('Copy'),
+              description: const Text('Tap here to copy the verse.'),
+              tapTarget: Icon(Icons.content_copy, color: Colors.black),
+              child: IconButton(
+                  color: model.iconColor,
+                  icon: Icon(Icons.content_copy),
+                  onPressed: _onCopy
+                  // searchModel.copyPressed(
+                  //     text: '${model.formattedTitle.data}\n${model.content}',
+                  //     context: context), // set state here
+                  ),
             ),
-            IconButton(
-              color: model.iconColor,
-              icon: Icon(Icons.exit_to_app),
-              onPressed: () => searchModel.openTB(
-                a: widget.res.verses[widget.res.currentVerseIndex].a,
-                id: widget.res.verses[widget.res.currentVerseIndex].id,
-                bookId: widget.res.bookId,
-                chapterId: widget.res.chapterId,
-                verseId: widget.res.verseId,
-                context: context,
+            DescribedFeatureOverlay(
+              onDismiss: _onDismiss,
+              featureId: 'share',
+              title: const Text('Share'),
+              description: const Text(
+                  'Tap here to share this verse with your friends and family!'),
+              tapTarget: Icon(
+                Icons.share,
+                color: Colors.black,
               ),
+              child: IconButton(
+                  color: model.iconColor,
+                  icon: Icon(Icons.share),
+                  onPressed: _onShare
+                  // final verseContent = widget.res.contextExpanded
+                  //     ? '${model.contextTitle.data}'
+                  //         '\n'
+                  //         '${widget.res.verses[widget.res.currentVerseIndex].contextText}'
+                  //     : '${model.nonContextTitle.data}'
+                  //         '\n'
+                  //         '${widget.res.verses[widget.res.currentVerseIndex].verseContent}';
+                  // Share.share(verseContent);
+
+                  ),
+            ),
+            DescribedFeatureOverlay(
+              featureId: 'open_in_TB',
+              title: const Text('Open in Tecarta Bible'),
+              description: const Text(
+                  'Study out the scripture in context with one of the top Study Bible apps!'),
+              tapTarget: Icon(Icons.exit_to_app, color: Colors.black),
+              child: IconButton(
+                  color: model.iconColor,
+                  icon: Icon(Icons.exit_to_app),
+                  onPressed: _openInTB),
             ),
           ],
         ),
@@ -327,10 +374,21 @@ class _ResultCardState extends State<ResultCard> {
         ),
         Align(
             alignment: Alignment.centerRight,
-            child: IconButton(
-              color: model.iconColor,
-              icon: Icon(Icons.expand_more),
-              onPressed: _expandButtonPressed,
+            child: DescribedFeatureOverlay(
+              onDismiss: _onDismiss,
+              featureId: 'expand',
+              title: const Text('Expand'),
+              description: const Text(
+                  'Tap here to expand the card and view other settings.'),
+              tapTarget: Icon(
+                Icons.expand_more,
+                color: Colors.black,
+              ),
+              child: IconButton(
+                color: model.iconColor,
+                icon: Icon(Icons.expand_more),
+                onPressed: _expandButtonPressed,
+              ),
             ))
       ])
     ];

@@ -44,7 +44,8 @@ class _CardViewState extends State<CardView> {
                             ),
                             TextSpan(
                                 text: '${widget.vm.searchQuery}',
-                                style: const TextStyle(fontWeight: FontWeight.bold)),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
                           ],
                         ),
                         minFontSize: defaultMinFontSize,

@@ -15,6 +15,7 @@ const String translationsPref = 'bs_translations';
 const String searchHistoryPref = 'bs_searchHistory';
 const String removedAdsPref = 'bs_removeAds';
 const String numberOfTimesSearchPref = 'bs_numberOfTimesSearch';
+const String firstTimeOpenedPref = 'bs_firstTimeOpened';
 
 final lightOverlay = SystemUiOverlayStyle(
   statusBarColor: Colors.transparent, // was null
