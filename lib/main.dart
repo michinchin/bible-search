@@ -90,6 +90,19 @@ class _AppBindingObserverState extends State<_AppBindingObserver>
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);
+
+    // reset ads...
+    if (tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)) {
+      final dt = DateTime.parse(
+          tec.Prefs.shared.getString(removedAdsExpirePref,
+              defaultValue: (DateTime.now().add(const Duration(days: 365)))
+                  .toString()));
+
+      if (DateTime.now().isAfter(dt)) {
+        tec.Prefs.shared.setBool(removedAdsPref, false);
+      }
+    }
+
     super.initState();
   }
 

@@ -14,6 +14,7 @@ const String themePref = 'bs_theme';
 const String translationsPref = 'bs_translations';
 const String searchHistoryPref = 'bs_searchHistory';
 const String removedAdsPref = 'bs_removeAds';
+const String removedAdsExpirePref = 'bs_removeAdsExpire';
 const String numberOfTimesSearchPref = 'bs_numberOfTimesSearch';
 const String firstTimeOpenedPref = 'bs_firstTimeOpened';
 
@@ -41,9 +42,7 @@ const double minFontSizeDescription = 16;
 const double minFontSizeTitle = 18;
 const int searchHistoryMaxNum = 100;
 const Duration timeBetweenAds = Duration(hours: 1);
-
-final removeAdsId =
-    (Platform.isIOS) ? 'com.tecarta.tbbiblesearch.7004' : 'inapp.7004';
+const removeAdsId = 'inapp.7004';
 
 final prefInterstitialAdId = Platform.isAndroid
     ? 'ca-app-pub-5279916355700267/3575410635'

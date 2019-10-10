@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/iap.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +11,7 @@ class InAppPurchaseDialog extends StatefulWidget {
 
 class _InAppPurchaseDialogState extends State<InAppPurchaseDialog> {
   void _buyProduct() {
-    InAppPurchases.purchase(removeAdsId);
+    InAppPurchases.purchase(removeAdsId, consumable: Platform.isAndroid);
     Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
   }
 

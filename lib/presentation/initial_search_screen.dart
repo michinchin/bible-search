@@ -48,6 +48,9 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
   void _purchaseHandler(String inAppId) {
     if (inAppId == removeAdsId) {
       tec.Prefs.shared.setBool(removedAdsPref, true);
+      tec.Prefs.shared.setString(
+          removedAdsExpirePref,
+          DateTime.now().add(const Duration(days: 1)).toString());
     }
   }
 
