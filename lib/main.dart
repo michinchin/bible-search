@@ -93,12 +93,15 @@ class _AppBindingObserverState extends State<_AppBindingObserver>
 
     // reset ads...
     if (tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)) {
-      final dt = DateTime.parse(
-          tec.Prefs.shared.getString(removedAdsExpirePref,
-              defaultValue: (DateTime.now().add(const Duration(days: 365)))
-                  .toString()));
+      var dts = tec.Prefs.shared.getString(removedAdsExpirePref);
 
-      if (DateTime.now().isAfter(dt)) {
+      // if this is an old app that doesn't have this value set - add a year
+      if (dts == null) {
+        dts = DateTime.now().add(const Duration(days: 365)).toString();
+        tec.Prefs.shared.setString(removedAdsExpirePref, dts);
+      }
+
+      if (DateTime.now().isAfter(DateTime.parse(dts))) {
         tec.Prefs.shared.setBool(removedAdsPref, false);
       }
     }
