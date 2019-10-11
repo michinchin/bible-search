@@ -6,6 +6,7 @@ import 'package:bible_search/models/filter_model.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/models/app_state.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:redux/redux.dart';
 import 'package:bible_search/models/home_model.dart';
@@ -22,9 +23,11 @@ Future<void> searchMiddleware(
   NextDispatcher next,
 ) async {
   TecInterstitialAd ad;
+
   if (homeModel.shouldShowAd) {
     ad = TecInterstitialAd(adUnitId: prefInterstitialAdId);
   }
+
   store.dispatch(SearchLoadingAction());
   final translationIds = store.state.translations.formatIds();
   if (translationIds.isNotEmpty) {
@@ -51,10 +54,22 @@ Future<void> searchMiddleware(
       ..dispatch(SearchNoTranslationsAction());
   }
 
-  if (ad != null) {
-    await ad.show();
-  }
+  showAd(ad, maxTries: 10);
+
   next(action);
+}
+
+void showAd(TecInterstitialAd ad, { int maxTries = 1 }) {
+  if (ad != null) {
+    Future.delayed(const Duration(seconds: 1), () async {
+      if (await ad.isLoaded()) {
+        await ad.show();
+      }
+      else if (maxTries > 1) {
+        showAd(ad, maxTries: maxTries - 1);
+      }
+    });
+  }
 }
 
 void contextMiddleware(

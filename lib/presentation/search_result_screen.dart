@@ -28,6 +28,9 @@ class SearchResultScreen extends StatefulWidget {
 class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   void initState() {
+    var num_searches = tec.Prefs.shared.getInt(
+        numSearchesPref, defaultValue: 0);
+
     if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true)) {
       WidgetsBinding.instance.addPostFrameCallback(
           (duration) => Future.delayed(const Duration(seconds: 1), () {
@@ -37,7 +40,36 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 );
               }));
       tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
+
+      tec.Prefs.shared.setInt(numSearchesPref, 1);
     }
+    else if (num_searches == 2) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog<void>(context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                title: const Text(
+                    'This is an ad supported app.\n\nYou will occasionally see an ad. You may remove ads from the menu.\n\nThanks for your support!',
+                  textAlign: TextAlign.center,
+                ),
+                actions: <Widget>[
+                  FlatButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Ok')),
+                ],
+              );
+            });
+      });
+
+      tec.Prefs.shared
+          .setString(lastTimeAdShownPref, DateTime.now().toIso8601String());
+    }
+    else {
+      tec.Prefs.shared.setInt(numSearchesPref, num_searches + 1);
+    }
+
     super.initState();
   }
 

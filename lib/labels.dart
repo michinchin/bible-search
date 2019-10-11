@@ -17,6 +17,7 @@ const String removedAdsPref = 'bs_removeAds';
 const String removedAdsExpirePref = 'bs_removeAdsExpire';
 const String numberOfTimesSearchPref = 'bs_numberOfTimesSearch';
 const String firstTimeOpenedPref = 'bs_firstTimeOpened';
+const String numSearchesPref = 'bs_numSearches';
 
 final lightOverlay = SystemUiOverlayStyle(
   statusBarColor: Colors.transparent, // was null

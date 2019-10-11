@@ -40,23 +40,26 @@ class HomeModel {
 
   /// Should we show ad?
   bool get shouldShowAd {
-    var lastTimeAdShown = tec.Prefs.shared.getString(lastTimeAdShownPref);
-    if (lastTimeAdShown == null) {
-      tec.Prefs.shared
-          .setString(lastTimeAdShownPref, DateTime.now().toIso8601String());
-      lastTimeAdShown = DateTime.now().toIso8601String();
+    if (tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)) {
+      // no ads purchased...
+      return true;
     }
 
-    final iapNotPurchased =
-        !tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false);
+    final lastTimeAdShown = tec.Prefs.shared.getString(lastTimeAdShownPref);
+    if (lastTimeAdShown == null) {
+      // no ad has ever been shown - show dialog...
+      return false;
+    }
+
     final timeSinceLastAd =
         DateTime.now().difference(DateTime.parse(lastTimeAdShown));
 
-    if (timeSinceLastAd >= timeBetweenAds && !kDebugMode && iapNotPurchased) {
+    if (timeSinceLastAd >= timeBetweenAds && !kDebugMode) {
       tec.Prefs.shared
           .setString(lastTimeAdShownPref, DateTime.now().toIso8601String());
       return true;
     }
+
     return false;
   }
 
