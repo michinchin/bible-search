@@ -5,6 +5,7 @@ import 'package:bible_search/containers/initial_search_components/home_drawer.da
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/iap.dart';
 import 'package:bible_search/version.dart';
+import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bible_search/containers/is_components.dart';
@@ -48,8 +49,7 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
   void _purchaseHandler(String inAppId) {
     if (inAppId == removeAdsId) {
       tec.Prefs.shared.setBool(removedAdsPref, true);
-      tec.Prefs.shared.setString(
-          removedAdsExpirePref,
+      tec.Prefs.shared.setString(removedAdsExpirePref,
           DateTime.now().add(const Duration(days: 1)).toString());
     }
   }
@@ -168,9 +168,10 @@ class InitialSearchViewModel {
   bool isDarkTheme;
   void Function(String term) onSearchEntered;
   void Function(List<String> searchQueries) updateSearchHistory;
-  Future<void> Function(BuildContext c) emailFeedback;
-  Future<void> Function(BuildContext c) shareApp;
+  Future<void> Function(BuildContext) emailFeedback;
+  Future<void> Function(BuildContext) shareApp;
   void Function(bool isDarkTheme) changeTheme;
+  Future<void> Function(BuildContext) featureDiscovery;
 
   InitialSearchViewModel(this.store) {
     // votdImage = store.state.votdImage;
@@ -182,6 +183,7 @@ class InitialSearchViewModel {
     changeTheme = _changeTheme;
     emailFeedback = _emailFeedback;
     shareApp = _shareApp;
+    featureDiscovery = _featureDiscovery;
   }
 
   String _ordinalDayAsset() {
@@ -194,6 +196,18 @@ class InitialSearchViewModel {
   void _onSearchEntered(String term) {
     if (term.trim().isNotEmpty) {
       store.dispatch(SearchAction(term));
+    }
+  }
+
+  Future<void> _featureDiscovery(BuildContext c) async {
+    await tec.Prefs.shared.setBool(firstTimeOpenedPref, true);
+    if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true)) {
+      WidgetsBinding.instance
+          .addPostFrameCallback((duration) => FeatureDiscovery.discoverFeatures(
+                c,
+                <String>{'selection_mode', 'filter', 'context', 'open_in_TB'},
+              ));
+      await tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
     }
   }
 

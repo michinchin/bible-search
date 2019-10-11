@@ -25,25 +25,34 @@ class HomeDrawer extends StatelessWidget {
                 const DrawerHeader(
                   child: Text('Settings'),
                 ),
-                !tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)
-                    ? ListTile(
-                        leading: Icon(Icons.money_off),
-                        title: const Text('Remove Ads'),
-                        onTap: () => showDialog<void>(
-                            context: context,
-                            builder: (c) => InAppPurchaseDialog()))
-                    : Container(),
-                isResultPage
-                    ? ListTile(
-                        leading: Icon(Icons.history),
-                        title: const Text('History'),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          Future.delayed(const Duration(milliseconds: 250),
-                              () => Navigator.of(context).pop());
-                        },
-                      )
-                    : Container(),
+                if (isResultPage) ...[
+                  ListTile(
+                    leading: Icon(Icons.history),
+                    title: const Text('History'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Future.delayed(const Duration(milliseconds: 250),
+                          () => Navigator.of(context).pop());
+                    },
+                  ),
+                  // IconData(0xe0c6, fontFamily: 'MaterialIcons')
+                  ListTile(
+                    leading: const Icon(Icons.highlight),
+                    title: const Text('Feature Discovery'),
+                    onTap: () async {
+                      Navigator.of(context).pop();
+                      await vm.featureDiscovery(context);
+                    },
+                  ),
+                ],
+                if (!tec.Prefs.shared
+                    .getBool(removedAdsPref, defaultValue: false))
+                  ListTile(
+                      leading: Icon(Icons.money_off),
+                      title: const Text('Remove Ads'),
+                      onTap: () => showDialog<void>(
+                          context: context,
+                          builder: (c) => InAppPurchaseDialog())),
                 ListTile(
                   leading: Icon(Icons.mobile_screen_share),
                   title: const Text('Share App'),
