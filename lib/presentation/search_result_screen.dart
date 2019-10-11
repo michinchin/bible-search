@@ -40,8 +40,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 );
               }));
       tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
-
-      tec.Prefs.shared.setInt(numSearchesPref, 1);
     }
     else if (num_searches == 2) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -66,9 +64,8 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       tec.Prefs.shared
           .setString(lastTimeAdShownPref, DateTime.now().toIso8601String());
     }
-    else {
-      tec.Prefs.shared.setInt(numSearchesPref, num_searches + 1);
-    }
+
+    tec.Prefs.shared.setInt(numSearchesPref, num_searches + 1);
 
     super.initState();
   }
