@@ -32,10 +32,12 @@ class CardIcons extends StatefulWidget {
 
 class _CardIconsState extends State<CardIcons> {
   SearchModel searchModel;
+  GlobalKey<EnsureVisibleState> ensureVisibleGlobalKey;
 
   @override
   void initState() {
     searchModel = SearchModel();
+    ensureVisibleGlobalKey = GlobalKey<EnsureVisibleState>();
     super.initState();
   }
 
@@ -74,35 +76,41 @@ class _CardIconsState extends State<CardIcons> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: widget.expanded
           ? [
-              Stack(alignment: Alignment.bottomRight, children: <Widget>[
-                ListTile(
-                    title: Padding(
-                      padding: const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                      child:
-                          // Padding(
-                          // padding: const EdgeInsets.only(bottom: 10.0),
-                          // child:
-                          widget.model.formattedTitle,
-                      // )
+              Stack(
+                alignment: Alignment.bottomRight,
+                children: <Widget>[
+                  ListTile(
+                      title: Padding(
+                        padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                        child: widget.model.formattedTitle,
+                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: widget.model.formattedText,
+                      )),
+                  IconButton(
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    alignment: Alignment.bottomRight,
+                    padding: const EdgeInsets.all(0),
+                    color: widget.model.iconColor,
+                    icon: Icon(
+                      Icons.expand_less,
                     ),
-                    subtitle: widget.model.formattedText),
-                IconButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  alignment: Alignment.bottomRight,
-                  padding: const EdgeInsets.only(right: 8),
-                  iconSize: 18,
-                  color: widget.model.iconColor,
-                  icon: Icon(
-                    Icons.expand_less,
+                    onPressed: widget.onExpanded,
                   ),
-                  onPressed: widget.onExpanded,
-                ),
-              ]),
+                ],
+              ),
               Stack(children: [
                 ButtonBar(alignment: MainAxisAlignment.start, children: [
                   DescribedFeatureOverlay(
                     onDismiss: () => _onDismiss('context'),
+                    onOpen: () async {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        ensureVisibleGlobalKey.currentState.ensureVisible();
+                      });
+                      return true;
+                    },
                     featureId: 'context',
                     title: const Text('Give Context'),
                     description: const Text(
@@ -111,16 +119,19 @@ class _CardIconsState extends State<CardIcons> {
                       quarterTurns: 1,
                       child: Icon(Icons.unfold_more, color: Colors.black),
                     ),
-                    child: IconButton(
-                      tooltip: 'Context',
-                      color: widget.model.iconColor,
-                      icon: RotatedBox(
-                        quarterTurns: 1,
-                        child: widget.res.contextExpanded
-                            ? Icon(Icons.unfold_less)
-                            : Icon(Icons.unfold_more),
+                    child: EnsureVisible(
+                      key: ensureVisibleGlobalKey,
+                      child: IconButton(
+                        tooltip: 'Context',
+                        color: widget.model.iconColor,
+                        icon: RotatedBox(
+                          quarterTurns: 1,
+                          child: widget.res.contextExpanded
+                              ? Icon(Icons.unfold_less)
+                              : Icon(Icons.unfold_more),
+                        ),
+                        onPressed: widget.onContext,
                       ),
-                      onPressed: widget.onContext,
                     ),
                   ),
                 ]),
@@ -170,7 +181,7 @@ class _CardIconsState extends State<CardIcons> {
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                   alignment: Alignment.bottomRight,
-                  iconSize: 18,
+                  padding: const EdgeInsets.all(0),
                   color: widget.model.iconColor,
                   icon: Icon(
                     Icons.expand_more,
@@ -266,7 +277,7 @@ class __TranslationSelectorState extends State<_TranslationSelector> {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(left: 8, right: 8, bottom: 10),
+      padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
       child: Wrap(
           alignment: WrapAlignment.spaceAround,
           children: buttons..add(allButton)),
