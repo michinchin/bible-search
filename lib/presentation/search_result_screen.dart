@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bible_search/containers/initial_search_components/home_drawer.dart';
 import 'package:bible_search/containers/sr_components.dart';
 import 'package:bible_search/labels.dart';
@@ -28,8 +30,8 @@ class SearchResultScreen extends StatefulWidget {
 class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   void initState() {
-    var num_searches = tec.Prefs.shared.getInt(
-        numSearchesPref, defaultValue: 0);
+    final num_searches =
+        tec.Prefs.shared.getInt(numSearchesPref, defaultValue: 0);
 
     if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true)) {
       WidgetsBinding.instance.addPostFrameCallback(
@@ -40,18 +42,21 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 );
               }));
       tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
-    }
-    else if (num_searches == 2) {
+    } else if (num_searches == 2) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDialog<void>(context: context,
-            builder: (BuildContext context) {
+        showDialog<void>(
+            context: context,
+            builder: (context) {
               return AlertDialog(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 title: const Text(
-                    'This is an ad supported app.\n\nYou will occasionally see an ad. You may remove ads from the menu.\n\nThanks for your support!',
+                  'This is an ad supported app.',
                   textAlign: TextAlign.center,
                 ),
+                content: const Text(
+                    'You will occasionally see an ad. You may remove ads '
+                    'from the menu.\n\nThanks for your support!'),
                 actions: <Widget>[
                   FlatButton(
                       onPressed: () => Navigator.of(context).pop(),
@@ -100,7 +105,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 showSearch: () => _showSearch(vm),
               ),
               body: WillPopScope(
-                  onWillPop: () => Future.value(false),
+                  onWillPop: () =>Future.value(Platform.isAndroid),
                   child: vm.state.isFetchingSearch
                       ? LoadingView()
                       : vm.filteredRes.isEmpty

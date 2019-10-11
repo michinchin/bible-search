@@ -52,7 +52,7 @@ String getString(Context context, int verseId) {
         before = ' $before';
       }
       before = verse + before;
-      before = '[$v] $before';
+      before = ' [$v] $before';
     }
     v--;
   }
@@ -60,7 +60,7 @@ String getString(Context context, int verseId) {
 
   final verse = wholeChapter[v];
   if (verse != null && verse.isNotEmpty) {
-    before += '[$verseId] ${wholeChapter[verseId]}';
+    before += ' [$verseId] ${wholeChapter[verseId]}';
   }
 
   if (verseId <= wholeChapter.length) {
@@ -71,7 +71,7 @@ String getString(Context context, int verseId) {
         if (after.isNotEmpty) {
           after += ' ';
         }
-        after += '[$v] ';
+        after += ' [$v] ';
         after += verse;
       }
       v++;

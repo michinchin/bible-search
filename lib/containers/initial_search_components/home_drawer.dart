@@ -25,17 +25,6 @@ class HomeDrawer extends StatelessWidget {
                 const DrawerHeader(
                   child: Text('Settings'),
                 ),
-                isResultPage
-                    ? ListTile(
-                        leading: Icon(Icons.home),
-                        title: const Text('Home'),
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          Future.delayed(const Duration(milliseconds: 250),
-                              () => Navigator.of(context).pop());                   
-                        },
-                      )
-                    : Container(),
                 !tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)
                     ? ListTile(
                         leading: Icon(Icons.money_off),
@@ -43,6 +32,17 @@ class HomeDrawer extends StatelessWidget {
                         onTap: () => showDialog<void>(
                             context: context,
                             builder: (c) => InAppPurchaseDialog()))
+                    : Container(),
+                isResultPage
+                    ? ListTile(
+                        leading: Icon(Icons.history),
+                        title: const Text('History'),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Future.delayed(const Duration(milliseconds: 250),
+                              () => Navigator.of(context).pop());
+                        },
+                      )
                     : Container(),
                 ListTile(
                   leading: Icon(Icons.mobile_screen_share),

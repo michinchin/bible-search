@@ -1,3 +1,5 @@
+import 'package:tec_util/tec_util.dart' as tec;
+
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/app_state.dart';
 import 'package:bible_search/redux/actions.dart';
@@ -83,7 +85,7 @@ AppState _onSelected(AppState state, SetNumSelectedAction action) =>
 
 AppState _onImageLoad(AppState state, ImageLoadingAction action) =>
     state.copyWith(isLoadingImage: true);
-    
+
 AppState _onStateChange(AppState state, StateChangeAction action) =>
     state.copyWith(state: action.state);
 // AppState _onImageLoaded(AppState state, ImageResultAction action) =>

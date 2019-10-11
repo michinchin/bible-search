@@ -37,17 +37,17 @@ Future<void> searchMiddleware(
         searchQuery: action.searchQuery,
         searchQueries:
             newSearchList.reversed.toSet().toList().reversed.toList()));
-    final res = await SearchResults.fetch(
+    await SearchResults.fetch(
       words: action.searchQuery,
       translationIds: translationIds,
-    ).catchError((dynamic e) {
+    ).then((res) {
+      store
+        ..dispatch(SearchResultAction(res))
+        ..dispatch(SetFilteredResultsAction(
+            filterModel.filterByBook(res, store.state.books)));
+    }).catchError((dynamic e) {
       store..dispatch(SearchResultAction([]))..dispatch(SearchErrorAction());
-      // store.dispatch(SearchErrorAction());
     });
-    store
-      ..dispatch(SearchResultAction(res))
-      ..dispatch(SetFilteredResultsAction(
-          filterModel.filterByBook(res, store.state.books)));
   } else {
     store
       ..dispatch(SearchResultAction([]))
@@ -59,13 +59,12 @@ Future<void> searchMiddleware(
   next(action);
 }
 
-void showAd(TecInterstitialAd ad, { int maxTries = 1 }) {
+void showAd(TecInterstitialAd ad, {int maxTries = 1}) {
   if (ad != null) {
     Future.delayed(const Duration(seconds: 1), () async {
       if (await ad.isLoaded()) {
         await ad.show();
-      }
-      else if (maxTries > 1) {
+      } else if (maxTries > 1) {
         showAd(ad, maxTries: maxTries - 1);
       }
     });

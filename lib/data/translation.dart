@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:bible_search/models/home_model.dart';
 import 'package:bible_search/labels.dart';
+import 'package:flutter/services.dart';
 import 'package:tec_cache/tec_cache.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 
@@ -120,13 +123,14 @@ class BibleTranslations {
   static Future<BibleTranslations> fetch() async {
     const fileName = 'WebSite.json.gz';
     const hostAndPath = '$kTBStreamServer/$kTBApiVersion/products-list';
-    final tecCache = TecCache();
-    final json =
-        await tecCache.jsonFromFile(cachedPath: 'assets/Translation.json') ??
-            await TecCache().jsonFromUrl(url: 'https://$hostAndPath/$fileName');
+    final translations = await rootBundle.loadString('assets/Translation.json');
+    final translationJson =
+        tec.as<Map<String, dynamic>>(json.decode(translations));
+    final bibleJson = translationJson ??
+        await TecCache().jsonFromUrl(url: 'https://$hostAndPath/$fileName');
 
     if (json != null) {
-      return BibleTranslations.fromJson(json);
+      return BibleTranslations.fromJson(bibleJson);
     } else {
       return BibleTranslations(data: []);
     }
