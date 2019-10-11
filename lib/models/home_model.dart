@@ -42,7 +42,7 @@ class HomeModel {
   bool get shouldShowAd {
     if (tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)) {
       // no ads purchased...
-      return true;
+      return false;
     }
 
     final lastTimeAdShown = tec.Prefs.shared.getString(lastTimeAdShownPref);
