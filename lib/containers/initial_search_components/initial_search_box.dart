@@ -1,12 +1,13 @@
+import 'package:bible_search/labels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:tec_ads/tec_ads.dart';
 
 class InitialSearchBox extends StatefulWidget {
   final Orientation orientation;
   final double height;
   final double imageHeight;
   final Function(String) updateSearch;
-  
 
   const InitialSearchBox({
     Key key,
@@ -28,8 +29,8 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
 
   @override
   void initState() {
-    super.initState();
     controller = TextEditingController();
+    super.initState();
   }
 
   @override

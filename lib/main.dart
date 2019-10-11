@@ -7,6 +7,7 @@ import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
+import 'package:oktoast/oktoast.dart';
 import 'package:redux/redux.dart';
 import 'package:bible_search/redux/reducers.dart';
 import 'package:bible_search/redux/middleware.dart';
@@ -54,26 +55,28 @@ class BibleSearchApp extends StatelessWidget {
     return StoreProvider<AppState>(
         store: store,
         child: FeatureDiscovery(
-          child: DynamicTheme(
-              defaultBrightness: Brightness.light,
-              data: (brightness) => ThemeData(
-                    primarySwatch: Colors.orange,
-                    primaryColorBrightness:
-                        darkTheme ? Brightness.dark : Brightness.light,
-                    brightness: darkTheme ? Brightness.dark : Brightness.light,
-                  ),
-              themedWidgetBuilder: (context, theme) {
-                return MaterialApp(
-                  initialRoute: '/',
-                  debugShowCheckedModeBanner: false,
-                  routes: <String, WidgetBuilder>{
-                    '/results': (context) => const SearchResultScreen(),
-                  },
-                  title: 'Bible Search',
-                  theme: theme,
-                  home: _AppBindingObserver(store),
-                );
-              }),
+          child: OKToast(
+            child: DynamicTheme(
+                defaultBrightness: Brightness.light,
+                data: (brightness) => ThemeData(
+                      primarySwatch: Colors.orange,
+                      primaryColorBrightness:
+                          darkTheme ? Brightness.dark : Brightness.light,
+                      brightness: darkTheme ? Brightness.dark : Brightness.light,
+                    ),
+                themedWidgetBuilder: (context, theme) {
+                  return MaterialApp(
+                    initialRoute: '/',
+                    debugShowCheckedModeBanner: false,
+                    routes: <String, WidgetBuilder>{
+                      '/results': (context) => const SearchResultScreen(),
+                    },
+                    title: 'Bible Search',
+                    theme: theme,
+                    home: _AppBindingObserver(store),
+                  );
+                }),
+          ),
         ));
   }
 }
