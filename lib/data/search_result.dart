@@ -113,12 +113,37 @@ class SearchResults {
     }
     const hostAndPath = '$kTBApiServer/search';
     const cachePath = '$kTBStreamServer/cache';
+    var phrase = 0, exact = 0;
+    String searchWords;
+
+    // phrase or exact search ?
+    if (words[0] == '"' || words[0] == '\'') {
+        if (words.contains(' ')) {
+          phrase = 1;
+        }
+        else {
+          exact = 1;
+        }
+
+        // remove trailing quote
+        if (words.endsWith(words[0])) {
+          searchWords = words.substring(1, words.length - 1);
+        }
+        else {
+          searchWords = words.substring(1);
+        }
+    }
+    else {
+      searchWords = _formatWords(words);
+    }
+
     final tecCache = TecCache();
     final fullCachedPath =
-        'https://$cachePath/${_getCacheKey(words, translationIds)}.gz';
+        'https://$cachePath/${_getCacheKey(
+        searchWords, translationIds, exact, phrase)}.gz';
     final fullPath =
-        'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=${_formatWords(words)}&book=0'
-        '&bookset=0&exact=0&phrase=0&searchVolumes=$translationIds';
+        'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=$searchWords&book=0'
+        '&bookset=0&exact=$exact&phrase=$phrase&searchVolumes=$translationIds';
     final cacheJson = await tecCache.jsonFromUrl(
       url: fullCachedPath,
       requestType: 'get',
@@ -181,10 +206,20 @@ String _formatWords(String keywords) {
   urlEncodingExceptions.forEach((k, v) => modifiedKeywords =
       modifiedKeywords.replaceAll(RegExp(k), v));
 
+  // sort by length descending then alpha ascending...
   final wordList = modifiedKeywords.split(' ')
-    ..sort((a, b) => b.length.compareTo(a.length));
+    ..sort((a, b) {
+        if (a.length == b.length) {
+          return a.compareTo(b);
+        }
+        else {
+          return b.length.compareTo(a.length);
+        }
+    });
+
+  // return the top 5 results
   return wordList
-      .sublist(0, wordList.length < 5 ? wordList.length : 4)
+      .sublist(0, wordList.length <= 5 ? wordList.length : 5)
       .join(' ');
 }
 
@@ -206,7 +241,8 @@ String _formatRefs(String query) {
   return query;
 }
 
-String _getCacheKey(String keywords, String translationIds) {
+String _getCacheKey(String keywords, String translationIds, int exact,
+    int phrase) {
   String modKeywords;
   modKeywords = keywords.toLowerCase();
   modKeywords = _formatWords(modKeywords);
@@ -228,5 +264,5 @@ String _getCacheKey(String keywords, String translationIds) {
     volumeId -= digit.toInt() * length;
     encoded.write(base64Map[volumeId.toInt()]);
   }
-  return '$words${encoded.toString()}_0_0_0_0';
+  return '$words${encoded.toString()}_0_0_${phrase}_$exact';
 }

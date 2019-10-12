@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tec_util/tec_util.dart' as tec;
+import 'package:validators/validators.dart';
 
 class SearchModel {
   Future<void> openTB(
@@ -138,13 +139,45 @@ class SearchModel {
 
     final content = <TextSpan>[];
     var modPar = verse;
-    var modKeywords = searchWords;
+    String modKeywords;
+    var phrase = false, exact = false;
+
+    // phrase or exact search ?
+    if (searchWords[0] == '"' || searchWords[0] == '\'') {
+      if (searchWords.contains(' ')) {
+        phrase = true;
+      }
+      else {
+        exact = true;
+      }
+
+      // remove trailing quote
+      if (searchWords.endsWith(searchWords[0])) {
+        modKeywords = searchWords.substring(1, searchWords.length - 1);
+      }
+      else {
+        modKeywords = searchWords.substring(1);
+      }
+    }
+    else {
+      modKeywords = searchWords;
+    }
 
     urlEncodingExceptions
         .forEach((k, v) => modKeywords = modKeywords.replaceAll(RegExp(k), v));
-    final formattedKeywords = modKeywords.split(' ')
-      ..sort((s, t) => s.length.compareTo(t.length));
-    final lFormattedKeywords = modKeywords.toLowerCase().split(' ');
+
+    List<String> formattedKeywords, lFormattedKeywords;
+
+    if (exact || phrase) {
+      formattedKeywords = [modKeywords.
+      trim()];
+      lFormattedKeywords = [modKeywords.trim().toLowerCase()];
+    }
+    else {
+      formattedKeywords = modKeywords.split(' ')
+        ..sort((s, t) => s.length.compareTo(t.length));
+      lFormattedKeywords = modKeywords.toLowerCase().split(' ');
+    }
 
     for (final keyword in formattedKeywords) {
       if (keyword.length >= 3) {
@@ -158,13 +191,34 @@ class SearchModel {
 
     final arr = modPar.split('\*');
     for (var i = 0; i < arr.length; i++) {
+      var bold = false;
+
       if (lFormattedKeywords.contains(arr[i].trim().toLowerCase())) {
+        bold = true;
+
+        // we may skip this one... if not a whole word match
+        if (exact) {
+          // check last character of previous word...
+          if (i > 0 && isAlpha(arr[i - 1][arr[i - 1].length - 1])) {
+            bold = false;
+          }
+          // check first character of next word...
+          else if (i < arr.length - 1 && isAlpha(arr[i + 1][0])) {
+            bold = false;
+          }
+        }
+      }
+
+      if (bold) {
         content.add(TextSpan(
-            text: arr[i], style: const TextStyle(fontWeight: FontWeight.bold)));
-      } else {
+            text: arr[i],
+            style: const TextStyle(fontWeight: FontWeight.bold)));
+      }
+      else {
         content.add(TextSpan(text: arr[i]));
       }
     }
+
     return content;
   }
 }

@@ -65,7 +65,7 @@ const defaultSearchHistory = <String>[
   'prayer',
   'John 3:16',
   'love',
-  'seek and you will find',
+  '"seek and you will find"',
 ];
 
 const extraBookNames = {
