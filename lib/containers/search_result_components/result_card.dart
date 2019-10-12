@@ -125,33 +125,43 @@ class _ResultCardState extends State<ResultCard> {
       formatWords: searchModel.formatWords,
     );
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(15.0),
-      onTap: () =>
-          !widget.isInSelectionMode ? _expandButtonPressed() : _selectCard(),
-      onLongPress: () {
-        if (!widget.isInSelectionMode) _selectionModeEnabled();
-      },
-      child: Card(
-        elevation: 2.0,
-        color: widget.res.isSelected
-            ? Theme.of(context).accentColor
-            : Theme.of(context).cardColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(15.0),
+        onTap: () =>
+            !widget.isInSelectionMode ? _expandButtonPressed() : _selectCard(),
+        onLongPress: () {
+          if (!widget.isInSelectionMode) _selectionModeEnabled();
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: widget.res.isSelected
+                ? Theme.of(context).accentColor
+                : Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                offset: const Offset(0, 10),
+                blurRadius: 10,
+                spreadRadius: 1,
+              )
+            ],
+          ),
+          child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: CardIcons(
+                bookNames: widget.bookNames,
+                model: model,
+                expanded: widget.res.isExpanded,
+                res: widget.res,
+                onExpanded: _expandButtonPressed,
+                onContext: _contextButtonPressed,
+                onTranslationChanged: _translationChanged,
+                currTag: _currTag,
+              )),
         ),
-        child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CardIcons(
-              bookNames: widget.bookNames,
-              model: model,
-              expanded: widget.res.isExpanded,
-              res: widget.res,
-              onExpanded: _expandButtonPressed,
-              onContext: _contextButtonPressed,
-              onTranslationChanged: _translationChanged,
-              currTag: _currTag,
-            )),
       ),
     );
   }

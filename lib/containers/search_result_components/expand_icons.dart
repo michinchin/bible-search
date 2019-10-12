@@ -1,6 +1,5 @@
 import 'package:bible_search/containers/sr_components.dart';
 import 'package:bible_search/data/book.dart';
-import 'package:bible_search/data/context.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/verse.dart';
 import 'package:bible_search/models/search_model.dart';
