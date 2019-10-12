@@ -1,5 +1,3 @@
-import 'package:tec_util/tec_util.dart' as tec;
-
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/app_state.dart';
 import 'package:bible_search/redux/actions.dart';

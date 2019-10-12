@@ -100,7 +100,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
             AppBar(
                 elevation: 0.0,
                 brightness: Theme.of(context).brightness,
-                backgroundColor: Theme.of(context).canvasColor,
+                backgroundColor: Colors.transparent,
                 bottomOpacity: 0.0,
                 toolbarOpacity: 0.0,
                 leading: BackButton(
@@ -118,10 +118,11 @@ class _SearchAppBarState extends State<SearchAppBar> {
                     color: Theme.of(context).cardColor,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black38,
-                        offset: const Offset(0, 5.0),
-                        blurRadius: 5.0,
-                      ),
+                        color: Colors.black26,
+                        offset: const Offset(0, 10),
+                        blurRadius: 10,
+                        spreadRadius: 1,
+                      )
                     ]),
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(0),

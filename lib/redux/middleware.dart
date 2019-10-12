@@ -6,7 +6,6 @@ import 'package:bible_search/models/filter_model.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/models/app_state.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:redux/redux.dart';
 import 'package:bible_search/models/home_model.dart';

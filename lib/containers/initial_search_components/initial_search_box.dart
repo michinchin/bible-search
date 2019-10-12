@@ -1,7 +1,5 @@
-import 'package:bible_search/labels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:tec_ads/tec_ads.dart';
 
 class InitialSearchBox extends StatefulWidget {
   final Orientation orientation;
