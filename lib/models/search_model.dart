@@ -134,17 +134,17 @@ class SearchModel {
     );
   }
 
-  List<TextSpan> formatWords(String verseText, String searchWords) {
+  List<TextSpan> formatWords(String verseText, String words) {
     final verse = removeDiacritics(verseText);
 
     final content = <TextSpan>[];
     var modPar = verse;
-    String modKeywords;
+    var modKeywords = words.trim();
     var phrase = false, exact = false;
 
     // phrase or exact search ?
-    if (searchWords[0] == '"' || searchWords[0] == '\'') {
-      if (searchWords.contains(' ')) {
+    if (modKeywords[0] == '"' || modKeywords[0] == '\'') {
+      if (modKeywords.contains(' ')) {
         phrase = true;
       }
       else {
@@ -152,15 +152,15 @@ class SearchModel {
       }
 
       // remove trailing quote
-      if (searchWords.endsWith(searchWords[0])) {
-        modKeywords = searchWords.substring(1, searchWords.length - 1);
+      if (modKeywords.endsWith(modKeywords[0])) {
+        modKeywords = modKeywords.substring(1, modKeywords.length - 1);
       }
       else {
-        modKeywords = searchWords.substring(1);
+        modKeywords = modKeywords.substring(1);
       }
     }
     else {
-      modKeywords = searchWords;
+      modKeywords = modKeywords;
     }
 
     urlEncodingExceptions

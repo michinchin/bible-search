@@ -114,11 +114,11 @@ class SearchResults {
     const hostAndPath = '$kTBApiServer/search';
     const cachePath = '$kTBStreamServer/cache';
     var phrase = 0, exact = 0;
-    String searchWords;
+    String searchWords = words.trim();
 
     // phrase or exact search ?
-    if (words[0] == '"' || words[0] == '\'') {
-        if (words.contains(' ')) {
+    if (searchWords[0] == '"' || searchWords[0] == '\'') {
+        if (searchWords.contains(' ')) {
           phrase = 1;
         }
         else {
@@ -126,15 +126,15 @@ class SearchResults {
         }
 
         // remove trailing quote
-        if (words.endsWith(words[0])) {
-          searchWords = words.substring(1, words.length - 1);
+        if (searchWords.endsWith(searchWords[0])) {
+          searchWords = searchWords.substring(1, searchWords.length - 1);
         }
         else {
-          searchWords = words.substring(1);
+          searchWords = searchWords.substring(1);
         }
     }
     else {
-      searchWords = _formatWords(words);
+      searchWords = _formatWords(searchWords);
     }
 
     final tecCache = TecCache();
