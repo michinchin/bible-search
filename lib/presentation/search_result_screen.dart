@@ -30,7 +30,7 @@ class SearchResultScreen extends StatefulWidget {
 class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   void initState() {
-    final num_searches =
+    final numSearches =
         tec.Prefs.shared.getInt(numSearchesPref, defaultValue: 0);
 
     if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true)) {
@@ -42,7 +42,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 );
               }));
       tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
-    } else if (num_searches == 2) {
+    } else if (numSearches == 2) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog<void>(
             context: context,
@@ -70,7 +70,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
           .setString(lastTimeAdShownPref, DateTime.now().toIso8601String());
     }
 
-    tec.Prefs.shared.setInt(numSearchesPref, num_searches + 1);
+    tec.Prefs.shared.setInt(numSearchesPref, numSearches + 1);
 
     super.initState();
   }

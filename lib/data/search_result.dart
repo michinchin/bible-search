@@ -147,6 +147,7 @@ class SearchResults {
     final cacheJson = await tecCache.jsonFromUrl(
       url: fullCachedPath,
       requestType: 'get',
+      connectionTimeout: const Duration(seconds: 10),
     );
 
     if (cacheJson != null) {
@@ -156,6 +157,7 @@ class SearchResults {
       final json = await tecCache.jsonFromUrl(
         url: fullPath,
         requestType: 'post',
+        connectionTimeout: const Duration(seconds: 10),
       );
       if (json != null) {
         debugPrint('Getting results from: ${Uri.encodeFull(fullPath)}');
