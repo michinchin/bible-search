@@ -21,6 +21,8 @@ class _CardViewState extends State<CardView> {
   @override
   Widget build(BuildContext context) {
     final res = widget.vm.filteredRes;
+    final filterOn =
+        widget.vm.filteredRes.length != widget.vm.searchResults.length;
     return SafeArea(
       bottom: false,
       child: Container(
@@ -40,12 +42,17 @@ class _CardViewState extends State<CardView> {
                           style: Theme.of(context).textTheme.caption,
                           children: [
                             TextSpan(
-                              text: 'Showing ${res.length} results for ',
+                              text: 'Showing ${res.length} verses containing ',
                             ),
                             TextSpan(
                                 text: '${widget.vm.searchQuery}',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold)),
+                            if (filterOn)
+                              TextSpan(
+                                text:
+                                    ' of ${widget.vm.searchResults.length} filtered verses',
+                              )
                           ],
                         ),
                         minFontSize: defaultMinFontSize,
