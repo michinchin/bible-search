@@ -114,33 +114,32 @@ class SearchResults {
     const hostAndPath = '$kTBApiServer/search';
     const cachePath = '$kTBStreamServer/cache';
     var phrase = 0, exact = 0;
-    String searchWords = words.trim();
+    var searchWords = words.trim();
 
+    urlEncodingExceptions
+        .forEach((k, v) => searchWords = searchWords.replaceAll(RegExp(k), v));
+    
     // phrase or exact search ?
     if (searchWords[0] == '"' || searchWords[0] == '\'') {
-        if (searchWords.contains(' ')) {
-          phrase = 1;
-        }
-        else {
-          exact = 1;
-        }
+      if (searchWords.contains(' ')) {
+        phrase = 1;
+      } else {
+        exact = 1;
+      }
 
-        // remove trailing quote
-        if (searchWords.endsWith(searchWords[0])) {
-          searchWords = searchWords.substring(1, searchWords.length - 1);
-        }
-        else {
-          searchWords = searchWords.substring(1);
-        }
-    }
-    else {
+      // remove trailing quote
+      if (searchWords.endsWith(searchWords[0])) {
+        searchWords = searchWords.substring(1, searchWords.length - 1);
+      } else {
+        searchWords = searchWords.substring(1);
+      }
+    } else {
       searchWords = _formatWords(searchWords);
     }
 
     final tecCache = TecCache();
     final fullCachedPath =
-        'https://$cachePath/${_getCacheKey(
-        searchWords, translationIds, exact, phrase)}.gz';
+        'https://$cachePath/${_getCacheKey(searchWords, translationIds, exact, phrase)}.gz';
     final fullPath =
         'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=$searchWords&book=0'
         '&bookset=0&exact=$exact&phrase=$phrase&searchVolumes=$translationIds';
@@ -176,6 +175,8 @@ Map<String, String> urlEncodingExceptions = {
   '‚': '',
   ',': '', // get rid of commas
   '‛': '\'',
+  '“': '\"',
+  '”': '\"',
   '“': '\"', // UTF-8: E2 80 9C
   '”': '\"', // UTF-8: E2 80 9D
   '„': '\"', // UTF-8: E2 80 9E
@@ -196,7 +197,7 @@ const base64Map =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 
 String _formatWords(String keywords) {
-  var modifiedKeywords = keywords;
+  final modifiedKeywords = keywords;
   final currQuery = keywords.toLowerCase();
   final regex = RegExp(r' *[0-9]? *\w+ *[0-9]+');
   final matches = regex.allMatches(currQuery).toList();
@@ -205,18 +206,14 @@ String _formatWords(String keywords) {
     return _formatRefs(currQuery);
   }
 
-  urlEncodingExceptions.forEach((k, v) => modifiedKeywords =
-      modifiedKeywords.replaceAll(RegExp(k), v));
-
   // sort by length descending then alpha ascending...
   final wordList = modifiedKeywords.split(' ')
     ..sort((a, b) {
-        if (a.length == b.length) {
-          return a.compareTo(b);
-        }
-        else {
-          return b.length.compareTo(a.length);
-        }
+      if (a.length == b.length) {
+        return a.compareTo(b);
+      } else {
+        return b.length.compareTo(a.length);
+      }
     });
 
   // return the top 5 results
@@ -243,11 +240,14 @@ String _formatRefs(String query) {
   return query;
 }
 
-String _getCacheKey(String keywords, String translationIds, int exact,
-    int phrase) {
+String _getCacheKey(
+    String keywords, String translationIds, int exact, int phrase) {
   String modKeywords;
   modKeywords = keywords.toLowerCase();
   modKeywords = _formatWords(modKeywords);
+  urlEncodingExceptions
+      .forEach((k, v) => modKeywords = modKeywords.replaceAll(RegExp(k), v));
+
   // var klist = keywords.split(' ');
   // klist.sort((f,l)=> f.length.compareTo(l.length));
   // keywords = klist.join(' ');
