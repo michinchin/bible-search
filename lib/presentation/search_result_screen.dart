@@ -112,6 +112,9 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                           ? NoResultsView(
                               hasError: vm.hasError,
                               hasNoTranslations: vm.hasNoTranslationsSelected,
+                              books: vm.bookNames,
+                              resultLength: vm.searchResults.length,
+                              resetFilter: vm.resetFilter,
                             )
                           : CardView(vm)));
         });
@@ -139,6 +142,7 @@ class ResultsViewModel {
   Function(int, bool) selectCard;
   ShareVerse Function() getShareVerse;
   Function(bool) changeTheme;
+  VoidCallback resetFilter;
 
   ResultsViewModel(this.store) {
     searchQuery = store.state.searchQuery;
@@ -160,6 +164,18 @@ class ResultsViewModel {
         ShareVerse(books: store.state.books, results: store.state.results);
     changeTheme = (b) => store.dispatch(SetThemeAction(isDarkTheme: b));
     filteredRes = store.state.filteredResults;
+    resetFilter = _resetFilter;
+  }
+
+  void _resetFilter() {
+    final books = List<Book>.from(bookNames)
+      ..map((b) {
+        b.isSelected = true;
+        return b;
+      }).toList();
+    store
+      ..dispatch(SetBookNamesAction(books))
+      ..dispatch(SearchAction(searchQuery));
   }
 
   @override

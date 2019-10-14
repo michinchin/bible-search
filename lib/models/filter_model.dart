@@ -95,6 +95,11 @@ class FilterModel {
   List chooseBook(
       {bool b, int i, List<Book> bookNames, bool otSelected, bool ntSelected}) {
     var modBookNames = List<Book>.from(bookNames);
+      // ..map(((b) {
+      //   if (b.numResults > 0) {
+      //     return b;
+      //   }
+      // }));
     var oT = otSelected;
     var nT = ntSelected;
     if (i == -2) {
@@ -158,9 +163,9 @@ class FilterModel {
   List<SearchResult> updateBooks(
       List<SearchResult> searchRes, List<Book> bookNames) {
     final books = List<Book>.from(bookNames);
-    final results  = List<SearchResult>.from(searchRes);
+    final results = List<SearchResult>.from(searchRes);
     for (final b in books) {
-      b.numResults = results.where((r)=>r.bookId == b.id).toList().length;
+      b.numResults = results.where((r) => r.bookId == b.id).toList().length;
     }
     return filterByBook(searchRes, books);
   }
