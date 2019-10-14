@@ -125,8 +125,8 @@ class _ResultCardState extends State<ResultCard> {
       formatWords: searchModel.formatWords,
     );
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
+    return Container(
+      margin: const EdgeInsets.all(8.0),
       child: InkWell(
         borderRadius: BorderRadius.circular(15.0),
         onTap: () =>
@@ -142,9 +142,11 @@ class _ResultCardState extends State<ResultCard> {
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
               BoxShadow(
-                color: Colors.black26,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black12
+                    : Colors.black26,
                 offset: const Offset(0, 10),
-                blurRadius: 10,
+                blurRadius: 8,
                 spreadRadius: 1,
               )
             ],

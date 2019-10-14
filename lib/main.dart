@@ -14,6 +14,7 @@ import 'package:bible_search/redux/middleware.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 import 'package:firebase_admob/firebase_admob.dart';
+import 'package:tec_user_account/tec_user_account.dart';
 
 import 'package:tec_util/tec_util.dart' as tec;
 
@@ -28,11 +29,14 @@ Future<void> main() async {
   print('Running on ${di.productName} with ${tec.DeviceInfo.os} ${di.version}');
 
   await FirebaseAdMob.instance.initialize(appId: prefAdmobAppId);
+  final userAccount = UserAccount(kvStore: KVStore());
 
   final store = Store<AppState>(
     reducers,
-    initialState:
-        AppState.initial(deviceInfo: di, state: AppLifecycleState.inactive),
+    initialState: AppState.initial(
+        deviceInfo: di,
+        state: AppLifecycleState.inactive,
+        userAccount: userAccount),
     middleware: middleware,
   )
     ..dispatch(InitHomeAction())
@@ -62,7 +66,8 @@ class BibleSearchApp extends StatelessWidget {
                       primarySwatch: Colors.orange,
                       primaryColorBrightness:
                           darkTheme ? Brightness.dark : Brightness.light,
-                      brightness: darkTheme ? Brightness.dark : Brightness.light,
+                      brightness:
+                          darkTheme ? Brightness.dark : Brightness.light,
                     ),
                 themedWidgetBuilder: (context, theme) {
                   return MaterialApp(
@@ -126,4 +131,21 @@ class _AppBindingObserverState extends State<_AppBindingObserver>
 
   @override
   Widget build(BuildContext context) => InitialSearchScreen();
+}
+
+class KVStore with UserAccountKVStore {
+  KVStore() : prefs = <String, String>{};
+
+  final Map<String, String> prefs;
+
+  @override
+  String getString(String key, {String defaultValue}) {
+    return prefs[key] ?? defaultValue;
+  }
+
+  @override
+  Future<bool> setString(String key, String value) async {
+    prefs[key] = value;
+    return true;
+  }
 }

@@ -5,12 +5,14 @@ import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/translation.dart';
 import 'package:bible_search/data/votd_image.dart';
 import 'package:meta/meta.dart';
+import 'package:tec_user_account/tec_user_account.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 
 @immutable
 class AppState {
   final tec.DeviceInfo deviceInfo;
   final AppLifecycleState state;
+  final UserAccount userAccount;
 
   final BibleTranslations translations;
   final List<SearchResult> results;
@@ -35,6 +37,7 @@ class AppState {
   const AppState({
     this.deviceInfo,
     this.state,
+    this.userAccount,
     this.translations,
     this.results,
     this.filteredResults,
@@ -55,10 +58,13 @@ class AppState {
   });
 
   factory AppState.initial(
-          {tec.DeviceInfo deviceInfo, AppLifecycleState state}) =>
+          {tec.DeviceInfo deviceInfo,
+          AppLifecycleState state,
+          UserAccount userAccount}) =>
       AppState(
         deviceInfo: deviceInfo,
         state: state,
+        userAccount: userAccount,
         translations: BibleTranslations(data: []),
         results: const [],
         filteredResults: const [],
@@ -81,6 +87,7 @@ class AppState {
   AppState copyWith(
       {tec.DeviceInfo deviceInfo,
       AppLifecycleState state,
+      UserAccount userAccount,
       BibleTranslations translations,
       List<SearchResult> results,
       List<SearchResult> filteredResults,
@@ -101,6 +108,7 @@ class AppState {
     return AppState(
         deviceInfo: deviceInfo ?? this.deviceInfo,
         state: state ?? this.state,
+        userAccount: userAccount ?? this.userAccount,
         translations: translations ?? this.translations,
         results: results ?? this.results,
         filteredResults: filteredResults ?? this.filteredResults,

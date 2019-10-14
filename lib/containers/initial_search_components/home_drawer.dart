@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tec_util/tec_util.dart' as tec;
+import 'package:tec_user_account/tec_user_account_ui.dart';
 
 class HomeDrawer extends StatelessWidget {
   final bool isResultPage;
@@ -76,6 +77,15 @@ class HomeDrawer extends StatelessWidget {
                       vm.changeTheme(b);
                     }),
                 const Divider(),
+                ListTile(
+                    leading: Icon(Icons.account_circle),
+                    title: Text(vm.userAccount.isSignedIn
+                        ? '${vm.userAccount.user.email}'
+                        : 'Sign in'),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      showSignInDlg(context: context, account: vm.userAccount);
+                    }),
                 ListTile(
                   leading: Icon(Icons.help_outline),
                   title: const Text('Help & Feedback'),

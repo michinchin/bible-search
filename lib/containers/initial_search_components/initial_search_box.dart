@@ -50,11 +50,13 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
             borderRadius: BorderRadius.circular(widget.height),
             boxShadow: [
               BoxShadow(
-                color: Colors.black26,
-                blurRadius: 5.0, // has the effect of softening the shadow
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black12
+                    : Colors.black26,
+                blurRadius: 5.0,
                 offset: const Offset(
-                  0.0, // right
-                  2.0, //left
+                  0.0,
+                  2.0,
                 ),
               )
             ],

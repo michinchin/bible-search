@@ -118,7 +118,9 @@ class _SearchAppBarState extends State<SearchAppBar> {
                     color: Theme.of(context).cardColor,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black26,
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? Colors.black12
+                            : Colors.black26,
                         offset: const Offset(0, 10),
                         blurRadius: 10,
                         spreadRadius: 1,

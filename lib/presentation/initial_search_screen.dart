@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:bible_search/containers/is_components.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:share/share.dart';
+import 'package:tec_user_account/tec_user_account.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
@@ -163,6 +164,7 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
 class InitialSearchViewModel {
   final Store<AppState> store;
   // VOTDImage votdImage;
+  UserAccount userAccount;
   String votdString;
   List<String> searchHistory;
   bool isDarkTheme;
@@ -176,6 +178,7 @@ class InitialSearchViewModel {
   InitialSearchViewModel(this.store) {
     // votdImage = store.state.votdImage;
     votdString = _ordinalDayAsset();
+    userAccount = store.state.userAccount;
     searchHistory = store.state.searchHistory;
     isDarkTheme = store.state.isDarkTheme;
     onSearchEntered = _onSearchEntered;
