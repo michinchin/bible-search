@@ -175,6 +175,8 @@ class ResultsViewModel {
       }).toList();
     store
       ..dispatch(SetBookNamesAction(books))
+      ..dispatch(SetTestamentAction(Test.nT, toggle: true))
+      ..dispatch(SetTestamentAction(Test.oT, toggle: true))
       ..dispatch(SearchAction(searchQuery));
   }
 
