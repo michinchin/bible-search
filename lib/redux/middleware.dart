@@ -157,6 +157,7 @@ Future<void> initFilterMiddleware(
   final tl = filterModel.loadLanguagePref(translations, store.state.languages);
   final t = tec.as<BibleTranslations>(tl[0]);
   final l = tec.as<List<Language>>(tl[1]);
+  t.data.sort((a,b)=> a.name.compareTo(b.name));
   store..dispatch(SetTranslationsAction(t))..dispatch(SetLanguagesAction(l));
   next(action);
 }
