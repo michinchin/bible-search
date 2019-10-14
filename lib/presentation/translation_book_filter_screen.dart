@@ -24,7 +24,7 @@ class TranslationBookFilterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, FilterViewModel>(
-        converter: FilterViewModel.fromStore,
+        converter: (store) => FilterViewModel(store),
         builder: (context, vm) {
           return DefaultTabController(
             initialIndex: tabValue,
@@ -49,8 +49,9 @@ class TranslationBookFilterScreen extends StatelessWidget {
                   return Container(
                       key: PageStorageKey(tab.text),
                       padding: const EdgeInsets.all(10.0),
-                      child:
-                          tab.text == 'BOOK' ? BookList(vm) : LanguageList(vm));
+                      child: tab.text == 'BOOK'
+                          ? BookList(vm, tabValue)
+                          : LanguageList(vm));
                 }).toList(),
               ),
             ),
@@ -60,43 +61,30 @@ class TranslationBookFilterScreen extends StatelessWidget {
 }
 
 class FilterViewModel {
-  final BibleTranslations translations;
-  final Function(bool, int) selectTranslation;
-  final List<Language> languages;
-  final Function(bool, int) selectLanguage;
-  final List<Book> bookNames;
-  final Function(bool, int) selectBook;
-  final bool otSelected;
-  final bool ntSelected;
-  final Function() updateSearch;
+  final Store<AppState> store;
+  BibleTranslations translations;
+  Function(bool, int) selectTranslation;
+  List<Language> languages;
+  Function(bool, int) selectLanguage;
+  List<Book> bookNames;
+  Function(bool, int) selectBook;
+  bool otSelected;
+  bool ntSelected;
+  VoidCallback updateSearch;
 
-  const FilterViewModel({
-    this.translations,
-    this.selectTranslation,
-    this.languages,
-    this.selectLanguage,
-    this.bookNames,
-    this.selectBook,
-    this.otSelected,
-    this.ntSelected,
-    this.updateSearch,
-  });
-
-  static FilterViewModel fromStore(Store<AppState> store) {
-    return FilterViewModel(
-      translations: store.state.translations,
-      selectTranslation: (b, i) =>
-          store.dispatch(SelectAction(i, Select.translation, toggle: b)),
-      languages: store.state.languages,
-      selectLanguage: (b, i) =>
-          store.dispatch(SelectAction(i, Select.language, toggle: b)),
-      bookNames: store.state.books,
-      selectBook: (b, i) =>
-          store.dispatch(SelectAction(i, Select.book, toggle: b)),
-      otSelected: store.state.otSelected,
-      ntSelected: store.state.ntSelected,
-      updateSearch: () => store.dispatch(SearchAction(store.state.searchQuery)),
-    );
+  FilterViewModel(this.store) {
+    translations = store.state.translations;
+    selectTranslation = (b, i) =>
+        store.dispatch(SelectAction(i, Select.translation, toggle: b));
+    languages = store.state.languages;
+    selectLanguage =
+        (b, i) => store.dispatch(SelectAction(i, Select.language, toggle: b));
+    bookNames = store.state.books;
+    selectBook =
+        (b, i) => store.dispatch(SelectAction(i, Select.book, toggle: b));
+    otSelected = store.state.otSelected;
+    ntSelected = store.state.ntSelected;
+    updateSearch = () => store.dispatch(SearchAction(store.state.searchQuery));
   }
 
   @override

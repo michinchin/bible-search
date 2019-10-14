@@ -93,7 +93,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 
     return StoreConnector<AppState, ResultsViewModel>(
         distinct: true,
-        converter: ResultsViewModel.fromStore,
+        converter: (store) => ResultsViewModel(store),
         builder: (context, vm) {
           return Scaffold(
               resizeToAvoidBottomInset: false,
@@ -105,14 +105,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 showSearch: () => _showSearch(vm),
               ),
               body: WillPopScope(
-                  onWillPop: () =>Future.value(Platform.isAndroid),
-                  child: vm.state.isFetchingSearch
+                  onWillPop: () => Future.value(Platform.isAndroid),
+                  child: vm.isFetchingSearch
                       ? LoadingView()
                       : vm.filteredRes.isEmpty
                           ? NoResultsView(
-                              hasError: vm.state.hasError,
-                              hasNoTranslations:
-                                  vm.state.hasNoTranslationsSelected,
+                              hasError: vm.hasError,
+                              hasNoTranslations: vm.hasNoTranslationsSelected,
                             )
                           : CardView(vm)));
         });
@@ -120,56 +119,47 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 }
 
 class ResultsViewModel {
-  final AppState state;
-  final String searchQuery;
-  final List<SearchResult> searchResults;
-  final List<SearchResult> filteredRes;
-  final List<String> searchHistory;
+  final Store<AppState> store;
+  String searchQuery;
+  List<SearchResult> searchResults;
+  List<SearchResult> filteredRes;
+  List<String> searchHistory;
 
-  final BibleTranslations translations;
-  final List<Book> bookNames;
-  final bool isInSelectionMode;
+  BibleTranslations translations;
+  List<Book> bookNames;
+  bool isInSelectionMode;
+  int numSelected;
+  bool isFetchingSearch;
+  bool isDarkTheme;
+  bool hasError;
+  bool hasNoTranslationsSelected;
 
-  final VoidCallback changeToSelectionMode;
-  final Function(String) updateSearchResults;
-  final Function(int, bool) selectCard;
-  final ShareVerse Function() getShareVerse;
-  final Function(bool) changeTheme;
+  VoidCallback changeToSelectionMode;
+  Function(String) updateSearchResults;
+  Function(int, bool) selectCard;
+  ShareVerse Function() getShareVerse;
+  Function(bool) changeTheme;
 
-  const ResultsViewModel({
-    this.state,
-    this.searchQuery,
-    this.searchResults,
-    this.searchHistory,
-    this.translations,
-    this.bookNames,
-    this.isInSelectionMode,
-    this.changeToSelectionMode,
-    this.updateSearchResults,
-    this.filteredRes,
-    this.selectCard,
-    this.getShareVerse,
-    this.changeTheme,
-  });
-
-  static ResultsViewModel fromStore(Store<AppState> store) {
-    return ResultsViewModel(
-      state: store.state,
-      searchQuery: store.state.searchQuery,
-      searchResults: store.state.results,
-      searchHistory: store.state.searchHistory,
-      translations: store.state.translations,
-      bookNames: store.state.books,
-      isInSelectionMode: store.state.isInSelectionMode,
-      changeToSelectionMode: () => store.dispatch(SetSelectionModeAction()),
-      updateSearchResults: (s) => store.dispatch(SearchAction(s)),
-      selectCard: (idx, b) =>
-          store.dispatch(SelectAction(idx, Select.result, toggle: b)),
-      getShareVerse: () =>
-          ShareVerse(books: store.state.books, results: store.state.results),
-      changeTheme: (b) => store.dispatch(SetThemeAction(isDarkTheme: b)),
-      filteredRes: store.state.filteredResults,
-    );
+  ResultsViewModel(this.store) {
+    searchQuery = store.state.searchQuery;
+    searchResults = store.state.results;
+    searchHistory = store.state.searchHistory;
+    translations = store.state.translations;
+    bookNames = store.state.books;
+    numSelected = store.state.numSelected;
+    isFetchingSearch = store.state.isFetchingSearch;
+    isDarkTheme = store.state.isDarkTheme;
+    hasError = store.state.hasError;
+    hasNoTranslationsSelected = store.state.hasNoTranslationsSelected;
+    isInSelectionMode = store.state.isInSelectionMode;
+    changeToSelectionMode = () => store.dispatch(SetSelectionModeAction());
+    updateSearchResults = (s) => store.dispatch(SearchAction(s));
+    selectCard =
+        (idx, b) => store.dispatch(SelectAction(idx, Select.result, toggle: b));
+    getShareVerse = () =>
+        ShareVerse(books: store.state.books, results: store.state.results);
+    changeTheme = (b) => store.dispatch(SetThemeAction(isDarkTheme: b));
+    filteredRes = store.state.filteredResults;
   }
 
   @override
@@ -177,22 +167,25 @@ class ResultsViewModel {
       searchQuery == other.searchQuery &&
       translations == other.translations &&
       bookNames == other.bookNames &&
-      state.isFetchingSearch == other.state.isFetchingSearch &&
+      isFetchingSearch == isFetchingSearch &&
+      numSelected == other.numSelected &&
       isInSelectionMode == other.isInSelectionMode &&
-      state.numSelected == other.state.numSelected &&
-      state.isDarkTheme == other.state.isDarkTheme &&
+      numSelected == other.numSelected &&
+      isDarkTheme == other.isDarkTheme &&
       filteredRes == other.filteredRes &&
-      searchHistory == other.searchHistory;
+      searchHistory == other.searchHistory &&
+      hasError == other.hasError &&
+      hasNoTranslationsSelected == other.hasNoTranslationsSelected;
 
   @override
   int get hashCode =>
       searchQuery.hashCode ^
       translations.hashCode ^
       bookNames.hashCode ^
-      state.isFetchingSearch.hashCode ^
+      isFetchingSearch.hashCode ^
       isInSelectionMode.hashCode ^
-      state.numSelected.hashCode ^
-      state.isDarkTheme.hashCode ^
+      numSelected.hashCode ^
+      isDarkTheme.hashCode ^
       filteredRes.hashCode ^
       searchHistory.hashCode;
 }

@@ -43,7 +43,7 @@ Future<void> searchMiddleware(
       store
         ..dispatch(SearchResultAction(res))
         ..dispatch(SetFilteredResultsAction(
-            filterModel.filterByBook(res, store.state.books)));
+            filterModel.updateBooks(res, store.state.books)));
     }).catchError((dynamic e) {
       store..dispatch(SearchResultAction([]))..dispatch(SearchErrorAction());
     });

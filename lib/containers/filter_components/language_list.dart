@@ -56,7 +56,7 @@ class _LanguageChildren extends StatelessWidget {
             TextSpan(children: [
               TextSpan(
                   text: '${translations[i].a}\t',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
               TextSpan(
                 text: translations[i].name,
                 style:

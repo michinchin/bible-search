@@ -155,6 +155,16 @@ class FilterModel {
     return bookNames;
   }
 
+  List<SearchResult> updateBooks(
+      List<SearchResult> searchRes, List<Book> bookNames) {
+    final books = List<Book>.from(bookNames);
+    final results  = List<SearchResult>.from(searchRes);
+    for (final b in books) {
+      b.numResults = results.where((r)=>r.bookId == b.id).toList().length;
+    }
+    return filterByBook(searchRes, books);
+  }
+
   List<SearchResult> filterByBook(
       List<SearchResult> searchRes, List<Book> bookNames) {
     final sr = searchRes.where((res) {

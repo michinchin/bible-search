@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 
 class BookList extends StatelessWidget {
   final FilterViewModel vm;
+  final int tabValue;
 
-  const BookList(this.vm);
+  const BookList(this.vm, this.tabValue);
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +23,7 @@ class BookList extends StatelessWidget {
       _BookChildren(
         vm,
         isOT: true,
+        isFirstScreen: tabValue == 1,
       ),
       SwitchListTile.adaptive(
         title: const AutoSizeText(
@@ -35,6 +37,7 @@ class BookList extends StatelessWidget {
       _BookChildren(
         vm,
         isOT: false,
+        isFirstScreen: tabValue == 1,
       )
     ]);
   }
@@ -43,38 +46,68 @@ class BookList extends StatelessWidget {
 class _BookChildren extends StatelessWidget {
   final bool isOT;
   final FilterViewModel vm;
-  const _BookChildren(this.vm, {this.isOT});
+  final bool isFirstScreen;
+  const _BookChildren(this.vm, {this.isOT, this.isFirstScreen});
   @override
   Widget build(BuildContext context) {
     final _bookList = <Widget>[];
 
     for (var i = isOT ? 0 : 39; i < (isOT ? 39 : vm.bookNames.length); i++) {
-      _bookList.add(ChoiceChip(
-        elevation: vm.bookNames[i].isSelected ? 5 : 0,
-        shape: StadiumBorder(
-            side: BorderSide(
+      if (vm.bookNames[i].numResults != 0 && !isFirstScreen) {
+        _bookList.add(ChoiceChip(
+          elevation: vm.bookNames[i].isSelected ? 5 : 0,
+          shape: StadiumBorder(
+              side: BorderSide(
+                  color: vm.bookNames[i].isSelected
+                      ? Colors.transparent
+                      : Theme.of(context).accentColor)),
+          selectedColor: Theme.of(context).accentColor,
+          label: Text(
+            '${vm.bookNames[i].name} (${vm.bookNames[i].numResults})',
+            style: TextStyle(
                 color: vm.bookNames[i].isSelected
-                    ? Colors.transparent
-                    : Theme.of(context).accentColor)),
-        selectedColor: Theme.of(context).accentColor,
-        label: Text(
-          vm.bookNames[i].name,
-          style: TextStyle(
-              color: vm.bookNames[i].isSelected
-                  ? Theme.of(context).brightness == Brightness.dark
-                      ? ThemeData.dark().cardColor
-                      : Colors.white
-                  : Theme.of(context).accentColor,
-              fontWeight: vm.bookNames[i].isSelected
-                  ? FontWeight.bold
-                  : FontWeight.normal),
-        ),
-        backgroundColor: vm.bookNames[i].isSelected
-            ? Theme.of(context).accentColor
-            : Theme.of(context).cardColor,
-        onSelected: (b) => vm.selectBook(b, i),
-        selected: vm.bookNames[i].isSelected,
-      ));
+                    ? Theme.of(context).brightness == Brightness.dark
+                        ? ThemeData.dark().cardColor
+                        : Colors.white
+                    : Theme.of(context).accentColor,
+                fontWeight: vm.bookNames[i].isSelected
+                    ? FontWeight.bold
+                    : FontWeight.normal),
+          ),
+          backgroundColor: vm.bookNames[i].isSelected
+              ? Theme.of(context).accentColor
+              : Theme.of(context).cardColor,
+          onSelected: (b) => vm.selectBook(b, i),
+          selected: vm.bookNames[i].isSelected,
+        ));
+      } else if (isFirstScreen) {
+        _bookList.add(ChoiceChip(
+          elevation: vm.bookNames[i].isSelected ? 5 : 0,
+          shape: StadiumBorder(
+              side: BorderSide(
+                  color: vm.bookNames[i].isSelected
+                      ? Colors.transparent
+                      : Theme.of(context).accentColor)),
+          selectedColor: Theme.of(context).accentColor,
+          label: Text(
+            '${vm.bookNames[i].name}',
+            style: TextStyle(
+                color: vm.bookNames[i].isSelected
+                    ? Theme.of(context).brightness == Brightness.dark
+                        ? ThemeData.dark().cardColor
+                        : Colors.white
+                    : Theme.of(context).accentColor,
+                fontWeight: vm.bookNames[i].isSelected
+                    ? FontWeight.bold
+                    : FontWeight.normal),
+          ),
+          backgroundColor: vm.bookNames[i].isSelected
+              ? Theme.of(context).accentColor
+              : Theme.of(context).cardColor,
+          onSelected: (b) => vm.selectBook(b, i),
+          selected: vm.bookNames[i].isSelected,
+        ));
+      }
     }
 
     return Wrap(

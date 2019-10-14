@@ -175,7 +175,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
             ),
           ])
         : AppBar(
-            title: AutoSizeText('${widget.model.state.numSelected}'),
+            title: AutoSizeText('${widget.model.numSelected}'),
             leading: IconButton(
               icon: Icon(Icons.close),
               onPressed: _changeToSelectionMode,
