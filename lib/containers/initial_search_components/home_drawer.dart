@@ -23,9 +23,26 @@ class HomeDrawer extends StatelessWidget {
           return Drawer(
             child: ListView(
               children: <Widget>[
-                const DrawerHeader(
-                  child: Text('Settings'),
+                ListTile(
+                  contentPadding: const EdgeInsets.only(left: 16, top: 16),
+                  title: RichText(
+                    text: TextSpan(
+                        children: [
+                          const TextSpan(text: 'Tecarta'),
+                          TextSpan(
+                              text: 'Bible',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          const TextSpan(text: ' Search')
+                        ],
+                        style: Theme.of(context).brightness == Brightness.dark
+                            ? Theme.of(context).textTheme.headline
+                            : Theme.of(context)
+                                .textTheme
+                                .headline
+                                .copyWith(color: Colors.black54)),
+                  ),
                 ),
+                const Divider(),
                 if (isResultPage) ...[
                   ListTile(
                     leading: Icon(Icons.history),
