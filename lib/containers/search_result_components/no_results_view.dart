@@ -1,5 +1,6 @@
 import 'package:bible_search/data/book.dart';
 import 'package:flutter/material.dart';
+import 'package:tec_util/tec_util.dart' as tec;
 
 class NoResultsView extends StatelessWidget {
   final bool hasError;
@@ -25,7 +26,7 @@ class NoResultsView extends StatelessWidget {
     } else if (hasNoTranslations) {
       text = 'No translations selected. \n'
           'Please select translations to view results';
-    } else if (books != null && resultLength != null) {
+    } else if (books != null && tec.isNotNullOrZero(resultLength)) {
       final bookString =
           books.where((b) => b.isSelected).map((b) => b.name).join(',');
       text =
