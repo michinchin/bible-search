@@ -82,6 +82,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       delegate: BibleSearchDelegate(
         searchHistory: vm.searchHistory,
         search: vm.updateSearchResults,
+        translations: vm.translations
       ),
     );
   }

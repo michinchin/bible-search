@@ -128,7 +128,6 @@ class BibleTranslations {
         tec.as<Map<String, dynamic>>(json.decode(translations));
     final bibleJson = translationJson ??
         await TecCache().jsonFromUrl(url: 'https://$hostAndPath/$fileName');
-
     if (json != null) {
       return BibleTranslations.fromJson(bibleJson);
     } else {

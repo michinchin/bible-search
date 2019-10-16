@@ -1,17 +1,27 @@
+import 'dart:async';
+import 'package:bible_search/data/translation.dart';
+import 'package:tec_util/tec_util.dart' as tec;
+import 'package:async/async.dart';
+import 'package:bible_search/data/autocomplete.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
-
-import 'package:tec_ads/tec_ads.dart';
 import 'keyword_text.dart';
 
 class BibleSearchDelegate extends SearchDelegate<String> {
   final List<String> searchHistory;
   final Function(String) search;
-  final TecInterstitialAd interstitial;
+  final BibleTranslations translations;
+  CancelableOperation<AutoComplete> autoCompleteOperation;
 
   BibleSearchDelegate(
-      {@required this.searchHistory, @required this.search, this.interstitial});
+      {@required this.searchHistory,
+      @required this.search,
+      @required this.translations}) {
+    // autoCompleteOperation = CancelableOperation<AutoComplete>.fromFuture(
+    //     AutoComplete.fetch(
+    //         phrase: query, translationIds: translations.formatIds()),
+    //     onCancel: () => {debugPrint('onCancel')});
+  }
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -57,19 +67,40 @@ class BibleSearchDelegate extends SearchDelegate<String> {
         .toList()
         .reversed
         .toList();
-    return ListView(
-      children: results
-          .map((a) => ListTile(
-                title: query.isEmpty
-                    ? Text(a)
-                    : KeywordText(outer: a, inner: query, c: context),
-                onTap: () {
-                  query = a;
-                  search(query);
-                  close(context, null);
-                },
-              ))
-          .toList(),
-    );
+    
+    // autoCompleteOperation.cancel();
+    // autoCompleteOperation = CancelableOperation<AutoComplete>.fromFuture(
+    //     AutoComplete.fetch(
+    //         phrase: query, translationIds: translations.formatIds()),
+    //     onCancel: () => {debugPrint('onCancel')});
+
+    // return FutureBuilder<AutoComplete>(
+    //     future: autoCompleteOperation.value,
+    //     builder: (c, snapshot) {
+    //       if (snapshot.connectionState == ConnectionState.done) {
+            return query.isNotEmpty
+                ? ListView(
+                    children: results
+                    // (snapshot.data?.possibles ?? [])
+                        .map((a) => ListTile(
+                              title: query.isEmpty
+                                  ? Text(a)
+                                  : KeywordText(
+                                      outer: a, inner: query, c: context),
+                              onTap: () {
+                                query = a;
+                                search(query);
+                                close(context, null);
+                              },
+                            ))
+                        .toList(),
+                  )
+                : Container();
+        //   } else {
+        //     return const Center(
+        //       child: CircularProgressIndicator(),
+        //     );
+        //   }
+        // });
   }
 }

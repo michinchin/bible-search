@@ -19,6 +19,7 @@ dependencies:
   cupertino_icons: '>=0.1.2'
 
   # External dependencies
+  async: '>=2.3.0'
   auto_size_text: '>=2.0.1'
   diacritic: '>=0.1.1'
   draggable_scrollbar: '>=0.0.4'

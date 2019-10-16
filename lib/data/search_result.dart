@@ -193,8 +193,6 @@ Map<String, String> urlEncodingExceptions = {
   '—': '-', // UTF-8: E2 80 94
   '―': '-' // UTF-8: E2 80 95
 };
-const base64Map =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 
 String _formatWords(String keywords) {
   final modifiedKeywords = keywords;
