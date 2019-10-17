@@ -21,15 +21,17 @@ class AutoComplete {
 
   static Future<AutoComplete> fetch(
       {String phrase, String translationIds}) async {
+    final suggestions = getSuggestions(phrase);
     final path = 'https://$kTBApiServer/';
     final parameters =
-        'suggest?key=$kTBkey&version=$kTBApiVersion&partialWord=$phrase&searchVolumes=$translationIds';
+        'suggest?key=$kTBkey&version=$kTBApiVersion&words=${suggestions['words']}&partialWord=${suggestions['partialWord']}&searchVolumes=$translationIds';
     const cachePath = 'https://$kTBStreamServer/cache/';
-    final cacheParam = '-$phrase${_getCacheKey(phrase, translationIds)}';
+    final cacheParam =
+        '${_getCachePhrase(phrase)}${_getCacheKey(phrase, translationIds)}';
+
     print('$cachePath$cacheParam');
     final tecCache = TecCache();
     var json = await tecCache.jsonFromUrl(
-      requestType: 'post',
       url: '$cachePath$cacheParam',
     );
     print(Uri.encodeFull('$path$parameters'));
@@ -64,4 +66,35 @@ String _getCacheKey(String phrase, String translationIds) {
     encoded.write(base64Map[volumeId.toInt()]);
   }
   return '_${encoded.toString()}.gz';
+}
+
+String _getCachePhrase(String phrase) {
+  final words = getSuggestions(phrase);
+  final fullWords = words['words'].split(' ').join('_');
+  var partial = '';
+  if (tec.isNotNullOrEmpty(words['partialWord'])) {
+    partial += '_-${words['partialWord']}';
+  }
+  return fullWords + partial;
+}
+
+Map<String, String> getSuggestions(String phrase) {
+  String words, partialWord;
+  final s = phrase..replaceAll('\'', '')..replaceAll('\"', '');
+
+  final index = s.lastIndexOf(' ');
+
+  if (index < 0) {
+    words = '';
+    partialWord = s;
+  } else {
+    words = s.substring(0, index).trim();
+    partialWord = s.substring(index).trim();
+  }
+
+  if (words.isEmpty && partialWord.isEmpty) {
+    return {'words': '', 'partialWord': ''};
+  }
+
+  return {'words': words, 'partialWord': partialWord};
 }
