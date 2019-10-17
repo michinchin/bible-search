@@ -31,15 +31,16 @@ class AutoComplete {
 
     print('$cachePath$cacheParam');
     final tecCache = TecCache();
-    var json = await tecCache.jsonFromUrl(
+    Map<String, dynamic> json;
+    json = await tecCache.jsonFromUrl(
       url: '$cachePath$cacheParam',
     );
     print(Uri.encodeFull('$path$parameters'));
     if (tec.isNullOrEmpty(json)) {
-      json = await tecCache.jsonFromUrl(
-        requestType: 'post',
-        url: '$path$parameters',
-      );
+    json = await tecCache.jsonFromUrl(
+      requestType: 'post',
+      url: '$path$parameters',
+    );
     }
     if (json != null) {
       return AutoComplete.fromJson(json);

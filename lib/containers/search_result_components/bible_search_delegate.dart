@@ -59,7 +59,7 @@ class BibleSearchDelegate extends SearchDelegate<String> {
         phrase: query, translationIds: translations.formatIds());
     await autoCompleteOperation?.cancel();
     autoCompleteOperation = CancelableOperation<AutoComplete>.fromFuture(future,
-        onCancel: () => {debugPrint('onCancel {$future}}')});
+        onCancel: () => {debugPrint('Cancelled Suggestion Fetch')});
     return autoCompleteOperation.value;
   }
 
@@ -89,7 +89,8 @@ class BibleSearchDelegate extends SearchDelegate<String> {
                                     ' ') {
                                   query += '$a ';
                                 } else {
-                                  query = a;
+                                  final words = query.split(' ')..last = a;
+                                  query = words.join(' ');
                                   search(query);
                                   close(context, null);
                                 }
