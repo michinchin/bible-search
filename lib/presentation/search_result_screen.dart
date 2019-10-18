@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bible_search/containers/initial_search_components/home_drawer.dart';
+import 'package:bible_search/containers/search_result_components/bible_search_screen.dart';
 import 'package:bible_search/containers/sr_components.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/search_model.dart';
@@ -76,13 +77,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   void _showSearch(ResultsViewModel vm) {
-    showSearch<String>(
+    showBibleSearch<String>(
       query: vm.searchQuery,
       context: context,
-      delegate: BibleSearchDelegate(
+      translations: vm.translations.formatIds(),
+      delegate: BibleSearchScreen(
         searchHistory: vm.searchHistory,
         search: vm.updateSearchResults,
-        translations: vm.translations
       ),
     );
   }
