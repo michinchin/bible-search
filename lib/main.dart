@@ -140,12 +140,11 @@ class KVStore with UserAccountKVStore {
 
   @override
   String getString(String key, {String defaultValue}) {
-    return prefs[key] ?? defaultValue;
+    return tec.Prefs.shared.getString(key, defaultValue: defaultValue);
   }
 
   @override
   Future<bool> setString(String key, String value) async {
-    prefs[key] = value;
-    return true;
+    return tec.Prefs.shared.setString(key, value);
   }
 }
