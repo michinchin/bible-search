@@ -3,18 +3,22 @@ import 'package:bible_search/data/context.dart';
 import 'package:bible_search/data/translation.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/filter_model.dart';
+import 'package:bible_search/models/user_model.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/models/app_state.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:redux/redux.dart';
 import 'package:bible_search/models/home_model.dart';
+import 'package:redux_thunk/redux_thunk.dart';
 import 'package:tec_ads/tec_ads.dart';
 
 import 'package:tec_util/tec_util.dart' as tec;
 
 final filterModel = FilterModel();
 final homeModel = HomeModel();
+final userModel = UserModel();
 
 Future<void> searchMiddleware(
   Store<AppState> store,
@@ -23,7 +27,7 @@ Future<void> searchMiddleware(
 ) async {
   TecInterstitialAd ad;
 
-  if (homeModel.shouldShowAd) {
+  if (homeModel.shouldShowAd(hasPurchased: store.state.noAdsPurchased)) {
     ad = TecInterstitialAd(adUnitId: prefInterstitialAdId);
   }
 
@@ -53,21 +57,20 @@ Future<void> searchMiddleware(
       ..dispatch(SearchNoTranslationsAction());
   }
 
-  showAd(ad, maxTries: 10);
+  homeModel.showAd(ad, maxTries: 10);
 
   next(action);
 }
 
-void showAd(TecInterstitialAd ad, {int maxTries = 1}) {
-  if (ad != null) {
-    Future.delayed(const Duration(seconds: 1), () async {
-      if (await ad.isLoaded()) {
-        await ad.show();
-      } else if (maxTries > 1) {
-        showAd(ad, maxTries: maxTries - 1);
-      }
-    });
+void syncMiddleware(
+  Store<AppState> store,
+  StateChangeAction action,
+  NextDispatcher next,
+) {
+  if (action.state == AppLifecycleState.inactive) {
+    userModel.checkPurchaseAndSync(store.state.userAccount);
   }
+  next(action);
 }
 
 void contextMiddleware(
@@ -95,12 +98,13 @@ void contextMiddleware(
   }
 }
 
-/// Fetch verse of the day, init home page by loading theme and search history from user preferences, and load languages and bookNames
-void initHomeMiddleware(
+/// Fetch verse of the day, init home page by loading theme and search history from user preferences,
+/// load languages and bookNames, sync purchases
+Future<void> initHomeMiddleware(
   Store<AppState> store,
   InitHomeAction action,
   NextDispatcher next,
-) {
+) async {
   // store.dispatch(ImageLoadingAction());
   // VOTDImage.fetch().then((votd) {
   //   store.dispatch(ImageResultAction(votd));
@@ -108,15 +112,26 @@ void initHomeMiddleware(
   //   store.dispatch(ImageResultAction(VOTDImage(url: 'assets/appimage.jpg')));
   // });
 
-  homeModel.loadTheme().then((theme) {
+  //sync purchases on init
+  // if purchased before user accounts
+  if (tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)) {
+    await userModel.addLicense(store.state.userAccount);
+  } else {
+    final hasPurchased =
+        await userModel.checkPurchaseAndSync(store.state.userAccount);
+    store.dispatch(SetNoAdsPurchasedAction(noAdsPurchased: hasPurchased));
+  }
+
+  await homeModel.loadTheme().then((theme) {
     store.dispatch(SetThemeAction(isDarkTheme: theme));
   });
-  homeModel.loadSearchHistory().then((searchHistory) {
+  await homeModel.loadSearchHistory().then((searchHistory) {
     store.dispatch(SetSearchHistoryAction(searchQueries: searchHistory));
   });
   store
     ..dispatch(SetLanguagesAction(homeModel.languages))
-    ..dispatch(SetBookNamesAction(homeModel.bookNames));
+    ..dispatch(SetBookNamesAction(homeModel.bookNames))
+    ..dispatch(InitFilterAction());
   next(action);
 }
 
@@ -157,7 +172,7 @@ Future<void> initFilterMiddleware(
   final tl = filterModel.loadLanguagePref(translations, store.state.languages);
   final t = tec.as<BibleTranslations>(tl[0]);
   final l = tec.as<List<Language>>(tl[1]);
-  t.data.sort((a,b)=> a.name.compareTo(b.name));
+  t.data.sort((a, b) => a.name.compareTo(b.name));
   store..dispatch(SetTranslationsAction(t))..dispatch(SetLanguagesAction(l));
   next(action);
 }
@@ -238,14 +253,15 @@ void selectionMiddleware(
 }
 
 final List<Middleware<AppState>> middleware = [
-  TypedMiddleware<AppState, SearchAction>(searchMiddleware),
   TypedMiddleware<AppState, InitHomeAction>(initHomeMiddleware),
+  TypedMiddleware<AppState, InitFilterAction>(initFilterMiddleware),
+  TypedMiddleware<AppState, SearchAction>(searchMiddleware),
   TypedMiddleware<AppState, SetThemeAction>(updateThemeMiddleware),
   TypedMiddleware<AppState, StateChangeAction>(updateStateMiddleware),
   TypedMiddleware<AppState, SetSearchHistoryAction>(updateSearchesMiddleware),
-  TypedMiddleware<AppState, InitFilterAction>(initFilterMiddleware),
   TypedMiddleware<AppState, UpdateTranslationsAction>(
       updateTranslationsMiddleware),
   TypedMiddleware<AppState, SelectAction>(selectionMiddleware),
   TypedMiddleware<AppState, ContextAction>(contextMiddleware),
+  TypedMiddleware<AppState, StateChangeAction>(syncMiddleware),
 ];

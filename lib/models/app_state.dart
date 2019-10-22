@@ -13,6 +13,7 @@ class AppState {
   final tec.DeviceInfo deviceInfo;
   final AppLifecycleState state;
   final UserAccount userAccount;
+  final bool noAdsPurchased;
 
   final BibleTranslations translations;
   final List<SearchResult> results;
@@ -38,6 +39,7 @@ class AppState {
     this.deviceInfo,
     this.state,
     this.userAccount,
+    this.noAdsPurchased,
     this.translations,
     this.results,
     this.filteredResults,
@@ -65,6 +67,7 @@ class AppState {
         deviceInfo: deviceInfo,
         state: state,
         userAccount: userAccount,
+        noAdsPurchased: false,
         translations: BibleTranslations(data: []),
         results: const [],
         filteredResults: const [],
@@ -88,6 +91,7 @@ class AppState {
       {tec.DeviceInfo deviceInfo,
       AppLifecycleState state,
       UserAccount userAccount,
+      bool noAdsPurchased,
       BibleTranslations translations,
       List<SearchResult> results,
       List<SearchResult> filteredResults,
@@ -109,6 +113,7 @@ class AppState {
         deviceInfo: deviceInfo ?? this.deviceInfo,
         state: state ?? this.state,
         userAccount: userAccount ?? this.userAccount,
+        noAdsPurchased: noAdsPurchased ?? this.noAdsPurchased,
         translations: translations ?? this.translations,
         results: results ?? this.results,
         filteredResults: filteredResults ?? this.filteredResults,

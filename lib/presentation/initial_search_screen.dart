@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:bible_search/containers/initial_search_components/home_drawer.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/iap.dart';
+import 'package:bible_search/models/user_model.dart';
 import 'package:bible_search/version.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,8 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
   @override
   void initState() {
     _globalKey = GlobalKey();
-    InAppPurchases.init(_purchaseHandler);
+    final userModel = UserModel();
+    InAppPurchases.init(userModel.purchaseHandler);
 
     if (Platform.isAndroid) {
       InAppPurchases.restorePurchases();
@@ -47,13 +49,7 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
     super.initState();
   }
 
-  void _purchaseHandler(String inAppId) {
-    if (inAppId == removeAdsId) {
-      tec.Prefs.shared.setBool(removedAdsPref, true);
-      tec.Prefs.shared.setString(removedAdsExpirePref,
-          DateTime.now().add(const Duration(days: 365)).toString());
-    }
-  }
+ 
 
   @override
   void dispose() {
@@ -139,7 +135,7 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
           return Scaffold(
             key: _globalKey,
             appBar: appBar,
-            drawer: const HomeDrawer(),
+            drawer: HomeDrawer(),
             body: WillPopScope(
                 onWillPop: onWillPop,
                 child: SafeArea(

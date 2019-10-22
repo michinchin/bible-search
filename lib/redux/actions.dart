@@ -51,6 +51,11 @@ class StateChangeAction {
   AppLifecycleState state;
   StateChangeAction({this.state});
 }
+
+class SetNoAdsPurchasedAction {
+  bool noAdsPurchased;
+  SetNoAdsPurchasedAction({this.noAdsPurchased});
+}
 // class ImageResultAction {
 //   final VOTDImage votdImage;
 //   ImageResultAction(this.votdImage);

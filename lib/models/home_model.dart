@@ -2,6 +2,7 @@ import 'package:bible_search/data/translation.dart';
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/labels.dart';
 import 'package:flutter/foundation.dart';
+import 'package:tec_ads/tec_ads.dart';
 
 import 'package:tec_util/tec_util.dart' as tec;
 
@@ -39,8 +40,9 @@ class HomeModel {
   }
 
   /// Should we show ad?
-  bool get shouldShowAd {
-    if (tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)) {
+  bool shouldShowAd({bool hasPurchased}) {
+    if (hasPurchased) {
+      // if(tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false))
       // no ads purchased...
       return false;
     }
@@ -61,6 +63,18 @@ class HomeModel {
     }
 
     return false;
+  }
+
+  void showAd(TecInterstitialAd ad, {int maxTries = 1}) {
+    if (ad != null) {
+      Future.delayed(const Duration(seconds: 1), () async {
+        if (await ad.isLoaded()) {
+          await ad.show();
+        } else if (maxTries > 1) {
+          showAd(ad, maxTries: maxTries - 1);
+        }
+      });
+    }
   }
 
   final languages = <Language>[

@@ -38,10 +38,8 @@ Future<void> main() async {
         state: AppLifecycleState.inactive,
         userAccount: userAccount),
     middleware: middleware,
-  )
-    ..dispatch(InitHomeAction())
-    ..dispatch(InitFilterAction());
-
+  )..dispatch(InitHomeAction());
+  
   return runApp(BibleSearchApp(
     store: store,
   ));
@@ -100,19 +98,19 @@ class _AppBindingObserverState extends State<_AppBindingObserver>
     WidgetsBinding.instance.addObserver(this);
 
     // reset ads...
-    if (tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)) {
-      var dts = tec.Prefs.shared.getString(removedAdsExpirePref);
+    // if (tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)) {
+    //   var dts = tec.Prefs.shared.getString(removedAdsExpirePref);
 
-      // if this is an old app that doesn't have this value set - add a year
-      if (dts == null) {
-        dts = DateTime.now().add(const Duration(days: 365)).toString();
-        tec.Prefs.shared.setString(removedAdsExpirePref, dts);
-      }
+    //   // if this is an old app that doesn't have this value set - add a year
+    //   if (dts == null) {
+    //     dts = DateTime.now().add(const Duration(days: 365)).toString();
+    //     tec.Prefs.shared.setString(removedAdsExpirePref, dts);
+    //   }
 
-      if (DateTime.now().isAfter(DateTime.parse(dts))) {
-        tec.Prefs.shared.setBool(removedAdsPref, false);
-      }
-    }
+    //   if (DateTime.now().isAfter(DateTime.parse(dts))) {
+    //     tec.Prefs.shared.setBool(removedAdsPref, false);
+    //   }
+    // }
 
     super.initState();
   }

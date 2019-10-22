@@ -1,33 +1,54 @@
-import 'dart:io';
-
-import 'package:bible_search/labels.dart';
-import 'package:bible_search/models/iap.dart';
+import 'package:bible_search/models/user_model.dart';
 import 'package:flutter/material.dart';
 
-class InAppPurchaseDialog extends StatefulWidget {
-  @override
-  _InAppPurchaseDialogState createState() => _InAppPurchaseDialogState();
-}
+import 'package:tec_user_account/tec_user_account.dart';
+import 'package:tec_user_account/tec_user_account_ui.dart';
 
-class _InAppPurchaseDialogState extends State<InAppPurchaseDialog> {
-  void _buyProduct() {
-    InAppPurchases.purchase(removeAdsId, consumable: Platform.isAndroid);
-    Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
-  }
-
+class InAppPurchaseDialog extends StatelessWidget {
+  final UserAccount ua;
+  InAppPurchaseDialog(this.ua);
+  final userModel = UserModel();
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       title: const Text(
           'This is an ad supported app. Would you like to pay a small fee to remove ads for a year?'),
       actions: <Widget>[
         FlatButton(
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('No')),
-        FlatButton(onPressed: _buyProduct, child: const Text('Yes')),
+        FlatButton(
+            onPressed: () => userModel.buyProduct(context, ua),
+            child: const Text('Yes')),
       ],
     );
   }
+}
+
+class SignInForPurchasesDialog extends StatelessWidget {
+  final UserAccount ua;
+  const SignInForPurchasesDialog(this.ua);
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: const Text('Sign in to save purchases'),
+        content: const Text(
+            'Sync purchases across devices by signing in or signing up for a TecartaBible account.'),
+        actions: <Widget>[
+          FlatButton(
+            child: const Text('No thanks'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          FlatButton(
+            child: const Text('Okay'),
+            onPressed: () async {
+              await showSignInDlg(context: context, account: ua);
+              Navigator.of(context).pop();
+            },
+          )
+        ],
+      );
 }

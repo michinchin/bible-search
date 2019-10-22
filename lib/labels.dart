@@ -45,7 +45,8 @@ const double minFontSizeDescription = 16;
 const double minFontSizeTitle = 18;
 const int searchHistoryMaxNum = 100;
 const Duration timeBetweenAds = Duration(hours: 1);
-const removeAdsId = 'inapp.7004';
+const removeAdsVolumeId = 7004;
+const removeAdsId = 'inapp.$removeAdsVolumeId';
 
 final prefInterstitialAdId = Platform.isAndroid
     ? 'ca-app-pub-5279916355700267/3575410635'

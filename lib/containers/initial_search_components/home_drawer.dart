@@ -1,18 +1,19 @@
 import 'package:bible_search/containers/iap_dialog.dart';
-import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/app_state.dart';
+import 'package:bible_search/models/user_model.dart';
 import 'package:bible_search/presentation/initial_search_screen.dart';
 import 'package:bible_search/version.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:tec_util/tec_util.dart' as tec;
 import 'package:tec_user_account/tec_user_account_ui.dart';
 
 class HomeDrawer extends StatelessWidget {
   final bool isResultPage;
-  const HomeDrawer({this.isResultPage = false});
+  HomeDrawer({this.isResultPage = false});
+
+  final userModel = UserModel();
 
   @override
   Widget build(BuildContext context) {
@@ -63,14 +64,29 @@ class HomeDrawer extends StatelessWidget {
                     },
                   ),
                 ],
-                if (!tec.Prefs.shared
-                    .getBool(removedAdsPref, defaultValue: false))
+                // if (!tec.Prefs.shared
+                //     .getBool(removedAdsPref, defaultValue: false))
+                if(!vm.store.state.noAdsPurchased)
                   ListTile(
                       leading: Icon(Icons.money_off),
                       title: const Text('Remove Ads'),
-                      onTap: () => showDialog<void>(
-                          context: context,
-                          builder: (c) => InAppPurchaseDialog())),
+                      onTap: () {
+                        final ua = vm.store.state.userAccount;
+                        if (ua.user.userId == 0) {
+                          showDialog<void>(
+                                  context: context,
+                                  builder: (c) => SignInForPurchasesDialog(ua))
+                              .then((_) {
+                            showDialog<void>(
+                                context: context,
+                                builder: (c) => InAppPurchaseDialog(ua));
+                          });
+                        } else {
+                          showDialog<void>(
+                              context: context,
+                              builder: (c) => InAppPurchaseDialog(ua));
+                        }
+                      }),
                 ListTile(
                   leading: Icon(Icons.mobile_screen_share),
                   title: const Text('Share App'),
