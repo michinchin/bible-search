@@ -1,13 +1,18 @@
+
 import 'package:bible_search/models/user_model.dart';
 import 'package:flutter/material.dart';
+
 
 import 'package:tec_user_account/tec_user_account.dart';
 import 'package:tec_user_account/tec_user_account_ui.dart';
 
 class InAppPurchaseDialog extends StatelessWidget {
-  final UserAccount ua;
-  InAppPurchaseDialog(this.ua);
+  final UserAccount user;
+
+  InAppPurchaseDialog({this.user});
+
   final userModel = UserModel();
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -19,7 +24,7 @@ class InAppPurchaseDialog extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('No')),
         FlatButton(
-            onPressed: () => userModel.buyProduct(context, ua),
+            onPressed: () => userModel.buyProduct(context, user),
             child: const Text('Yes')),
       ],
     );

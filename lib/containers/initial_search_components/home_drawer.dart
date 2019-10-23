@@ -66,7 +66,7 @@ class HomeDrawer extends StatelessWidget {
                 ],
                 // if (!tec.Prefs.shared
                 //     .getBool(removedAdsPref, defaultValue: false))
-                if(!vm.store.state.noAdsPurchased)
+                if (!vm.store.state.noAdsPurchased)
                   ListTile(
                       leading: Icon(Icons.money_off),
                       title: const Text('Remove Ads'),
@@ -77,14 +77,14 @@ class HomeDrawer extends StatelessWidget {
                                   context: context,
                                   builder: (c) => SignInForPurchasesDialog(ua))
                               .then((_) {
-                            showDialog<void>(
+                            showDialog<bool>(
                                 context: context,
-                                builder: (c) => InAppPurchaseDialog(ua));
+                                builder: (c) => InAppPurchaseDialog(user: ua));
                           });
                         } else {
-                          showDialog<void>(
+                          showDialog<bool>(
                               context: context,
-                              builder: (c) => InAppPurchaseDialog(ua));
+                              builder: (c) => InAppPurchaseDialog(user: ua));
                         }
                       }),
                 ListTile(
@@ -117,7 +117,9 @@ class HomeDrawer extends StatelessWidget {
                         : 'Sign in'),
                     onTap: () {
                       Navigator.of(context).pop();
-                      showSignInDlg(context: context, account: vm.userAccount);
+                      showSignInDlg(
+                          context: context,
+                          account: vm.userAccount);
                     }),
                 ListTile(
                   leading: Icon(Icons.help_outline),

@@ -49,8 +49,6 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
     super.initState();
   }
 
- 
-
   @override
   void dispose() {
     super.dispose();
@@ -170,6 +168,7 @@ class InitialSearchViewModel {
   Future<void> Function(BuildContext) shareApp;
   void Function(bool isDarkTheme) changeTheme;
   Future<void> Function(BuildContext) featureDiscovery;
+  Future<void> Function() syncUser;
 
   InitialSearchViewModel(this.store) {
     // votdImage = store.state.votdImage;
@@ -183,6 +182,15 @@ class InitialSearchViewModel {
     emailFeedback = _emailFeedback;
     shareApp = _shareApp;
     featureDiscovery = _featureDiscovery;
+    syncUser = _syncUser;
+  }
+
+  Future<void> _syncUser() async {
+    final hasPurchased =
+        await UserModel().checkPurchaseAndSync(store.state.userAccount);
+    print(
+        'Has purchased no ads: $hasPurchased\nUser: ${store.state.userAccount.user.email}');
+    store.dispatch(SetNoAdsPurchasedAction(noAdsPurchased: hasPurchased));
   }
 
   String _ordinalDayAsset() {

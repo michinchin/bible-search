@@ -6,8 +6,6 @@ import 'package:tec_user_account/tec_user_account.dart';
 import 'iap.dart';
 
 class UserModel {
-  final _db = MemoryUserDb();
-
   Future<void> buyProduct(BuildContext context, UserAccount ua) async {
     InAppPurchases.purchase(removeAdsId, consumable: Platform.isAndroid);
     Navigator.popUntil(
@@ -24,27 +22,29 @@ class UserModel {
   }
 
   Future<bool> checkPurchaseAndSync(UserAccount ua) async {
-    await _db.openForUser(ua.user.userId);
-    await ua.syncUserDb<void>(_db, itemTypes: [UserItemType.license],
+    await ua.userDb.openForUser(ua.user.userId);
+    await ua.syncUserDb<void>(
+        itemTypes: [UserItemType.license],
         completion: (ua, i) {
-      print('Completed sync from db: $i');
-      return;
-    });
-    final hasLicense = await _db.hasLicenseToFullVolume(removeAdsVolumeId,
-        now: DateTime.now());
-    _db.close();
+          print('Completed sync from db: $i');
+          return;
+        });
+    final hasLicense =
+        await ua.userDb.hasLicenseToFullVolume(removeAdsVolumeId);
+    ua.userDb.close();
     return hasLicense;
   }
 
   Future<void> addLicense(UserAccount ua) async {
-    await _db.openForUser(ua.user.userId);
-    await _db.addLicenseForFullVolume(removeAdsVolumeId,
+    await ua.userDb.openForUser(ua.user.userId);
+    await ua.userDb.addLicenseForFullVolume(removeAdsVolumeId,
         expires: DateTime.now().add(const Duration(days: 365)));
-    await ua.syncUserDb<void>(_db, itemTypes: [UserItemType.license],
+    await ua.syncUserDb<void>(
+        itemTypes: [UserItemType.license],
         completion: (ua, i) {
-      print('Completed sync to db: $i');
-      return;
-    });
-    _db.close();
+          print('Completed sync to db: $i');
+          return;
+        });
+    ua.userDb.close();
   }
 }

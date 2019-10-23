@@ -29,7 +29,9 @@ Future<void> main() async {
   print('Running on ${di.productName} with ${tec.DeviceInfo.os} ${di.version}');
 
   await FirebaseAdMob.instance.initialize(appId: prefAdmobAppId);
-  final userAccount = UserAccount(kvStore: KVStore());
+  final kvStore = KVStore();
+  final userDb = UserDb(deviceUid: di.deviceUid, kvStore: kvStore);
+  final userAccount = UserAccount(userDb: userDb, kvStore: kvStore);
 
   final store = Store<AppState>(
     reducers,
@@ -39,7 +41,7 @@ Future<void> main() async {
         userAccount: userAccount),
     middleware: middleware,
   )..dispatch(InitHomeAction());
-  
+
   return runApp(BibleSearchApp(
     store: store,
   ));

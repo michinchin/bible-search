@@ -61,13 +61,15 @@ Future<void> searchMiddleware(
   next(action);
 }
 
-void syncMiddleware(
+Future<void> syncMiddleware(
   Store<AppState> store,
   StateChangeAction action,
   NextDispatcher next,
-) {
+) async {
   if (action.state == AppLifecycleState.inactive) {
-    userModel.checkPurchaseAndSync(store.state.userAccount);
+    final hasPurchased =
+        await userModel.checkPurchaseAndSync(store.state.userAccount);
+    store.dispatch(SetNoAdsPurchasedAction(noAdsPurchased: hasPurchased));
   }
   next(action);
 }
@@ -113,24 +115,28 @@ Future<void> initHomeMiddleware(
 
   //sync purchases on init
   // if purchased before user accounts
-  if (tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)) {
-    await userModel.addLicense(store.state.userAccount);
-  } else {
-    final hasPurchased =
-        await userModel.checkPurchaseAndSync(store.state.userAccount);
-    store.dispatch(SetNoAdsPurchasedAction(noAdsPurchased: hasPurchased));
-  }
 
-  await homeModel.loadTheme().then((theme) {
-    store.dispatch(SetThemeAction(isDarkTheme: theme));
-  });
-  await homeModel.loadSearchHistory().then((searchHistory) {
-    store.dispatch(SetSearchHistoryAction(searchQueries: searchHistory));
-  });
+  final theme = await homeModel.loadTheme();
+  final searchHistory = await homeModel.loadSearchHistory();
+
   store
+    ..dispatch(SetThemeAction(isDarkTheme: theme))
+    ..dispatch(SetSearchHistoryAction(searchQueries: searchHistory))
     ..dispatch(SetLanguagesAction(homeModel.languages))
     ..dispatch(SetBookNamesAction(homeModel.bookNames))
     ..dispatch(InitFilterAction());
+
+  if (tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)) {
+    await userModel.addLicense(store.state.userAccount);
+    store.dispatch(SetNoAdsPurchasedAction(noAdsPurchased: true));
+  } else {
+    final hasPurchased =
+        await userModel.checkPurchaseAndSync(store.state.userAccount);
+    print(
+        'Has purchased no ads: $hasPurchased\nUser: ${store.state.userAccount.user.email}');
+    store.dispatch(SetNoAdsPurchasedAction(noAdsPurchased: hasPurchased));
+  }
+
   next(action);
 }
 
