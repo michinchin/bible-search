@@ -21,7 +21,7 @@ class UserModel {
     }
   }
 
-  Future<bool> checkPurchaseAndSync(UserAccount ua) async {
+  Future<void> syncUser(UserAccount ua) async {
     await ua.userDb.openForUser(ua.user.userId);
     await ua.syncUserDb<void>(
         itemTypes: [UserItemType.license],
@@ -29,6 +29,11 @@ class UserModel {
           print('Completed sync from db: $i');
           return;
         });
+    ua.userDb.close();
+  }
+
+  Future<bool> hasPurchase(UserAccount ua) async {
+    await ua.userDb.openForUser(ua.user.userId);
     final hasLicense =
         await ua.userDb.hasLicenseToFullVolume(removeAdsVolumeId);
     ua.userDb.close();

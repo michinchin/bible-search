@@ -1,6 +1,5 @@
 import 'package:bible_search/containers/iap_dialog.dart';
 import 'package:bible_search/models/app_state.dart';
-import 'package:bible_search/models/user_model.dart';
 import 'package:bible_search/presentation/initial_search_screen.dart';
 import 'package:bible_search/version.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
@@ -11,9 +10,7 @@ import 'package:tec_user_account/tec_user_account_ui.dart';
 
 class HomeDrawer extends StatelessWidget {
   final bool isResultPage;
-  HomeDrawer({this.isResultPage = false});
-
-  final userModel = UserModel();
+  const HomeDrawer({this.isResultPage = false});
 
   @override
   Widget build(BuildContext context) {
@@ -66,27 +63,37 @@ class HomeDrawer extends StatelessWidget {
                 ],
                 // if (!tec.Prefs.shared
                 //     .getBool(removedAdsPref, defaultValue: false))
-                if (!vm.store.state.noAdsPurchased)
-                  ListTile(
-                      leading: Icon(Icons.money_off),
-                      title: const Text('Remove Ads'),
-                      onTap: () {
-                        final ua = vm.store.state.userAccount;
-                        if (ua.user.userId == 0) {
-                          showDialog<void>(
-                                  context: context,
-                                  builder: (c) => SignInForPurchasesDialog(ua))
-                              .then((_) {
-                            showDialog<bool>(
-                                context: context,
-                                builder: (c) => InAppPurchaseDialog(user: ua));
-                          });
-                        } else {
-                          showDialog<bool>(
-                              context: context,
-                              builder: (c) => InAppPurchaseDialog(user: ua));
-                        }
-                      }),
+                FutureBuilder<bool>(
+                    future: vm.hasPurchased,
+                    builder: (c, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done &&
+                          snapshot.hasData) {
+                        return ListTile(
+                            leading: Icon(Icons.money_off),
+                            title: const Text('Remove Ads'),
+                            onTap: () {
+                              final ua = vm.store.state.userAccount;
+                              if (ua.user.userId == 0) {
+                                showDialog<void>(
+                                    context: context,
+                                    builder: (c) =>
+                                        SignInForPurchasesDialog(ua)).then((_) {
+                                  showDialog<bool>(
+                                      context: context,
+                                      builder: (c) =>
+                                          InAppPurchaseDialog(user: ua));
+                                });
+                              } else {
+                                showDialog<bool>(
+                                    context: context,
+                                    builder: (c) =>
+                                        InAppPurchaseDialog(user: ua));
+                              }
+                            });
+                      }
+                      return Container();
+                    }),
+
                 ListTile(
                   leading: Icon(Icons.mobile_screen_share),
                   title: const Text('Share App'),
@@ -117,9 +124,7 @@ class HomeDrawer extends StatelessWidget {
                         : 'Sign in'),
                     onTap: () {
                       Navigator.of(context).pop();
-                      showSignInDlg(
-                          context: context,
-                          account: vm.userAccount);
+                      showSignInDlg(context: context, account: vm.userAccount);
                     }),
                 ListTile(
                   leading: Icon(Icons.help_outline),

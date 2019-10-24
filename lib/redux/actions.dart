@@ -52,10 +52,10 @@ class StateChangeAction {
   StateChangeAction({this.state});
 }
 
-class SetNoAdsPurchasedAction {
-  bool noAdsPurchased;
-  SetNoAdsPurchasedAction({this.noAdsPurchased});
-}
+// class SetNoAdsPurchasedAction {
+//   bool noAdsPurchased;
+//   SetNoAdsPurchasedAction({this.noAdsPurchased});
+// }
 // class ImageResultAction {
 //   final VOTDImage votdImage;
 //   ImageResultAction(this.votdImage);

@@ -25,8 +25,9 @@ Future<void> searchMiddleware(
   NextDispatcher next,
 ) async {
   TecInterstitialAd ad;
-
-  if (homeModel.shouldShowAd(hasPurchased: store.state.noAdsPurchased)) {
+  final hasPurchasedNoAds =
+      await userModel.hasPurchase(store.state.userAccount);
+  if (homeModel.shouldShowAd(hasPurchased: hasPurchasedNoAds)) {
     ad = TecInterstitialAd(adUnitId: prefInterstitialAdId);
   }
 
@@ -67,9 +68,7 @@ Future<void> syncMiddleware(
   NextDispatcher next,
 ) async {
   if (action.state == AppLifecycleState.inactive) {
-    final hasPurchased =
-        await userModel.checkPurchaseAndSync(store.state.userAccount);
-    store.dispatch(SetNoAdsPurchasedAction(noAdsPurchased: hasPurchased));
+    await userModel.syncUser(store.state.userAccount);
   }
   next(action);
 }
@@ -113,9 +112,6 @@ Future<void> initHomeMiddleware(
   //   store.dispatch(ImageResultAction(VOTDImage(url: 'assets/appimage.jpg')));
   // });
 
-  //sync purchases on init
-  // if purchased before user accounts
-
   final theme = await homeModel.loadTheme();
   final searchHistory = await homeModel.loadSearchHistory();
 
@@ -126,15 +122,13 @@ Future<void> initHomeMiddleware(
     ..dispatch(SetBookNamesAction(homeModel.bookNames))
     ..dispatch(InitFilterAction());
 
+  //if purchased before user accounts, update user with license
   if (tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)) {
     await userModel.addLicense(store.state.userAccount);
-    store.dispatch(SetNoAdsPurchasedAction(noAdsPurchased: true));
+    await tec.Prefs.shared.setBool(removedAdsPref, false);
+  //sync purchases on init
   } else {
-    final hasPurchased =
-        await userModel.checkPurchaseAndSync(store.state.userAccount);
-    print(
-        'Has purchased no ads: $hasPurchased\nUser: ${store.state.userAccount.user.email}');
-    store.dispatch(SetNoAdsPurchasedAction(noAdsPurchased: hasPurchased));
+    await userModel.syncUser(store.state.userAccount);
   }
 
   next(action);

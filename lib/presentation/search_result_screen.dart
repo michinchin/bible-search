@@ -35,38 +35,10 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         tec.Prefs.shared.getInt(numSearchesPref, defaultValue: 0);
 
     if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true)) {
-      WidgetsBinding.instance.addPostFrameCallback(
-          (duration) => Future.delayed(const Duration(seconds: 1), () {
-                FeatureDiscovery.discoverFeatures(
-                  context,
-                  <String>{'selection_mode', 'filter', 'context', 'open_in_TB'},
-                );
-              }));
+      _showFeatureDiscovery();
       tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
     } else if (numSearches == 2) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDialog<void>(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)),
-                title: const Text(
-                  'This is an ad supported app.',
-                  textAlign: TextAlign.center,
-                ),
-                content: const Text(
-                    'You will occasionally see an ad. You may remove ads '
-                    'from the menu.\n\nThanks for your support!'),
-                actions: <Widget>[
-                  FlatButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Ok')),
-                ],
-              );
-            });
-      });
-
+      _showAdSupportedDialog();
       tec.Prefs.shared
           .setString(lastTimeAdShownPref, DateTime.now().toIso8601String());
     }
@@ -74,6 +46,41 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     tec.Prefs.shared.setInt(numSearchesPref, numSearches + 1);
 
     super.initState();
+  }
+
+  void _showFeatureDiscovery() {
+    WidgetsBinding.instance.addPostFrameCallback(
+        (duration) => Future.delayed(const Duration(seconds: 1), () {
+              FeatureDiscovery.discoverFeatures(
+                context,
+                <String>{'selection_mode', 'filter', 'context', 'open_in_TB'},
+              );
+            }));
+  }
+
+  void _showAdSupportedDialog() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      showDialog<void>(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              title: const Text(
+                'This is an ad supported app.',
+                textAlign: TextAlign.center,
+              ),
+              content: const Text(
+                  'You will occasionally see an ad. You may remove ads '
+                  'from the menu.\n\nThanks for your support!'),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Ok')),
+              ],
+            );
+          });
+    });
   }
 
   void _showSearch(ResultsViewModel vm) {
