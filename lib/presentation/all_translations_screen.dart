@@ -60,9 +60,9 @@ class AllTranslationsScreen extends StatelessWidget {
                                     '${res.ref} ${allResults[index].a}\n${allResults[index].text}';
                                 return _AllResultCard(
                                   title:
-                                      '\n ${vm.store.state.translations.getFullName(allResults[index].id)}\n',
+                                      '${vm.store.state.translations.getFullName(allResults[index].id)}\n',
                                   subtitle: model.formatWords(
-                                      '${allResults[index].text}\n', keywords),
+                                      '${allResults[index].text}', keywords),
                                   copy: () => model.copyPressed(
                                       text: text, context: context),
                                   share: () => Share.share(text),
@@ -93,44 +93,61 @@ class _AllResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        elevation: 2.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        child: Container(
-          padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              AutoSizeText(
-                title,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-                minFontSize: minFontSizeTitle,
-              ),
-              AutoSizeText.rich(
-                TextSpan(
-                    style: Theme.of(context).textTheme.body1,
-                    children: subtitle),
-                minFontSize: minFontSizeDescription,
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ButtonBar(mainAxisSize: MainAxisSize.min, children: [
-                  IconButton(
-                    onPressed: copy,
-                    icon: Icon(Icons.content_copy),
-                  ),
-                  IconButton(onPressed: share, icon: Icon(Icons.share)),
-                  IconButton(
-                    onPressed: openInTB,
-                    icon: Icon(Icons.exit_to_app),
-                  )
-                ]),
-              ),
-            ],
-          ),
-        ));
+    final card = Container(
+      margin: const EdgeInsets.fromLTRB(8,8,8,8),
+      child: AutoSizeText.rich(
+        TextSpan(children: [
+          TextSpan(style: TextStyle(fontWeight: FontWeight.bold), text: title),
+          TextSpan(
+              style: Theme.of(context).textTheme.body1, children: subtitle),
+        ]),
+        minFontSize: minFontSizeDescription,
+      ),
+    );
+
+    return Container(
+        margin: const EdgeInsets.all(8.0),
+        child: InkWell(
+            borderRadius: BorderRadius.circular(15.0),
+            child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Colors.black12
+                          : Colors.black26,
+                      offset: const Offset(0, 10),
+                      blurRadius: 8,
+                      spreadRadius: 1,
+                    )
+                  ],
+                ),
+                child: ExpansionTile(
+                  title: card,
+                  children: <Widget>[
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ButtonBar(
+                          alignment: MainAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: copy,
+                              icon: Icon(Icons.content_copy),
+                            ),
+                            IconButton(
+                                onPressed: share, icon: Icon(Icons.share)),
+                            IconButton(
+                              onPressed: openInTB,
+                              icon: Icon(Icons.exit_to_app),
+                            )
+                          ]),
+                    ),
+                  ],
+                )))
+        );
   }
 }
 
