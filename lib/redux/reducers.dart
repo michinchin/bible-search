@@ -18,7 +18,6 @@ final reducers = combineReducers<AppState>([
   // TypedReducer<AppState, ImageResultAction>(_onImageLoaded),
   TypedReducer<AppState, SetThemeAction>(_onThemeSet),
   TypedReducer<AppState, SetSearchHistoryAction>(_onSearchHistorySet),
-  // TypedReducer<AppState, SetNoAdsPurchasedAction>(_onNoAdsPurchasedSet),
 
   /// Init Filter Reducers
   TypedReducer<AppState, SetTranslationsAction>(_onTranslationsSet),
@@ -101,10 +100,7 @@ AppState _onThemeSet(AppState state, SetThemeAction action) {
 AppState _onSearchHistorySet(AppState state, SetSearchHistoryAction action) =>
     state.copyWith(
         searchHistory: action.searchQueries, searchQuery: action.searchQuery);
-
-// AppState _onNoAdsPurchasedSet(AppState state, SetNoAdsPurchasedAction action) =>
-//     state.copyWith(noAdsPurchased: action.noAdsPurchased);
-
+        
 AppState _onLanguagesSet(AppState state, SetLanguagesAction action) =>
     state.copyWith(languages: action.languages);
 
