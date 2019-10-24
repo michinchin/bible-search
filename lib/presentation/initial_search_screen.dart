@@ -133,7 +133,7 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
           return Scaffold(
             key: _globalKey,
             appBar: appBar,
-            drawer: HomeDrawer(),
+            drawer: const HomeDrawer(),
             body: WillPopScope(
                 onWillPop: onWillPop,
                 child: SafeArea(

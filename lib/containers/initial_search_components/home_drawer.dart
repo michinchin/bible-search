@@ -68,28 +68,32 @@ class HomeDrawer extends StatelessWidget {
                     builder: (c, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done &&
                           snapshot.hasData) {
-                        return ListTile(
-                            leading: Icon(Icons.money_off),
-                            title: const Text('Remove Ads'),
-                            onTap: () {
-                              final ua = vm.store.state.userAccount;
-                              if (ua.user.userId == 0) {
-                                showDialog<void>(
-                                    context: context,
-                                    builder: (c) =>
-                                        SignInForPurchasesDialog(ua)).then((_) {
+                        if (!snapshot.data) {
+                          return ListTile(
+                              leading: Icon(Icons.money_off),
+                              title: const Text('Remove Ads'),
+                              onTap: () {
+                                final ua = vm.store.state.userAccount;
+                                if (ua.user.userId == 0) {
+                                  showDialog<void>(
+                                          context: context,
+                                          builder: (c) =>
+                                              SignInForPurchasesDialog(ua))
+                                      .then((_) {
+                                    showDialog<bool>(
+                                        context: context,
+                                        builder: (c) =>
+                                            InAppPurchaseDialog(user: ua));
+                                  });
+                                } else {
                                   showDialog<bool>(
                                       context: context,
                                       builder: (c) =>
                                           InAppPurchaseDialog(user: ua));
-                                });
-                              } else {
-                                showDialog<bool>(
-                                    context: context,
-                                    builder: (c) =>
-                                        InAppPurchaseDialog(user: ua));
-                              }
-                            });
+                                }
+                              });
+                        }
+                        return Container();
                       }
                       return Container();
                     }),
