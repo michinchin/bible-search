@@ -7,6 +7,7 @@ import 'package:bible_search/models/user_model.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/models/app_state.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:redux/redux.dart';
 import 'package:bible_search/models/home_model.dart';
@@ -23,7 +24,7 @@ Future<void> searchMiddleware(
   NextDispatcher next,
 ) async {
   TecInterstitialAd ad;
-  
+
   final hasPurchasedNoAds =
       await UserModel.hasPurchase(store.state.userAccount);
   if (homeModel.shouldShowAd(hasPurchased: hasPurchasedNoAds)) {
@@ -147,6 +148,20 @@ void updateSearchesMiddleware(
   next(action);
 }
 
+void syncMiddleware(
+  Store<AppState> store,
+  StateChangeAction action,
+  NextDispatcher next,
+) {
+  if (store.state.userAccount.isSignedIn &&
+      action.state == AppLifecycleState.paused) {
+    store.state.userAccount.syncUserDb<void>(onlyPostChanges: true);
+  } else if (action.state == AppLifecycleState.resumed) {
+    store.state.userAccount.syncUserDb<void>();
+  }
+  next(action);
+}
+
 Future<void> initFilterMiddleware(
   Store<AppState> store,
   InitFilterAction action,
@@ -247,4 +262,5 @@ final List<Middleware<AppState>> middleware = [
       updateTranslationsMiddleware),
   TypedMiddleware<AppState, SelectAction>(selectionMiddleware),
   TypedMiddleware<AppState, ContextAction>(contextMiddleware),
+  TypedMiddleware<AppState, StateChangeAction>(syncMiddleware),
 ];
