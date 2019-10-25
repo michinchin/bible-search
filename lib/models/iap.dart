@@ -1,14 +1,17 @@
 import 'dart:async';
 
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:tec_user_account/tec_user_account.dart';
 
 class InAppPurchases {
   static InAppPurchases _iap;
   StreamSubscription<List<PurchaseDetails>> _subscription;
   Function _purchaseHandler;
+  UserAccount _userAccount;
 
-  static void init(Function purchaseHandler) {
+  static void init(Function purchaseHandler, UserAccount ua) {
     _iap ??= InAppPurchases();
+    _iap._userAccount = ua;
     _iap._purchaseHandler = purchaseHandler;
   }
 
@@ -105,7 +108,7 @@ class InAppPurchases {
             InAppPurchaseConnection.instance.completePurchase(details);
           }
 
-          _purchaseHandler(details.productID);
+          _purchaseHandler(details.productID, _userAccount);
         }
       }
     }

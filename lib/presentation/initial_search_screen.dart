@@ -3,8 +3,6 @@ import 'dart:io';
 
 import 'package:bible_search/containers/initial_search_components/home_drawer.dart';
 import 'package:bible_search/labels.dart';
-import 'package:bible_search/models/iap.dart';
-import 'package:bible_search/models/user_model.dart';
 import 'package:bible_search/version.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
@@ -39,13 +37,6 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
   @override
   void initState() {
     _globalKey = GlobalKey();
-    final userModel = UserModel();
-    InAppPurchases.init(userModel.purchaseHandler);
-
-    if (Platform.isAndroid) {
-      InAppPurchases.restorePurchases();
-    }
-
     super.initState();
   }
 
@@ -162,7 +153,6 @@ class InitialSearchViewModel {
   String votdString;
   List<String> searchHistory;
   bool isDarkTheme;
-  Future<bool> hasPurchased;
   void Function(String term) onSearchEntered;
   void Function(List<String> searchQueries) updateSearchHistory;
   Future<void> Function(BuildContext) emailFeedback;
@@ -182,11 +172,6 @@ class InitialSearchViewModel {
     emailFeedback = _emailFeedback;
     shareApp = _shareApp;
     featureDiscovery = _featureDiscovery;
-    hasPurchased = _hasPurchased();
-  }
-
-  Future<bool> _hasPurchased() async{
-    return UserModel().hasPurchase(store.state.userAccount);
   }
 
   String _ordinalDayAsset() {

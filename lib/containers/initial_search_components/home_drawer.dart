@@ -1,5 +1,6 @@
 import 'package:bible_search/containers/iap_dialog.dart';
 import 'package:bible_search/models/app_state.dart';
+import 'package:bible_search/models/user_model.dart';
 import 'package:bible_search/presentation/initial_search_screen.dart';
 import 'package:bible_search/version.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
@@ -64,7 +65,7 @@ class HomeDrawer extends StatelessWidget {
                 // if (!tec.Prefs.shared
                 //     .getBool(removedAdsPref, defaultValue: false))
                 FutureBuilder<bool>(
-                    future: vm.hasPurchased,
+                    future: UserModel.hasPurchase(vm.userAccount),
                     builder: (c, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done &&
                           snapshot.hasData) {
