@@ -35,8 +35,10 @@ Future<void> main() async {
 
   await FirebaseAdMob.instance.initialize(appId: prefAdmobAppId);
   final kvStore = KVStore();
-  final userAccount =
-      await UserAccount.init(kvStore: kvStore, deviceUid: di.deviceUid);
+  // ignore: prefer_interpolation_to_compose_strings
+  final appPrefix = (Platform.isAndroid ? 'PLAY_' : 'IOS_') + 'BibleSearch';
+  final userAccount = 
+      await UserAccount.init(kvStore: kvStore, deviceUid: di.deviceUid, appPrefix: appPrefix);
 
   final store = Store<AppState>(
     reducers,
