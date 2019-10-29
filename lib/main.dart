@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:bible_search/models/app_state.dart';
 import 'package:bible_search/presentation/initial_search_screen.dart';
 import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:bible_search/labels.dart';
 import 'package:feature_discovery/feature_discovery.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
@@ -18,6 +21,9 @@ import 'package:tec_user_account/tec_user_account.dart';
 
 import 'package:tec_util/tec_util.dart' as tec;
 
+import 'models/iap.dart';
+import 'models/user_model.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -30,8 +36,10 @@ Future<void> main() async {
 
   await FirebaseAdMob.instance.initialize(appId: prefAdmobAppId);
   final kvStore = KVStore();
-  final userDb = UserDb(deviceUid: di.deviceUid, kvStore: kvStore);
-  final userAccount = UserAccount(userDb: userDb, kvStore: kvStore);
+  // ignore: prefer_interpolation_to_compose_strings
+  final appPrefix = (Platform.isAndroid ? 'PLAY_' : 'IOS_') + 'BibleSearch';
+  final userAccount = await UserAccount.init(
+      kvStore: kvStore, deviceUid: di.deviceUid, appPrefix: appPrefix);
 
   final store = Store<AppState>(
     reducers,
@@ -41,6 +49,12 @@ Future<void> main() async {
         userAccount: userAccount),
     middleware: middleware,
   )..dispatch(InitHomeAction());
+
+  // Initialize in app purchases
+  InAppPurchases.init(UserModel.purchaseHandler, userAccount);
+  if (Platform.isAndroid) {
+    InAppPurchases.restorePurchases();
+  }
 
   return runApp(BibleSearchApp(
     store: store,

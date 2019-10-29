@@ -46,7 +46,7 @@ class AllTranslationsScreen extends StatelessWidget {
                     title: Text(res.ref),
                   ),
                   body: Container(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.only(top: 8),
                       child: allResults.isEmpty
                           ? snapshot.connectionState == ConnectionState.done
                               ? NoResultsView(hasError: snapshot.hasError)
@@ -55,14 +55,15 @@ class AllTranslationsScreen extends StatelessWidget {
                                 )
                           : ListView.builder(
                               itemCount: allResults.length,
+                              // separatorBuilder: (c, i) => const Divider(),
                               itemBuilder: (context, index) {
                                 final text =
                                     '${res.ref} ${allResults[index].a}\n${allResults[index].text}';
                                 return _AllResultCard(
                                   title:
-                                      '\n ${vm.store.state.translations.getFullName(allResults[index].id)}\n',
+                                      '${vm.store.state.translations.getFullName(allResults[index].id)}\n',
                                   subtitle: model.formatWords(
-                                      '${allResults[index].text}\n', keywords),
+                                      '${allResults[index].text}', keywords),
                                   copy: () => model.copyPressed(
                                       text: text, context: context),
                                   share: () => Share.share(text),
@@ -93,44 +94,48 @@ class _AllResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        elevation: 2.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: ExpansionTile(
+        backgroundColor: Colors.transparent,
+        title: AutoSizeText.rich(
+          TextSpan(children: [
+            TextSpan(
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).accentColor),
+                text: title),
+            TextSpan(
+                style: Theme.of(context).textTheme.body1, children: subtitle),
+          ]),
+          minFontSize: minFontSizeDescription,
         ),
-        child: Container(
-          padding: const EdgeInsets.only(left: 15, right: 15, bottom: 15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              AutoSizeText(
-                title,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-                minFontSize: minFontSizeTitle,
-              ),
-              AutoSizeText.rich(
-                TextSpan(
-                    style: Theme.of(context).textTheme.body1,
-                    children: subtitle),
-                minFontSize: minFontSizeDescription,
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ButtonBar(mainAxisSize: MainAxisSize.min, children: [
+        children: <Widget>[
+          Align(
+            alignment: Alignment.centerRight,
+            child: ButtonBar(
+                alignment: MainAxisAlignment.end,
+                layoutBehavior: ButtonBarLayoutBehavior.constrained,
+                children: [
                   IconButton(
+                    tooltip: 'Copy',
                     onPressed: copy,
                     icon: Icon(Icons.content_copy),
                   ),
-                  IconButton(onPressed: share, icon: Icon(Icons.share)),
                   IconButton(
+                      tooltip: 'Share',
+                      onPressed: share,
+                      icon: Icon(Icons.share)),
+                  IconButton(
+                    tooltip: 'Open in TecartaBible',
                     onPressed: openInTB,
                     icon: Icon(Icons.exit_to_app),
                   )
                 ]),
-              ),
-            ],
           ),
-        ));
+        ],
+      ),
+    );
   }
 }
 

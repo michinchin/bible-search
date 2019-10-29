@@ -38,6 +38,7 @@ class TranslationBookFilterScreen extends StatelessWidget {
                   tabs: tabs,
                 ),
                 leading: IconButton(
+                  tooltip: 'Close Filter Page',
                   onPressed: () {
                     Navigator.pop(context);
                   },

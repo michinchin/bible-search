@@ -7,7 +7,7 @@ import 'package:bible_search/models/user_model.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/models/app_state.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:redux/redux.dart';
 import 'package:bible_search/models/home_model.dart';
@@ -17,7 +17,6 @@ import 'package:tec_util/tec_util.dart' as tec;
 
 final filterModel = FilterModel();
 final homeModel = HomeModel();
-final userModel = UserModel();
 
 Future<void> searchMiddleware(
   Store<AppState> store,
@@ -25,8 +24,9 @@ Future<void> searchMiddleware(
   NextDispatcher next,
 ) async {
   TecInterstitialAd ad;
+
   final hasPurchasedNoAds =
-      await userModel.hasPurchase(store.state.userAccount);
+      await UserModel.hasPurchase(store.state.userAccount);
   if (homeModel.shouldShowAd(hasPurchased: hasPurchasedNoAds)) {
     ad = TecInterstitialAd(adUnitId: prefInterstitialAdId);
   }
@@ -59,17 +59,6 @@ Future<void> searchMiddleware(
 
   homeModel.showAd(ad, maxTries: 10);
 
-  next(action);
-}
-
-Future<void> syncMiddleware(
-  Store<AppState> store,
-  StateChangeAction action,
-  NextDispatcher next,
-) async {
-  if (action.state == AppLifecycleState.inactive) {
-    await userModel.syncUser(store.state.userAccount);
-  }
   next(action);
 }
 
@@ -122,13 +111,10 @@ Future<void> initHomeMiddleware(
     ..dispatch(SetBookNamesAction(homeModel.bookNames))
     ..dispatch(InitFilterAction());
 
-  //if purchased before user accounts, update user with license
+  // if purchased before user accounts, update user with license
   if (tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false)) {
-    await userModel.addLicense(store.state.userAccount);
+    await UserModel.addLicense(store.state.userAccount);
     await tec.Prefs.shared.setBool(removedAdsPref, false);
-  //sync purchases on init
-  } else {
-    await userModel.syncUser(store.state.userAccount);
   }
 
   next(action);
@@ -159,6 +145,20 @@ void updateSearchesMiddleware(
   NextDispatcher next,
 ) {
   homeModel.updateSearchHistory(action.searchQueries);
+  next(action);
+}
+
+void syncMiddleware(
+  Store<AppState> store,
+  StateChangeAction action,
+  NextDispatcher next,
+) {
+  if (store.state.userAccount.isSignedIn &&
+      action.state == AppLifecycleState.paused) {
+    store.state.userAccount.syncUserDb<void>(onlyPostChanges: true);
+  } else if (action.state == AppLifecycleState.resumed) {
+    store.state.userAccount.syncUserDb<void>();
+  }
   next(action);
 }
 

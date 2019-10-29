@@ -33,84 +33,92 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-        padding: widget.orientation == Orientation.portrait
-            ? EdgeInsets.only(
-                left: 20.0,
-                right: 20.0,
-                top: widget.imageHeight - (widget.height / 2))
-            : EdgeInsets.only(
-                left: 40.0,
-                right: 40.0,
-                top: widget.imageHeight - (widget.height / 2)),
-        child: Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(widget.height),
-            boxShadow: [
-              BoxShadow(
-                color: Theme.of(context).brightness == Brightness.light
-                    ? Colors.black12
-                    : Colors.black26,
-                blurRadius: 5.0,
-                offset: const Offset(
-                  0.0,
-                  2.0,
+    return Theme(
+      data: Theme.of(context).brightness == Brightness.dark
+          ? ThemeData(
+              accentColor: Colors.tealAccent.withOpacity(0.5),
+              brightness: Brightness.dark)
+          : Theme.of(context),
+      child: Padding(
+          padding: widget.orientation == Orientation.portrait
+              ? EdgeInsets.only(
+                  left: 20.0,
+                  right: 20.0,
+                  top: widget.imageHeight - (widget.height / 2))
+              : EdgeInsets.only(
+                  left: 40.0,
+                  right: 40.0,
+                  top: widget.imageHeight - (widget.height / 2)),
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(widget.height),
+              boxShadow: [
+                BoxShadow(
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.black12
+                      : Colors.black26,
+                  blurRadius: 5.0,
+                  offset: const Offset(
+                    0.0,
+                    2.0,
+                  ),
+                )
+              ],
+            ),
+            height: widget.height,
+            child: Stack(children: [
+              Center(
+                child: TextField(
+                  onChanged: (s) {
+                    setState(() {}); //for clear button to show
+                  },
+                  textAlign: TextAlign.left,
+                  decoration: InputDecoration(
+                    contentPadding:
+                        const EdgeInsets.only(left: 40.0, right: 40.0),
+                    hintText: 'Enter search terms',
+                    border: InputBorder.none,
+                    hintStyle: TextStyle(color: Colors.grey),
+                  ),
+                  controller: controller,
+                  onSubmitted: (s) {
+                    widget.updateSearch(s);
+                    Navigator.of(context).pushNamed('/results');
+                    controller.clear();
+                  },
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: controller.text.isNotEmpty
+                    ? IconButton(
+                        tooltip: 'Clear Text',
+                        splashColor: Colors.transparent,
+                        icon: const Icon(
+                          CupertinoIcons.clear_circled,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            controller.clear();
+                          });
+                        },
+                      )
+                    : null,
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                  splashColor: Colors.transparent,
+                  icon: Icon(
+                    CupertinoIcons.search,
+                  ),
+                  onPressed: () {},
                 ),
               )
-            ],
-          ),
-          height: widget.height,
-          child: Stack(children: [
-            Center(
-              child: TextField(
-                onChanged: (s) {
-                  setState(() {}); //for clear button to show
-                },
-                textAlign: TextAlign.left,
-                decoration: InputDecoration(
-                  contentPadding:
-                      const EdgeInsets.only(left: 40.0, right: 40.0),
-                  hintText: 'Enter search terms',
-                  border: InputBorder.none,
-                  hintStyle: TextStyle(color: Colors.grey),
-                ),
-                controller: controller,
-                onSubmitted: (s) {
-                  widget.updateSearch(s);
-                  Navigator.of(context).pushNamed('/results');
-                  controller.clear();
-                },
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: controller.text.isNotEmpty
-                  ? IconButton(
-                      splashColor: Colors.transparent,
-                      icon: const Icon(
-                        CupertinoIcons.clear_circled,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          controller.clear();
-                        });
-                      },
-                    )
-                  : null,
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: IconButton(
-                splashColor: Colors.transparent,
-                icon: Icon(
-                  CupertinoIcons.search,
-                ),
-                onPressed: () {},
-              ),
-            )
-          ]),
-        ));
+            ]),
+          )),
+    );
   }
 }

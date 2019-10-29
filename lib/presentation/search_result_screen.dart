@@ -106,7 +106,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         builder: (context, vm) {
           return Scaffold(
               resizeToAvoidBottomInset: false,
-              drawer: HomeDrawer(
+              drawer: const HomeDrawer(
                 isResultPage: true,
               ),
               appBar: SearchAppBar(

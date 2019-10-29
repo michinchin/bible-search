@@ -35,15 +35,18 @@ class SearchHistoryList extends StatelessWidget {
                       child: Icon(Icons.delete)),
                   color: Colors.red,
                 ),
-                child: ListTile(
-                  title: Text(
-                    '${words[index]}',
+                child: Semantics(
+                  label: 'Search for',
+                  child: ListTile(
+                    title: Text(
+                      '${words[index]}',
+                    ),
+                    leading: Icon(Icons.access_time),
+                    onTap: () {
+                      onSearchEntered(words[index]);
+                      Navigator.of(context).pushNamed('/results');
+                    },
                   ),
-                  leading: Icon(Icons.access_time),
-                  onTap: () {
-                    onSearchEntered(words[index]);
-                    Navigator.of(context).pushNamed('/results');
-                  },
                 ),
               ),
             );
