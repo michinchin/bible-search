@@ -103,10 +103,8 @@ class _SearchAppBarState extends State<SearchAppBar> {
                 backgroundColor: Colors.transparent,
                 bottomOpacity: 0.0,
                 toolbarOpacity: 0.0,
-                leading: BackButton(
-                  onPressed: () {},
-                  color: Colors.transparent,
-                )),
+                leading: null
+                ),
             SafeArea(
               minimum: const EdgeInsets.only(left: 20.0, right: 20.0),
               child: Container(
@@ -129,6 +127,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                 child: ListTile(
                   contentPadding: const EdgeInsets.all(0),
                   leading: IconButton(
+                    tooltip: 'Menu',
                     icon: Icon(Icons.menu),
                     onPressed: () => Scaffold.of(context).openDrawer(),
                   ),
@@ -137,6 +136,8 @@ class _SearchAppBarState extends State<SearchAppBar> {
                       child: AutoSizeText(
                         widget.model.searchQuery ?? 'Search Here',
                         minFontSize: minFontSizeDescription,
+                        semanticsLabel:
+                            'Current Search Text is ${widget.model.searchQuery}',
                       )),
                   trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                     DescribedFeatureOverlay(
@@ -150,6 +151,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                       description: const Text(
                           'Tap here to enter selection mode. Select multiple scripture verses to copy or share!'),
                       child: IconButton(
+                        tooltip: 'Selection Mode',
                         icon: Icon(Icons.check_circle_outline),
                         onPressed: _changeToSelectionMode,
                       ),
@@ -165,6 +167,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                       description: const Text(
                           'Check out the filter page! Filter search results by translation and books of the Bible'),
                       child: IconButton(
+                        tooltip: 'Filter',
                         icon: Icon(Icons.filter_list),
                         onPressed: () => _navigateToFilter(context),
                       ),
@@ -177,11 +180,13 @@ class _SearchAppBarState extends State<SearchAppBar> {
         : AppBar(
             title: AutoSizeText('${widget.model.numSelected}'),
             leading: IconButton(
+              tooltip: 'Exit Selection Mode',
               icon: Icon(Icons.close),
               onPressed: _changeToSelectionMode,
             ),
             actions: <Widget>[
               IconButton(
+                  tooltip: 'Copy Selected',
                   icon: Icon(Icons.content_copy),
                   onPressed: () async {
                     // final hasfinishedCopy =
@@ -196,6 +201,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                     // }
                   }),
               IconButton(
+                  tooltip: 'Share Selected',
                   icon: Icon(Icons.share),
                   onPressed: () async {
                     // final hasFinishedShare =

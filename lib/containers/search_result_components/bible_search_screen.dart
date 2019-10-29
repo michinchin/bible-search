@@ -26,6 +26,7 @@ class BibleSearchScreen extends BibleSearchDelegate<String> {
     return query.isNotEmpty
         ? [
             IconButton(
+              tooltip: 'Clear text',
               icon: Icon(Icons.close),
               onPressed: () {
                 query = '';

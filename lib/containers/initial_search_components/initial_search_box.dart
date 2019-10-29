@@ -94,6 +94,7 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
                 alignment: Alignment.centerRight,
                 child: controller.text.isNotEmpty
                     ? IconButton(
+                        tooltip: 'Clear Text',
                         splashColor: Colors.transparent,
                         icon: const Icon(
                           CupertinoIcons.clear_circled,

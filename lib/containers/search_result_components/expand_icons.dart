@@ -88,6 +88,7 @@ class _CardIconsState extends State<CardIcons> {
                         child: widget.model.formattedText,
                       )),
                   IconButton(
+                    tooltip: 'Collapse Card',
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     alignment: Alignment.bottomRight,
@@ -121,7 +122,9 @@ class _CardIconsState extends State<CardIcons> {
                     child: EnsureVisible(
                       key: ensureVisibleGlobalKey,
                       child: IconButton(
-                        tooltip: 'Context',
+                        tooltip: widget.res.contextExpanded
+                            ? 'Collapse Context'
+                            : 'Expand Context',
                         color: widget.model.iconColor,
                         icon: RotatedBox(
                           quarterTurns: 1,
@@ -137,10 +140,12 @@ class _CardIconsState extends State<CardIcons> {
                 ButtonBar(
                   children: <Widget>[
                     IconButton(
+                        tooltip: 'Copy',
                         color: widget.model.iconColor,
                         icon: Icon(Icons.content_copy),
                         onPressed: _onCopy),
                     IconButton(
+                        tooltip: 'Share',
                         color: widget.model.iconColor,
                         icon: Icon(Icons.share),
                         onPressed: _onShare),
@@ -152,6 +157,7 @@ class _CardIconsState extends State<CardIcons> {
                           'take notes, explore maps, listen to audio and get help with verse explanations!'),
                       tapTarget: Icon(Icons.exit_to_app, color: Colors.black),
                       child: IconButton(
+                          tooltip: 'Open in TecartaBible',
                           color: widget.model.iconColor,
                           icon: Icon(Icons.exit_to_app),
                           onPressed: _openInTB),
@@ -177,6 +183,7 @@ class _CardIconsState extends State<CardIcons> {
                       child: widget.model.formattedText),
                 ),
                 IconButton(
+                  tooltip: 'Expand Card',
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                   alignment: Alignment.bottomRight,
@@ -213,32 +220,36 @@ class __TranslationSelectorState extends State<_TranslationSelector> {
   Widget build(BuildContext context) {
     final allButton = ButtonTheme(
         minWidth: 50,
-        child: FlatButton(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          child: const Text('ALL'),
-          onPressed: () {
-            Navigator.of(context).push<void>(MaterialPageRoute(
-                builder: (context) {
-                  return AllTranslationsScreen(
-                    res: widget.res,
-                    bcv: <int>[
-                      widget.res.bookId,
-                      widget.res.chapterId,
-                      widget.res.verseId
-                    ],
-                    model: SearchModel(),
-                    keywords: widget.model.keywords,
-                  );
-                },
-                fullscreenDialog: true));
-          },
-          textColor: widget.res.isSelected
-              ? widget.model.colorScheme
-              : widget.model.oppColorScheme,
-          splashColor: widget.res.isSelected
-              ? Colors.transparent
-              : Theme.of(context).accentColor,
+        child: Semantics(
+          container: true,
+          label: 'View all translations',
+          child: FlatButton(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: const Text('ALL'),
+            onPressed: () {
+              Navigator.of(context).push<void>(MaterialPageRoute(
+                  builder: (context) {
+                    return AllTranslationsScreen(
+                      res: widget.res,
+                      bcv: <int>[
+                        widget.res.bookId,
+                        widget.res.chapterId,
+                        widget.res.verseId
+                      ],
+                      model: SearchModel(),
+                      keywords: widget.model.keywords,
+                    );
+                  },
+                  fullscreenDialog: true));
+            },
+            textColor: widget.res.isSelected
+                ? widget.model.colorScheme
+                : widget.model.oppColorScheme,
+            splashColor: widget.res.isSelected
+                ? Colors.transparent
+                : Theme.of(context).accentColor,
+          ),
         ));
 
     final buttons = <ButtonTheme>[];
@@ -264,13 +275,19 @@ class __TranslationSelectorState extends State<_TranslationSelector> {
 
       buttons.add(ButtonTheme(
         minWidth: 50,
-        child: FlatButton(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          child: Text(each.a),
-          textColor: textColor,
-          color: buttonColor, //currently chosen, pass tag
-          onPressed: () => widget.onTranslationChanged(each, i),
+        child: Semantics(
+          container: true,
+          label: widget.currTag == each.id
+              ? '${each.a} selected'
+              : 'Select ${each.a}',
+          child: FlatButton(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            child: Text(each.a),
+            textColor: textColor,
+            color: buttonColor, //currently chosen, pass tag
+            onPressed: () => widget.onTranslationChanged(each, i),
+          ),
         ),
       ));
     }

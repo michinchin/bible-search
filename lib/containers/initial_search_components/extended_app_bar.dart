@@ -34,12 +34,14 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       backgroundColor: Colors.transparent,
       leading: IconButton(
+        tooltip: 'Menu',
         icon: Icon(Icons.menu),
         color: Colors.white,
         onPressed: () => Scaffold.of(context).openDrawer(),
       ),
       actions: <Widget>[
         IconButton(
+          tooltip: 'Filter',
           icon: Icon(Icons.filter_list),
           color: Colors.white,
           onPressed: () {

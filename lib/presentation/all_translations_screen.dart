@@ -95,12 +95,16 @@ class _AllResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only( bottom: 8),
+      padding: const EdgeInsets.only(bottom: 8),
       child: ExpansionTile(
         backgroundColor: Colors.transparent,
         title: AutoSizeText.rich(
           TextSpan(children: [
-            TextSpan(style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).accentColor), text: title),
+            TextSpan(
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).accentColor),
+                text: title),
             TextSpan(
                 style: Theme.of(context).textTheme.body1, children: subtitle),
           ]),
@@ -114,11 +118,16 @@ class _AllResultCard extends StatelessWidget {
                 layoutBehavior: ButtonBarLayoutBehavior.constrained,
                 children: [
                   IconButton(
+                    tooltip: 'Copy',
                     onPressed: copy,
                     icon: Icon(Icons.content_copy),
                   ),
-                  IconButton(onPressed: share, icon: Icon(Icons.share)),
                   IconButton(
+                      tooltip: 'Share',
+                      onPressed: share,
+                      icon: Icon(Icons.share)),
+                  IconButton(
+                    tooltip: 'Open in TecartaBible',
                     onPressed: openInTB,
                     icon: Icon(Icons.exit_to_app),
                   )
