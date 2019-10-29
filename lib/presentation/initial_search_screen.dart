@@ -189,7 +189,7 @@ class InitialSearchViewModel {
 
   Future<void> _featureDiscovery(BuildContext c) async {
     await tec.Prefs.shared.setBool(firstTimeOpenedPref, true);
-    if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true)) {
+    if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true) && !MediaQuery.of(c).accessibleNavigation) {
       WidgetsBinding.instance
           .addPostFrameCallback((duration) => FeatureDiscovery.discoverFeatures(
                 c,
