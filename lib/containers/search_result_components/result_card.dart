@@ -197,7 +197,7 @@ class ResultCardModel {
     contextTitle = AutoSizeText(
       '${bookNames.where((book) => book.id == res.bookId).first.name} ${res.chapterId}:'
       '${res.verses[res.currentVerseIndex].verseIdx[0]}-${res.verses[res.currentVerseIndex].verseIdx[1]}'
-      '  ${res.verses[res.currentVerseIndex].a}',
+      ' ${res.verses[res.currentVerseIndex].a}',
       minFontSize: minFontSizeTitle,
     );
     content = !res.contextExpanded
