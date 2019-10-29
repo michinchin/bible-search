@@ -46,7 +46,7 @@ class AllTranslationsScreen extends StatelessWidget {
                     title: Text(res.ref),
                   ),
                   body: Container(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.only(top: 8),
                       child: allResults.isEmpty
                           ? snapshot.connectionState == ConnectionState.done
                               ? NoResultsView(hasError: snapshot.hasError)
@@ -55,6 +55,7 @@ class AllTranslationsScreen extends StatelessWidget {
                                 )
                           : ListView.builder(
                               itemCount: allResults.length,
+                              // separatorBuilder: (c, i) => const Divider(),
                               itemBuilder: (context, index) {
                                 final text =
                                     '${res.ref} ${allResults[index].a}\n${allResults[index].text}';
@@ -93,61 +94,39 @@ class _AllResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final card = Container(
-      margin: const EdgeInsets.fromLTRB(8,8,8,8),
-      child: AutoSizeText.rich(
-        TextSpan(children: [
-          TextSpan(style: TextStyle(fontWeight: FontWeight.bold), text: title),
-          TextSpan(
-              style: Theme.of(context).textTheme.body1, children: subtitle),
-        ]),
-        minFontSize: minFontSizeDescription,
+    return Padding(
+      padding: const EdgeInsets.only( bottom: 8),
+      child: ExpansionTile(
+        backgroundColor: Colors.transparent,
+        title: AutoSizeText.rich(
+          TextSpan(children: [
+            TextSpan(style: TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).accentColor), text: title),
+            TextSpan(
+                style: Theme.of(context).textTheme.body1, children: subtitle),
+          ]),
+          minFontSize: minFontSizeDescription,
+        ),
+        children: <Widget>[
+          Align(
+            alignment: Alignment.centerRight,
+            child: ButtonBar(
+                alignment: MainAxisAlignment.end,
+                layoutBehavior: ButtonBarLayoutBehavior.constrained,
+                children: [
+                  IconButton(
+                    onPressed: copy,
+                    icon: Icon(Icons.content_copy),
+                  ),
+                  IconButton(onPressed: share, icon: Icon(Icons.share)),
+                  IconButton(
+                    onPressed: openInTB,
+                    icon: Icon(Icons.exit_to_app),
+                  )
+                ]),
+          ),
+        ],
       ),
     );
-
-    return Container(
-        margin: const EdgeInsets.all(8.0),
-        child: InkWell(
-            borderRadius: BorderRadius.circular(15.0),
-            child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? Colors.black12
-                          : Colors.black26,
-                      offset: const Offset(0, 10),
-                      blurRadius: 8,
-                      spreadRadius: 1,
-                    )
-                  ],
-                ),
-                child: ExpansionTile(
-                  title: card,
-                  children: <Widget>[
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: ButtonBar(
-                          alignment: MainAxisAlignment.end,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            IconButton(
-                              onPressed: copy,
-                              icon: Icon(Icons.content_copy),
-                            ),
-                            IconButton(
-                                onPressed: share, icon: Icon(Icons.share)),
-                            IconButton(
-                              onPressed: openInTB,
-                              icon: Icon(Icons.exit_to_app),
-                            )
-                          ]),
-                    ),
-                  ],
-                )))
-        );
   }
 }
 
