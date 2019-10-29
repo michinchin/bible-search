@@ -6,6 +6,7 @@ import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:bible_search/labels.dart';
 import 'package:feature_discovery/feature_discovery.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
@@ -37,8 +38,8 @@ Future<void> main() async {
   final kvStore = KVStore();
   // ignore: prefer_interpolation_to_compose_strings
   final appPrefix = (Platform.isAndroid ? 'PLAY_' : 'IOS_') + 'BibleSearch';
-  final userAccount = 
-      await UserAccount.init(kvStore: kvStore, deviceUid: di.deviceUid, appPrefix: appPrefix);
+  final userAccount = await UserAccount.init(
+      kvStore: kvStore, deviceUid: di.deviceUid, appPrefix: appPrefix);
 
   final store = Store<AppState>(
     reducers,

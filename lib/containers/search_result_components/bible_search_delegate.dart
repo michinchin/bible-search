@@ -557,21 +557,27 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
           textTheme: theme.primaryTextTheme,
           brightness: theme.primaryColorBrightness,
           leading: widget.delegate.buildLeading(context),
-          title: TextField(
-            controller: widget.delegate._queryTextController,
-            focusNode: focusNode,
-            style: theme.textTheme.title,
-            textInputAction: widget.delegate.textInputAction,
-            keyboardType: widget.delegate.keyboardType,
-            onSubmitted: (_) {
-              widget.delegate.showResults(context);
-            },
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: searchFieldLabel,
-              hintStyle: theme.inputDecorationTheme.hintStyle,
-            ),
-          ),
+          title: Theme(
+              data: Theme.of(context).brightness == Brightness.dark
+                  ? ThemeData(
+                      accentColor: Colors.tealAccent.withOpacity(0.5),
+                      brightness: Brightness.dark)
+                  : Theme.of(context),
+              child: TextField(
+                controller: widget.delegate._queryTextController,
+                focusNode: focusNode,
+                style: theme.textTheme.title,
+                textInputAction: widget.delegate.textInputAction,
+                keyboardType: widget.delegate.keyboardType,
+                onSubmitted: (_) {
+                  widget.delegate.showResults(context);
+                },
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: searchFieldLabel,
+                  hintStyle: theme.inputDecorationTheme.hintStyle,
+                ),
+              )),
           actions: widget.delegate.buildActions(context),
         ),
         body: AnimatedSwitcher(
