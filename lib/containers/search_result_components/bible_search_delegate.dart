@@ -431,6 +431,7 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
   FocusNode focusNode = FocusNode();
   // Load search suggestions
   CancelableOperation<AutoComplete> autoCompleteOperation;
+  Timer _debounce;
 
   @override
   void initState() {
@@ -502,9 +503,12 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
   }
 
   void _onQueryChanged() {
-    setState(() {
-      widget.delegate.autoComplete = _fromCancelable();
-      // rebuild ourselves because query changed.
+    if (_debounce?.isActive ?? false) _debounce.cancel();
+    _debounce = Timer(const Duration(milliseconds: 600), () {
+      setState(() {
+        widget.delegate.autoComplete = _fromCancelable();
+        // rebuild ourselves because query changed.
+      });
     });
   }
 
