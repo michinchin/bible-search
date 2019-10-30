@@ -191,13 +191,18 @@ class ResultCardModel {
       this.context,
       this.formatWords}) {
     nonContextTitle = AutoSizeText(
-      '${res.ref} ${res.verses[res.currentVerseIndex].a}',
+      '${res.verses[res.currentVerseIndex].title} ${res.verses[res.currentVerseIndex].a}',
       minFontSize: minFontSizeTitle,
     );
+    final bookTitleWithVerses =
+        res.verses[res.currentVerseIndex].title.split(' ');
+    final bookTitle =
+        bookTitleWithVerses.take(bookTitleWithVerses.length - 1).join(' ');
+
     contextTitle = AutoSizeText(
-      '${bookNames.where((book) => book.id == res.bookId).first.name} ${res.chapterId}:'
+      '$bookTitle ${res.chapterId}:'
       '${res.verses[res.currentVerseIndex].verseIdx[0]}-${res.verses[res.currentVerseIndex].verseIdx[1]}'
-      '  ${res.verses[res.currentVerseIndex].a}',
+      ' ${res.verses[res.currentVerseIndex].a}',
       minFontSize: minFontSizeTitle,
     );
     content = !res.contextExpanded
