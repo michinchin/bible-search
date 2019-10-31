@@ -59,7 +59,9 @@ class BibleSearchScreen extends BibleSearchDelegate<String> {
     //     .toList()
     //     .reversed
     //     .toList();
-
+    if (data == null){
+      return Container();
+    }
     return query.isNotEmpty
         ? ListView(
             children: data.possibles
