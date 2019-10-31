@@ -63,9 +63,9 @@ String getString(Context context, int verseId) {
     before += ' [$verseId] ${wholeChapter[verseId]}';
   }
 
-  if (verseId <= wholeChapter.length) {
+  if (verseId <= wholeChapter.keys.last) {
     v = ++vId;
-    while (v <= verseId + 10 && after.length < charsToShow) {
+    while (v <= verseId + 10 && after.length < charsToShow && v <= wholeChapter.keys.last) {
       final verse = wholeChapter[v];
       if (verse != null) {
         if (after.isNotEmpty) {
