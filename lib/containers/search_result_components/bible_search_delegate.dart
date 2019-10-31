@@ -446,6 +446,7 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
   @override
   void dispose() {
     super.dispose();
+    if (_debounce?.isActive ?? false) _debounce.cancel();
     widget.delegate._queryTextController.removeListener(_onQueryChanged);
     widget.animation.removeStatusListener(_onAnimationStatusChanged);
     widget.delegate._currentBodyNotifier.removeListener(_onSearchBodyChanged);
