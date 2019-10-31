@@ -35,16 +35,15 @@ class BibleTranslation {
   factory BibleTranslation.fromJson(Map<String, dynamic> json) {
     final onSale = tec.as<bool>(json['onsale']);
     final id = tec.as<int>(json['id']);
+    final lang = tec.as<String>(json['language']);
     if (onSale && (id < 300 || id >= 400)) {
       return BibleTranslation(
         id: id,
         name: tec.as<String>(json['name']),
         a: tec.as<String>(json['abbreviation']),
-        lang: HomeModel()
-            .languages
-            .firstWhere((t) => t.a == (tec.as<String>(json['language']))),
+        lang: HomeModel().languages.firstWhere((t) => t.a == lang),
         isOnSale: onSale,
-        isSelected: true,
+        isSelected: lang == 'en',
       );
     }
     return null;
