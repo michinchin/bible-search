@@ -126,8 +126,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                               resultLength: vm.searchResults.length,
                               resetFilter: vm.resetFilter,
                             )
-                          : vm.filteredRes.length == 1 &&
-                                  vm.searchQuery.contains(':')
+                          : vm.isVerseRefSearch
                               ? AllTranslationsScreen(
                                   res: vm.filteredRes[0],
                                   keywords: vm.searchQuery,
@@ -153,7 +152,8 @@ class ResultsViewModel {
   bool isDarkTheme;
   bool hasError;
   bool hasNoTranslationsSelected;
-
+  bool get isVerseRefSearch =>
+      filteredRes.length == 1 && searchQuery.contains(':');
   VoidCallback changeToSelectionMode;
   Function(String) updateSearchResults;
   Function(int, bool) selectCard;

@@ -103,8 +103,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                 backgroundColor: Colors.transparent,
                 bottomOpacity: 0.0,
                 toolbarOpacity: 0.0,
-                leading: null
-                ),
+                leading: null),
             SafeArea(
               minimum: const EdgeInsets.only(left: 20.0, right: 20.0),
               child: Container(
@@ -140,22 +139,23 @@ class _SearchAppBarState extends State<SearchAppBar> {
                             'Current Search Text is ${widget.model.searchQuery}',
                       )),
                   trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                    DescribedFeatureOverlay(
-                      featureId: 'selection_mode',
-                      onDismiss: () => _onDismiss('selection_mode'),
-                      tapTarget: Icon(
-                        Icons.check_circle_outline,
-                        color: Colors.black,
+                    if (!widget.model.isVerseRefSearch)
+                      DescribedFeatureOverlay(
+                        featureId: 'selection_mode',
+                        onDismiss: () => _onDismiss('selection_mode'),
+                        tapTarget: Icon(
+                          Icons.check_circle_outline,
+                          color: Colors.black,
+                        ),
+                        title: const Text('Selection Mode'),
+                        description: const Text(
+                            'Tap here to enter selection mode. Select multiple scripture verses to copy or share!'),
+                        child: IconButton(
+                          tooltip: 'Selection Mode',
+                          icon: Icon(Icons.check_circle_outline),
+                          onPressed: _changeToSelectionMode,
+                        ),
                       ),
-                      title: const Text('Selection Mode'),
-                      description: const Text(
-                          'Tap here to enter selection mode. Select multiple scripture verses to copy or share!'),
-                      child: IconButton(
-                        tooltip: 'Selection Mode',
-                        icon: Icon(Icons.check_circle_outline),
-                        onPressed: _changeToSelectionMode,
-                      ),
-                    ),
                     DescribedFeatureOverlay(
                       featureId: 'filter',
                       tapTarget: Icon(
