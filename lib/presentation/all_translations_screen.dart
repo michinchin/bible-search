@@ -84,8 +84,11 @@ class AllTranslationsScreen extends StatelessWidget {
                                 return _AllResultCard(
                                   title:
                                       '${vm.store.state.translations.getFullName(allResults[index].id)}\n',
-                                  subtitle: model.formatWords(
-                                      '${allResults[index].text}', keywords),
+                                  subtitle: isVerseRefSearch
+                                      ? [TextSpan(text: allResults[index].text)]
+                                      : model.formatWords(
+                                          '${allResults[index].text}',
+                                          keywords),
                                   copy: () => model.copyPressed(
                                       text: text, context: context),
                                   share: () => Share.share(text),

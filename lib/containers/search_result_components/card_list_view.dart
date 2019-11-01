@@ -42,7 +42,8 @@ class _CardViewState extends State<CardView> {
                           style: Theme.of(context).textTheme.caption,
                           children: [
                             TextSpan(
-                              text: 'Showing ${res.length} verses containing ',
+                              text:
+                                  'Showing ${res.length} verse${res.length > 1 ? 's' : ''} containing ',
                             ),
                             TextSpan(
                                 text: '${widget.vm.searchQuery}',
