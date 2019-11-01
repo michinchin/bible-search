@@ -205,7 +205,7 @@ abstract class BibleSearchDelegate<T> {
     assert(theme != null);
     return theme.copyWith(
       primaryColor: Colors.white,
-      primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.grey),
+      primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.black54),
       primaryColorBrightness: Brightness.light,
       primaryTextTheme: theme.textTheme,
     );

@@ -232,12 +232,6 @@ class __TranslationSelectorState extends State<_TranslationSelector> {
                   builder: (context) {
                     return AllTranslationsScreen(
                       res: widget.res,
-                      bcv: <int>[
-                        widget.res.bookId,
-                        widget.res.chapterId,
-                        widget.res.verseId
-                      ],
-                      model: SearchModel(),
                       keywords: widget.model.keywords,
                     );
                   },
