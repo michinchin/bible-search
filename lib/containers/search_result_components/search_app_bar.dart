@@ -75,11 +75,21 @@ class _SearchAppBarState extends State<SearchAppBar> {
   // }
 
   void _changeToSelectionMode() {
+    if (!_isInSelectionMode) {
+      Scaffold.of(context).showSnackBar(SnackBar(
+        backgroundColor: Theme.of(context).cardColor,
+        content: Text(
+          'Entered Selection Mode',
+          style: TextStyle(color: Theme.of(context).textTheme.body1.color),
+        ),
+      ));
+    } else {
+      Scaffold.of(context).hideCurrentSnackBar();
+    }
     setState(() {
       _isInSelectionMode = !_isInSelectionMode;
       widget.model.changeToSelectionMode();
     });
-    // Navigator.of(context).pop();
   }
 
   void _navigateToFilter(BuildContext context) {
