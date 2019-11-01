@@ -39,7 +39,11 @@ Future<void> main() async {
   // ignore: prefer_interpolation_to_compose_strings
   final appPrefix = (Platform.isAndroid ? 'PLAY_' : 'IOS_') + 'BibleSearch';
   final userAccount = await UserAccount.init(
-      kvStore: kvStore, deviceUid: di.deviceUid, appPrefix: appPrefix);
+    kvStore: kvStore,
+    deviceUid: di.deviceUid,
+    appPrefix: appPrefix,
+    itemTypesToSync: [UserItemType.license],
+  );
 
   final store = Store<AppState>(
     reducers,
