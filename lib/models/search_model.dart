@@ -146,20 +146,17 @@ class SearchModel {
     if (modKeywords[0] == '"' || modKeywords[0] == '\'') {
       if (modKeywords.contains(' ')) {
         phrase = true;
-      }
-      else {
+      } else {
         exact = true;
       }
 
       // remove trailing quote
       if (modKeywords.endsWith(modKeywords[0])) {
         modKeywords = modKeywords.substring(1, modKeywords.length - 1);
-      }
-      else {
+      } else {
         modKeywords = modKeywords.substring(1);
       }
-    }
-    else {
+    } else {
       modKeywords = modKeywords;
     }
 
@@ -169,11 +166,9 @@ class SearchModel {
     List<String> formattedKeywords, lFormattedKeywords;
 
     if (exact || phrase) {
-      formattedKeywords = [modKeywords.
-      trim()];
+      formattedKeywords = [modKeywords.trim()];
       lFormattedKeywords = [modKeywords.trim().toLowerCase()];
-    }
-    else {
+    } else {
       formattedKeywords = modKeywords.split(' ')
         ..sort((s, t) => s.length.compareTo(t.length));
       lFormattedKeywords = modKeywords.toLowerCase().split(' ');
@@ -211,10 +206,8 @@ class SearchModel {
 
       if (bold) {
         content.add(TextSpan(
-            text: arr[i],
-            style: const TextStyle(fontWeight: FontWeight.bold)));
-      }
-      else {
+            text: arr[i], style: const TextStyle(fontWeight: FontWeight.bold)));
+      } else {
         content.add(TextSpan(text: arr[i]));
       }
     }
@@ -226,7 +219,6 @@ class SearchModel {
 class ShareVerse {
   final List<SearchResult> results;
   final List<Book> books;
-
   const ShareVerse({this.results, this.books});
 
   String get selectedText {
@@ -252,9 +244,12 @@ class ShareVerse {
   bool get multipleSelected =>
       results.where((r) => r.isSelected).toList().length > 1;
 
-  int get volumeId => books.firstWhere((b) => b.id == shareVerse.bookId).id;
+  int get volumeId {
+    return books.firstWhere((b) => b.id == shareVerse.bookId).id;
+  }
 
-  SearchResult get shareVerse =>
-      results?.firstWhere((r) => r.isSelected) ??
-      results[results.first.currentVerseIndex];
+  SearchResult get shareVerse {
+    return results?.firstWhere((r) => r.isSelected,
+        orElse: () => results[results.first.currentVerseIndex]);
+  }
 }
