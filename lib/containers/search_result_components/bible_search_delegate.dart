@@ -205,7 +205,7 @@ abstract class BibleSearchDelegate<T> {
     assert(theme != null);
     return theme.copyWith(
       primaryColor: Colors.white,
-      primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.grey),
+      primaryIconTheme: theme.primaryIconTheme.copyWith(color: Colors.black54),
       primaryColorBrightness: Brightness.light,
       primaryTextTheme: theme.textTheme,
     );
@@ -431,6 +431,7 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
   FocusNode focusNode = FocusNode();
   // Load search suggestions
   CancelableOperation<AutoComplete> autoCompleteOperation;
+  Timer _debounce;
 
   @override
   void initState() {
@@ -445,6 +446,7 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
   @override
   void dispose() {
     super.dispose();
+    if (_debounce?.isActive ?? false) _debounce.cancel();
     widget.delegate._queryTextController.removeListener(_onQueryChanged);
     widget.animation.removeStatusListener(_onAnimationStatusChanged);
     widget.delegate._currentBodyNotifier.removeListener(_onSearchBodyChanged);
@@ -502,9 +504,12 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
   }
 
   void _onQueryChanged() {
-    setState(() {
-      widget.delegate.autoComplete = _fromCancelable();
-      // rebuild ourselves because query changed.
+    if (_debounce?.isActive ?? false) _debounce.cancel();
+    _debounce = Timer(const Duration(milliseconds: 600), () {
+      setState(() {
+        widget.delegate.autoComplete = _fromCancelable();
+        // rebuild ourselves because query changed.
+      });
     });
   }
 

@@ -5,6 +5,7 @@ import 'package:bible_search/containers/search_result_components/bible_search_sc
 import 'package:bible_search/containers/sr_components.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/search_model.dart';
+import 'package:bible_search/presentation/all_translations_screen.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/foundation.dart';
 
@@ -125,7 +126,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                               resultLength: vm.searchResults.length,
                               resetFilter: vm.resetFilter,
                             )
-                          : CardView(vm)));
+                          : vm.isVerseRefSearch
+                              ? AllTranslationsScreen(
+                                  res: vm.filteredRes[0],
+                                  keywords: vm.searchQuery,
+                                  isVerseRefSearch: true,
+                                )
+                              : CardView(vm)));
         });
   }
 }
@@ -145,7 +152,8 @@ class ResultsViewModel {
   bool isDarkTheme;
   bool hasError;
   bool hasNoTranslationsSelected;
-
+  bool get isVerseRefSearch =>
+      filteredRes.length == 1 && searchQuery.contains(':');
   VoidCallback changeToSelectionMode;
   Function(String) updateSearchResults;
   Function(int, bool) selectCard;

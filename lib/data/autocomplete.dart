@@ -22,7 +22,7 @@ class AutoComplete {
   static Future<AutoComplete> fetch(
       {String phrase, String translationIds}) async {
     final suggestions = getSuggestions(phrase);
-    final path = 'https://$kTBApiServer/';
+    const path = 'https://$kTBApiServer/';
     final parameters =
         'suggest?key=$kTBkey&version=$kTBApiVersion&words=${suggestions['words']}&partialWord=${suggestions['partialWord']}&searchVolumes=$translationIds';
     const cachePath = 'https://$kTBStreamServer/cache/';
