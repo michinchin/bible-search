@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 import 'package:bible_search/containers/is_components.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:rate_my_app/rate_my_app.dart';
 import 'package:share/share.dart';
 import 'package:tec_user_account/tec_user_account.dart';
 import 'package:tec_util/tec_util.dart' as tec;
@@ -37,7 +38,37 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
   @override
   void initState() {
     _globalKey = GlobalKey();
+    rateApp();
     super.initState();
+  }
+
+  void rateApp() {
+    final rateMyApp =
+        RateMyApp(preferencesPrefix: prefRateApp, minLaunches: 3, minDays: 0);
+    rateMyApp.init().then((_) {
+      WidgetsBinding.instance.addPostFrameCallback((d) {
+        if (rateMyApp.shouldOpenDialog) {
+          rateMyApp.showStarRateDialog(context,
+              title: 'Rate this app',
+              message:
+                  'Like using TecartaBible Search? Leave us a rating below:',
+              onRatingChanged: (stars) {
+            return [
+              FlatButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  print(
+                      'Thanks for the ${stars == null ? '0' : stars.round().toString()}'
+                      ' star(s) !');
+                  rateMyApp.doNotOpenAgain = true;
+                  rateMyApp.save().then((v) => Navigator.pop(context));
+                },
+              ),
+            ];
+          });
+        }
+      });
+    });
   }
 
   @override

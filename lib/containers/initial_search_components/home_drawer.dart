@@ -37,7 +37,7 @@ class HomeDrawer extends StatelessWidget {
                     text: TextSpan(
                         children: [
                           const TextSpan(text: 'Tecarta'),
-                          TextSpan(
+                          const TextSpan(
                               text: 'Bible',
                               style: TextStyle(fontWeight: FontWeight.bold)),
                           const TextSpan(text: ' Search')
@@ -76,8 +76,7 @@ class HomeDrawer extends StatelessWidget {
                 FutureBuilder<bool>(
                     future: vm.hasPurchased,
                     builder: (c, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.done &&
-                          snapshot.hasData) {
+                      if (snapshot.hasData) {
                         if (!snapshot.data) {
                           return ListTile(
                               leading: Icon(Icons.money_off),

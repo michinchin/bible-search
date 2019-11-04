@@ -12,6 +12,7 @@ const base64Map =
 
 // bs = Bible Search
 const String lastTimeAdShownPref = 'bs_adShownTime';
+const String prefRateApp = 'bs_rateApp';
 const String themePref = 'bs_theme';
 const String translationsPref = 'bs_translations';
 const String searchHistoryPref = 'bs_searchHistory';
@@ -55,6 +56,7 @@ final prefInterstitialAdId = Platform.isAndroid
 final prefAdmobAppId = Platform.isAndroid
     ? 'ca-app-pub-5279916355700267~6403892871'
     : 'ca-app-pub-5279916355700267~3348273170';
+
 
 const defaultSearchHistory = <String>[
   'God\'s word',

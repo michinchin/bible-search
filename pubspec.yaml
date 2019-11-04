@@ -31,6 +31,7 @@ dependencies:
   transparent_image: '>=0.1.0'
   url_launcher: '>=5.0.1'
   validators: '>=2.0.0+1'
+  rate_my_app: '>=0.4.0'
   
   # Internal dependencies
   tec_ads:
