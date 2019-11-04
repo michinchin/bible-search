@@ -1,13 +1,22 @@
+import 'dart:io';
+
 import 'package:bible_search/containers/iap_dialog.dart';
+import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/app_state.dart';
-import 'package:bible_search/models/user_model.dart';
-import 'package:bible_search/presentation/initial_search_screen.dart';
+import 'package:bible_search/redux/actions.dart';
+import 'package:feature_discovery/feature_discovery.dart';
+
+import 'package:flutter_redux/flutter_redux.dart';
+import 'package:redux/redux.dart';
 import 'package:bible_search/version.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_redux/flutter_redux.dart';
+import 'package:share/share.dart';
+import 'package:tec_user_account/tec_user_account.dart';
 import 'package:tec_user_account/tec_user_account_ui.dart';
+import 'package:tec_util/tec_util.dart' as tec;
+import 'package:url_launcher/url_launcher.dart' as launcher;
 
 class HomeDrawer extends StatelessWidget {
   final bool isResultPage;
@@ -15,9 +24,9 @@ class HomeDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, InitialSearchViewModel>(
+    return StoreConnector<AppState, DrawerViewModel>(
         distinct: true,
-        converter: (store) => InitialSearchViewModel(store),
+        converter: (store) => DrawerViewModel(store),
         builder: (context, vm) {
           return Drawer(
             child: ListView(
@@ -65,7 +74,7 @@ class HomeDrawer extends StatelessWidget {
                 // if (!tec.Prefs.shared
                 //     .getBool(removedAdsPref, defaultValue: false))
                 FutureBuilder<bool>(
-                    future: UserModel.hasPurchase(vm.userAccount),
+                    future: vm.hasPurchased,
                     builder: (c, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done &&
                           snapshot.hasData) {
@@ -124,7 +133,7 @@ class HomeDrawer extends StatelessWidget {
                     leading: Icon(Icons.account_circle),
                     title: Text(vm.userAccount.isSignedIn
                         ? '${vm.userAccount.user.email}'
-                        : 'Sign in'),
+                        : 'Account'),
                     onTap: () {
                       Navigator.of(context).pop();
                       showSignInDlg(context: context, account: vm.userAccount);
@@ -145,5 +154,98 @@ class HomeDrawer extends StatelessWidget {
             ),
           );
         });
+  }
+}
+
+class DrawerViewModel {
+  final Store<AppState> store;
+  // VOTDImage votdImage;
+  UserAccount userAccount;
+  bool isDarkTheme;
+  Future<bool> hasPurchased;
+  Future<void> Function(BuildContext) emailFeedback;
+  Future<void> Function(BuildContext) shareApp;
+  void Function(bool isDarkTheme) changeTheme;
+  Future<void> Function(BuildContext) featureDiscovery;
+
+  DrawerViewModel(this.store) {
+    userAccount = store.state.userAccount;
+    isDarkTheme = store.state.isDarkTheme;
+    changeTheme = _changeTheme;
+    emailFeedback = _emailFeedback;
+    shareApp = _shareApp;
+    featureDiscovery = _featureDiscovery;
+    hasPurchased = _hasPurchased();
+  }
+
+  Future<bool> _hasPurchased() {
+    return userAccount.userDb.hasLicenseToFullVolume(removeAdsVolumeId);
+  }
+
+  Future<void> _featureDiscovery(BuildContext c) async {
+    await tec.Prefs.shared.setBool(firstTimeOpenedPref, true);
+    if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true) &&
+        !MediaQuery.of(c).accessibleNavigation) {
+      WidgetsBinding.instance
+          .addPostFrameCallback((duration) => FeatureDiscovery.discoverFeatures(
+                c,
+                <String>{'selection_mode', 'filter', 'context', 'open_in_TB'},
+              ));
+      await tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
+    }
+  }
+
+  void _changeTheme(bool isDarkTheme) =>
+      store.dispatch(SetThemeAction(isDarkTheme: isDarkTheme));
+
+  /// Opens the native email UI with an email for questions or comments.
+  Future<void> _emailFeedback(BuildContext context) async {
+    var email = 'biblesupport@tecarta.com';
+    if (!Platform.isIOS) {
+      email = 'androidsupport@tecarta.com';
+    }
+    final di = await tec.DeviceInfo.fetch();
+    print(
+        'Running on ${di.productName} with ${tec.DeviceInfo.os} ${di.version}');
+    final version =
+        (appVersion == 'DEBUG-VERSION' ? '(debug version)' : 'v$appVersion');
+    final subject = 'Feedback regarding Bible Search! $version '
+        'with ${di.productName} ${tec.DeviceInfo.os} ${di.version}';
+    const body = 'I have the following question or comment:\n\n\n';
+
+    final url = Uri.encodeFull('mailto:$email?subject=$subject&body=$body');
+
+    try {
+      if (await launcher.canLaunch(url)) {
+        await launcher.launch(url, forceSafariVC: false, forceWebView: false);
+      }
+    } catch (e) {
+      final msg = 'Error emailing: ${e.toString()}';
+      showSnackBarMessage(context, msg);
+      print(msg);
+    }
+  }
+
+  Future<void> _shareApp(BuildContext context) async {
+    // String storeUrl;
+    // if (Platform.isAndroid) {
+    //   storeUrl =
+    //       'https://play.google.com/store/apps/details?id=com.tecarta.biblesearch';
+    // } else if (Platform.isIOS) {
+    //   storeUrl = 'https://apps.apple.com/us/app/bible-search/id1436076950';
+    // } else {
+    //   return;
+    // }
+    // final shortUrl = await tec.shortenUrl(storeUrl);
+    await Share.share('http://tbibl.es/search');
+  }
+
+  /// Shows a snack bar message.
+  void showSnackBarMessage(BuildContext context, String message) {
+    Navigator.pop(context); // Dismiss the drawer.
+    if (message == null) return;
+    Scaffold.of(context)?.showSnackBar(SnackBar(
+      content: Text(message),
+    ));
   }
 }

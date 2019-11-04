@@ -149,29 +149,17 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
 class InitialSearchViewModel {
   final Store<AppState> store;
   // VOTDImage votdImage;
-  UserAccount userAccount;
   String votdString;
   List<String> searchHistory;
-  bool isDarkTheme;
   void Function(String term) onSearchEntered;
   void Function(List<String> searchQueries) updateSearchHistory;
-  Future<void> Function(BuildContext) emailFeedback;
-  Future<void> Function(BuildContext) shareApp;
-  void Function(bool isDarkTheme) changeTheme;
-  Future<void> Function(BuildContext) featureDiscovery;
 
   InitialSearchViewModel(this.store) {
     // votdImage = store.state.votdImage;
     votdString = _ordinalDayAsset();
-    userAccount = store.state.userAccount;
     searchHistory = store.state.searchHistory;
-    isDarkTheme = store.state.isDarkTheme;
     onSearchEntered = _onSearchEntered;
     updateSearchHistory = _updateSearchHistory;
-    changeTheme = _changeTheme;
-    emailFeedback = _emailFeedback;
-    shareApp = _shareApp;
-    featureDiscovery = _featureDiscovery;
   }
 
   String _ordinalDayAsset() {
@@ -187,66 +175,9 @@ class InitialSearchViewModel {
     }
   }
 
-  Future<void> _featureDiscovery(BuildContext c) async {
-    await tec.Prefs.shared.setBool(firstTimeOpenedPref, true);
-    if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true) && !MediaQuery.of(c).accessibleNavigation) {
-      WidgetsBinding.instance
-          .addPostFrameCallback((duration) => FeatureDiscovery.discoverFeatures(
-                c,
-                <String>{'selection_mode', 'filter', 'context', 'open_in_TB'},
-              ));
-      await tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
-    }
-  }
-
-  void _changeTheme(bool isDarkTheme) =>
-      store.dispatch(SetThemeAction(isDarkTheme: isDarkTheme));
-
   void _updateSearchHistory(List<String> searchQueries) =>
       store.dispatch(SetSearchHistoryAction(
           searchQuery: store.state.searchQuery, searchQueries: searchQueries));
-
-  /// Opens the native email UI with an email for questions or comments.
-  Future<void> _emailFeedback(BuildContext context) async {
-    var email = 'biblesupport@tecarta.com';
-    if (!Platform.isIOS) {
-      email = 'androidsupport@tecarta.com';
-    }
-    final di = await tec.DeviceInfo.fetch();
-    print(
-        'Running on ${di.productName} with ${tec.DeviceInfo.os} ${di.version}');
-    final version =
-        (appVersion == 'DEBUG-VERSION' ? '(debug version)' : 'v$appVersion');
-    final subject = 'Feedback regarding Bible Search! $version '
-        'with ${di.productName} ${tec.DeviceInfo.os} ${di.version}';
-    const body = 'I have the following question or comment:\n\n\n';
-
-    final url = Uri.encodeFull('mailto:$email?subject=$subject&body=$body');
-
-    try {
-      if (await launcher.canLaunch(url)) {
-        await launcher.launch(url, forceSafariVC: false, forceWebView: false);
-      }
-    } catch (e) {
-      final msg = 'Error emailing: ${e.toString()}';
-      showSnackBarMessage(context, msg);
-      print(msg);
-    }
-  }
-
-  Future<void> _shareApp(BuildContext context) async {
-    // String storeUrl;
-    // if (Platform.isAndroid) {
-    //   storeUrl =
-    //       'https://play.google.com/store/apps/details?id=com.tecarta.biblesearch';
-    // } else if (Platform.isIOS) {
-    //   storeUrl = 'https://apps.apple.com/us/app/bible-search/id1436076950';
-    // } else {
-    //   return;
-    // }
-    // final shortUrl = await tec.shortenUrl(storeUrl);
-    await Share.share('http://tbibl.es/search');
-  }
 
   /// Shows a snack bar message.
   void showSnackBarMessage(BuildContext context, String message) {
@@ -261,10 +192,10 @@ class InitialSearchViewModel {
   @override
   bool operator ==(dynamic other) =>
       // votdImage == other.votdImage &&
-      searchHistory == other.searchHistory && isDarkTheme == other.isDarkTheme;
+      searchHistory == other.searchHistory;
 
   @override
   int get hashCode =>
       // votdImage.hashCode ^
-      searchHistory.hashCode ^ isDarkTheme.hashCode;
+      searchHistory.hashCode;
 }
