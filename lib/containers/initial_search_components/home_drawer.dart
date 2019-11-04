@@ -83,14 +83,12 @@ class HomeDrawer extends StatelessWidget {
                                       .then((_) {
                                     showDialog<bool>(
                                         context: context,
-                                        builder: (c) =>
-                                            InAppPurchaseDialog(user: ua));
+                                        builder: (c) => InAppPurchaseDialog());
                                   });
                                 } else {
                                   showDialog<bool>(
                                       context: context,
-                                      builder: (c) =>
-                                          InAppPurchaseDialog(user: ua));
+                                      builder: (c) => InAppPurchaseDialog());
                                 }
                               });
                         }

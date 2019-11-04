@@ -7,9 +7,6 @@ import 'package:tec_user_account/tec_user_account.dart';
 import 'package:tec_user_account/tec_user_account_ui.dart';
 
 class InAppPurchaseDialog extends StatelessWidget {
-  final UserAccount user;
-
-  const InAppPurchaseDialog({this.user});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +19,7 @@ class InAppPurchaseDialog extends StatelessWidget {
             onPressed: () => Navigator.of(context).pop(),
             child: const Text('No')),
         FlatButton(
-            onPressed: () => UserModel.buyProduct(context, user),
+            onPressed: () => UserModel.buyProduct(context),
             child: const Text('Yes')),
       ],
     );

@@ -6,7 +6,7 @@ import 'package:tec_util/tec_util.dart' as tec;
 import 'iap.dart';
 
 class UserModel {
-  static Future<void> buyProduct(BuildContext context, UserAccount ua) async {
+  static Future<void> buyProduct(BuildContext context) async {
     InAppPurchases.purchase(removeAdsId, consumable: Platform.isAndroid);
     Navigator.popUntil(
         context, ModalRoute.withName(Navigator.defaultRouteName));
