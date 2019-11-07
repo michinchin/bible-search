@@ -140,7 +140,7 @@ class ResultsViewModel {
     changeToSelectionMode = () => store.dispatch(SetSelectionModeAction());
     updateSearchResults = (s) => store.dispatch(SearchAction(s));
     selectCard =
-        (idx, b) => store.dispatch(SelectAction(idx, Select.result, toggle: b));
+        (idx, b) => store.dispatch(SelectionAction(idx, Select.result, toggle: b));
     getShareVerse = () =>
         ShareVerse(books: store.state.books, results: store.state.results);
     changeTheme = (b) => store.dispatch(SetThemeAction(isDarkTheme: b));

@@ -201,7 +201,7 @@ void updateTranslationsMiddleware(
 
 void selectionMiddleware(
   Store<AppState> store,
-  SelectAction action,
+  SelectionAction action,
   NextDispatcher next,
 ) {
   switch (action.select) {
@@ -270,7 +270,7 @@ final List<Middleware<AppState>> middleware = [
   TypedMiddleware<AppState, SetSearchHistoryAction>(updateSearchesMiddleware),
   TypedMiddleware<AppState, UpdateTranslationsAction>(
       updateTranslationsMiddleware),
-  TypedMiddleware<AppState, SelectAction>(selectionMiddleware),
+  TypedMiddleware<AppState, SelectionAction>(selectionMiddleware),
   TypedMiddleware<AppState, ContextAction>(contextMiddleware),
   TypedMiddleware<AppState, StateChangeAction>(syncMiddleware),
 ];

@@ -97,12 +97,12 @@ class UpdateTranslationsAction {}
 /// Init Filter Actions
 class InitFilterAction {}
 
-class SelectAction {
+class SelectionAction {
   final Select select;
   final bool toggle;
   final int index;
   // final dynamic item;
-  SelectAction(this.index, this.select, {this.toggle});
+  SelectionAction(this.index, this.select, {this.toggle});
 }
 
 enum Select {

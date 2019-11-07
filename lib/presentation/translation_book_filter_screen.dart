@@ -76,13 +76,13 @@ class FilterViewModel {
   FilterViewModel(this.store) {
     translations = store.state.translations;
     selectTranslation = (b, i) =>
-        store.dispatch(SelectAction(i, Select.translation, toggle: b));
+        store.dispatch(SelectionAction(i, Select.translation, toggle: b));
     languages = store.state.languages;
     selectLanguage =
-        (b, i) => store.dispatch(SelectAction(i, Select.language, toggle: b));
+        (b, i) => store.dispatch(SelectionAction(i, Select.language, toggle: b));
     bookNames = store.state.books;
     selectBook =
-        (b, i) => store.dispatch(SelectAction(i, Select.book, toggle: b));
+        (b, i) => store.dispatch(SelectionAction(i, Select.book, toggle: b));
     otSelected = store.state.otSelected;
     ntSelected = store.state.ntSelected;
     updateSearch = () => store.dispatch(SearchAction(store.state.searchQuery));
