@@ -81,24 +81,7 @@ class HomeDrawer extends StatelessWidget {
                           return ListTile(
                               leading: Icon(Icons.money_off),
                               title: const Text('Remove Ads'),
-                              onTap: () {
-                                final ua = vm.store.state.userAccount;
-                                if (ua.user.userId == 0) {
-                                  showDialog<void>(
-                                          context: context,
-                                          builder: (c) =>
-                                              SignInForPurchasesDialog(ua))
-                                      .then((_) {
-                                    showDialog<bool>(
-                                        context: context,
-                                        builder: (c) => InAppPurchaseDialog());
-                                  });
-                                } else {
-                                  showDialog<bool>(
-                                      context: context,
-                                      builder: (c) => InAppPurchaseDialog());
-                                }
-                              });
+                              onTap: () => vm.removeAds(context));
                         }
                         return Container();
                       }
@@ -164,6 +147,7 @@ class DrawerViewModel {
   Future<bool> hasPurchased;
   Future<void> Function(BuildContext) emailFeedback;
   Future<void> Function(BuildContext) shareApp;
+  void Function(BuildContext) removeAds;
   void Function(bool isDarkTheme) changeTheme;
   Future<void> Function(BuildContext) featureDiscovery;
 
@@ -173,8 +157,23 @@ class DrawerViewModel {
     changeTheme = _changeTheme;
     emailFeedback = _emailFeedback;
     shareApp = _shareApp;
+    removeAds = _removeAds;
     featureDiscovery = _featureDiscovery;
     hasPurchased = _hasPurchased();
+  }
+
+  void _removeAds(BuildContext context) {
+    final ua = store.state.userAccount;
+    if (ua.user.userId == 0) {
+      showDialog<void>(
+          context: context,
+          builder: (c) => SignInForPurchasesDialog(ua)).then((_) {
+        showDialog<bool>(
+            context: context, builder: (c) => InAppPurchaseDialog());
+      });
+    } else {
+      showDialog<bool>(context: context, builder: (c) => InAppPurchaseDialog());
+    }
   }
 
   Future<bool> _hasPurchased() {

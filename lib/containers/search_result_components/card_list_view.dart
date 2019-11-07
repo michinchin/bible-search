@@ -31,13 +31,15 @@ class _CardViewState extends State<CardView> {
 
     var adsAvailable = widget.vm.store.state.numAdsAvailable;
 
-    if (res.length > 2) {
-      for (var i = 2; i < res.length && adsAvailable > 0; i += 15) {
-        adLocations.add(i);
-        adsAvailable--;
+    if (adsAvailable > 0) {
+      if (res.length > 2) {
+        for (var i = 2; i < res.length; i += 15) {
+          adLocations.add(i);
+          adsAvailable--;
+        }
+      } else if (res.isNotEmpty) {
+        adLocations.add(res.length);
       }
-    } else if (adsAvailable > 0 && res.isNotEmpty) {
-      adLocations.add(res.length);
     }
 
     // the first item is a showing ... from ...
@@ -68,7 +70,7 @@ class _CardViewState extends State<CardView> {
 
               return ResultCard(
                 index: i - resOffset,
-                res: res[i],
+                res: res[i - resOffset],
                 keywords: widget.vm.searchQuery,
                 isInSelectionMode: widget.vm.isInSelectionMode,
                 selectCard: widget.vm.selectCard,
