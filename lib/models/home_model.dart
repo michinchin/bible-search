@@ -1,8 +1,6 @@
 import 'package:bible_search/data/translation.dart';
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/labels.dart';
-import 'package:flutter/foundation.dart';
-import 'package:tec_ads/tec_ads.dart';
 
 import 'package:tec_util/tec_util.dart' as tec;
 
@@ -37,44 +35,6 @@ class HomeModel {
   /// update the current theme in user prefs
   Future<void> updateTheme({bool b}) async {
     await tec.Prefs.shared.setBool(themePref, b);
-  }
-
-  /// Should we show ad?
-  bool shouldShowAd({bool hasPurchased}) {
-    if (hasPurchased) {
-      // if(tec.Prefs.shared.getBool(removedAdsPref, defaultValue: false))
-      // no ads purchased...
-      return false;
-    }
-
-    final lastTimeAdShown = tec.Prefs.shared.getString(lastTimeAdShownPref);
-    if (lastTimeAdShown == null) {
-      // no ad has ever been shown - show dialog...
-      return false;
-    }
-
-    final timeSinceLastAd =
-        DateTime.now().difference(DateTime.parse(lastTimeAdShown));
-
-    if (timeSinceLastAd >= timeBetweenAds && !kDebugMode) {
-      tec.Prefs.shared
-          .setString(lastTimeAdShownPref, DateTime.now().toIso8601String());
-      return true;
-    }
-
-    return false;
-  }
-
-  void showAd(TecInterstitialAd ad, {int maxTries = 1}) {
-    if (ad != null) {
-      Future.delayed(const Duration(seconds: 1), () async {
-        if (await ad.isLoaded()) {
-          await ad.show();
-        } else if (maxTries > 1) {
-          showAd(ad, maxTries: maxTries - 1);
-        }
-      });
-    }
   }
 
   final languages = <Language>[

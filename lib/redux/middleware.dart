@@ -11,7 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:redux/redux.dart';
 import 'package:bible_search/models/home_model.dart';
-import 'package:tec_ads/tec_ads.dart';
+import 'package:tec_native_ad/tec_native_ad.dart';
 
 import 'package:tec_util/tec_util.dart' as tec;
 
@@ -23,13 +23,6 @@ Future<void> searchMiddleware(
   SearchAction action,
   NextDispatcher next,
 ) async {
-  TecInterstitialAd ad;
-
-  final hasPurchasedNoAds =
-      await UserModel.hasPurchase(store.state.userAccount);
-  if (homeModel.shouldShowAd(hasPurchased: hasPurchasedNoAds)) {
-    ad = TecInterstitialAd(adUnitId: prefInterstitialAdId);
-  }
 
   store.dispatch(SearchLoadingAction());
   final translationIds = store.state.translations.formatIds();
@@ -40,12 +33,31 @@ Future<void> searchMiddleware(
         searchQuery: action.searchQuery,
         searchQueries:
             newSearchList.reversed.toSet().toList().reversed.toList()));
+
+    var numAdsAvailable = -1;
+
+    await(store.state.userAccount.userDb.hasLicenseToFullVolume(
+        removeAdsVolumeId).then((hasAccess) {
+      if (hasAccess) {
+        numAdsAvailable = 0;
+      }
+      else {
+        // load the next set of ads
+        NativeAdController.instance.loadAds(adUnitId: prefAdMobNativeAdId);
+      }
+    }));
+
     await SearchResults.fetch(
       words: action.searchQuery,
       translationIds: translationIds,
-    ).then((res) {
+    ).then((res) async {
+      if (numAdsAvailable < 0) {
+         numAdsAvailable = await NativeAdController.instance.numAdsAvailable(
+          prefAdMobNativeAdId);
+      }
+
       store
-        ..dispatch(SearchResultAction(res))
+        ..dispatch(SearchResultAction(res, numAdsAvailable: numAdsAvailable))
         ..dispatch(SetFilteredResultsAction(
             filterModel.updateBooks(res, store.state.books)));
     }).catchError((dynamic e) {
@@ -56,8 +68,6 @@ Future<void> searchMiddleware(
       ..dispatch(SearchResultAction([]))
       ..dispatch(SearchNoTranslationsAction());
   }
-
-  homeModel.showAd(ad, maxTries: 10);
 
   next(action);
 }

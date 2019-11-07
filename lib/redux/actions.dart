@@ -17,7 +17,8 @@ class SearchNoTranslationsAction {}
 
 class SearchResultAction {
   final List<SearchResult> res;
-  SearchResultAction(this.res);
+  final int numAdsAvailable;
+  SearchResultAction(this.res, {this.numAdsAvailable = 0});
 }
 
 class SetResultsAction {

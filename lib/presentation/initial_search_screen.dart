@@ -3,17 +3,11 @@ import 'dart:io';
 
 import 'package:bible_search/containers/initial_search_components/home_drawer.dart';
 import 'package:bible_search/labels.dart';
-import 'package:bible_search/version.dart';
-import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bible_search/containers/is_components.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:rate_my_app/rate_my_app.dart';
-import 'package:share/share.dart';
-import 'package:tec_user_account/tec_user_account.dart';
-import 'package:tec_util/tec_util.dart' as tec;
-import 'package:url_launcher/url_launcher.dart' as launcher;
 
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';

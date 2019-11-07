@@ -50,13 +50,15 @@ AppState _onResult(AppState state, SearchResultAction action) {
         isFetchingSearch: false,
         filteredResults: [],
         hasError: false,
-        hasNoTranslationsSelected: false);
+        hasNoTranslationsSelected: false,
+        numAdsAvailable: 0);
   } else {
     return state.copyWith(
         results: action.res,
         isFetchingSearch: false,
         hasError: false,
-        hasNoTranslationsSelected: false);
+        hasNoTranslationsSelected: false,
+        numAdsAvailable: action.numAdsAvailable);
   }
 }
 
@@ -100,7 +102,7 @@ AppState _onThemeSet(AppState state, SetThemeAction action) {
 AppState _onSearchHistorySet(AppState state, SetSearchHistoryAction action) =>
     state.copyWith(
         searchHistory: action.searchQueries, searchQuery: action.searchQuery);
-        
+
 AppState _onLanguagesSet(AppState state, SetLanguagesAction action) =>
     state.copyWith(languages: action.languages);
 

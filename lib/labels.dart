@@ -11,7 +11,6 @@ const base64Map =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 
 // bs = Bible Search
-const String lastTimeAdShownPref = 'bs_adShownTime';
 const String prefRateApp = 'bs_rateApp';
 const String themePref = 'bs_theme';
 const String translationsPref = 'bs_translations';
@@ -20,7 +19,6 @@ const String removedAdsPref = 'bs_removeAds';
 const String removedAdsExpirePref = 'bs_removeAdsExpire';
 const String numberOfTimesSearchPref = 'bs_numberOfTimesSearch';
 const String firstTimeOpenedPref = 'bs_firstTimeOpened';
-const String numSearchesPref = 'bs_numSearches';
 
 final lightOverlay = SystemUiOverlayStyle(
   statusBarColor: Colors.transparent, // was null
@@ -49,14 +47,9 @@ const Duration timeBetweenAds = Duration(hours: 1);
 const removeAdsVolumeId = 7004;
 const removeAdsId = 'inapp.$removeAdsVolumeId';
 
-final prefInterstitialAdId = Platform.isAndroid
-    ? 'ca-app-pub-5279916355700267/3575410635'
-    : 'ca-app-pub-5279916355700267/9566103912';
-
-final prefAdmobAppId = Platform.isAndroid
-    ? 'ca-app-pub-5279916355700267~6403892871'
-    : 'ca-app-pub-5279916355700267~3348273170';
-
+final prefAdMobNativeAdId = Platform.isAndroid
+    ? 'ca-app-pub-5279916355700267/7923069668'
+    : 'ca-app-pub-5279916355700267/7203757709';
 
 const defaultSearchHistory = <String>[
   'God\'s word',

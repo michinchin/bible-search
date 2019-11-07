@@ -27,6 +27,7 @@ dependencies:
   flutter_redux: '>=0.5.3'
   in_app_purchase: '>=0.2.1+3'
   oktoast: '>=2.2.0'
+  pedantic: '>1.8.0'
   share: '>=0.6.0+1'
   transparent_image: '>=0.1.0'
   url_launcher: '>=5.0.1'
@@ -34,8 +35,8 @@ dependencies:
   rate_my_app: '>=0.4.0'
   
   # Internal dependencies
-  tec_ads:
-    path: ../shared/tec_ads
+  tec_native_ad:
+    path: ../shared/tec_native_ad
   tec_cache:
     path: ../shared/tec_cache
   tec_user_account:

@@ -11,12 +11,13 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:redux/redux.dart';
 import 'package:bible_search/redux/reducers.dart';
 import 'package:bible_search/redux/middleware.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
-import 'package:firebase_admob/firebase_admob.dart';
+import 'package:tec_native_ad/tec_native_ad.dart';
 import 'package:tec_user_account/tec_user_account.dart';
 
 import 'package:tec_util/tec_util.dart' as tec;
@@ -34,7 +35,6 @@ Future<void> main() async {
   final di = await tec.DeviceInfo.fetch();
   print('Running on ${di.productName} with ${tec.DeviceInfo.os} ${di.version}');
 
-  await FirebaseAdMob.instance.initialize(appId: prefAdmobAppId);
   final kvStore = KVStore();
   // ignore: prefer_interpolation_to_compose_strings
   final appPrefix = (Platform.isAndroid ? 'PLAY_' : 'IOS_') + 'BibleSearch';
@@ -53,6 +53,14 @@ Future<void> main() async {
         userAccount: userAccount),
     middleware: middleware,
   )..dispatch(InitHomeAction());
+
+  // init loading of ads...
+  unawaited(userAccount.userDb.hasLicenseToFullVolume(removeAdsVolumeId).then((
+      hasAccess) {
+    if (!hasAccess) {
+      NativeAdController.instance.loadAds(adUnitId: prefAdMobNativeAdId);
+    }
+  }));
 
   // Initialize in app purchases
   InAppPurchases.init(UserModel.purchaseHandler, userAccount);

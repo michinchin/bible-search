@@ -31,6 +31,7 @@ class AppState {
   final bool otSelected;
   final bool ntSelected;
   final bool hasNoTranslationsSelected;
+  final int numAdsAvailable;
 
   final int numSelected;
 
@@ -50,6 +51,7 @@ class AppState {
     this.isLoadingImage,
     this.isInSelectionMode,
     this.hasNoTranslationsSelected,
+    this.numAdsAvailable,
     this.hasError,
     this.isDarkTheme,
     this.otSelected,
@@ -77,6 +79,7 @@ class AppState {
         isLoadingImage: false,
         isInSelectionMode: false,
         hasNoTranslationsSelected: false,
+        numAdsAvailable: 0,
         hasError: false,
         isDarkTheme: false,
         otSelected: true,
@@ -100,6 +103,7 @@ class AppState {
       bool isLoadingImage,
       bool isInSelectionMode,
       bool hasNoTranslationsSelected,
+      int numAdsAvailable,
       bool hasError,
       bool isDarkTheme,
       bool otSelected,
@@ -122,6 +126,7 @@ class AppState {
         isInSelectionMode: isInSelectionMode ?? this.isInSelectionMode,
         hasNoTranslationsSelected:
             hasNoTranslationsSelected ?? this.hasNoTranslationsSelected,
+        numAdsAvailable: numAdsAvailable ?? this.numAdsAvailable,
         hasError: hasError ?? this.hasError,
         isDarkTheme: isDarkTheme ?? this.isDarkTheme,
         otSelected: otSelected ?? this.otSelected,

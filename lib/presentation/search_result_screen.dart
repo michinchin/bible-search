@@ -32,19 +32,10 @@ class SearchResultScreen extends StatefulWidget {
 class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   void initState() {
-    final numSearches =
-        tec.Prefs.shared.getInt(numSearchesPref, defaultValue: 0);
-
     if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true)) {
       _showFeatureDiscovery();
       tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
-    } else if (numSearches == 2) {
-      _showAdSupportedDialog();
-      tec.Prefs.shared
-          .setString(lastTimeAdShownPref, DateTime.now().toIso8601String());
     }
-
-    tec.Prefs.shared.setInt(numSearchesPref, numSearches + 1);
 
     super.initState();
   }
@@ -57,31 +48,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                 <String>{'selection_mode', 'filter', 'context', 'open_in_TB'},
               );
             }));
-  }
-
-  void _showAdSupportedDialog() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showDialog<void>(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              title: const Text(
-                'This is an ad supported app.',
-                textAlign: TextAlign.center,
-              ),
-              content: const Text(
-                  'You will occasionally see an ad. You may remove ads '
-                  'from the menu.\n\nThanks for your support!'),
-              actions: <Widget>[
-                FlatButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Ok')),
-              ],
-            );
-          });
-    });
   }
 
   void _showSearch(ResultsViewModel vm) {
