@@ -1,5 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:bible_search/containers/search_result_components/ad_card.dart';
 import 'package:bible_search/containers/search_result_components/result_card.dart';
+import 'package:bible_search/containers/search_result_components/results_description.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:flutter/material.dart';
@@ -34,8 +36,7 @@ class _CardViewState extends State<CardView> {
         adLocations.add(i);
         adsAvailable--;
       }
-    }
-    else if (adsAvailable > 0 && res.isNotEmpty) {
+    } else if (adsAvailable > 0 && res.isNotEmpty) {
       adLocations.add(res.length);
     }
 
@@ -52,91 +53,17 @@ class _CardViewState extends State<CardView> {
             itemCount: res.length + 1 + adLocations.length,
             itemBuilder: (context, i) {
               if (i == 0) {
-                return Container(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: AutoSizeText.rich(
-                        TextSpan(
-                          style: Theme.of(context).textTheme.caption,
-                          children: [
-                            TextSpan(
-                              text:
-                                  'Showing ${res.length} verse${res.length > 1 ? 's' : ''} containing ',
-                            ),
-                            TextSpan(
-                                text: '${widget.vm.searchQuery}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold)),
-                            if (filterOn)
-                              TextSpan(
-                                text:
-                                    ' of ${widget.vm.searchResults.length} filtered verses',
-                              )
-                          ],
-                        ),
-                        minFontSize: defaultMinFontSize,
-                      ),
-                    ));
+                return ResultsDescription(
+                  filteredLength: res.length,
+                  resultLength: widget.vm.searchResults.length,
+                  filterOn: filterOn,
+                  searchQuery: widget.vm.searchQuery,
+                );
               }
 
               if (adLocations.contains(i)) {
                 resOffset++;
-
-                return Container(
-                    margin: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: Theme
-                          .of(context)
-                          .cardColor,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Theme
-                              .of(context)
-                              .brightness == Brightness.light
-                              ? Colors.black12
-                              : Colors.black26,
-                          offset: const Offset(0, 10),
-                          blurRadius: 8,
-                          spreadRadius: 1,
-                        )
-                      ],),
-                    height: 105,
-                    width: 180,
-                    child: Stack(
-                      children: [
-                        ClipRRect(
-                          clipBehavior: Clip.hardEdge,
-                          borderRadius: BorderRadius.circular(15),
-                          child: TecNativeAd(
-                            adUnitId: prefAdMobNativeAdId,
-                            uniqueId: 'list-$i',
-                            adFormat: 'text',
-                            darkMode: Theme
-                                .of(context)
-                                .brightness != Brightness.light,
-                          ),
-                        ),
-                        Container(
-                          alignment: Alignment.bottomRight,
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.more_vert,
-                              color: Theme
-                                  .of(context)
-                                  .brightness == Brightness.light ? Colors
-                                  .black45 : Colors.grey,
-                              size: 24.0,
-                            ),
-                            onPressed: () {
-
-                            },
-                          ),
-                        ),
-                      ],
-                    )
-                );
+                return AdCard(i);
               }
 
               return ResultCard(
