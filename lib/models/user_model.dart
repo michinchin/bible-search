@@ -8,8 +8,8 @@ import 'iap.dart';
 class UserModel {
   static Future<void> buyProduct(BuildContext context) async {
     InAppPurchases.purchase(removeAdsId, consumable: Platform.isAndroid);
-    Navigator.popUntil(
-        context, ModalRoute.withName(Navigator.defaultRouteName));
+    Navigator.of(context).pop();
+    Navigator.of(context).pop();
   }
 
   static void purchaseHandler(String inAppId, UserAccount ua) {

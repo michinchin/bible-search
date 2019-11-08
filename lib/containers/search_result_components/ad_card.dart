@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bible_search/containers/iap_dialog.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/app_state.dart';
+import 'package:bible_search/redux/actions.dart';
 import 'package:bible_search/version.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -13,7 +14,8 @@ import 'package:url_launcher/url_launcher.dart' as launcher;
 
 class AdCard extends StatelessWidget {
   final int index;
-  const AdCard(this.index);
+  final void Function(int) hideAd;
+  const AdCard(this.index, this.hideAd);
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +78,10 @@ class AdCard extends StatelessWidget {
                                         title: const Text('Hide this ad'),
                                         leading:
                                             Icon(Icons.remove_circle_outline),
-                                        onTap: () {},
+                                        onTap: () {
+                                          Navigator.of(context).maybePop();
+                                          hideAd(index);
+                                        },
                                       ),
                                       ListTile(
                                         title: const Text('Remove ads'),
@@ -119,6 +124,7 @@ class AdCardViewModel {
   Future<void> Function(BuildContext) emailFeedback;
   void Function(BuildContext) whyAdDialog;
   void Function(BuildContext) removeAds;
+
   AdCardViewModel(this.store) {
     emailFeedback = _emailFeedback;
     whyAdDialog = _showWhyAd;
@@ -150,14 +156,14 @@ class AdCardViewModel {
                   'To support our development efforts, ads will appear in the search results of the app'),
               actions: <Widget>[
                 FlatButton(
-                  child: Text('Close'),
+                  child: const Text('Close'),
                   onPressed: () {
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
                   },
                 ),
                 FlatButton(
-                  child: Text('Remove Ads'),
+                  child: const Text('Remove Ads'),
                   onPressed: () => _removeAds(context),
                 )
               ],
