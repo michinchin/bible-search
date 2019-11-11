@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bible_search/containers/search_result_components/ad_card.dart';
 import 'package:bible_search/containers/search_result_components/results_description.dart';
 import 'package:bible_search/containers/search_result_components/result_card.dart';
@@ -14,8 +16,8 @@ class CardView extends StatefulWidget {
 
 class _CardViewState extends State<CardView> {
   List<int> _adLocations;
-  // the first item is a showing ... from ...
-  int resOffset;
+  ScrollController _scrollController;
+  bool _scrolling = false;
 
   @override
   void initState() {
@@ -23,7 +25,6 @@ class _CardViewState extends State<CardView> {
     final res = widget.vm.filteredRes;
     var adsAvailable = widget.vm.store.state.numAdsAvailable;
     _adLocations = [];
-    resOffset = 1;
 
     if (adsAvailable > 0) {
       if (res.length > 3) {
@@ -40,7 +41,6 @@ class _CardViewState extends State<CardView> {
   void _hideAd(int idx) {
     setState(() {
       _adLocations.remove(idx);
-      resOffset--;
     });
   }
 
@@ -51,42 +51,65 @@ class _CardViewState extends State<CardView> {
     final filterOn =
         widget.vm.filteredRes.length != widget.vm.searchResults.length;
 
-    // every build - we need to reset resOffset
-    // first index is always "showing..." so start at 1
-    resOffset = 1;
-
     return SafeArea(
       bottom: false,
       child: Container(
           key: PageStorageKey(
               '${widget.vm.searchQuery}${res[0].ref}${res.length}'),
           padding: const EdgeInsets.only(left: 10, top: 10, right: 10),
-          child: ListView.builder(
-            itemCount: res.length + 1 + _adLocations.length,
-            itemBuilder: (context, i) {
-              if (i == 0) {
-                return ResultsDescription(
-                  filteredLength: res.length,
-                  resultLength: widget.vm.searchResults.length,
-                  filterOn: filterOn,
-                  searchQuery: widget.vm.searchQuery,
+          child: NotificationListener<ScrollNotification>(
+            child: ListView.builder(
+              controller: _scrollController,
+              itemCount: res.length + 1 + _adLocations.length,
+              itemBuilder: (context, i) {
+                if (i == 0) {
+                  return ResultsDescription(
+                    filteredLength: res.length,
+                    resultLength: widget.vm.searchResults.length,
+                    filterOn: filterOn,
+                    searchQuery: widget.vm.searchQuery,
+                  );
+                }
+
+                if (_adLocations.contains(i)) {
+                  return AdCard(i, _hideAd, hideNow: _scrolling,);
+                }
+
+                // we start with 1 since the first card is a showing...
+                var resultOffset = 1;
+
+                for (final location in _adLocations) {
+                  if (location < i) {
+                    resultOffset++;
+                  }
+                }
+
+                return ResultCard(
+                  index: i - resultOffset,
+                  res: res[i - resultOffset],
+                  keywords: widget.vm.searchQuery,
+                  isInSelectionMode: widget.vm.isInSelectionMode,
+                  selectCard: widget.vm.selectCard,
+                  bookNames: widget.vm.bookNames,
+                  toggleSelectionMode: widget.vm.changeToSelectionMode,
                 );
+              },
+            ),
+            onNotification: (n) {
+              if (Platform.isIOS) {
+                if (n is ScrollStartNotification) {
+                  setState(() {
+                    _scrolling = true;
+                  });
+                }
+                else if (n is ScrollEndNotification) {
+                  setState(() {
+                    _scrolling = false;
+                  });
+                }
               }
 
-              if (_adLocations.contains(i)) {
-                resOffset++;
-                return AdCard(i, _hideAd);
-              }
-
-              return ResultCard(
-                index: i - resOffset,
-                res: res[i - resOffset],
-                keywords: widget.vm.searchQuery,
-                isInSelectionMode: widget.vm.isInSelectionMode,
-                selectCard: widget.vm.selectCard,
-                bookNames: widget.vm.bookNames,
-                toggleSelectionMode: widget.vm.changeToSelectionMode,
-              );
+              return false;
             },
           )),
     );

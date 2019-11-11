@@ -12,11 +12,18 @@ import 'package:tec_native_ad/tec_native_ad.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
-class AdCard extends StatelessWidget {
+class AdCard extends StatefulWidget {
   final int index;
   final void Function(int) hideAd;
-  const AdCard(this.index, this.hideAd);
+  final bool hideNow;
 
+  const AdCard(this.index, this.hideAd, {this.hideNow});
+
+  @override
+  _AdCardState createState() => _AdCardState();
+}
+
+class _AdCardState extends State<AdCard> {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, AdCardViewModel>(
@@ -46,12 +53,14 @@ class AdCard extends StatelessWidget {
                   ClipRRect(
                     clipBehavior: Clip.hardEdge,
                     borderRadius: BorderRadius.circular(15),
-                    child: TecNativeAd(
+                    child: widget.hideNow ? Container() : TecNativeAd(
                       adUnitId: prefAdMobNativeAdId,
-                      uniqueId: 'list-$index',
+                      uniqueId: 'list-${widget.index}',
                       adFormat: 'text',
                       darkMode:
-                          Theme.of(context).brightness != Brightness.light,
+                      Theme
+                          .of(context)
+                          .brightness != Brightness.light,
                     ),
                   ),
                   Container(
@@ -80,7 +89,7 @@ class AdCard extends StatelessWidget {
                                             Icon(Icons.remove_circle_outline),
                                         onTap: () {
                                           Navigator.of(context).maybePop();
-                                          hideAd(index);
+                                          widget.hideAd(widget.index);
                                         },
                                       ),
                                       ListTile(
