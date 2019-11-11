@@ -27,7 +27,7 @@ class _CardViewState extends State<CardView> {
 
     if (adsAvailable > 0) {
       if (res.length > 3) {
-        for (var i = 3; i < res.length; i += 15) {
+        for (var i = 3; i < res.length && adsAvailable > 0; i += 15) {
           _adLocations.add(i);
           adsAvailable--;
         }
@@ -50,6 +50,10 @@ class _CardViewState extends State<CardView> {
 
     final filterOn =
         widget.vm.filteredRes.length != widget.vm.searchResults.length;
+
+    // every build - we need to reset resOffset
+    // first index is always "showing..." so start at 1
+    resOffset = 1;
 
     return SafeArea(
       bottom: false,
