@@ -16,7 +16,6 @@ class CardView extends StatefulWidget {
 
 class _CardViewState extends State<CardView> {
   List<int> _adLocations;
-  ScrollController _scrollController;
   bool _scrolling = false;
 
   @override
@@ -59,7 +58,6 @@ class _CardViewState extends State<CardView> {
           padding: const EdgeInsets.only(left: 10, top: 10, right: 10),
           child: NotificationListener<ScrollNotification>(
             child: ListView.builder(
-              controller: _scrollController,
               itemCount: res.length + 1 + _adLocations.length,
               itemBuilder: (context, i) {
                 if (i == 0) {
@@ -97,6 +95,7 @@ class _CardViewState extends State<CardView> {
             ),
             onNotification: (n) {
               if (Platform.isIOS) {
+                // only setState for these 2 notification types
                 if (n is ScrollStartNotification) {
                   setState(() {
                     _scrolling = true;
