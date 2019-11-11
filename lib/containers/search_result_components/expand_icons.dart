@@ -41,7 +41,7 @@ class _CardIconsState extends State<CardIcons> {
   }
 
   Future<bool> _onDismiss(String id) {
-    FeatureDiscovery.markStepComplete(context, id);
+    FeatureDiscovery.completeCurrentStep(context);
     return Future.value(false);
   }
 

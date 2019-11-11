@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:bible_search/containers/iap_dialog.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/app_state.dart';
-import 'package:bible_search/redux/actions.dart';
 import 'package:bible_search/version.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';

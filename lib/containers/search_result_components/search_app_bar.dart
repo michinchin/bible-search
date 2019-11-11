@@ -99,7 +99,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
   }
 
   Future<bool> _onDismiss(String id) {
-    FeatureDiscovery.markStepComplete(context, id);
+    FeatureDiscovery.completeCurrentStep(context);
     return Future.value(false);
   }
 
