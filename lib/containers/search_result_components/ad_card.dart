@@ -52,15 +52,15 @@ class _AdCardState extends State<AdCard> {
                   ClipRRect(
                     clipBehavior: Clip.hardEdge,
                     borderRadius: BorderRadius.circular(15),
-                    child: widget.hideNow ? Container() : TecNativeAd(
-                      adUnitId: prefAdMobNativeAdId,
-                      uniqueId: 'list-${widget.index}',
-                      adFormat: 'text',
-                      darkMode:
-                      Theme
-                          .of(context)
-                          .brightness != Brightness.light,
-                    ),
+                    child: widget.hideNow
+                        ? Container()
+                        : TecNativeAd(
+                            adUnitId: prefAdMobNativeAdId,
+                            uniqueId: 'list-${widget.index}',
+                            adFormat: 'text',
+                            darkMode: Theme.of(context).brightness !=
+                                Brightness.light,
+                          ),
                   ),
                   Container(
                     alignment: Alignment.bottomRight,
@@ -142,11 +142,15 @@ class AdCardViewModel {
   void _removeAds(BuildContext context) {
     final ua = store.state.userAccount;
     if (ua.user.userId == 0) {
-      showDialog<void>(
+      showDialog<bool>(
           context: context,
-          builder: (c) => SignInForPurchasesDialog(ua)).then((_) {
-        showDialog<bool>(
-            context: context, builder: (c) => InAppPurchaseDialog());
+          builder: (c) => SignInForPurchasesDialog(ua)).then((no) {
+        if (no) {
+          Navigator.of(context).pop();
+        } else {
+          showDialog<bool>(
+              context: context, builder: (c) => InAppPurchaseDialog());
+        }
       });
     } else {
       showDialog<bool>(context: context, builder: (c) => InAppPurchaseDialog());
@@ -161,7 +165,8 @@ class AdCardViewModel {
                   borderRadius: BorderRadius.circular(15)),
               title: const Text('Why am I seeing ads?'),
               content: const Text(
-                  'Bible Search! is an ad supported app.  To support the app''s continued development, text only ads will occasionally appear in the search results.'),
+                  'Bible Search! is an ad supported app.  To support the app'
+                  's continued development, text only ads will occasionally appear in the search results.'),
               actions: <Widget>[
                 FlatButton(
                   child: const Text('Close'),
@@ -172,7 +177,10 @@ class AdCardViewModel {
                 ),
                 FlatButton(
                   child: const Text('Remove Ads'),
-                  onPressed: () => _removeAds(context),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    _removeAds(context);
+                  },
                 )
               ],
             ));

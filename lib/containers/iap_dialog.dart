@@ -1,13 +1,10 @@
-
 import 'package:bible_search/models/user_model.dart';
 import 'package:flutter/material.dart';
-
 
 import 'package:tec_user_account/tec_user_account.dart';
 import 'package:tec_user_account/tec_user_account_ui.dart';
 
 class InAppPurchaseDialog extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -39,14 +36,14 @@ class SignInForPurchasesDialog extends StatelessWidget {
           FlatButton(
             child: const Text('No thanks'),
             onPressed: () {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(true);
             },
           ),
           FlatButton(
             child: const Text('Okay'),
             onPressed: () async {
               await showSignInDlg(context: context, account: ua);
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(false);
             },
           )
         ],
