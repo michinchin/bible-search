@@ -165,8 +165,7 @@ class AdCardViewModel {
                   borderRadius: BorderRadius.circular(15)),
               title: const Text('Why am I seeing ads?'),
               content: const Text(
-                  'Bible Search! is an ad supported app.  To support the app'
-                  's continued development, text only ads will occasionally appear in the search results.'),
+                  'Bible Search! is an ad supported app. To support the app\'s continued development, text only ads will occasionally appear in the search results.'),
               actions: <Widget>[
                 FlatButton(
                   child: const Text('Close'),
