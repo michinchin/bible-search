@@ -2,6 +2,7 @@ import 'package:bible_search/containers/sr_components.dart';
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/verse.dart';
+import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/search_model.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
@@ -40,9 +41,10 @@ class _CardIconsState extends State<CardIcons> {
     super.initState();
   }
 
-  Future<bool> _onDismiss(String id) {
-    FeatureDiscovery.completeCurrentStep(context);
-    return Future.value(false);
+  Future<bool> _onDismiss(int idx) async {
+    final currFeatureId = featureIds[idx + 1];
+    FeatureDiscovery.discoverFeatures(context, {currFeatureId});
+    return true;
   }
 
   void _onCopy() => searchModel.shareSelection(
@@ -104,14 +106,14 @@ class _CardIconsState extends State<CardIcons> {
               Stack(children: [
                 ButtonBar(alignment: MainAxisAlignment.start, children: [
                   DescribedFeatureOverlay(
-                    onDismiss: () => _onDismiss('context'),
+                    featureId: featureIds[2],
                     onOpen: () async {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         ensureVisibleGlobalKey.currentState.ensureVisible();
                       });
                       return true;
                     },
-                    featureId: 'context',
+                    onDismiss: () => _onDismiss(2),
                     title: const Text('Give Context'),
                     description: const Text(
                         'Tap here to view the surrounding verses of this scripture'),

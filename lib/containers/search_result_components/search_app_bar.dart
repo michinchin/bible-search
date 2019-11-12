@@ -32,47 +32,16 @@ class _SearchAppBarState extends State<SearchAppBar> {
 
   @override
   void initState() {
+    super.initState();
     _isInSelectionMode = widget.model.isInSelectionMode;
     sm = SearchModel();
-    super.initState();
   }
 
   @override
   void didUpdateWidget(SearchAppBar oldWidget) {
-    _isInSelectionMode = widget.model.isInSelectionMode;
     super.didUpdateWidget(oldWidget);
+    _isInSelectionMode = widget.model.isInSelectionMode;
   }
-
-  // void _showModalSheet() {
-  //   showModalBottomSheet<void>(
-  //       context: context,
-  //       builder: (c) => Column(
-  //             mainAxisSize: MainAxisSize.min,
-  //             children: <Widget>[
-  //               ListTile(
-  //                 leading: Icon(Icons.check_circle),
-  //                 title: const Text('Selection Mode'),
-  //                 onTap: () {
-  //                   _changeToSelectionMode();
-  //                   Navigator.of(context).pop();
-  //                 },
-  //               ),
-  //               SwitchListTile.adaptive(
-  //                   secondary: Icon(Icons.lightbulb_outline),
-  //                   value: widget.model.state.isDarkTheme,
-  //                   title: const Text('Dark Mode'),
-  //                   onChanged: (b) {
-  //                     DynamicTheme.of(context).setThemeData(ThemeData(
-  //                       primarySwatch: b ? Colors.teal : Colors.orange,
-  //                       primaryColorBrightness: Brightness.dark,
-  //                       brightness: b ? Brightness.dark : Brightness.light,
-  //                     ));
-  //                     widget.model.changeTheme(b);
-  //                     Navigator.of(context).pop();
-  //                   }),
-  //             ],
-  //           ));
-  // }
 
   void _changeToSelectionMode() {
     if (!_isInSelectionMode) {
@@ -98,9 +67,10 @@ class _SearchAppBarState extends State<SearchAppBar> {
         fullscreenDialog: true));
   }
 
-  Future<bool> _onDismiss(String id) {
-    FeatureDiscovery.completeCurrentStep(context);
-    return Future.value(false);
+  Future<bool> _onDismiss(int idx) async {
+    final currFeatureId = featureIds[idx + 1];
+    FeatureDiscovery.discoverFeatures(context, {currFeatureId});
+    return true;
   }
 
   @override
@@ -151,8 +121,8 @@ class _SearchAppBarState extends State<SearchAppBar> {
                   trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                     if (!widget.model.isVerseRefSearch)
                       DescribedFeatureOverlay(
-                        featureId: 'selection_mode',
-                        onDismiss: () => _onDismiss('selection_mode'),
+                        featureId: featureIds[0],
+                        onDismiss: () => _onDismiss(0),
                         tapTarget: Icon(
                           Icons.check_circle_outline,
                           color: Colors.black,
@@ -167,12 +137,12 @@ class _SearchAppBarState extends State<SearchAppBar> {
                         ),
                       ),
                     DescribedFeatureOverlay(
-                      featureId: 'filter',
+                      featureId: featureIds[1],
                       tapTarget: Icon(
                         Icons.filter_list,
                         color: Colors.black,
                       ),
-                      onDismiss: () => _onDismiss('filter'),
+                      onDismiss: () => _onDismiss(1),
                       title: const Text('Filter'),
                       description: const Text(
                           'Check out the filter page! Filter search results by translation and books of the Bible'),

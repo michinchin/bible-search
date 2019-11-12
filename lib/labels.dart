@@ -51,6 +51,13 @@ final prefAdMobNativeAdId = Platform.isAndroid
     ? 'ca-app-pub-5279916355700267/7923069668'
     : 'ca-app-pub-5279916355700267/7203757709';
 
+const featureIds = <String>[
+  'selection_mode',
+  'filter',
+  'context',
+  'open_in_TB'
+];
+
 const defaultSearchHistory = <String>[
   'God\'s word',
   'Jeremiah 29:11',

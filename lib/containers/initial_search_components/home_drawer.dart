@@ -35,12 +35,12 @@ class HomeDrawer extends StatelessWidget {
                   contentPadding: const EdgeInsets.only(left: 16, top: 16),
                   title: RichText(
                     text: TextSpan(
-                        children: [
-                          const TextSpan(text: 'Tecarta'),
-                          const TextSpan(
+                        children: const [
+                          TextSpan(text: 'Tecarta'),
+                          TextSpan(
                               text: 'Bible',
                               style: TextStyle(fontWeight: FontWeight.bold)),
-                          const TextSpan(text: ' Search')
+                          TextSpan(text: ' Search')
                         ],
                         style: Theme.of(context).brightness == Brightness.dark
                             ? Theme.of(context).textTheme.headline
@@ -187,7 +187,7 @@ class DrawerViewModel {
       WidgetsBinding.instance
           .addPostFrameCallback((duration) => FeatureDiscovery.discoverFeatures(
                 c,
-                <String>{'selection_mode', 'filter', 'context', 'open_in_TB'},
+                featureIds.toSet(),
               ));
       await tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
     }
