@@ -18,7 +18,7 @@ class SearchModel {
       @required int chapterId,
       @required int verseId,
       @required BuildContext context}) async {
-    var url = 'bible://$id/$bookId/$chapterId/$verseId';
+    final url = 'bible://$id/$bookId/$chapterId/$verseId';
 
     if (await canLaunch(url)) {
       await launch(url, universalLinksOnly: false);
