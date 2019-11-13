@@ -18,8 +18,7 @@ class SearchModel {
       @required int chapterId,
       @required int verseId,
       @required BuildContext context}) async {
-    var url = Platform.isIOS ? 'bible://$a' : 'bible://$id';
-    url += '/$bookId/$chapterId/$verseId';
+    var url = 'bible://$id/$bookId/$chapterId/$verseId';
 
     if (await canLaunch(url)) {
       await launch(url, universalLinksOnly: false);
