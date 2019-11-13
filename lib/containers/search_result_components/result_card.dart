@@ -211,10 +211,10 @@ class ResultCardModel {
 
     colorScheme = Theme.of(context).brightness == Brightness.dark
         ? Colors.black
-        : Colors.white;
+        : const Color(0xffe6e6e6);
 
     oppColorScheme = Theme.of(context).brightness == Brightness.dark
-        ? Colors.white
+        ? const Color(0xffe6e6e6)
         : Colors.black;
     formattedTitle = Text(
       res.contextExpanded ? contextTitle.data : nonContextTitle.data,
