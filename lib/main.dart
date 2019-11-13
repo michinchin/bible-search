@@ -55,8 +55,9 @@ Future<void> main() async {
   )..dispatch(InitHomeAction());
 
   // init loading of ads...
-  unawaited(userAccount.userDb.hasLicenseToFullVolume(removeAdsVolumeId).then((
-      hasAccess) {
+  unawaited(userAccount.userDb
+      .hasLicenseToFullVolume(removeAdsVolumeId)
+      .then((hasAccess) {
     if (!hasAccess) {
       NativeAdController.instance.loadAds(adUnitId: prefAdMobNativeAdId);
     }

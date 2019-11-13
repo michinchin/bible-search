@@ -31,18 +31,19 @@ class SearchModel {
 
   void showAppStoreDialog(BuildContext context) {
     final dialog = AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       title: const Text('Download TecartaBible'),
       content: const Text(
           'Easily navigate to scriptures in the Bible by downloading our Bible app.'),
       actions: [
         FlatButton(
-          child: const Text('No Thanks'),
+          child: const Text('Cancel'),
           onPressed: () {
             Navigator.of(context).pop();
           },
         ),
         FlatButton(
-          child: const Text('Okay'),
+          child: const Text('Download'),
           onPressed: () async {
             final url = Platform.isIOS
                 ? 'itms-apps://itunes.apple.com/app/id325955298'

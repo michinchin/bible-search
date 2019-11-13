@@ -45,7 +45,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         (duration) => Future.delayed(const Duration(seconds: 1), () {
               FeatureDiscovery.discoverFeatures(
                 context,
-                <String>{'selection_mode', 'filter', 'context', 'open_in_TB'},
+                featureIds.toSet(),
               );
             }));
   }
@@ -139,8 +139,8 @@ class ResultsViewModel {
     isInSelectionMode = store.state.isInSelectionMode;
     changeToSelectionMode = () => store.dispatch(SetSelectionModeAction());
     updateSearchResults = (s) => store.dispatch(SearchAction(s));
-    selectCard =
-        (idx, b) => store.dispatch(SelectionAction(idx, Select.result, toggle: b));
+    selectCard = (idx, b) =>
+        store.dispatch(SelectionAction(idx, Select.result, toggle: b));
     getShareVerse = () =>
         ShareVerse(books: store.state.books, results: store.state.results);
     changeTheme = (b) => store.dispatch(SetThemeAction(isDarkTheme: b));

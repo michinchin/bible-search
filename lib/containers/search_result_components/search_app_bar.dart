@@ -68,8 +68,8 @@ class _SearchAppBarState extends State<SearchAppBar> {
   }
 
   Future<bool> _onDismiss(int idx) async {
-    final currFeatureId = featureIds[idx + 1];
-    FeatureDiscovery.discoverFeatures(context, {currFeatureId});
+    final futureFeatures = featureIds.getRange(idx + 1, featureIds.length);
+    FeatureDiscovery.discoverFeatures(context, futureFeatures.toSet());
     return true;
   }
 
