@@ -97,6 +97,13 @@ class BibleSearchApp extends StatelessWidget {
                           darkTheme ? Brightness.dark : Brightness.light,
                     ),
                 themedWidgetBuilder: (context, theme) {
+                  if (theme.brightness == Brightness.dark) {
+                    const textColor = Color(0xffe6e6e6);
+                    theme = theme.copyWith(
+                        textTheme: theme.textTheme.apply(
+                            bodyColor: textColor, displayColor: textColor),
+                        iconTheme: const IconThemeData(color: textColor));
+                  }
                   return MaterialApp(
                     initialRoute: '/',
                     debugShowCheckedModeBanner: false,

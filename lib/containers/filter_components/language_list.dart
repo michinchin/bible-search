@@ -14,7 +14,7 @@ class LanguageList extends StatelessWidget {
       final lang = vm.languages[i];
       _languageList.add(ExpandableCheckboxListTile(
         color: Theme.of(context).brightness == Brightness.dark
-            ? ThemeData.dark().cardColor
+            ? Theme.of(context).cardColor
             : null,
         controlAffinity: ListTileControlAffinity.leading,
         onChanged: (b) {
@@ -47,7 +47,7 @@ class _LanguageChildren extends StatelessWidget {
         padding: const EdgeInsets.only(left: 15.0),
         child: CheckboxListTile(
           checkColor: Theme.of(context).brightness == Brightness.dark
-              ? ThemeData.dark().cardColor
+              ? Theme.of(context).cardColor
               : null,
           onChanged: (b) => vm.selectTranslation(
               b, vm.translations.data.indexOf(translations[i])),

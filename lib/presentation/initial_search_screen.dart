@@ -61,7 +61,8 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
                 ),
               ];
             })
-            ..doNotOpenAgain = true;
+            ..doNotOpenAgain = true
+            ..save();
         }
       });
     });
