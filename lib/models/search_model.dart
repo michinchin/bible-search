@@ -142,6 +142,9 @@ class SearchModel {
     var modKeywords = words.trim();
     var phrase = false, exact = false;
 
+    urlEncodingExceptions
+        .forEach((k, v) => modKeywords = modKeywords.replaceAll(RegExp(k), v));
+
     // phrase or exact search ?
     if (modKeywords[0] == '"' || modKeywords[0] == '\'') {
       if (modKeywords.contains(' ')) {
@@ -159,9 +162,6 @@ class SearchModel {
     } else {
       modKeywords = modKeywords;
     }
-
-    urlEncodingExceptions
-        .forEach((k, v) => modKeywords = modKeywords.replaceAll(RegExp(k), v));
 
     List<String> formattedKeywords, lFormattedKeywords;
 
