@@ -106,7 +106,7 @@ class _AdCardState extends State<AdCard> {
                                         leading: Icon(Icons.feedback),
                                         onTap: () {
                                           Navigator.of(context).maybePop();
-                                          vm.emailFeedback(context);
+                                          vm.emailFeedback(context, 'list-${widget.index}');
                                         },
                                       ),
                                       ListTile(
@@ -129,7 +129,7 @@ class _AdCardState extends State<AdCard> {
 
 class AdCardViewModel {
   final Store<AppState> store;
-  Future<void> Function(BuildContext) emailFeedback;
+  Future<void> Function(BuildContext, String) emailFeedback;
   void Function(BuildContext) whyAdDialog;
   void Function(BuildContext) removeAds;
 
@@ -186,7 +186,7 @@ class AdCardViewModel {
   }
 
   /// Opens the native email UI with an email for questions or comments.
-  Future<void> _emailFeedback(BuildContext context) async {
+  Future<void> _emailFeedback(BuildContext context, String uniqueId) async {
     var email = 'biblesupport@tecarta.com';
     if (!Platform.isIOS) {
       email = 'androidsupport@tecarta.com';
@@ -198,8 +198,9 @@ class AdCardViewModel {
         (appVersion == 'DEBUG-VERSION' ? '(debug version)' : 'v$appVersion');
     final subject = 'Feedback regarding Bible Search! $version '
         'with ${di.productName} ${tec.DeviceInfo.os} ${di.version}';
-    const body = 'I have the following question or comment:\n\n\n';
-
+    final adHeadline = await NativeAdController.instance.getHeadline(
+        prefAdMobNativeAdId, uniqueId);
+    final body = 'I have the following question or comment about an ad with headline ($adHeadline):\n\n\n';
     final url = Uri.encodeFull('mailto:$email?subject=$subject&body=$body');
 
     try {
