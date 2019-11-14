@@ -211,7 +211,7 @@ class ResultCardModel {
 
     colorScheme = Theme.of(context).brightness == Brightness.dark
         ? Colors.black
-        : const Color(0xffe6e6e6);
+        : Colors.white;
 
     oppColorScheme = Theme.of(context).brightness == Brightness.dark
         ? const Color(0xffe6e6e6)
