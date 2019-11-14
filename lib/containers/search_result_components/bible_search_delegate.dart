@@ -490,6 +490,11 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
   }
 
   Future<AutoComplete> _fromCancelable() async {
+    if (autoCompleteOperation != null && !autoCompleteOperation.isCompleted) {
+      debugPrint('Cancel current suggestion api call and find new suggestions');
+      await autoCompleteOperation.cancel();
+    }
+
     final future = AutoComplete.fetch(
         phrase: widget.delegate.query,
         translationIds: widget.delegate.translations);
@@ -498,8 +503,6 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
         future,
         onCancel: () => {debugPrint('Cancelled Suggestion Fetch')});
 
-    debugPrint('Cancel current suggestion api call and find new suggestions');
-    await autoCompleteOperation.cancel();
     return autoCompleteOperation.valueOrCancellation(await future);
   }
 

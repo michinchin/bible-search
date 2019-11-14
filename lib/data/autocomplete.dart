@@ -26,22 +26,37 @@ class AutoComplete {
     final parameters =
         'suggest?key=$kTBkey&version=$kTBApiVersion&words=${suggestions['words']}&partialWord=${suggestions['partialWord']}&searchVolumes=$translationIds';
     const cachePath = 'https://$kTBStreamServer/cache/';
-    final cacheParam =
-        '${_getCachePhrase(phrase)}${_getCacheKey(phrase, translationIds)}';
+    final cacheParam = '${_getCacheKey(phrase, translationIds)}';
 
-    print('$cachePath$cacheParam');
-    final tecCache = TecCache();
     Map<String, dynamic> json;
-    json = await tecCache.jsonFromUrl(
-      url: '$cachePath$cacheParam',
-    );
-    print(Uri.encodeFull('$path$parameters'));
-    if (tec.isNullOrEmpty(json)) {
-    json = await tecCache.jsonFromUrl(
-      requestType: 'post',
-      url: '$path$parameters',
-    );
+
+    if (phrase
+        .trim()
+        .isEmpty) {
+      json =
+      <String, dynamic>{ 'words': '', 'parital': '', 'possibles': <String>[]};
+      print('Getting empty results');
     }
+
+    final tecCache = TecCache();
+
+    if (tec.isNullOrEmpty(json)) {
+      print('Getting cached results from $cachePath$cacheParam');
+
+      json = await tecCache.jsonFromUrl(
+        url: '$cachePath$cacheParam',
+      );
+    }
+
+    if (tec.isNullOrEmpty(json)) {
+      print('Getting results from ${Uri.encodeFull('$path$parameters')}');
+
+      json = await tecCache.jsonFromUrl(
+        requestType: 'post',
+        url: '$path$parameters',
+      );
+    }
+
     if (json != null) {
       return AutoComplete.fromJson(json);
     } else {
@@ -54,6 +69,13 @@ class AutoComplete {
 //         '-${phrase}_AIAJANAPAgAtAuAvAwAxAyAzBBBMBOBPBWBZDIDJDKDaDgDjDmDnD6EqE1Fd.gz';
 
 String _getCacheKey(String phrase, String translationIds) {
+  final words = getSuggestions(phrase);
+  final fullWords = words['words'].split(' ').join('_');
+  var partial = '';
+  if (tec.isNotNullOrEmpty(words['partialWord'])) {
+    partial += '-${words['partialWord']}';
+  }
+
   final encoded = StringBuffer();
   const length = base64Map.length;
   final volumeIds =
@@ -66,17 +88,8 @@ String _getCacheKey(String phrase, String translationIds) {
     volumeId -= digit.toInt() * length;
     encoded.write(base64Map[volumeId.toInt()]);
   }
-  return '_${encoded.toString()}.gz';
-}
 
-String _getCachePhrase(String phrase) {
-  final words = getSuggestions(phrase);
-  final fullWords = words['words'].split(' ').join('_');
-  var partial = '';
-  if (tec.isNotNullOrEmpty(words['partialWord'])) {
-    partial += '_-${words['partialWord']}';
-  }
-  return fullWords + partial;
+  return '$fullWords${partial}_${encoded.toString()}.gz';
 }
 
 Map<String, String> getSuggestions(String phrase) {
