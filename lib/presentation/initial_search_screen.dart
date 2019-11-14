@@ -41,24 +41,32 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
     rateMyApp.init().then((_) {
       WidgetsBinding.instance.addPostFrameCallback((d) {
         if (rateMyApp.shouldOpenDialog) {
-          rateMyApp.showStarRateDialog(context,
-              title: 'Rate this app',
+          if (Platform.isIOS) {
+            rateMyApp.showStarRateDialog(context,
+                title: 'Rate this app',
+                message:
+                    'Like using TecartaBible Search? Leave us a rating below:',
+                onRatingChanged: (stars) {
+              return [
+                FlatButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    print(
+                        'Thanks for the ${stars == null ? '0' : stars.round().toString()}'
+                        ' star(s) !');
+                    rateMyApp.doNotOpenAgain = true;
+                    rateMyApp.save().then((v) => Navigator.pop(context));
+                  },
+                ),
+              ];
+            });
+          } else {
+            rateMyApp.showRateDialog(
+              context,
               message:
                   'Like using TecartaBible Search? Leave us a rating below:',
-              onRatingChanged: (stars) {
-            return [
-              FlatButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  print(
-                      'Thanks for the ${stars == null ? '0' : stars.round().toString()}'
-                      ' star(s) !');
-                  rateMyApp.doNotOpenAgain = true;
-                  rateMyApp.save().then((v) => Navigator.pop(context));
-                },
-              ),
-            ];
-          });
+            );
+          }
         }
       });
     });
