@@ -36,14 +36,14 @@ class SignInForPurchasesDialog extends StatelessWidget {
           FlatButton(
             child: const Text('No thanks'),
             onPressed: () {
-              Navigator.of(context).pop(true);
+              Navigator.of(context).pop();
             },
           ),
           FlatButton(
             child: const Text('Okay'),
             onPressed: () async {
               await showSignInDlg(context: context, account: ua);
-              Navigator.of(context).pop(false);
+              Navigator.of(context).pop();
             },
           )
         ],

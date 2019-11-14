@@ -98,7 +98,7 @@ class _AdCardState extends State<AdCard> {
                                       ),
                                       ListTile(
                                           title: const Text(
-                                              'Why am I seeeing this ad?'),
+                                              'Why am I seeing this ad?'),
                                           leading: Icon(Icons.info),
                                           onTap: () => vm.whyAdDialog(context)),
                                       ListTile(
@@ -106,7 +106,8 @@ class _AdCardState extends State<AdCard> {
                                         leading: Icon(Icons.feedback),
                                         onTap: () {
                                           Navigator.of(context).maybePop();
-                                          vm.emailFeedback(context, 'list-${widget.index}');
+                                          vm.emailFeedback(
+                                              context, 'list-${widget.index}');
                                         },
                                       ),
                                       ListTile(
@@ -144,13 +145,9 @@ class AdCardViewModel {
     if (ua.user.userId == 0) {
       showDialog<bool>(
           context: context,
-          builder: (c) => SignInForPurchasesDialog(ua)).then((no) {
-        if (no) {
-          Navigator.of(context).pop();
-        } else {
-          showDialog<bool>(
-              context: context, builder: (c) => InAppPurchaseDialog());
-        }
+          builder: (c) => SignInForPurchasesDialog(ua)).then((_) {
+        showDialog<bool>(
+            context: context, builder: (c) => InAppPurchaseDialog());
       });
     } else {
       showDialog<bool>(context: context, builder: (c) => InAppPurchaseDialog());
@@ -198,9 +195,10 @@ class AdCardViewModel {
         (appVersion == 'DEBUG-VERSION' ? '(debug version)' : 'v$appVersion');
     final subject = 'Feedback regarding Bible Search! $version '
         'with ${di.productName} ${tec.DeviceInfo.os} ${di.version}';
-    final adHeadline = await NativeAdController.instance.getHeadline(
-        prefAdMobNativeAdId, uniqueId);
-    final body = 'I have the following question or comment about an ad with headline ($adHeadline):\n\n\n';
+    final adHeadline = await NativeAdController.instance
+        .getHeadline(prefAdMobNativeAdId, uniqueId);
+    final body =
+        'I have the following question or comment about an ad with headline ($adHeadline):\n\n\n';
     final url = Uri.encodeFull('mailto:$email?subject=$subject&body=$body');
 
     try {
