@@ -235,7 +235,9 @@ class DrawerViewModel {
     //   return;
     // }
     // final shortUrl = await tec.shortenUrl(storeUrl);
-    await Share.share('https://biblesearch.page.link/app');
+    await Share.share((Platform.isIOS)
+        ? 'http://tbibl.es/search'
+        : 'https://biblesearch.page.link/app');
   }
 
   /// Shows a snack bar message.
