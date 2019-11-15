@@ -37,8 +37,7 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
   }
 
   void rateApp() {
-    final rateMyApp =
-        RateMyApp(preferencesPrefix: prefRateApp, minLaunches: 5);
+    final rateMyApp = RateMyApp(preferencesPrefix: prefRateApp, minLaunches: 5);
     rateMyApp.init().then((_) {
       WidgetsBinding.instance.addPostFrameCallback((d) {
         if (rateMyApp.shouldOpenDialog) {
@@ -61,11 +60,10 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
               FlatButton(
                 child: const Text('Done'),
                 onPressed: () {
-                  _globalKey.currentState.showSnackBar(SnackBar(
-                    content: Text(
-                        'Thanks for the ${stars == null ? '0' : stars.round().toString()}'
-                        ' star(s) !'),
-                  ));
+                  TecToast.show(
+                      context,
+                      'Thanks for the ${stars == null ? '0' : stars.round().toString()}'
+                      ' star(s) !');
                   rateMyApp.doNotOpenAgain = true;
                   rateMyApp.save().then((v) => Navigator.pop(context));
                 },
@@ -91,7 +89,7 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
           now.difference(currentBackPressTime) >
               const Duration(seconds: seconds)) {
         currentBackPressTime = now;
-        TecToast.show('Tap back again to exit');
+        TecToast.show(context, 'Tap back again to exit');
         return Future.value(false);
       }
     }
@@ -194,15 +192,6 @@ class InitialSearchViewModel {
   void _updateSearchHistory(List<String> searchQueries) =>
       store.dispatch(SetSearchHistoryAction(
           searchQuery: store.state.searchQuery, searchQueries: searchQueries));
-
-  /// Shows a snack bar message.
-  void showSnackBarMessage(BuildContext context, String message) {
-    Navigator.pop(context); // Dismiss the drawer.
-    if (message == null) return;
-    Scaffold.of(context)?.showSnackBar(SnackBar(
-      content: Text(message),
-    ));
-  }
 
   /// override == operator so flutter only rebuilds widgets that need rebuilding
   @override

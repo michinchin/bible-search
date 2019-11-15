@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/search_model.dart';
+import 'package:bible_search/toast.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -45,15 +46,9 @@ class _SearchAppBarState extends State<SearchAppBar> {
 
   void _changeToSelectionMode() {
     if (!_isInSelectionMode) {
-      Scaffold.of(context).showSnackBar(SnackBar(
-        backgroundColor: Theme.of(context).cardColor,
-        content: Text(
-          'Entered Selection Mode',
-          style: TextStyle(color: Theme.of(context).textTheme.body1.color),
-        ),
-      ));
-    } else {
-      Scaffold.of(context).hideCurrentSnackBar();
+      TecToast.show(context,
+        'Entered Selection Mode',
+      );
     }
     setState(() {
       _isInSelectionMode = !_isInSelectionMode;

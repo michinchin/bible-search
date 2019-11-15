@@ -1,3 +1,4 @@
+import 'package:bible_search/toast.dart';
 import 'package:flutter/material.dart';
 
 class SearchHistoryList extends StatelessWidget {
@@ -19,12 +20,8 @@ class SearchHistoryList extends StatelessWidget {
                 key: Key(words[index]),
                 direction: DismissDirection.endToStart,
                 onDismissed: (direction) {
-                  Scaffold.of(context).showSnackBar(SnackBar(
-                      backgroundColor: Theme.of(context).cardColor,
-                      content: Text(
-                        'The search term "${words[index]}" has been removed',
-                        style: Theme.of(context).textTheme.body1,
-                      )));
+                  TecToast.show(context,
+                      'The search term "${words[index]}" has been removed');
                   words.removeWhere((w) => (w == words[index]));
                   updateSearchHistory(words.reversed.toList());
                 },
