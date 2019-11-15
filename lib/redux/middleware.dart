@@ -23,7 +23,6 @@ Future<void> searchMiddleware(
   SearchAction action,
   NextDispatcher next,
 ) async {
-
   store.dispatch(SearchLoadingAction());
   final translationIds = store.state.translations.formatIds();
   if (translationIds.isNotEmpty) {
@@ -36,12 +35,12 @@ Future<void> searchMiddleware(
 
     var numAdsAvailable = -1;
 
-    await(store.state.userAccount.userDb.hasLicenseToFullVolume(
-        removeAdsVolumeId).then((hasAccess) {
+    await (store.state.userAccount.userDb
+        .hasLicenseToFullVolume(removeAdsVolumeId)
+        .then((hasAccess) {
       if (hasAccess) {
         numAdsAvailable = 0;
-      }
-      else {
+      } else {
         // load the next set of ads
         NativeAdController.instance.loadAds(adUnitId: prefAdMobNativeAdId);
       }
@@ -52,8 +51,16 @@ Future<void> searchMiddleware(
       translationIds: translationIds,
     ).then((res) async {
       if (numAdsAvailable < 0) {
-         numAdsAvailable = await NativeAdController.instance.numAdsAvailable(
-          prefAdMobNativeAdId);
+        numAdsAvailable = await NativeAdController.instance
+            .numAdsAvailable(prefAdMobNativeAdId);
+      }
+
+      if (res.isEmpty) {
+        newSearchList.removeLast();
+        store.dispatch(SetSearchHistoryAction(
+            searchQuery: action.searchQuery,
+            searchQueries:
+                newSearchList.reversed.toSet().toList().reversed.toList()));
       }
 
       store
