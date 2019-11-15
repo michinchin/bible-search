@@ -32,7 +32,8 @@ class _CardViewState extends State<CardView> {
           adsAvailable--;
         }
       } else if (res.isNotEmpty) {
-        _adLocations.add(res.length);
+        // +1 to include showing...
+        _adLocations.add(res.length + 1);
       }
     }
   }
