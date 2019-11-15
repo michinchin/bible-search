@@ -70,8 +70,11 @@ class BibleSearchScreen extends BibleSearchDelegate<String> {
                           ? Text(a)
                           : KeywordText(outer: a, inner: query, c: context),
                       onTap: () {
-                        if (' '.allMatches(query).length < 4 && query.substring(query.length - 1, query.length) ==
-                            ' ') {
+                        if (' '
+                            .allMatches(query)
+                            .length < 4 &&
+                            query.substring(query.length - 1, query.length) ==
+                                ' ') {
                           query += '$a ';
                         } else {
                           final words = query.split(' ')..last = a;
