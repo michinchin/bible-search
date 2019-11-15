@@ -65,7 +65,7 @@ class AutoComplete {
         .sublist(0, wordList.length <= 5 ? wordList.length : 5)
         .join(' ');
 
-    
+
     if (phrase.endsWith(' ')) {
       // so we get full partial word correct...
       cleanPhrase += ' ';
