@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 
 import 'package:tec_cache/tec_cache.dart';
@@ -114,7 +115,8 @@ class SearchResults {
     const hostAndPath = '$kTBApiServer/search';
     const cachePath = '$kTBStreamServer/cache';
     var phrase = 0, exact = 0;
-    var searchWords = words.trim();
+    var searchWords = removeDiacritics(words).replaceAll(
+        RegExp('[^ a-zA-Z\'0-9:\-]'), ' ').trim();
 
     urlEncodingExceptions
         .forEach((k, v) => searchWords = searchWords.replaceAll(RegExp(k), v));

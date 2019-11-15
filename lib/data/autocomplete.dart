@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bible_search/labels.dart';
+import 'package:diacritic/diacritic.dart';
 import 'package:tec_cache/tec_cache.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 
@@ -21,16 +22,65 @@ class AutoComplete {
 
   static Future<AutoComplete> fetch(
       {String phrase, String translationIds}) async {
-    final suggestions = getSuggestions(phrase);
+
+    //    if (normalize) {
+//      searchText = TecartaBible.normalize(searchText);
+//    }
+//
+//    if (latinBased) {
+//      // remove non alpha/number/space/quote and lowercase
+//      searchText = searchText.replaceAll("[^ a-zA-Z'0-9:\\\\-]", " ").toLowerCase(Locale.ENGLISH);
+//    } else {
+//      // remove punctuation from non latin languages
+//      searchText = searchText.replaceAll("\\P{L}", " ");
+//    }
+
+    // normalize phrase
+    var cleanPhrase = removeDiacritics(phrase);
+
+    // remove punctuation
+    cleanPhrase = cleanPhrase.replaceAll(RegExp('[^ a-zA-Z\'0-9:\-]'), ' ');
+
+    // top 5 words...
+    final words = cleanPhrase.split(' ');
+    cleanPhrase = '';
+
+    for (final word in words) {
+      if (word.trim().isNotEmpty) {
+        cleanPhrase += ' ${word.trim()}';
+      }
+    }
+
+    // sort by length descending then alpha ascending...
+    final wordList = cleanPhrase.trim().split(' ')
+      ..sort((a, b) {
+        if (a.length == b.length) {
+          return a.compareTo(b);
+        } else {
+          return b.length.compareTo(a.length);
+        }
+      });
+
+    cleanPhrase = wordList
+        .sublist(0, wordList.length <= 5 ? wordList.length : 5)
+        .join(' ');
+
+    
+    if (phrase.endsWith(' ')) {
+      // so we get full partial word correct...
+      cleanPhrase += ' ';
+    }
+
+    final suggestions = getSuggestions(cleanPhrase);
     const path = 'https://$kTBApiServer/';
     final parameters =
         'suggest?key=$kTBkey&version=$kTBApiVersion&words=${suggestions['words']}&partialWord=${suggestions['partialWord']}&searchVolumes=$translationIds';
     const cachePath = 'https://$kTBStreamServer/cache/';
-    final cacheParam = '${_getCacheKey(phrase, translationIds)}';
+    final cacheParam = '${_getCacheKey(cleanPhrase, translationIds)}';
 
     Map<String, dynamic> json;
 
-    if (phrase
+    if (cleanPhrase
         .trim()
         .isEmpty) {
       json =
