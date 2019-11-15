@@ -117,6 +117,8 @@ class _SearchAppBarState extends State<SearchAppBar> {
                         minFontSize: minFontSizeDescription,
                         semanticsLabel:
                             'Current Search Text is ${widget.model.searchQuery}',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       )),
                   trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                     if (!widget.model.isVerseRefSearch)
