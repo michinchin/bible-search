@@ -499,11 +499,11 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
         phrase: widget.delegate.query,
         translationIds: widget.delegate.translations);
 
-    autoCompleteOperation ??= CancelableOperation<AutoComplete>.fromFuture(
+    autoCompleteOperation = CancelableOperation<AutoComplete>.fromFuture(
         future,
         onCancel: () => {debugPrint('Cancelled Suggestion Fetch')});
 
-    return autoCompleteOperation.valueOrCancellation(await future);
+    return autoCompleteOperation.value;
   }
 
   void _onQueryChanged() {
