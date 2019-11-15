@@ -1,18 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bible_search/labels.dart';
+import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:flutter/material.dart';
 
 class ResultsDescription extends StatelessWidget {
-  final int resultLength;
-  final int filteredLength;
-  final bool filterOn;
-  final String searchQuery;
+  final ResultsViewModel vm;
 
-  const ResultsDescription(
-      {@required this.resultLength,
-      @required this.filteredLength,
-      @required this.filterOn,
-      @required this.searchQuery});
+  const ResultsDescription(this.vm);
 
   @override
   Widget build(BuildContext context) {
@@ -26,15 +20,24 @@ class ResultsDescription extends StatelessWidget {
               children: [
                 TextSpan(
                   text:
-                      'Showing $filteredLength verse${filteredLength > 1 ? 's' : ''} containing ',
+                      'Showing ${vm.filteredLength} verse${vm.filteredLength > 1 ? 's' : ''} containing ',
                 ),
                 TextSpan(
-                    text: '$searchQuery',
+                    text: '${vm.searchQuery}',
                     style: const TextStyle(fontWeight: FontWeight.bold)),
-                if (filterOn)
-                  TextSpan(
-                    text: ' of $resultLength filtered verses',
-                  )
+                if (vm.filterOn)
+                  if (vm.showOTLabel)
+                    const TextSpan(text: ' in the Old Testament')
+                  else if (vm.showNTLabel)
+                    const TextSpan(text: ' in the New Testament')
+                  else if (vm.booksSelected.length <= 5)
+                    TextSpan(
+                      text: ' in ${vm.booksSelected.map((b) {
+                        return b.name;
+                      }).join(', ')}',
+                    )
+                  else
+                    const TextSpan(text: ' in current filter')
               ],
             ),
             minFontSize: defaultMinFontSize,

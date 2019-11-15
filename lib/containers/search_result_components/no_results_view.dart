@@ -29,8 +29,9 @@ class NoResultsView extends StatelessWidget {
     } else if (books != null && tec.isNotNullOrZero(resultLength)) {
       final bookString =
           books.where((b) => b.isSelected).map((b) => b.name).join(',');
+      final s = books.where((b) => b.isSelected).toList().length > 1 ? 's' : '';
       text =
-          'Found $resultLength results, \nbut none in the book(s): $bookString';
+          'Found $resultLength results, \n${bookString.trim().isEmpty ? 'but no books are selected' : 'but none in the book$s: $bookString'}';
       reset = true;
     } else {
       text = 'No Results';
