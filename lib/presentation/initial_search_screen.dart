@@ -3,10 +3,10 @@ import 'dart:io';
 
 import 'package:bible_search/containers/initial_search_components/home_drawer.dart';
 import 'package:bible_search/labels.dart';
+import 'package:bible_search/toast.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bible_search/containers/is_components.dart';
-import 'package:oktoast/oktoast.dart';
 import 'package:rate_my_app/rate_my_app.dart';
 
 import 'package:flutter_redux/flutter_redux.dart';
@@ -91,33 +91,12 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
           now.difference(currentBackPressTime) >
               const Duration(seconds: seconds)) {
         currentBackPressTime = now;
-        tecShowToast('Tap back again to exit');
+        TecToast.show('Tap back again to exit');
         return Future.value(false);
       }
     }
 
     return Future.value(true);
-  }
-
-  void tecShowToast(String message) {
-    final widget = Container(
-      margin: const EdgeInsets.only(
-          left: 50.0, right: 50.0, top: 50.0, bottom: 0.0),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(235, 0, 134, 248),
-        borderRadius: BorderRadius.circular(20.0),
-      ),
-      padding: const EdgeInsets.all(16.0),
-      child: ClipRect(
-        child: Text(
-          message,
-          style: const TextStyle(color: Colors.white),
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
-
-    showToastWidget(widget, position: ToastPosition.bottom);
   }
 
   @override

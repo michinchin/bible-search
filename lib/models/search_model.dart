@@ -3,6 +3,7 @@ import 'package:diacritic/diacritic.dart';
 
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
+import 'package:bible_search/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share/share.dart';
@@ -66,7 +67,7 @@ class SearchModel {
 
   void copyPressed({@required String text, @required BuildContext context}) {
     Clipboard.setData(ClipboardData(text: text)).then((_) {
-      _showToast(context, 'Successfully Copied!');
+      TecToast.show('Successfully Copied!');
     });
   }
 
@@ -110,28 +111,14 @@ class SearchModel {
         await Clipboard.setData(
                 ClipboardData(text: '${verse.selectedText}$shortUrl'))
             .then((x) {
-          _showToast(context, 'Successfully Copied!');
+          TecToast.show('Successfully Copied!');
         });
         return true;
       }
     } else {
-      _showToast(context, 'Please make a selection');
+      TecToast.show('Please make a selection');
     }
     return false;
-  }
-
-  void _showToast(BuildContext context, String label) {
-    final scaffold = Scaffold.of(context);
-    scaffold.showSnackBar(
-      SnackBar(
-        backgroundColor: Theme.of(context).cardColor,
-        content: Text(label, style: Theme.of(context).textTheme.body1),
-        action: SnackBarAction(
-            label: 'CLOSE',
-            textColor: Theme.of(context).accentColor,
-            onPressed: scaffold.hideCurrentSnackBar),
-      ),
-    );
   }
 
   List<TextSpan> formatWords(String verseText, String words) {
