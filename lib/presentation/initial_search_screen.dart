@@ -37,36 +37,41 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
   }
 
   void rateApp() {
-    final rateMyApp = RateMyApp(preferencesPrefix: prefRateApp, minLaunches: 5);
+    final rateMyApp =
+        RateMyApp(preferencesPrefix: prefRateApp, minLaunches: 5);
     rateMyApp.init().then((_) {
       WidgetsBinding.instance.addPostFrameCallback((d) {
         if (rateMyApp.shouldOpenDialog) {
-          if (Platform.isIOS) {
-            rateMyApp.showStarRateDialog(context,
-                title: 'Rate this app',
-                message:
-                    'Like using TecartaBible Search? Leave us a rating below:',
-                onRatingChanged: (stars) {
+          rateMyApp.showStarRateDialog(context,
+              appIcon: Image.asset(
+                'assets/appIcon.png',
+                scale: 2,
+              ),
+              title: 'Enjoying TecartaBible Search?',
+              message: 'Leave us a rating below:', onRatingChanged: (stars) {
+            if (stars == 0 || stars == null) {
               return [
                 FlatButton(
-                  child: const Text('OK'),
-                  onPressed: () {
-                    print(
-                        'Thanks for the ${stars == null ? '0' : stars.round().toString()}'
-                        ' star(s) !');
-                    rateMyApp.doNotOpenAgain = true;
-                    rateMyApp.save().then((v) => Navigator.pop(context));
-                  },
-                ),
+                  child: const Text('No Thanks'),
+                  onPressed: () => Navigator.of(context).pop(),
+                )
               ];
-            });
-          } else {
-            rateMyApp.showRateDialog(
-              context,
-              message:
-                  'Like using TecartaBible Search? Leave us a rating below:',
-            );
-          }
+            }
+            return [
+              FlatButton(
+                child: const Text('Done'),
+                onPressed: () {
+                  _globalKey.currentState.showSnackBar(SnackBar(
+                    content: Text(
+                        'Thanks for the ${stars == null ? '0' : stars.round().toString()}'
+                        ' star(s) !'),
+                  ));
+                  rateMyApp.doNotOpenAgain = true;
+                  rateMyApp.save().then((v) => Navigator.pop(context));
+                },
+              ),
+            ];
+          });
         }
       });
     });

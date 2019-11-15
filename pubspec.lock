@@ -245,9 +245,9 @@ packages:
   rate_my_app:
     dependency: "direct main"
     description:
-      name: rate_my_app
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "../shared/rate_my_app"
+      relative: true
+    source: path
     version: "0.4.0"
   redux:
     dependency: transitive

@@ -32,7 +32,6 @@ dependencies:
   transparent_image: '>=0.1.0'
   url_launcher: '>=5.0.1'
   validators: '>=2.0.0+1'
-  rate_my_app: '>=0.4.0'
   
   # Internal dependencies
   tec_native_ad:
@@ -43,6 +42,8 @@ dependencies:
     path: ../shared/tec_user_account
   tec_util:
     path: ../shared/tec_util
+  rate_my_app:
+    path: ../shared/rate_my_app
 
 dev_dependencies:
   flutter_test:
@@ -62,7 +63,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-   - assets/appimage.jpg
+   - assets/appIcon.png
    - assets/Translation.json
    - assets/logo.png
    - assets/1.jpg
