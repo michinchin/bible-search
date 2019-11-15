@@ -220,7 +220,10 @@ abstract class BibleSearchDelegate<T> {
   String get query => _queryTextController.text;
   set query(String value) {
     assert(query != null);
-    _queryTextController.text = value;
+
+    _queryTextController
+        ..text = value
+        ..selection = TextSelection.collapsed(offset: value.length);
   }
 
   /// Transition from the suggestions returned by [buildSuggestions] to the
@@ -432,6 +435,7 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
   // Load search suggestions
   CancelableOperation<AutoComplete> autoCompleteOperation;
   Timer _debounce;
+  String _lastQuery;
 
   @override
   void initState() {
@@ -509,10 +513,16 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
   void _onQueryChanged() {
     if (_debounce?.isActive ?? false) _debounce.cancel();
     _debounce = Timer(const Duration(milliseconds: 600), () {
-      setState(() {
-        widget.delegate.autoComplete = _fromCancelable();
-        // rebuild ourselves because query changed.
-      });
+      if (_lastQuery != widget.delegate._queryTextController.text) {
+        _lastQuery = widget.delegate._queryTextController.text;
+        setState(() {
+          widget.delegate.autoComplete = _fromCancelable();
+          // rebuild ourselves because query changed.
+        });
+      }
+      else {
+        debugPrint('onQueryChanged called - but no change...');
+      }
     });
   }
 

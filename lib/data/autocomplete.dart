@@ -23,54 +23,7 @@ class AutoComplete {
   static Future<AutoComplete> fetch(
       {String phrase, String translationIds}) async {
 
-    //    if (normalize) {
-//      searchText = TecartaBible.normalize(searchText);
-//    }
-//
-//    if (latinBased) {
-//      // remove non alpha/number/space/quote and lowercase
-//      searchText = searchText.replaceAll("[^ a-zA-Z'0-9:\\\\-]", " ").toLowerCase(Locale.ENGLISH);
-//    } else {
-//      // remove punctuation from non latin languages
-//      searchText = searchText.replaceAll("\\P{L}", " ");
-//    }
-
-    // normalize phrase
-    var cleanPhrase = removeDiacritics(phrase);
-
-    // remove punctuation
-    cleanPhrase = cleanPhrase.replaceAll(RegExp('[^ a-zA-Z\'0-9:\-]'), ' ');
-
-    // top 5 words...
-    final words = cleanPhrase.split(' ');
-    cleanPhrase = '';
-
-    for (final word in words) {
-      if (word.trim().isNotEmpty) {
-        cleanPhrase += ' ${word.trim()}';
-      }
-    }
-
-    // sort by length descending then alpha ascending...
-    final wordList = cleanPhrase.trim().split(' ')
-      ..sort((a, b) {
-        if (a.length == b.length) {
-          return a.compareTo(b);
-        } else {
-          return b.length.compareTo(a.length);
-        }
-      });
-
-    cleanPhrase = wordList
-        .sublist(0, wordList.length <= 5 ? wordList.length : 5)
-        .join(' ');
-
-
-    if (phrase.endsWith(' ')) {
-      // so we get full partial word correct...
-      cleanPhrase += ' ';
-    }
-
+    final cleanPhrase = optimizePhrase(phrase);
     final suggestions = getSuggestions(cleanPhrase);
     const path = 'https://$kTBApiServer/';
     final parameters =
@@ -140,6 +93,66 @@ String _getCacheKey(String phrase, String translationIds) {
   }
 
   return '$fullWords${partial}_${encoded.toString()}.gz';
+}
+
+String optimizePhrase(String phrase) {
+  //    if (normalize) {
+  //      searchText = TecartaBible.normalize(searchText);
+  //    }
+  //
+  //    if (latinBased) {
+  //      // remove non alpha/number/space/quote and lowercase
+  //      searchText = searchText.replaceAll("[^ a-zA-Z'0-9:\\\\-]", " ").toLowerCase(Locale.ENGLISH);
+  //    } else {
+  //      // remove punctuation from non latin languages
+  //      searchText = searchText.replaceAll("\\P{L}", " ");
+  //    }
+
+  // normalize phrase
+  var cleanPhrase = removeDiacritics(phrase.trimLeft());
+
+  // remove punctuation
+  cleanPhrase = cleanPhrase.replaceAll(RegExp('[^ a-zA-Z\'0-9:\-]'), ' ');
+
+  // top 5 words...
+  final words = cleanPhrase.split(' ');
+  cleanPhrase = '';
+
+  var partial = '';
+  if (!phrase.endsWith(' ')) {
+    partial = ' ${words.last}';
+    words.removeLast();
+  }
+
+  for (final word in words) {
+    if (word.trim().isNotEmpty) {
+      cleanPhrase += ' ${word.trim()}';
+    }
+  }
+
+  // sort by length descending then alpha ascending...
+  final wordList = cleanPhrase.trim().split(' ')
+    ..sort((a, b) {
+      if (a.length == b.length) {
+        return a.compareTo(b);
+      } else {
+        return b.length.compareTo(a.length);
+      }
+    });
+
+  cleanPhrase = wordList
+      .sublist(0, wordList.length <= 5 ? wordList.length : 5)
+      .join(' ');
+
+  // so we get full/partial word correct...
+  if (partial.isNotEmpty) {
+    cleanPhrase += ' $partial';
+  }
+  else {
+    cleanPhrase += ' ';
+  }
+
+  return cleanPhrase;
 }
 
 Map<String, String> getSuggestions(String phrase) {
