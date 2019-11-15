@@ -219,7 +219,7 @@ class DrawerViewModel {
       }
     } catch (e) {
       final msg = 'Error emailing: ${e.toString()}';
-      showSnackBarMessage(context, msg);
+      showToastAndPop(context, msg);
       print(msg);
     }
   }
@@ -238,14 +238,5 @@ class DrawerViewModel {
     await Share.share((Platform.isIOS)
         ? 'http://tbibl.es/search'
         : 'https://biblesearch.page.link/app');
-  }
-
-  /// Shows a snack bar message.
-  void showSnackBarMessage(BuildContext context, String message) {
-    Navigator.pop(context); // Dismiss the drawer.
-    if (message == null) return;
-    Scaffold.of(context)?.showSnackBar(SnackBar(
-      content: Text(message),
-    ));
   }
 }

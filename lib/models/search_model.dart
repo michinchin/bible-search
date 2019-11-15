@@ -67,7 +67,7 @@ class SearchModel {
 
   void copyPressed({@required String text, @required BuildContext context}) {
     Clipboard.setData(ClipboardData(text: text)).then((_) {
-      TecToast.show('Successfully Copied!');
+      TecToast.show(context, 'Successfully Copied!');
     });
   }
 
@@ -111,12 +111,12 @@ class SearchModel {
         await Clipboard.setData(
                 ClipboardData(text: '${verse.selectedText}$shortUrl'))
             .then((x) {
-          TecToast.show('Successfully Copied!');
+          TecToast.show(context,'Successfully Copied!');
         });
         return true;
       }
     } else {
-      TecToast.show('Please make a selection');
+      TecToast.show(context,'Please make a selection');
     }
     return false;
   }

@@ -4,6 +4,8 @@ import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/translation.dart';
 import 'package:bible_search/data/votd_image.dart';
+import 'package:bible_search/toast.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:tec_user_account/tec_user_account.dart';
 import 'package:tec_util/tec_util.dart' as tec;
@@ -133,4 +135,11 @@ class AppState {
         ntSelected: ntSelected ?? this.ntSelected,
         numSelected: numSelected ?? this.numSelected);
   }
+}
+
+/// Shows a snack bar message.
+void showToastAndPop(BuildContext context, String message) {
+  Navigator.pop(context); // Dismiss the drawer.
+  if (message == null) return;
+  TecToast.show(context, message);
 }
