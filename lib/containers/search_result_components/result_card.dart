@@ -154,7 +154,9 @@ class _ResultCardState extends State<ResultCard> {
           child: Padding(
               padding: const EdgeInsets.all(8),
               child: Material(
-                color: Theme.of(context).cardColor,
+                color: widget.res.isSelected
+                    ? Theme.of(context).accentColor
+                    : Theme.of(context).cardColor,
                 child: CardIcons(
                   bookNames: widget.bookNames,
                   model: model,
