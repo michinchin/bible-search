@@ -153,15 +153,18 @@ class _ResultCardState extends State<ResultCard> {
           ),
           child: Padding(
               padding: const EdgeInsets.all(8),
-              child: CardIcons(
-                bookNames: widget.bookNames,
-                model: model,
-                expanded: widget.res.isExpanded,
-                res: widget.res,
-                onExpanded: _expandButtonPressed,
-                onContext: _contextButtonPressed,
-                onTranslationChanged: _translationChanged,
-                currTag: _currTag,
+              child: Material(
+                color: Theme.of(context).cardColor,
+                child: CardIcons(
+                  bookNames: widget.bookNames,
+                  model: model,
+                  expanded: widget.res.isExpanded,
+                  res: widget.res,
+                  onExpanded: _expandButtonPressed,
+                  onContext: _contextButtonPressed,
+                  onTranslationChanged: _translationChanged,
+                  currTag: _currTag,
+                ),
               )),
         ),
       ),
