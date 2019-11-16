@@ -3,7 +3,7 @@ import 'package:diacritic/diacritic.dart';
 
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
-import 'package:bible_search/toast.dart';
+import 'package:tec_widgets/tec_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share/share.dart';

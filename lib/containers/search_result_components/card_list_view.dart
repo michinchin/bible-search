@@ -48,9 +48,6 @@ class _CardViewState extends State<CardView> {
   Widget build(BuildContext context) {
     final res = widget.vm.filteredRes;
 
-    final filterOn =
-        widget.vm.filteredRes.length != widget.vm.searchResults.length;
-
     return SafeArea(
       bottom: false,
       child: Container(
@@ -62,16 +59,15 @@ class _CardViewState extends State<CardView> {
               itemCount: res.length + 1 + _adLocations.length,
               itemBuilder: (context, i) {
                 if (i == 0) {
-                  return ResultsDescription(
-                    filteredLength: res.length,
-                    resultLength: widget.vm.searchResults.length,
-                    filterOn: filterOn,
-                    searchQuery: widget.vm.searchQuery,
-                  );
+                  return ResultsDescription(widget.vm);
                 }
 
                 if (_adLocations.contains(i)) {
-                  return AdCard(i, _hideAd, hideNow: _scrolling,);
+                  return AdCard(
+                    i,
+                    _hideAd,
+                    hideNow: _scrolling,
+                  );
                 }
 
                 // we start with 1 since the first card is a showing...
@@ -83,15 +79,19 @@ class _CardViewState extends State<CardView> {
                   }
                 }
 
-                return ResultCard(
-                  index: i - resultOffset,
-                  res: res[i - resultOffset],
-                  keywords: widget.vm.searchQuery,
-                  isInSelectionMode: widget.vm.isInSelectionMode,
-                  selectCard: widget.vm.selectCard,
-                  bookNames: widget.vm.bookNames,
-                  toggleSelectionMode: widget.vm.changeToSelectionMode,
-                );
+                if (i - resultOffset < res.length) {
+                  return ResultCard(
+                    index: i - resultOffset,
+                    res: res[i - resultOffset],
+                    keywords: widget.vm.searchQuery,
+                    isInSelectionMode: widget.vm.isInSelectionMode,
+                    selectCard: widget.vm.selectCard,
+                    bookNames: widget.vm.bookNames,
+                    toggleSelectionMode: widget.vm.changeToSelectionMode,
+                  );
+                } else {
+                  return Container();
+                }
               },
             ),
             onNotification: (n) {
@@ -101,8 +101,7 @@ class _CardViewState extends State<CardView> {
                   setState(() {
                     _scrolling = true;
                   });
-                }
-                else if (n is ScrollEndNotification) {
+                } else if (n is ScrollEndNotification) {
                   setState(() {
                     _scrolling = false;
                   });

@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/search_model.dart';
-import 'package:bible_search/toast.dart';
+import 'package:tec_widgets/tec_widgets.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';

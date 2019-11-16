@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:bible_search/containers/initial_search_components/home_drawer.dart';
 import 'package:bible_search/labels.dart';
-import 'package:bible_search/toast.dart';
+import 'package:tec_widgets/tec_widgets.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bible_search/containers/is_components.dart';

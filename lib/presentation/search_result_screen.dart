@@ -118,6 +118,44 @@ class ResultsViewModel {
   bool hasNoTranslationsSelected;
   bool get isVerseRefSearch =>
       filteredRes.length == 1 && searchQuery.contains(':');
+  bool get filterOn => filteredRes.length != searchResults.length;
+  int get filteredLength => filteredRes.length;
+  List<Book> get booksSelected =>
+      bookNames.where((b) => b.isSelected && b.numResults > 0).toList();
+  bool get showOTLabel =>
+      bookNames.where((b) => b.numResults > 0 && b.isOT()).toList().length ==
+          bookNames
+              .where((b) => b.isSelected && b.numResults > 0 && b.isOT())
+              .toList()
+              .length &&
+      bookNames
+              .where((b) => b.isSelected && b.numResults > 0 && b.isOT())
+              .toList()
+              .length >
+          1 &&
+      bookNames
+          .where((b) => b.isSelected && b.numResults > 0 && !b.isOT())
+          .toList()
+          .isEmpty;
+  bool get showNTLabel =>
+      // all books from nt that have results are selected
+      bookNames.where((b) => b.numResults > 0 && !b.isOT()).toList().length ==
+          bookNames
+              .where((b) => b.isSelected && b.numResults > 0 && !b.isOT())
+              .toList()
+              .length &&
+      // more than one book selected
+      bookNames
+              .where((b) => b.isSelected && b.numResults > 0 && !b.isOT())
+              .toList()
+              .length >
+          1 &&
+      // no ot selected
+      bookNames
+          .where((b) => b.isSelected && b.numResults > 0 && b.isOT())
+          .toList()
+          .isEmpty;
+
   VoidCallback changeToSelectionMode;
   Function(String) updateSearchResults;
   Function(int, bool) selectCard;

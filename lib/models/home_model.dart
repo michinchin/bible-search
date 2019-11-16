@@ -27,7 +27,7 @@ class HomeModel {
   /// update the search history with current user prefs
   Future<void> updateSearchHistory(List<String> searchQueries) async {
     final sq = List<String>.from(searchQueries)
-      ..removeWhere((s) => (s?.length ?? 0) == 0);
+      ..removeWhere((s) => (s?.trim()?.length ?? 0) == 0);
     await tec.Prefs.shared.setStringList(
         searchHistoryPref, sq.reversed.toSet().toList().reversed.toList());
   }

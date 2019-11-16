@@ -1,5 +1,5 @@
-import 'package:bible_search/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:tec_widgets/tec_widgets.dart';
 
 class SearchHistoryList extends StatelessWidget {
   final List<String> searchHistory;

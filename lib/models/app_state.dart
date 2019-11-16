@@ -4,7 +4,7 @@ import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/data/translation.dart';
 import 'package:bible_search/data/votd_image.dart';
-import 'package:bible_search/toast.dart';
+import 'package:tec_widgets/tec_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:tec_user_account/tec_user_account.dart';

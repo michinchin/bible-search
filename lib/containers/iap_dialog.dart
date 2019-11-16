@@ -9,8 +9,9 @@ class InAppPurchaseDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      title: const Text(
-          'This is an ad supported app. Would you like to pay a small fee to remove ads for a year?'),
+      title: const Text('Ad supported app'),
+      content: const Text(
+          'Would you like to pay a small fee to remove ads for a year?'),
       actions: <Widget>[
         FlatButton(
             onPressed: () => Navigator.of(context).pop(),
