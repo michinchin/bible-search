@@ -8,7 +8,7 @@ flutter clean
 sed -i '' "s/DEBUG-VERSION/$VERSION-$BUILD_NUMBER/g" lib/version.dart
 
 # iOS
-cd ios && pod install && cd ..
+#cd ios && pod update && cd ..
 sed -i '' "s/\$(FLUTTER_BUILD_NUMBER)/$BUILD_NUMBER/g" ios/Runner/Info.plist
 sed -i '' "s/\$(FLUTTER_BUILD_NAME)/$VERSION/g" ios/Runner/Info.plist
 security -v unlock-keychain -p goph3rw00d ~/Library/Keychains/login.keychain
