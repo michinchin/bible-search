@@ -60,6 +60,7 @@ class _AdCardState extends State<AdCard> {
                             adFormat: 'text',
                             darkMode: Theme.of(context).brightness !=
                                 Brightness.light,
+                            maxHeight: 105,
                           ),
                   ),
                   Container(
