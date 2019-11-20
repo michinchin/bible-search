@@ -2,13 +2,13 @@
 VERSION=1.0.4
 
 cd bible_search
-flutter upgrade
+#flutter upgrade
 flutter clean
 
 sed -i '' "s/DEBUG-VERSION/$VERSION-$BUILD_NUMBER/g" lib/version.dart
 
 # iOS
-cd ios && pod update && cd ..
+cd ios && pod install && cd ..
 sed -i '' "s/\$(FLUTTER_BUILD_NUMBER)/$BUILD_NUMBER/g" ios/Runner/Info.plist
 sed -i '' "s/\$(FLUTTER_BUILD_NAME)/$VERSION/g" ios/Runner/Info.plist
 security -v unlock-keychain -p goph3rw00d ~/Library/Keychains/login.keychain
