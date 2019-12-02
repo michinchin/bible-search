@@ -5,6 +5,7 @@ import 'package:bible_search/containers/search_result_components/results_descrip
 import 'package:bible_search/containers/search_result_components/result_card.dart';
 import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class CardView extends StatefulWidget {
   final ResultsViewModel vm;
@@ -14,9 +15,20 @@ class CardView extends StatefulWidget {
   State<StatefulWidget> createState() => _CardViewState();
 }
 
+///
+/// Helper class that makes the relationship between
+/// an item index and its BuildContext
+///
+class ItemContext {
+  final BuildContext context;
+
+  ItemContext({this.context});
+}
+
 class _CardViewState extends State<CardView> {
   List<int> _adLocations;
-  bool _scrolling = false;
+  Map<int, ItemContext> _adContexts;
+  bool _hideAds = false;
 
   @override
   void initState() {
@@ -24,6 +36,7 @@ class _CardViewState extends State<CardView> {
     final res = widget.vm.filteredRes;
     var adsAvailable = widget.vm.store.state.numAdsAvailable;
     _adLocations = [];
+    _adContexts = <int, ItemContext>{};
 
     if (adsAvailable > 0) {
       if (res.length > 3) {
@@ -63,10 +76,16 @@ class _CardViewState extends State<CardView> {
                 }
 
                 if (_adLocations.contains(i)) {
-                  return AdCard(
-                    i,
-                    _hideAd,
-                    hideNow: _scrolling,
+                  return LayoutBuilder(
+                    builder: (context, constraints) {
+                      _adContexts[i] = ItemContext(context: context);
+
+                      return AdCard(
+                        i,
+                        _hideAd,
+                        hideNow: _hideAds,
+                      );
+                    }
                   );
                 }
 
@@ -96,14 +115,54 @@ class _CardViewState extends State<CardView> {
             ),
             onNotification: (n) {
               if (Platform.isIOS) {
-                // only setState for these 2 notification types
-                if (n is ScrollStartNotification) {
+                var newHideAds = false;
+
+                for (final location in _adLocations) {
+                  final ic = _adContexts[location];
+
+                  if (ic != null) {
+                    // Retrieve the RenderObject, linked to a specific item
+                    final object = ic.context.findRenderObject();
+
+                    // If none was to be found, or if not attached, ignore
+                    // As we are dealing with Slivers, items no longer part of the
+                    // viewport will be detached
+                    if (object != null && object.attached) {
+                      // Retrieve the viewport related to the scroll area
+                      final viewport = RenderAbstractViewport.of(object);
+                      final vpHeight = viewport.paintBounds.height;
+                      final scrollableState = Scrollable.of(ic.context);
+                      final scrollPosition = scrollableState.position;
+                      final vpOffset = viewport.getOffsetToReveal(
+                          object, 0.0);
+
+                      // Retrieve the dimensions of the item
+                      final size = object?.semanticBounds?.size;
+
+                      // Check if the item is in the viewport
+                      final deltaTop = vpOffset.offset -
+                          scrollPosition.pixels;
+                      final deltaBottom = deltaTop + size.height;
+
+                      var isInViewport = false;
+
+                      // this is the check if 80% is off screen
+                      final offset = size.height * 0.80;
+                      isInViewport = (deltaTop + offset) >= 0.0;
+                      if (isInViewport) {
+                        isInViewport = deltaBottom - offset < vpHeight;
+                      }
+
+                      if (!isInViewport) {
+                        newHideAds = true;
+                      }
+                    }
+                  }
+                }
+
+                if (newHideAds != _hideAds) {
                   setState(() {
-                    _scrolling = true;
-                  });
-                } else if (n is ScrollEndNotification) {
-                  setState(() {
-                    _scrolling = false;
+                    _hideAds = newHideAds;
                   });
                 }
               }
