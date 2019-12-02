@@ -115,12 +115,13 @@ class SearchResults {
     const hostAndPath = '$kTBApiServer/search';
     const cachePath = '$kTBStreamServer/cache';
     var phrase = 0, exact = 0;
-    var searchWords = removeDiacritics(words).replaceAll(
-        RegExp('[^ a-zA-Z\'0-9:\-]'), ' ').trim();
-
+    var searchWords = words;
     urlEncodingExceptions
         .forEach((k, v) => searchWords = searchWords.replaceAll(RegExp(k), v));
-    
+    removeDiacritics(searchWords)
+        .replaceAll(RegExp('[^ a-zA-Z\'0-9:\-]'), ' ')
+        .trim();
+
     // phrase or exact search ?
     if (searchWords[0] == '"' || searchWords[0] == '\'') {
       if (searchWords.contains(' ')) {
@@ -177,18 +178,18 @@ Map<String, String> urlEncodingExceptions = {
   '‚': '',
   ',': '', // get rid of commas
   '‛': '\'',
-  '“': '\"',
-  '”': '\"',
-  '“': '\"', // UTF-8: E2 80 9C
-  '”': '\"', // UTF-8: E2 80 9D
-  '„': '\"', // UTF-8: E2 80 9E
-  '‟': '\"',
-  '′': '\"',
-  '″': '\"',
-  '‴': '\"',
+  '“': '"',
+  '”': '"',
+  '“': '"', // UTF-8: E2 80 9C
+  '”': '"', // UTF-8: E2 80 9D
+  '„': '"', // UTF-8: E2 80 9E
+  '‟': '"',
+  '′': '"',
+  '″': '"',
+  '‴': '"',
   '‵': '\'',
-  '‶': '\"',
-  '‷': '\"',
+  '‶': '"',
+  '‷': '"',
   '–': '-', // UTF-8: E2 80 93
   '‐': '-',
   '‒': '-',
