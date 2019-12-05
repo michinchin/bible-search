@@ -104,11 +104,11 @@ SPEC CHECKSUMS:
   GoogleUtilities: f895fde57977df4e0233edda0dbeac490e3703b6
   in_app_purchase: 6b3a6d6944354f353d59eb1f2a0db3fd7a40917b
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
-  path_provider: f96fff6166a8867510d2c25fdcc346327cc4b259
+  path_provider: fb74bd0465e96b594bb3b5088ee4a4e7bb1f2a9d
   rate_my_app: 45513a2f4d9a55b7b46d19b64fc13882fd101157
   share: bae0a282aab4483288913fc4dc0b935d4b491f2e
   shared_preferences: 430726339841afefe5142b9c1f50cb6bd7793e01
-  sqflite: ff1d9da63c06588cc8d1faf7256d741f16989d5a
+  sqflite: 4001a31ff81d210346b500c55b17f4d6c7589dd0
   tec_native_ad: 493118a78e83e264c5c2d87d0fc23e36b5c2f63e
   url_launcher: a1c0cc845906122c4784c542523d8cacbded5626
 

@@ -40,7 +40,7 @@ class _CardViewState extends State<CardView> {
 
     if (adsAvailable > 0) {
       if (res.length > 3) {
-        for (var i = 3; i < res.length && adsAvailable > 0; i += 25) {
+        for (var i = 3; i < res.length && adsAvailable > 0; i += 10) {
           _adLocations.add(i);
           adsAvailable--;
         }
