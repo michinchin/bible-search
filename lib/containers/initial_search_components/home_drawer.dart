@@ -16,6 +16,7 @@ import 'package:share/share.dart';
 import 'package:tec_user_account/tec_user_account.dart';
 import 'package:tec_user_account/tec_user_account_ui.dart';
 import 'package:tec_util/tec_util.dart' as tec;
+import 'package:tec_widgets/tec_widgets.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
 class HomeDrawer extends StatelessWidget {
@@ -62,14 +63,6 @@ class HomeDrawer extends StatelessWidget {
                     },
                   ),
                   // IconData(0xe0c6, fontFamily: 'MaterialIcons')
-                  ListTile(
-                    leading: const Icon(Icons.highlight),
-                    title: const Text('Feature Discovery'),
-                    onTap: () async {
-                      Navigator.of(context).pop();
-                      await vm.featureDiscovery(context);
-                    },
-                  ),
                 ],
                 // if (!tec.Prefs.shared
                 //     .getBool(removedAdsPref, defaultValue: false))
@@ -126,9 +119,8 @@ class HomeDrawer extends StatelessWidget {
                 ListTile(
                   leading: Icon(Icons.help_outline),
                   title: const Text('Help & Feedback'),
-                  onTap: () async {
-                    await Navigator.of(context).maybePop();
-                    await vm.emailFeedback(context);
+                  onTap: () {
+                    vm.helpAndFeedback(context);
                   },
                 ),
                 ListTile(
@@ -148,21 +140,45 @@ class DrawerViewModel {
   UserAccount userAccount;
   bool isDarkTheme;
   Future<bool> hasPurchased;
-  Future<void> Function(BuildContext) emailFeedback;
   Future<void> Function(BuildContext) shareApp;
   void Function(BuildContext) removeAds;
   void Function(bool isDarkTheme) changeTheme;
-  Future<void> Function(BuildContext) featureDiscovery;
+  void Function(BuildContext) helpAndFeedback;
 
   DrawerViewModel(this.store) {
     userAccount = store.state.userAccount;
     isDarkTheme = store.state.isDarkTheme;
     changeTheme = _changeTheme;
-    emailFeedback = _emailFeedback;
+    helpAndFeedback = _helpAndFeedback;
     shareApp = _shareApp;
     removeAds = _removeAds;
-    featureDiscovery = _featureDiscovery;
     hasPurchased = _hasPurchased();
+  }
+
+  void _helpAndFeedback(BuildContext context) {
+    showDialog<void>(
+        context: context,
+        builder: (c) => AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [TecText('Help & Feedback'), CloseButton()]),
+              content: const TecText(
+                  'Would you like to reset the app walkthrough process or send an email to our support team? '),
+              actions: <Widget>[
+                FlatButton(
+                  child: const TecText('Feature Discovery'),
+                  onPressed: () => _featureDiscovery(c),
+                ),
+                FlatButton(
+                  child: const TecText('Email'),
+                  onPressed: () => _emailFeedback(c),
+                )
+              ],
+            )).then((_) {
+      Navigator.of(context).pop();
+    });
   }
 
   void _removeAds(BuildContext context) {
@@ -194,6 +210,7 @@ class DrawerViewModel {
               ));
       await tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
     }
+    showToastAndPop(c, 'Success! Reset Feature Discovery');
   }
 
   void _changeTheme(bool isDarkTheme) =>
@@ -225,6 +242,7 @@ class DrawerViewModel {
       showToastAndPop(context, msg);
       print(msg);
     }
+    await Navigator.of(context).maybePop();
   }
 
   Future<void> _shareApp(BuildContext context) async {
