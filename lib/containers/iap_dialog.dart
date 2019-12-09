@@ -43,7 +43,7 @@ class SignInForPurchasesDialog extends StatelessWidget {
           FlatButton(
             child: const Text('Okay'),
             onPressed: () async {
-              await showSignInDlg(context: context, account: ua);
+              await showSignInDlg(context: context, account: ua, appName: 'bible_search');
               Navigator.of(context).pop();
             },
           )

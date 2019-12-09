@@ -118,7 +118,10 @@ class HomeDrawer extends StatelessWidget {
                         : 'Account'),
                     onTap: () {
                       Navigator.of(context).pop();
-                      showSignInDlg(context: context, account: vm.userAccount);
+                      showSignInDlg(
+                          context: context,
+                          account: vm.userAccount,
+                          appName: 'bible_search');
                     }),
                 ListTile(
                   leading: Icon(Icons.help_outline),
