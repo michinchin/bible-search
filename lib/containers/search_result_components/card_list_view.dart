@@ -29,6 +29,8 @@ class _CardViewState extends State<CardView> {
   List<int> _adLocations;
   Map<int, ItemContext> _adContexts;
   bool _hideAds = false;
+  var _extraLength = 0;
+  List _lastResults = null;
 
   @override
   void initState() {
@@ -47,6 +49,11 @@ class _CardViewState extends State<CardView> {
       } else if (res.isNotEmpty) {
         // +1 to include showing...
         _adLocations.add(res.length + 1);
+
+        if (Platform.isIOS) {
+          // add an extra container at the bottom of the screen to iOS scroll
+          _extraLength = 1;
+        }
       }
     }
   }
@@ -61,6 +68,11 @@ class _CardViewState extends State<CardView> {
   Widget build(BuildContext context) {
     final res = widget.vm.filteredRes;
 
+    if (_lastResults != widget.vm.filteredRes) {
+      _hideAds = false;
+      _lastResults = widget.vm.filteredRes;
+    }
+
     return SafeArea(
       bottom: false,
       child: Container(
@@ -69,7 +81,7 @@ class _CardViewState extends State<CardView> {
           padding: const EdgeInsets.only(left: 10, top: 10, right: 10),
           child: NotificationListener<ScrollNotification>(
             child: ListView.builder(
-              itemCount: res.length + 1 + _adLocations.length,
+              itemCount: res.length + 1 + _adLocations.length + _extraLength,
               itemBuilder: (context, i) {
                 if (i == 0) {
                   return ResultsDescription(widget.vm);
@@ -109,18 +121,23 @@ class _CardViewState extends State<CardView> {
                     toggleSelectionMode: widget.vm.changeToSelectionMode,
                   );
                 } else {
-                  return Container();
+                  return Container(
+                    color: Colors.transparent, width: 100,
+                    height: MediaQuery
+                        .of(context)
+                        .size
+                        .height / 2,);
                 }
               },
             ),
             onNotification: (n) {
               if (Platform.isIOS) {
-                var newHideAds = false;
+                var newHideAds = _hideAds;
 
                 for (final location in _adLocations) {
                   final ic = _adContexts[location];
 
-                  if (ic != null) {
+                  if (ic != null && newHideAds == _hideAds) {
                     // Retrieve the RenderObject, linked to a specific item
                     final object = ic.context.findRenderObject();
 
@@ -153,9 +170,7 @@ class _CardViewState extends State<CardView> {
                         isInViewport = deltaBottom - offset < vpHeight;
                       }
 
-                      if (!isInViewport) {
-                        newHideAds = true;
-                      }
+                      newHideAds = !isInViewport;
                     }
                   }
                 }
