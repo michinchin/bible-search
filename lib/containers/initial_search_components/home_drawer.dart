@@ -173,10 +173,11 @@ class DrawerViewModel {
                 'Would you like to re-enable Feature Discovery hints or send an email to our support team?',
                 style: TextStyle(color: Colors.black54, height: 1.4,),),
               actions: <Widget>[
-                FlatButton(
-                  child: const TecText('Feature Discovery'),
-                  onPressed: () => _featureDiscovery(c),
-                ),
+                if (!MediaQuery.of(context).accessibleNavigation)
+                  FlatButton(
+                    child: const TecText('Feature Discovery'),
+                    onPressed: () => _featureDiscovery(c),
+                  ),
                 FlatButton(
                   child: const TecText('Email'),
                   onPressed: () => _emailFeedback(c),
@@ -215,8 +216,8 @@ class DrawerViewModel {
                 featureIds.toSet(),
               ));
       await tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
+      showToastAndPop(c, 'Success! Reset Feature Discovery');
     }
-    showToastAndPop(c, 'Success! Reset Feature Discovery');
   }
 
   void _changeTheme(bool isDarkTheme) =>
