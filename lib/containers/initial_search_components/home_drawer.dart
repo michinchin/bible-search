@@ -167,10 +167,11 @@ class DrawerViewModel {
               content: const TecText(
                   'Would you like to reset the app walkthrough process or send an email to our support team? '),
               actions: <Widget>[
-                FlatButton(
-                  child: const TecText('Feature Discovery'),
-                  onPressed: () => _featureDiscovery(c),
-                ),
+                if (!MediaQuery.of(context).accessibleNavigation)
+                  FlatButton(
+                    child: const TecText('Feature Discovery'),
+                    onPressed: () => _featureDiscovery(c),
+                  ),
                 FlatButton(
                   child: const TecText('Email'),
                   onPressed: () => _emailFeedback(c),
