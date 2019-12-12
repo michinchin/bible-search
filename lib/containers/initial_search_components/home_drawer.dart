@@ -156,35 +156,31 @@ class DrawerViewModel {
   }
 
   void _helpAndFeedback(BuildContext context) {
-    showDialog<void>(
-        context: context,
-        builder: (c) =>
-            AlertDialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              title: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    TecText('Help & Feedback',
-                        style: TextStyle(
-                          color: Colors.black87, fontSize: 16.0,))
-                  ]),
-              content: const TecText(
-                'Would you like to re-enable Feature Discovery hints or send an email to our support team?',
-                style: TextStyle(color: Colors.black54, height: 1.4,),),
-              actions: <Widget>[
-                if (!MediaQuery.of(context).accessibleNavigation)
-                  FlatButton(
-                    child: const TecText('Feature Discovery'),
-                    onPressed: () => _featureDiscovery(c),
-                  ),
-                FlatButton(
-                  child: const TecText('Email'),
-                  onPressed: () => _emailFeedback(c),
-                )
-              ],
-            )).then((_) {
-      Navigator.of(context).pop();
+    var _close = false;
+
+    tecShowSimpleAlertDialog(context: context,
+      title: 'Help & Feedback',
+      content: 'Would you like to re-enable Feature Discovery hints or send an email to our support team?',
+      actions: <Widget>[
+        TecDialogButton(
+          child: const Text('Feature Discovery'),
+          onPressed: () {
+            _featureDiscovery(context);
+            _close = true;
+          },
+        ),
+        TecDialogButton(
+          child: const Text('Email'),
+          onPressed: () {
+            _emailFeedback(context);
+            _close = true;
+          },
+        ),
+      ],
+    ).then((_) {
+      if (_close) {
+        Navigator.of(context).pop();
+      }
     });
   }
 
