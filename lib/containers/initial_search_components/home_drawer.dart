@@ -158,14 +158,20 @@ class DrawerViewModel {
   void _helpAndFeedback(BuildContext context) {
     showDialog<void>(
         context: context,
-        builder: (c) => AlertDialog(
+        builder: (c) =>
+            AlertDialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15)),
               title: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [TecText('Help & Feedback'), CloseButton()]),
+                  children: const [
+                    TecText('Help & Feedback',
+                        style: TextStyle(
+                          color: Colors.black87, fontSize: 16.0,))
+                  ]),
               content: const TecText(
-                  'Would you like to reset the app walkthrough process or send an email to our support team? '),
+                'Would you like to re-enable Feature Discovery hints or send an email to our support team?',
+                style: TextStyle(color: Colors.black54, height: 1.4,),),
               actions: <Widget>[
                 FlatButton(
                   child: const TecText('Feature Discovery'),
