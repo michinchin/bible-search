@@ -209,8 +209,8 @@ class DrawerViewModel {
                 featureIds.toSet(),
               ));
       await tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
+      showToastAndPop(c, 'Success! Reset Feature Discovery');
     }
-    showToastAndPop(c, 'Success! Reset Feature Discovery');
   }
 
   void _changeTheme(bool isDarkTheme) =>

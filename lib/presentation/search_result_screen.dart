@@ -32,7 +32,8 @@ class SearchResultScreen extends StatefulWidget {
 class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   void initState() {
-    if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true)) {
+    if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true) &&
+        !MediaQuery.of(context).accessibleNavigation) {
       _showFeatureDiscovery();
       tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
     }
