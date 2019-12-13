@@ -32,23 +32,26 @@ class SearchResultScreen extends StatefulWidget {
 class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   void initState() {
-    if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true) &&
-        !MediaQuery.of(context).accessibleNavigation) {
-      _showFeatureDiscovery();
-      tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
-    }
-
+    _showFeatureDiscovery();
     super.initState();
   }
 
   void _showFeatureDiscovery() {
     WidgetsBinding.instance.addPostFrameCallback(
-        (duration) => Future.delayed(const Duration(seconds: 1), () {
+        (duration) {
+          if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true) &&
+              !MediaQuery.of(context).accessibleNavigation) {
+
+            tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
+
+            Future.delayed(const Duration(seconds: 1), () {
               FeatureDiscovery.discoverFeatures(
                 context,
                 featureIds.toSet(),
               );
-            }));
+            });
+          }
+        });
   }
 
   void _showSearch(ResultsViewModel vm) {
