@@ -20,6 +20,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tec_native_ad/tec_native_ad.dart';
 import 'package:tec_user_account/tec_user_account.dart';
 
+import 'package:tec_widgets/tec_widgets.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 
 import 'models/iap.dart';
@@ -85,38 +86,41 @@ class BibleSearchApp extends StatelessWidget {
 
     return StoreProvider<AppState>(
         store: store,
-        child: FeatureDiscovery(
-          child: OKToast(
-            child: DynamicTheme(
-                defaultBrightness: Brightness.light,
-                data: (brightness) => ThemeData(
-                      primarySwatch: Colors.orange,
-                      primaryColorBrightness:
-                          darkTheme ? Brightness.dark : Brightness.light,
-                      brightness:
-                          darkTheme ? Brightness.dark : Brightness.light,
-                    ),
-                themedWidgetBuilder: (context, theme) {
-                  if (theme.brightness == Brightness.dark) {
-                    const textColor = Color(0xffe6e6e6);
-                    theme = theme.copyWith(
-                        textTheme: theme.textTheme.apply(
-                            bodyColor: textColor, displayColor: textColor),
-                        iconTheme: const IconThemeData(color: textColor));
-                  }
-                  return MaterialApp(
-                    initialRoute: '/',
-                    debugShowCheckedModeBanner: false,
-                    routes: <String, WidgetBuilder>{
-                      '/results': (context) => const SearchResultScreen(),
-                    },
-                    title: 'Bible Search',
-                    theme: theme,
-                    home: _AppBindingObserver(store),
-                  );
-                }),
-          ),
-        ));
+        child: tec.BlocProvider<TecStyleBloc>(
+            bloc: TecStyleBloc(
+                <String, dynamic>{'dialogStyle': TecMetaStyle.material}),
+            child: FeatureDiscovery(
+              child: OKToast(
+                child: DynamicTheme(
+                    defaultBrightness: Brightness.light,
+                    data: (brightness) => ThemeData(
+                          primarySwatch: Colors.orange,
+                          primaryColorBrightness:
+                              darkTheme ? Brightness.dark : Brightness.light,
+                          brightness:
+                              darkTheme ? Brightness.dark : Brightness.light,
+                        ),
+                    themedWidgetBuilder: (context, theme) {
+                      if (theme.brightness == Brightness.dark) {
+                        const textColor = Color(0xffe6e6e6);
+                        theme = theme.copyWith(
+                            textTheme: theme.textTheme.apply(
+                                bodyColor: textColor, displayColor: textColor),
+                            iconTheme: const IconThemeData(color: textColor));
+                      }
+                      return MaterialApp(
+                        initialRoute: '/',
+                        debugShowCheckedModeBanner: false,
+                        routes: <String, WidgetBuilder>{
+                          '/results': (context) => const SearchResultScreen(),
+                        },
+                        title: 'Bible Search',
+                        theme: theme,
+                        home: _AppBindingObserver(store),
+                      );
+                    }),
+              ),
+            )));
   }
 }
 

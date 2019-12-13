@@ -157,18 +157,22 @@ class DrawerViewModel {
 
   void _helpAndFeedback(BuildContext context) {
     var _close = false;
-
-    tecShowSimpleAlertDialog(context: context,
+    final accessibilityOff = !MediaQuery.of(context).accessibleNavigation;
+    tecShowSimpleAlertDialog(
+      context: context,
       title: 'Help & Feedback',
-      content: 'Would you like to re-enable Feature Discovery hints or send an email to our support team?',
+      content:
+          'Would you like to ${accessibilityOff ? 're-enable Feature Discovery hints or ' : ''}'
+          'send an email to our support team?', 
       actions: <Widget>[
-        TecDialogButton(
-          child: const Text('Feature Discovery'),
-          onPressed: () {
-            _featureDiscovery(context);
-            _close = true;
-          },
-        ),
+        if (accessibilityOff)
+          TecDialogButton(
+            child: const Text('Feature Discovery'),
+            onPressed: () {
+              _featureDiscovery(context);
+              _close = true;
+            },
+          ),
         TecDialogButton(
           child: const Text('Email'),
           onPressed: () {
