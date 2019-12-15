@@ -30,7 +30,7 @@ class _CardViewState extends State<CardView> {
   Map<int, ItemContext> _adContexts;
   bool _hideAds = false;
   var _extraLength = 0;
-  List _lastResults = null;
+  List _lastResults;
 
   @override
   void initState() {

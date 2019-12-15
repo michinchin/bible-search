@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bible_search/containers/iap_dialog.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/app_state.dart';
+import 'package:bible_search/models/user_model.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 
@@ -191,14 +192,13 @@ class DrawerViewModel {
   void _removeAds(BuildContext context) {
     final ua = store.state.userAccount;
     if (ua.user.userId == 0) {
-      showDialog<void>(
-          context: context,
-          builder: (c) => SignInForPurchasesDialog(ua)).then((_) {
-        showDialog<bool>(
-            context: context, builder: (c) => InAppPurchaseDialog());
+      showSignInForPurchases(context, ua).then((_) {
+        Navigator.of(context).pop();
+        UserModel.buyProduct();
       });
     } else {
-      showDialog<bool>(context: context, builder: (c) => InAppPurchaseDialog());
+      Navigator.of(context).pop();
+      UserModel.buyProduct();
     }
   }
 
