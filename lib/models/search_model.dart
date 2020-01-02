@@ -19,7 +19,7 @@ class SearchModel {
       @required int chapterId,
       @required int verseId,
       @required BuildContext context}) async {
-    final url = 'bible://$id/$bookId/$chapterId/$verseId';
+    final url = 'tecartabible://$id/$bookId/$chapterId/$verseId';
 
     if (await canLaunch(url)) {
       await launch(url, universalLinksOnly: false);
