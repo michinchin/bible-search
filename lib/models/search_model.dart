@@ -20,14 +20,23 @@ class SearchModel {
       @required int verseId,
       @required BuildContext context}) async {
     final url = 'tecartabible://$id/$bookId/$chapterId/$verseId';
-
-    if (await canLaunch(url)) {
-      await launch(url, universalLinksOnly: false);
-    } else {
+    final launched = await launchUrl(url);
+    if (!launched) {
       //couldn't launch, open app store
       print('Could not launch $url');
       showAppStoreDialog(context);
     }
+  }
+
+  Future<bool> launchUrl(String url) async {
+    var launched = false;
+    try {
+      launched =
+      await launch(url, forceSafariVC: false, forceWebView: false);
+    } catch (e) {
+      print('ERROR with launch(\'$url\'): $e');
+    }
+    return launched;
   }
 
   void showAppStoreDialog(BuildContext context) {
