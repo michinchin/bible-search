@@ -10,12 +10,22 @@ class FilterModel {
     final temp = await BibleTranslations.fetch();
     temp.data.sort((f, k) => f.lang.id.compareTo(k.lang.id));
     final translations = temp;
+
     //select only translations that are in the formatted Id
     final translationIds = tec.Prefs.shared.getString(translationsPref);
     if (translationIds == null || translationIds.trim().isEmpty) {
       await tec.Prefs.shared.setString(translationsPref, temp.formatIds());
     } else {
       translations.selectTranslations(translationIds);
+    }
+
+    //load pref for default
+    final translationDefaults =
+        tec.Prefs.shared.getString(defaultTranslationsPref);
+    if (translationDefaults == null || translationDefaults.trim().isEmpty) {
+      await tec.Prefs.shared.setString(translationDefaults, '');
+    } else {
+      translations.selectTranslations(translationDefaults, isDefault: true);
     }
 
     return translations;
@@ -27,8 +37,16 @@ class FilterModel {
     var translationIds = '';
     await tec.Prefs.shared
         .setString(translationsPref, translationIds = translations.formatIds());
-
     translations.selectTranslations(translationIds);
+
+    var translationDefaults = '';
+    final defaultTranslations =
+        tec.Prefs.shared.getString(defaultTranslationsPref, defaultValue: '');
+    await tec.Prefs.shared.setString(
+        defaultTranslationsPref,
+        translationDefaults =
+            translations.formatDefaultIds(defaultTranslations));
+    translations.selectTranslations(translationDefaults, isDefault: true);
 
     return translations;
   }
@@ -47,7 +65,7 @@ class FilterModel {
     return <dynamic>[translations, languages];
   }
 
-  /// choose the translation in list and update translations in user prefs
+  /// choose the translation in list
   List chooseTranslation(
       int i, BibleTranslations translations, List<Language> languages,
       {bool b}) {
@@ -77,6 +95,20 @@ class FilterModel {
     return <dynamic>[t, l];
   }
 
+  /// choose the default translations in list and update translations in user prefs
+  List<BibleTranslation> chooseDefaultTranslations(
+      int i, BibleTranslations translations,
+      {bool b}) {
+    final t = List<BibleTranslation>.from(translations.data);
+    t[i].isDefault = b;
+    final defaults = t.where((t) => t.isDefault).toList();
+    if (defaults.length > maxDefaultTranslations) {
+      t[i].isDefault = !b;
+    }
+
+    return t;
+  }
+
   /// select the language and update translations in user prefs to represent which are chosen
   List selectLang(
       Language lang, BibleTranslations translations, List<Language> languages,
@@ -95,11 +127,6 @@ class FilterModel {
   List chooseBook(
       {bool b, int i, List<Book> bookNames, bool otSelected, bool ntSelected}) {
     var modBookNames = List<Book>.from(bookNames);
-      // ..map(((b) {
-      //   if (b.numResults > 0) {
-      //     return b;
-      //   }
-      // }));
     var oT = otSelected;
     var nT = ntSelected;
     if (i == -2) {

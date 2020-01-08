@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:bible_search/data/verse.dart';
+import 'package:bible_search/labels.dart';
 import 'package:diacritic/diacritic.dart';
 
 import 'package:bible_search/data/book.dart';
@@ -31,8 +33,7 @@ class SearchModel {
   Future<bool> launchUrl(String url) async {
     var launched = false;
     try {
-      launched =
-      await launch(url, forceSafariVC: false, forceWebView: false);
+      launched = await launch(url, forceSafariVC: false, forceWebView: false);
     } catch (e) {
       print('ERROR with launch(\'$url\'): $e');
     }
@@ -120,12 +121,12 @@ class SearchModel {
         await Clipboard.setData(
                 ClipboardData(text: '${verse.selectedText}$shortUrl'))
             .then((x) {
-          TecToast.show(context,'Successfully Copied!');
+          TecToast.show(context, 'Successfully Copied!');
         });
         return true;
       }
     } else {
-      TecToast.show(context,'Please make a selection');
+      TecToast.show(context, 'Please make a selection');
     }
     return false;
   }
@@ -209,6 +210,25 @@ class SearchModel {
     }
 
     return content;
+  }
+
+  SearchResult orderByDefaultTranslation(SearchResult res) {
+    final defaultTranslations = tec.Prefs.shared
+        .getString(defaultTranslationsPref, defaultValue: '')
+        .split('|')
+        .map(int.tryParse)
+        .toList();
+    final verses = res.verses;
+    final ids = verses.map((v) => v.id).toList();
+    final orderedVerses = List<Verse>.from(verses);
+    for (final dt in defaultTranslations.reversed) {
+      if (ids.contains(dt)) {
+        final idx = orderedVerses.indexWhere((v) => v.id == dt);
+        final verse = orderedVerses.removeAt(idx);
+        orderedVerses.insert(0, verse);
+      }
+    }
+    return res.copyWith(verses: orderedVerses);
   }
 }
 

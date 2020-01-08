@@ -65,6 +65,7 @@ class FilterViewModel {
   final Store<AppState> store;
   BibleTranslations translations;
   Function(bool, int) selectTranslation;
+  Function(bool, int) selectDefaultTranslation;
   List<Language> languages;
   Function(bool, int) selectLanguage;
   List<Book> bookNames;
@@ -77,9 +78,11 @@ class FilterViewModel {
     translations = store.state.translations;
     selectTranslation = (b, i) =>
         store.dispatch(SelectionAction(i, Select.translation, toggle: b));
+    selectDefaultTranslation = (b, i) => store
+        .dispatch(SelectionAction(i, Select.defaultTranslation, toggle: b));
     languages = store.state.languages;
-    selectLanguage =
-        (b, i) => store.dispatch(SelectionAction(i, Select.language, toggle: b));
+    selectLanguage = (b, i) =>
+        store.dispatch(SelectionAction(i, Select.language, toggle: b));
     bookNames = store.state.books;
     selectBook =
         (b, i) => store.dispatch(SelectionAction(i, Select.book, toggle: b));

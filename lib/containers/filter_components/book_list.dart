@@ -54,63 +54,56 @@ class _BookChildren extends StatelessWidget {
 
     for (var i = isOT ? 0 : 39; i < (isOT ? 39 : vm.bookNames.length); i++) {
       if (vm.bookNames[i].numResults != 0 && !isFirstScreen) {
-        _bookList.add(ChoiceChip(
-          elevation: vm.bookNames[i].isSelected ? 5 : 0,
-          shape: StadiumBorder(
-              side: BorderSide(
-                  color: vm.bookNames[i].isSelected
-                      ? Colors.transparent
-                      : Theme.of(context).accentColor)),
-          selectedColor: Theme.of(context).accentColor,
-          label: Text(
-            '${vm.bookNames[i].name} (${vm.bookNames[i].numResults})',
-            style: TextStyle(
-                color: vm.bookNames[i].isSelected
-                    ? Theme.of(context).brightness == Brightness.dark
-                        ? ThemeData.dark().cardColor
-                        : Colors.white
-                    : Theme.of(context).accentColor,
-                fontWeight: vm.bookNames[i].isSelected
-                    ? FontWeight.bold
-                    : FontWeight.normal),
-          ),
-          backgroundColor: vm.bookNames[i].isSelected
-              ? Theme.of(context).accentColor
-              : Theme.of(context).cardColor,
+        _bookList.add(MultiSelectChip(
+          isSelected: vm.bookNames[i].isSelected,
+          title: '${vm.bookNames[i].name} (${vm.bookNames[i].numResults})',
           onSelected: (b) => vm.selectBook(b, i),
-          selected: vm.bookNames[i].isSelected,
         ));
       } else if (isFirstScreen) {
-        _bookList.add(ChoiceChip(
-          elevation: vm.bookNames[i].isSelected ? 5 : 0,
-          shape: StadiumBorder(
-              side: BorderSide(
-                  color: vm.bookNames[i].isSelected
-                      ? Colors.transparent
-                      : Theme.of(context).accentColor)),
-          selectedColor: Theme.of(context).accentColor,
-          label: Text(
-            '${vm.bookNames[i].name}',
-            style: TextStyle(
-                color: vm.bookNames[i].isSelected
-                    ? Theme.of(context).brightness == Brightness.dark
-                        ? ThemeData.dark().cardColor
-                        : Colors.white
-                    : Theme.of(context).accentColor,
-                fontWeight: vm.bookNames[i].isSelected
-                    ? FontWeight.bold
-                    : FontWeight.normal),
-          ),
-          backgroundColor: vm.bookNames[i].isSelected
-              ? Theme.of(context).accentColor
-              : Theme.of(context).cardColor,
+        _bookList.add(MultiSelectChip(
+          isSelected: vm.bookNames[i].isSelected,
+          title: '${vm.bookNames[i].name}',
           onSelected: (b) => vm.selectBook(b, i),
-          selected: vm.bookNames[i].isSelected,
         ));
       }
     }
 
     return Wrap(
         spacing: 5.0, alignment: WrapAlignment.center, children: _bookList);
+  }
+}
+
+class MultiSelectChip extends StatelessWidget {
+  final bool isSelected;
+  final String title;
+  final Function(bool) onSelected;
+  const MultiSelectChip({this.isSelected, this.title, this.onSelected});
+
+  @override
+  Widget build(BuildContext context) {
+    return ChoiceChip(
+      elevation: isSelected ? 5 : 0,
+      shape: StadiumBorder(
+          side: BorderSide(
+              color: isSelected
+                  ? Colors.transparent
+                  : Theme.of(context).accentColor)),
+      selectedColor: Theme.of(context).accentColor,
+      label: Text(
+        title,
+        style: TextStyle(
+            color: isSelected
+                ? Theme.of(context).brightness == Brightness.dark
+                    ? ThemeData.dark().cardColor
+                    : Colors.white
+                : Theme.of(context).accentColor,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+      ),
+      backgroundColor: isSelected
+          ? Theme.of(context).accentColor
+          : Theme.of(context).cardColor,
+      onSelected: onSelected,
+      selected: isSelected,
+    );
   }
 }

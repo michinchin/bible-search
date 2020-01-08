@@ -91,6 +91,11 @@ class HomeDrawer extends StatelessWidget {
                   },
                 ),
                 const Divider(),
+                ListTile(
+                  leading: Icon(Icons.book),
+                  title: const Text('Translation'),
+                  onTap: () => Navigator.of(context).pushNamed('/default_translation'),
+                ),
                 SwitchListTile.adaptive(
                     secondary: Icon(Icons.lightbulb_outline),
                     activeColor: Theme.of(context).accentColor,
@@ -164,7 +169,7 @@ class DrawerViewModel {
       title: 'Help & Feedback',
       content:
           'Would you like to ${accessibilityOff ? 're-enable Feature Discovery hints or ' : ''}'
-          'send an email to our support team?', 
+          'send an email to our support team?',
       actions: <Widget>[
         if (accessibilityOff)
           TecDialogButton(

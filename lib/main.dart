@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bible_search/models/app_state.dart';
+import 'package:bible_search/presentation/choose_default_translation_screen.dart';
 import 'package:bible_search/presentation/initial_search_screen.dart';
 import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:bible_search/redux/actions.dart';
@@ -113,6 +114,8 @@ class BibleSearchApp extends StatelessWidget {
                         debugShowCheckedModeBanner: false,
                         routes: <String, WidgetBuilder>{
                           '/results': (context) => const SearchResultScreen(),
+                          '/default_translation': (context) =>
+                              const ChooseDefaultTranslationScreen(),
                         },
                         title: 'Bible Search',
                         theme: theme,

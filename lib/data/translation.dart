@@ -21,16 +21,17 @@ class BibleTranslation {
   final String a;
   final Language lang;
   final bool isOnSale;
+  bool isDefault;
   bool isSelected;
 
-  BibleTranslation({
-    this.id,
-    this.name,
-    this.a,
-    this.lang,
-    this.isOnSale,
-    this.isSelected,
-  });
+  BibleTranslation(
+      {this.id,
+      this.name,
+      this.a,
+      this.lang,
+      this.isOnSale,
+      this.isSelected,
+      this.isDefault});
 
   factory BibleTranslation.fromJson(Map<String, dynamic> json) {
     final onSale = tec.as<bool>(json['onsale']);
@@ -44,6 +45,7 @@ class BibleTranslation {
         lang: HomeModel().languages.firstWhere((t) => t.a == lang),
         isOnSale: onSale,
         isSelected: lang == 'en',
+        isDefault: false,
       );
     }
     return null;
@@ -75,37 +77,66 @@ class BibleTranslations {
 
   String formatIds() {
     var formattedIds = '';
-    for (final each in data) {
-      if (each.isSelected && each.isOnSale) {
-        formattedIds += '${each.id}|';
-      }
+    if (data != null) {
+      final toSave = data.where((t) => t.isSelected && t.isOnSale).toList();
+      final ids = toSave.map((t) => t.id).toList();
+      formattedIds = ids.join('|');
     }
-    if (formattedIds.isNotEmpty) {
-      final idx = formattedIds.lastIndexOf('|');
-      formattedIds = formattedIds.substring(0, idx);
-    }
+
     return formattedIds;
   }
 
-  void selectTranslations(String id) {
-    if (id.isEmpty) {
-      final tempData = data;
-      for (final t in tempData) {
-        t.isSelected = false;
-      }
-      data = tempData;
-    } else {
-      final arr = id.split('|').toList();
-      final intArr = arr.map(int.parse).toList();
-      final tempData = data;
-      for (final t in tempData) {
-        if (intArr.contains(t.id)) {
-          t.isSelected = true;
+  String formatDefaultIds(String currentIds) {
+    var formattedIds = '';
+    final defaults = data.where((t) => t.isDefault)?.toList() ?? [];
+    if (defaults.isNotEmpty) {
+      final chosenDefaultIds = defaults.map((t) => t.id).toList();
+
+      if (currentIds.isNotEmpty) {
+        final defaultIds =
+            currentIds.split('|').map(int.tryParse).toList().toSet().toList();
+        final newDefaultIds = List<int>.from(defaultIds);
+
+        // append any translations not currently saved in pref ids
+        if (chosenDefaultIds.length > defaultIds.length) {
+          newDefaultIds.add(chosenDefaultIds
+              .where((id) => !defaultIds.contains(id))
+              .toList()
+              .first);
+          // remove translations when deselected from defaults
         } else {
-          t.isSelected = false;
+          newDefaultIds.removeWhere((id) => !chosenDefaultIds.contains(id));
         }
+        formattedIds = newDefaultIds.join('|');
+      } else {
+        formattedIds = chosenDefaultIds.join('|');
       }
-      data = tempData;
+    }
+
+    return formattedIds;
+  }
+
+  void selectTranslations(String id, {bool isDefault = false}) {
+    if (data != null) {
+      if (id.isEmpty) {
+        final tempData = data;
+        for (final t in tempData) {
+          isDefault ? t.isDefault = false : t.isSelected = false;
+        }
+        data = tempData;
+      } else {
+        final arr = id.split('|').toList();
+        final intArr = arr.map(int.parse).toList();
+        final tempData = data;
+        for (final t in tempData) {
+          if (intArr.contains(t.id)) {
+            isDefault ? t.isDefault = true : t.isSelected = true;
+          } else {
+            isDefault ? t.isDefault = false : t.isSelected = false;
+          }
+        }
+        data = tempData;
+      }
     }
   }
 

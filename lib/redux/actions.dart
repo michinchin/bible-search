@@ -107,6 +107,7 @@ class SelectionAction {
 
 enum Select {
   translation,
+  defaultTranslation,
   book, //index indicates ot or nt (-2 or -1) or book index
   language,
   result

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ExpandableCheckboxListTile extends StatefulWidget {
   final Widget title;
-  final List<Widget> children;
+  final Widget child;
   final Function(bool) onChanged;
   final ListTileControlAffinity controlAffinity;
   final bool value;
@@ -13,15 +13,15 @@ class ExpandableCheckboxListTile extends StatefulWidget {
   const ExpandableCheckboxListTile({
     Key key,
     @required this.title,
-    @required this.children,
+    @required this.child,
     this.onChanged,
-    this.controlAffinity,
+    this.controlAffinity = ListTileControlAffinity.leading,
     this.value,
     this.secondary,
     this.initiallyExpanded = false,
     this.color = Colors.white,
   })  : assert(title != null),
-  assert(children != null),
+        assert(child != null),
         super(key: key);
   @override
   _ExpandableCheckboxListTileState createState() =>
@@ -38,27 +38,42 @@ class _ExpandableCheckboxListTileState
     super.initState();
   }
 
+  void onExpanded() {
+    setState(() {
+      _expanded = !_expanded;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final topicListTile = CheckboxListTile(
-      checkColor: widget.color,
-      title: widget.title,
-      value: widget.value,
-      controlAffinity: widget.controlAffinity,
-      secondary: IconButton(
-        icon: Icon(!_expanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up),
-        onPressed: (){
-          setState(() {
-            _expanded = !_expanded;
-          });
-        },
-      ),
-      onChanged: (b)=>widget.onChanged(b),
-    );
-
-    return !_expanded 
-    ? topicListTile : Column(
-      children: <Widget>[topicListTile] + widget.children
+    Widget topicListTile;
+    if (widget.value == null || widget.onChanged == null) {
+      topicListTile = ListTile(
+        title: widget.title,
+        onTap: onExpanded,
+        trailing: IconButton(
+          icon: Icon(
+              !_expanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up),
+          onPressed: onExpanded,
+        ),
       );
+    } else {
+      topicListTile = CheckboxListTile(
+        checkColor: widget.color,
+        title: widget.title,
+        value: widget.value,
+        controlAffinity: widget.controlAffinity,
+        secondary: IconButton(
+          icon: Icon(
+              !_expanded ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up),
+          onPressed: onExpanded,
+        ),
+        onChanged: (b) => widget.onChanged(b),
+      );
+    }
+
+    return !_expanded
+        ? topicListTile
+        : Column(children: <Widget>[topicListTile] + [widget.child]);
   }
 }

@@ -226,6 +226,17 @@ void selectionMiddleware(
         ..dispatch(SetLanguagesAction(l))
         ..dispatch(UpdateTranslationsAction());
       break;
+    case Select.defaultTranslation:
+      final tl = filterModel.chooseDefaultTranslations(
+        action.index,
+        store.state.translations,
+        b: action.toggle,
+      );
+      final t = tec.as<List<BibleTranslation>>(tl);
+      store
+        ..dispatch(SetTranslationsAction(BibleTranslations(data: t)))
+        ..dispatch(UpdateTranslationsAction());
+      break;
     case Select.book:
       final bon = filterModel.chooseBook(
           b: action.toggle,

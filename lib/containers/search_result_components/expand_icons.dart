@@ -249,8 +249,9 @@ class __TranslationSelectorState extends State<_TranslationSelector> {
         ));
 
     final buttons = <ButtonTheme>[];
-    for (var i = 0; i < widget.res.verses.length; i++) {
-      final each = widget.res.verses[i];
+    final verses = widget.res.verses;
+    for (var i = 0; i < verses.length; i++) {
+      final each = verses[i];
       Color buttonColor;
       Color textColor;
       if (widget.res.isSelected) {

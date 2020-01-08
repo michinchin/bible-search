@@ -14,6 +14,7 @@ const base64Map =
 const String prefRateApp = 'bs_rateApp';
 const String themePref = 'bs_theme';
 const String translationsPref = 'bs_translations';
+const String defaultTranslationsPref = 'bs_defaultTranslations';
 const String searchHistoryPref = 'bs_searchHistory';
 const String removedAdsPref = 'bs_removeAds';
 const String removedAdsExpirePref = 'bs_removeAdsExpire';
@@ -39,6 +40,7 @@ const darkOverlay = SystemUiOverlayStyle(
   systemNavigationBarIconBrightness: Brightness.light,
 );
 
+const int maxDefaultTranslations = 3;
 const double defaultMinFontSize = 15;
 const double minFontSizeDescription = 16;
 const double minFontSizeTitle = 18;

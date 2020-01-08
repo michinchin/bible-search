@@ -1,5 +1,7 @@
 import 'dart:core';
 
+import 'package:tec_util/tec_util.dart' as tec;
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bible_search/containers/search_result_components/expand_icons.dart';
 import 'package:bible_search/data/book.dart';
@@ -39,43 +41,44 @@ class ResultCard extends StatefulWidget {
 class _ResultCardState extends State<ResultCard> {
   SearchModel searchModel;
   int _currTag;
+  SearchResult _res;
 
   @override
   void initState() {
     searchModel = SearchModel();
-    _currTag = widget.res.verses[widget.res.currentVerseIndex].id;
+    _res = searchModel.orderByDefaultTranslation(widget.res);
+    _currTag = _res.verses[_res.currentVerseIndex].id;
     super.initState();
   }
 
   void _contextButtonPressed() {
-    if (widget.res.verses[widget.res.currentVerseIndex].contextText.isEmpty) {
+    if (_res.verses[_res.currentVerseIndex].contextText.isEmpty) {
       Context.fetch(
-        translation: widget.res.verses[widget.res.currentVerseIndex].id,
-        book: widget.res.bookId,
-        chapter: widget.res.chapterId,
-        verse: widget.res.verseId,
+        translation: _res.verses[_res.currentVerseIndex].id,
+        book: _res.bookId,
+        chapter: _res.chapterId,
+        verse: _res.verseId,
       ).then((context) {
-        widget.res.verses[widget.res.currentVerseIndex].contextText =
-            context.text;
-        widget.res.verses[widget.res.currentVerseIndex].verseIdx = [
+        _res.verses[_res.currentVerseIndex].contextText = context.text;
+        _res.verses[_res.currentVerseIndex].verseIdx = [
           context.initialVerse,
           context.finalVerse
         ];
       }).then((_) {
         setState(() {
-          widget.res.contextExpanded = !widget.res.contextExpanded;
+          _res.contextExpanded = !_res.contextExpanded;
         });
       });
     } else {
       setState(() {
-        widget.res.contextExpanded = !widget.res.contextExpanded;
+        _res.contextExpanded = !_res.contextExpanded;
       });
     }
   }
 
   void _expandButtonPressed() {
     setState(() {
-      widget.res.isExpanded = !widget.res.isExpanded;
+      _res.isExpanded = !_res.isExpanded;
     });
   }
 
@@ -86,25 +89,24 @@ class _ResultCardState extends State<ResultCard> {
 
   void _selectCard() {
     setState(() {
-      widget.res.isSelected = !widget.res.isSelected;
-      widget.selectCard(widget.index, widget.res.isSelected);
+      _res.isSelected = !_res.isSelected;
+      widget.selectCard(widget.index, _res.isSelected);
     });
   }
 
   Future<void> _translationChanged(Verse each, int index) async {
-    widget.res.currentVerseIndex = index;
+    _res.currentVerseIndex = index;
 
-    if (widget.res.contextExpanded &&
-        widget.res.verses[widget.res.currentVerseIndex].contextText.isEmpty) {
+    if (_res.contextExpanded &&
+        _res.verses[_res.currentVerseIndex].contextText.isEmpty) {
       final context = await Context.fetch(
-        translation: widget.res.verses[widget.res.currentVerseIndex].id,
-        book: widget.res.bookId,
-        chapter: widget.res.chapterId,
-        verse: widget.res.verseId,
+        translation: _res.verses[_res.currentVerseIndex].id,
+        book: _res.bookId,
+        chapter: _res.chapterId,
+        verse: _res.verseId,
       );
-      widget.res.verses[widget.res.currentVerseIndex].contextText =
-          context.text;
-      widget.res.verses[widget.res.currentVerseIndex].verseIdx = [
+      _res.verses[_res.currentVerseIndex].contextText = context.text;
+      _res.verses[_res.currentVerseIndex].verseIdx = [
         context.initialVerse,
         context.finalVerse
       ];
@@ -118,7 +120,7 @@ class _ResultCardState extends State<ResultCard> {
   @override
   Widget build(BuildContext context) {
     final model = ResultCardModel(
-      res: widget.res,
+      res: _res,
       keywords: widget.keywords,
       bookNames: widget.bookNames,
       context: context,
@@ -136,7 +138,7 @@ class _ResultCardState extends State<ResultCard> {
         },
         child: Container(
           decoration: BoxDecoration(
-            color: widget.res.isSelected
+            color: _res.isSelected
                 ? Theme.of(context).accentColor
                 : Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(15),
@@ -154,14 +156,14 @@ class _ResultCardState extends State<ResultCard> {
           child: Padding(
               padding: const EdgeInsets.all(8),
               child: Material(
-                color: widget.res.isSelected
+                color: _res.isSelected
                     ? Theme.of(context).accentColor
                     : Theme.of(context).cardColor,
                 child: CardIcons(
                   bookNames: widget.bookNames,
                   model: model,
-                  expanded: widget.res.isExpanded,
-                  res: widget.res,
+                  expanded: _res.isExpanded,
+                  res: _res,
                   onExpanded: _expandButtonPressed,
                   onContext: _contextButtonPressed,
                   onTranslationChanged: _translationChanged,
@@ -180,6 +182,7 @@ class ResultCardModel {
   final BuildContext context;
   final List<TextSpan> Function(String, String) formatWords;
   final String keywords;
+  List<int> defaultTranslationIds;
   AutoSizeText nonContextTitle;
   AutoSizeText contextTitle;
   String content;
@@ -192,9 +195,13 @@ class ResultCardModel {
   ResultCardModel(
       {this.res,
       this.keywords,
+      this.defaultTranslationIds,
       this.bookNames,
       this.context,
       this.formatWords}) {
+    final defaults =
+        tec.Prefs.shared.getString(defaultTranslationsPref, defaultValue: '');
+    defaultTranslationIds = defaults.split('|').map(int.tryParse).toList();
     nonContextTitle = AutoSizeText(
       '${res.verses[res.currentVerseIndex].title} ${res.verses[res.currentVerseIndex].a}',
       minFontSize: minFontSizeTitle,
