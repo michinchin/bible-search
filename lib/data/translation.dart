@@ -5,7 +5,6 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:bible_search/models/home_model.dart';
 import 'package:bible_search/labels.dart';
-import 'package:flutter/services.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:tec_cache/tec_cache.dart';
 import 'package:tec_util/tec_util.dart' as tec;
@@ -167,8 +166,10 @@ class BibleTranslations {
     var needsUpdate = false;
 
     if (bibleJson != null) {
-      needsUpdate = translations.compareTo(json.encode(bibleJson)) != 0;
+      needsUpdate = (translations ?? '').compareTo(json.encode(bibleJson)) != 0;
+
       if (!needsUpdate) {
+        debugPrint('Using translation json from file system');
         bibleJson = tec.as<Map<String, dynamic>>(json.decode(translations));
       } else {
         debugPrint('Updating translation json');
