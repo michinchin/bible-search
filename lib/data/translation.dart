@@ -1,8 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'package:bible_search/models/home_model.dart';
 import 'package:bible_search/labels.dart';
 import 'package:flutter/services.dart';
+import 'package:pedantic/pedantic.dart';
 import 'package:tec_cache/tec_cache.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 
@@ -153,15 +157,44 @@ class BibleTranslations {
   static Future<BibleTranslations> fetch() async {
     const fileName = 'WebSite.json.gz';
     const hostAndPath = '$kTBStreamServer/$kTBApiVersion/products-list';
-    final translations = await rootBundle.loadString('assets/Translation.json');
-    final translationJson =
-        tec.as<Map<String, dynamic>>(json.decode(translations));
-    final bibleJson = translationJson ??
+    final translations = await readTranslationsJson('Translation.txt');
+
+    Map<String, dynamic> bibleJson;
+    // if the current vs fetched don't match, update current
+    bibleJson =
         await TecCache().jsonFromUrl(url: 'https://$hostAndPath/$fileName');
-    if (json != null) {
+
+    var needsUpdate = false;
+
+    if (bibleJson != null) {
+      needsUpdate = translations.compareTo(json.encode(bibleJson)) != 0;
+      if (!needsUpdate) {
+        bibleJson = tec.as<Map<String, dynamic>>(json.decode(translations));
+      } else {
+        debugPrint('Updating translation json');
+        unawaited(writeToTranslationJson(jsonEncode(bibleJson)));
+      }
       return BibleTranslations.fromJson(bibleJson);
     } else {
       return BibleTranslations(data: []);
     }
+  }
+
+  static Future<String> readTranslationsJson(String path) async {
+    String text;
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final file = File('${directory.path}/$path');
+      text = await file.readAsString();
+    } catch (e) {
+      print("Couldn't read file");
+    }
+    return text;
+  }
+
+  static Future<void> writeToTranslationJson(String text) async {
+    final directory = (await getApplicationDocumentsDirectory()).path;
+    final file = File('$directory/Translation.txt');
+    await file.writeAsString(text);
   }
 }
