@@ -1,5 +1,5 @@
 # this version
-VERSION=1.1
+VERSION=1.2
 
 cd bible_search
 #flutter upgrade
