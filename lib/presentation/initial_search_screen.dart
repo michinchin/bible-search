@@ -37,39 +37,18 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
   }
 
   void rateApp() {
-    final rateMyApp = RateMyApp(preferencesPrefix: prefRateApp, minLaunches: 5);
+    final rateMyApp = RateMyApp(preferencesPrefix: prefRateApp,
+        minLaunches: 3, minDays: 3);
     rateMyApp.init().then((_) {
       WidgetsBinding.instance.addPostFrameCallback((d) {
         if (rateMyApp.shouldOpenDialog) {
-          rateMyApp.showStarRateDialog(context,
+          rateMyApp.showRateDialog(context,
+              title: 'Rate App',
               appIcon: Image.asset(
                 'assets/appIcon.png',
-                scale: 2,
+                width: 100,
               ),
-              title: 'Enjoying TecartaBible Search?',
-              message: 'Leave us a rating below:', onRatingChanged: (stars) {
-            if (stars == 0 || stars == null) {
-              return [
-                FlatButton(
-                  child: const Text('No Thanks'),
-                  onPressed: () => Navigator.of(context).pop(),
-                )
-              ];
-            }
-            return [
-              FlatButton(
-                child: const Text('Done'),
-                onPressed: () {
-                  TecToast.show(
-                      context,
-                      'Thanks for the ${stars == null ? '0' : stars.round().toString()}'
-                      ' star(s) !');
-                  rateMyApp.doNotOpenAgain = true;
-                  rateMyApp.save().then((v) => Navigator.pop(context));
-                },
-              ),
-            ];
-          });
+              message: 'Enjoying Bible Search!?');
         }
       });
     });

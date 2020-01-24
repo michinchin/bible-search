@@ -11,7 +11,7 @@ const base64Map =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 
 // bs = Bible Search
-const String prefRateApp = 'bs_rateApp';
+final String prefRateApp = (Platform.isAndroid) ? 'bs_rateApp1' : 'bs_rateApp';
 const String themePref = 'bs_theme';
 const String translationsPref = 'bs_translations';
 const String defaultTranslationsPref = 'bs_defaultTranslations';
