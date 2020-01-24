@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 
 import 'package:bible_search/containers/is_components.dart';
 import 'package:rate_my_app/rate_my_app.dart';
-
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
+import 'package:tec_util/tec_util.dart' as tec;
 
 import 'package:bible_search/models/app_state.dart';
 import 'package:bible_search/redux/actions.dart';
@@ -37,21 +37,27 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
   }
 
   void rateApp() {
-    final rateMyApp = RateMyApp(preferencesPrefix: prefRateApp,
-        minLaunches: 3, minDays: 3);
-    rateMyApp.init().then((_) {
-      WidgetsBinding.instance.addPostFrameCallback((d) {
-        if (rateMyApp.shouldOpenDialog) {
-          rateMyApp.showRateDialog(context,
-              title: 'Rate App',
-              appIcon: Image.asset(
-                'assets/appIcon.png',
-                width: 100,
-              ),
-              message: 'Enjoying Bible Search!?');
-        }
+    if (tec.Prefs.shared.getBool(prefRateApp, defaultValue: true)) {
+      final rateMyApp = RateMyApp(
+          preferencesPrefix: prefRateApp, minLaunches: 3, minDays: 3);
+
+      rateMyApp.init().then((_) {
+        WidgetsBinding.instance.addPostFrameCallback((d) {
+          if (rateMyApp.shouldOpenDialog) {
+            rateMyApp
+              ..showRateDialog(context,
+                  title: 'Rate App',
+                  appIcon: Image.asset(
+                    'assets/appIcon.png',
+                    width: 100,
+                  ),
+                  message: 'Enjoying Bible Search!?')
+              ..reset();
+            tec.Prefs.shared.setBool(prefRateApp, false);
+          }
+        });
       });
-    });
+    }
   }
 
   @override
