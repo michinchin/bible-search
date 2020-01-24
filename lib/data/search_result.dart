@@ -172,7 +172,7 @@ class SearchResults {
   }
 }
 
-Map<String, String> urlEncodingExceptions = {
+final urlEncodingExceptions = <String, String>{
   '’': '\'', // UTF-8: E2 80 99
   '‘': '\'', // UTF-8: E2 80 98
   '‚': '',
@@ -195,6 +195,7 @@ Map<String, String> urlEncodingExceptions = {
   '‒': '-',
   '—': '-', // UTF-8: E2 80 94
   '―': '-', // UTF-8: E2 80 95
+  '\\.': '',
 };
 
 String _formatWords(String keywords) {
