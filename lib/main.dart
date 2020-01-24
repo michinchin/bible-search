@@ -21,7 +21,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tec_native_ad/tec_native_ad.dart';
 import 'package:tec_user_account/tec_user_account.dart';
 
-import 'package:tec_widgets/tec_widgets.dart';
+import 'package:tec_widgets/tec_widgets.dart' as tw;
 import 'package:tec_util/tec_util.dart' as tec;
 
 import 'models/iap.dart';
@@ -87,9 +87,9 @@ class BibleSearchApp extends StatelessWidget {
 
     return StoreProvider<AppState>(
         store: store,
-        child: tec.BlocProvider<TecStyleBloc>(
-            bloc: TecStyleBloc(
-                <String, dynamic>{'dialogStyle': TecMetaStyle.material}),
+        child: tec.BlocProvider<tw.TecStyleBloc>(
+            bloc: tw.TecStyleBloc(
+                <String, dynamic>{'dialogStyle': tw.TecMetaStyle.material}),
             child: FeatureDiscovery(
               child: OKToast(
                 child: DynamicTheme(

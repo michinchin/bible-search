@@ -5,7 +5,7 @@ import 'package:diacritic/diacritic.dart';
 
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
-import 'package:tec_widgets/tec_widgets.dart';
+import 'package:tec_widgets/tec_widgets.dart' as tw;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:share/share.dart';
@@ -77,7 +77,7 @@ class SearchModel {
 
   void copyPressed({@required String text, @required BuildContext context}) {
     Clipboard.setData(ClipboardData(text: text)).then((_) {
-      TecToast.show(context, 'Successfully Copied!');
+      tw.TecToast.show(context, 'Successfully Copied!');
     });
   }
 
@@ -121,12 +121,12 @@ class SearchModel {
         await Clipboard.setData(
                 ClipboardData(text: '${verse.selectedText}$shortUrl'))
             .then((x) {
-          TecToast.show(context, 'Successfully Copied!');
+          tw.TecToast.show(context, 'Successfully Copied!');
         });
         return true;
       }
     } else {
-      TecToast.show(context, 'Please make a selection');
+      tw.TecToast.show(context, 'Please make a selection');
     }
     return false;
   }

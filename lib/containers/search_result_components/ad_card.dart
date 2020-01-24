@@ -198,7 +198,7 @@ class AdCardViewModel {
     final di = await tec.DeviceInfo.fetch();
     print(
         'Running on ${di.productName} with ${tec.DeviceInfo.os} ${di.version}');
-    final version =
+    const version =
         (appVersion == 'DEBUG-VERSION' ? '(debug version)' : 'v$appVersion');
     final subject = 'Feedback regarding Bible Search! $version '
         'with ${di.productName} ${tec.DeviceInfo.os} ${di.version}';
