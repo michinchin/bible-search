@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:tec_widgets/tec_widgets.dart';
+import 'package:tec_widgets/tec_widgets.dart' as tw;
 import 'package:tec_util/tec_util.dart' as tec;
 
 import 'package:auto_size_text/auto_size_text.dart';
@@ -105,7 +105,7 @@ class _LanguageChildren extends StatelessWidget {
             title: '$defNum ${tl[i].a}',
             onSelected: (b) {
               if (defaults.length == maxDefaultTranslations && b) {
-                TecToast.show(context, 'Cannot select more than three items');
+                tw.TecToast.show(context, 'Cannot select more than three items');
               } else {
                 onClick(b, translations.indexOf(tl[i]));
               }

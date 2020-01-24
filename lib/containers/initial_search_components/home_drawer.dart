@@ -17,7 +17,7 @@ import 'package:share/share.dart';
 import 'package:tec_user_account/tec_user_account.dart';
 import 'package:tec_user_account/tec_user_account_ui.dart';
 import 'package:tec_util/tec_util.dart' as tec;
-import 'package:tec_widgets/tec_widgets.dart';
+import 'package:tec_widgets/tec_widgets.dart' as tw;
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
 class HomeDrawer extends StatelessWidget {
@@ -164,7 +164,7 @@ class DrawerViewModel {
   void _helpAndFeedback(BuildContext context) {
     var _close = false;
     final accessibilityOff = !MediaQuery.of(context).accessibleNavigation;
-    tecShowSimpleAlertDialog(
+    tw.tecShowSimpleAlertDialog(
       context: context,
       title: 'Help & Feedback',
       content:
@@ -172,14 +172,14 @@ class DrawerViewModel {
           'send an email to our support team?',
       actions: <Widget>[
         if (accessibilityOff)
-          TecDialogButton(
+          tw.TecDialogButton(
             child: const Text('Feature Discovery'),
             onPressed: () {
               _featureDiscovery(context);
               _close = true;
             },
           ),
-        TecDialogButton(
+        tw.TecDialogButton(
           child: const Text('Email'),
           onPressed: () {
             _emailFeedback(context);

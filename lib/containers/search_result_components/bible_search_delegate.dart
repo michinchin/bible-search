@@ -63,8 +63,8 @@ Future<T> showBibleSearch<T>({
 ///
 /// The search page always shows an [AppBar] at the top where users can
 /// enter their search queries. The buttons shown before and after the search
-/// query text field can be customized via [BibleSearchDelegate.leading] and
-/// [BibleSearchDelegate.actions].
+/// query text field can be customized via BibleSearchDelegate.leading and
+/// BibleSearchDelegate.actions.
 ///
 /// The body below the [AppBar] can either show suggested queries (returned by
 /// [BibleSearchDelegate.buildSuggestions]) or - once the user submits a search  - the
@@ -222,8 +222,8 @@ abstract class BibleSearchDelegate<T> {
     assert(query != null);
 
     _queryTextController
-        ..text = value
-        ..selection = TextSelection.collapsed(offset: value.length);
+      ..text = value
+      ..selection = TextSelection.collapsed(offset: value.length);
   }
 
   /// Transition from the suggestions returned by [buildSuggestions] to the
@@ -503,8 +503,7 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
         phrase: widget.delegate.query,
         translationIds: widget.delegate.translations);
 
-    autoCompleteOperation = CancelableOperation<AutoComplete>.fromFuture(
-        future,
+    autoCompleteOperation = CancelableOperation<AutoComplete>.fromFuture(future,
         onCancel: () => {debugPrint('Cancelled Suggestion Fetch')});
 
     return autoCompleteOperation.value;
@@ -519,8 +518,7 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
           widget.delegate.autoComplete = _fromCancelable();
           // rebuild ourselves because query changed.
         });
-      }
-      else {
+      } else {
         debugPrint('onQueryChanged called - but no change...');
       }
     });
@@ -561,6 +559,9 @@ class _SearchPageState<T> extends State<_SearchPage<T>> {
       case TargetPlatform.android:
       case TargetPlatform.fuchsia:
       case TargetPlatform.macOS:
+        routeName = searchFieldLabel;
+        break;
+      default:
         routeName = searchFieldLabel;
     }
 

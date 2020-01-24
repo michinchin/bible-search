@@ -194,7 +194,7 @@ Map<String, String> urlEncodingExceptions = {
   '‐': '-',
   '‒': '-',
   '—': '-', // UTF-8: E2 80 94
-  '―': '-' // UTF-8: E2 80 95
+  '―': '-', // UTF-8: E2 80 95
 };
 
 String _formatWords(String keywords) {
