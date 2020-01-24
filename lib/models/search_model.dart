@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bible_search/containers/sr_components.dart';
 import 'package:bible_search/data/verse.dart';
 import 'package:bible_search/labels.dart';
 import 'package:diacritic/diacritic.dart';
@@ -160,6 +161,7 @@ class SearchModel {
       modKeywords = modKeywords;
     }
 
+    // l = lowercase
     List<String> formattedKeywords, lFormattedKeywords;
 
     if (exact || phrase) {
@@ -172,20 +174,32 @@ class SearchModel {
     }
 
     for (final keyword in formattedKeywords) {
-      if (keyword.length >= 3) {
+      if (keyword.length > 3) {
         final regex = RegExp(keyword, caseSensitive: false, unicode: true);
         modPar = modPar.replaceAllMapped(regex, (s) => '\*${s.group(0)}\*');
       } else {
-        final regex = RegExp(' $keyword ', caseSensitive: false);
+        // shorter words (length <= 3 i.e. and, the, I) will be bolded only if
+        // stand alone words (i.e. not bolding l[and] or [the]n)
+        final regex =
+            RegExp('[^a-zA-Z]$keyword[^a-zA-Z]', caseSensitive: false);
         modPar = modPar.replaceAllMapped(regex, (s) => '\*${s.group(0)}\*');
+        // i.e. if first word in paragraph is One (and this is a keyword) => bold word
+        // this avoids the issue of nested words (not stand alone) for shorter words
+        final keywordAsFirst =
+            RegExp('$keyword[^a-zA-Z]', caseSensitive: false);
+        if (modPar.startsWith(keywordAsFirst)) {
+          final firstWord = modPar.split(' ').first;
+          modPar = modPar.replaceFirst(keywordAsFirst, '\*$firstWord \*');
+        }
       }
     }
 
     final arr = modPar.split('\*');
     for (var i = 0; i < arr.length; i++) {
       var bold = false;
-
-      if (lFormattedKeywords.contains(arr[i].trim().toLowerCase())) {
+      final keyword =
+          arr[i].trim().toLowerCase().replaceAll(RegExp('[^a-zA-Z\s]*'), '');
+      if (lFormattedKeywords.contains(keyword)) {
         bold = true;
 
         // we may skip this one... if not a whole word match
