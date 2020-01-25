@@ -173,55 +173,111 @@ class SearchModel {
       lFormattedKeywords = modKeywords.toLowerCase().split(' ');
     }
 
-    for (final keyword in formattedKeywords) {
-      if (keyword.length > 3) {
-        final regex = RegExp(keyword, caseSensitive: false, unicode: true);
-        modPar = modPar.replaceAllMapped(regex, (s) => '\*${s.group(0)}\*');
-      } else {
-        // shorter words (length <= 3 i.e. and, the, I) will be bolded only if
-        // stand alone words (i.e. not bolding l[and] or [the]n)
-        final regex =
-            RegExp('[^a-zA-Z]$keyword[^a-zA-Z]', caseSensitive: false);
-        modPar = modPar.replaceAllMapped(regex, (s) => '\*${s.group(0)}\*');
-        // i.e. if first word in paragraph is One (and this is a keyword) => bold word
-        // this avoids the issue of nested words (not stand alone) for shorter words
-        final keywordAsFirst =
-            RegExp('$keyword[^a-zA-Z]', caseSensitive: false);
-        if (modPar.startsWith(keywordAsFirst)) {
-          final firstWord = modPar.split(' ').first;
-          modPar = modPar.replaceFirst(keywordAsFirst, '\*$firstWord \*');
+    final bold = <int, int>{};
+    final lverse = verse.toLowerCase();
+    final a = 'a'.codeUnitAt(0);
+    final z = 'z'.codeUnitAt(0);
+
+    // find matching words (case insensitive search)
+    for (final keyword in lFormattedKeywords) {
+      var where = -1;
+
+      while ((where = lverse.indexOf(keyword, where + 1)) >= 0) {
+        if (where == 0 || (lverse.codeUnitAt(where - 1) < a) || lverse.codeUnitAt(where - 1) > z) {
+          final length = keyword.length;
+
+          if (length <= 2 && lverse.length > (where + length)) {
+            // match only whole words
+            if (lverse.codeUnitAt(where + length) >= a && lverse.codeUnitAt(where + length) <= z) {
+              continue;
+            }
+          }
+
+          bold[where] = length;
         }
       }
     }
 
-    final arr = modPar.split('\*');
-    for (var i = 0; i < arr.length; i++) {
-      var bold = false;
-      final keyword =
-          arr[i].trim().toLowerCase().replaceAll(RegExp('[^a-zA-Z\s]*'), '');
-      if (lFormattedKeywords.contains(keyword)) {
-        bold = true;
+    if (bold.isEmpty) {
+      // no bold - should never happen
+      content.add(TextSpan(text: verse));
+    }
+    else {
+      final boldKeys = bold.keys.toList()
+        ..sort((a, b) => a.compareTo(b));
 
-        // we may skip this one... if not a whole word match
-        if (exact) {
-          // check last character of previous word...
-          if (i > 0 && isAlpha(arr[i - 1][arr[i - 1].length - 1])) {
-            bold = false;
+      var lastEnd = 0;
+
+      for (final where in boldKeys) {
+        if (where >= lastEnd) {
+          if (where > 0) {
+            // add any preceding text not bolded...
+            content.add(TextSpan(text: verse.substring(lastEnd, where)));
           }
-          // check first character of next word...
-          else if (i < arr.length - 1 && isAlpha(arr[i + 1][0])) {
-            bold = false;
-          }
+
+          // add the bold text...
+          content.add(TextSpan(
+              text: verse.substring(where, where + bold[where]),
+              style: const TextStyle(fontWeight: FontWeight.bold)));
+
+          lastEnd = where + bold[where];
         }
       }
 
-      if (bold) {
-        content.add(TextSpan(
-            text: arr[i], style: const TextStyle(fontWeight: FontWeight.bold)));
-      } else {
-        content.add(TextSpan(text: arr[i]));
+      if (lastEnd < verse.length) {
+        content.add(TextSpan(text: verse.substring(lastEnd)));
       }
     }
+
+//    for (final keyword in formattedKeywords) {
+//      if (keyword.length > 3) {
+//        final regex = RegExp(keyword, caseSensitive: false, unicode: true);
+//        modPar = modPar.replaceAllMapped(regex, (s) => '\*${s.group(0)}\*');
+//      } else {
+//        // shorter words (length <= 3 i.e. and, the, I) will be bolded only if
+//        // stand alone words (i.e. not bolding l[and] or [the]n)
+//        final regex =
+//            RegExp('[^a-zA-Z]$keyword[^a-zA-Z]', caseSensitive: false);
+//        modPar = modPar.replaceAllMapped(regex, (s) => '\*${s.group(0)}\*');
+//        // i.e. if first word in paragraph is One (and this is a keyword) => bold word
+//        // this avoids the issue of nested words (not stand alone) for shorter words
+//        final keywordAsFirst =
+//            RegExp('$keyword[^a-zA-Z]', caseSensitive: false);
+//        if (modPar.startsWith(keywordAsFirst)) {
+//          final firstWord = modPar.split(' ').first;
+//          modPar = modPar.replaceFirst(keywordAsFirst, '\*$firstWord \*');
+//        }
+//      }
+//    }
+
+//    final arr = modPar.split('\*');
+//    for (var i = 0; i < arr.length; i++) {
+//      var bold = false;
+//      final keyword =
+//          arr[i].trim().toLowerCase().replaceAll(RegExp('[^a-zA-Z\s]*'), '');
+//      if (lFormattedKeywords.contains(keyword)) {
+//        bold = true;
+//
+//        // we may skip this one... if not a whole word match
+//        if (exact) {
+//          // check last character of previous word...
+//          if (i > 0 && isAlpha(arr[i - 1][arr[i - 1].length - 1])) {
+//            bold = false;
+//          }
+//          // check first character of next word...
+//          else if (i < arr.length - 1 && isAlpha(arr[i + 1][0])) {
+//            bold = false;
+//          }
+//        }
+//      }
+//
+//      if (bold) {
+//        content.add(TextSpan(
+//            text: arr[i], style: const TextStyle(fontWeight: FontWeight.bold)));
+//      } else {
+//        content.add(TextSpan(text: arr[i]));
+//      }
+//    }
 
     return content;
   }
