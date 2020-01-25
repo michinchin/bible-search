@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:bible_search/containers/sr_components.dart';
 import 'package:bible_search/data/verse.dart';
 import 'package:bible_search/labels.dart';
 import 'package:diacritic/diacritic.dart';
@@ -12,7 +11,10 @@ import 'package:flutter/services.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:tec_util/tec_util.dart' as tec;
-import 'package:validators/validators.dart';
+
+final tecartaBibleLink = Platform.isAndroid
+    ? 'https://play.google.com/store/apps/details?id=com.tecarta.TecartaBible'
+    : 'itms-apps://itunes.apple.com/app/id325955298';
 
 class SearchModel {
   Future<void> openTB(
@@ -57,12 +59,9 @@ class SearchModel {
         FlatButton(
           child: const Text('Download'),
           onPressed: () async {
-            final url = Platform.isIOS
-                ? 'itms-apps://itunes.apple.com/app/id325955298'
-                : 'https://play.google.com/store/apps/details?id=com.tecarta.TecartaBible';
-            if (await canLaunch(url)) {
+            if (await canLaunch(tecartaBibleLink)) {
               try {
-                await launch(url);
+                await launch(tecartaBibleLink);
               } catch (e) {
                 Navigator.of(context).pop();
                 print(e);
@@ -136,7 +135,7 @@ class SearchModel {
     final verse = removeDiacritics(verseText);
 
     final content = <TextSpan>[];
-    var modPar = verse;
+    // var modPar = verse;
     var modKeywords = words.trim();
     var phrase = false, exact = false;
 
@@ -162,14 +161,15 @@ class SearchModel {
     }
 
     // l = lowercase
-    List<String> formattedKeywords, lFormattedKeywords;
+    // List<String> formattedKeywords, lFormattedKeywords;
+    List<String> lFormattedKeywords;
 
     if (exact || phrase) {
-      formattedKeywords = [modKeywords.trim()];
+      // formattedKeywords = [modKeywords.trim()];
       lFormattedKeywords = [modKeywords.trim().toLowerCase()];
     } else {
-      formattedKeywords = modKeywords.split(' ')
-        ..sort((s, t) => s.length.compareTo(t.length));
+//      formattedKeywords = modKeywords.split(' ')
+//        ..sort((s, t) => s.length.compareTo(t.length));
       lFormattedKeywords = modKeywords.toLowerCase().split(' ');
     }
 

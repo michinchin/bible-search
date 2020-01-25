@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bible_search/containers/iap_dialog.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/app_state.dart';
+import 'package:bible_search/models/search_model.dart';
 import 'package:bible_search/models/user_model.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:feature_discovery/feature_discovery.dart';
@@ -18,6 +19,7 @@ import 'package:tec_user_account/tec_user_account.dart';
 import 'package:tec_user_account/tec_user_account_ui.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 import 'package:tec_widgets/tec_widgets.dart' as tw;
+import 'package:tec_widgets/tec_widgets.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
 class HomeDrawer extends StatelessWidget {
@@ -131,7 +133,31 @@ class HomeDrawer extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Icon(Icons.info_outline),
-                  title: const Text('Version: $appVersion'),
+                  title: const Text('About'),
+                  onTap: () {
+                    tecShowSimpleAlertDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      useRootNavigator: false,
+                      title: 'About',
+                      content: 'Bible Search! is a product developed by Tecarta.\n\nLooking for a full featured Bible app? Download Tecarta Bible to access thousands of study notes, maps, charts, book introductions and more!\n\nVersion: $appVersion',
+                      actions: <Widget>[
+                        TecDialogButton(
+                          child: const TecText('Not Now'),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        TecDialogButton(
+                          child: const TecText('Tecarta Bible'),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            launcher.launch(tecartaBibleLink);
+                          },
+                        ),
+                      ],
+                    );
+                  }
                 ),
               ],
             ),
