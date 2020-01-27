@@ -46,12 +46,11 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
           if (rateMyApp.shouldOpenDialog) {
             rateMyApp
               ..showRateDialog(context,
-                  title: 'Rate App',
+                  title: 'Bible Search!',
                   appIcon: Image.asset(
                     'assets/appIcon.png',
                     width: 100,
-                  ),
-                  message: 'Enjoying Bible Search!?')
+                  ))
               ..reset();
             tec.Prefs.shared.setBool(prefRateApp, false);
           }
