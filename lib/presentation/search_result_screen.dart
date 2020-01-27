@@ -37,21 +37,19 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   }
 
   void _showFeatureDiscovery() {
-    WidgetsBinding.instance.addPostFrameCallback(
-        (duration) {
-          if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true) &&
-              !MediaQuery.of(context).accessibleNavigation) {
+    WidgetsBinding.instance.addPostFrameCallback((duration) {
+      if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true) &&
+          !MediaQuery.of(context).accessibleNavigation) {
+        tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
 
-            tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
-
-            Future.delayed(const Duration(seconds: 1), () {
-              FeatureDiscovery.discoverFeatures(
-                context,
-                featureIds.toSet(),
-              );
-            });
-          }
+        Future.delayed(const Duration(milliseconds: 250), () {
+          FeatureDiscovery.discoverFeatures(
+            context,
+            featureIds.toSet(),
+          );
         });
+      }
+    });
   }
 
   void _showSearch(ResultsViewModel vm) {

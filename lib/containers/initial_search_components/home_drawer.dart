@@ -19,7 +19,6 @@ import 'package:tec_user_account/tec_user_account.dart';
 import 'package:tec_user_account/tec_user_account_ui.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 import 'package:tec_widgets/tec_widgets.dart' as tw;
-import 'package:tec_widgets/tec_widgets.dart';
 import 'package:url_launcher/url_launcher.dart' as launcher;
 
 class HomeDrawer extends StatelessWidget {
@@ -39,12 +38,12 @@ class HomeDrawer extends StatelessWidget {
                   contentPadding: const EdgeInsets.only(left: 16, top: 16),
                   title: RichText(
                     text: TextSpan(
-                        children: const [
-                          TextSpan(text: 'Tecarta'),
+                        children: [
+                          const TextSpan(text: 'Tecarta'),
                           TextSpan(
                               text: 'Bible',
                               style: TextStyle(fontWeight: FontWeight.bold)),
-                          TextSpan(text: ' Search')
+                          const TextSpan(text: ' Search')
                         ],
                         style: Theme.of(context).brightness == Brightness.dark
                             ? Theme.of(context).textTheme.headline
@@ -96,7 +95,8 @@ class HomeDrawer extends StatelessWidget {
                 ListTile(
                   leading: Icon(Icons.book),
                   title: const Text('Translation'),
-                  onTap: () => Navigator.of(context).pushNamed('/default_translation'),
+                  onTap: () =>
+                      Navigator.of(context).pushNamed('/default_translation'),
                 ),
                 SwitchListTile.adaptive(
                     secondary: Icon(Icons.lightbulb_outline),
@@ -132,33 +132,33 @@ class HomeDrawer extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.info_outline),
-                  title: const Text('About'),
-                  onTap: () {
-                    tecShowSimpleAlertDialog(
-                      context: context,
-                      barrierDismissible: true,
-                      useRootNavigator: false,
-                      title: 'About',
-                      content: 'Bible Search! is a product developed by Tecarta.\n\nLooking for a full featured Bible app? Download Tecarta Bible to access thousands of study notes, maps, charts, book introductions and more!\n\nVersion: $appVersion',
-                      actions: <Widget>[
-                        TecDialogButton(
-                          child: const TecText('Not Now'),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                        TecDialogButton(
-                          child: const TecText('Tecarta Bible'),
-                          onPressed: () {
-                            Navigator.pop(context);
-                            launcher.launch(tecartaBibleLink);
-                          },
-                        ),
-                      ],
-                    );
-                  }
-                ),
+                    leading: Icon(Icons.info_outline),
+                    title: const Text('About'),
+                    onTap: () {
+                      tw.tecShowSimpleAlertDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        useRootNavigator: false,
+                        title: 'About',
+                        content:
+                            'Bible Search! is a product developed by Tecarta.\n\nLooking for a full featured Bible app? Download Tecarta Bible to access thousands of study notes, maps, charts, book introductions and more!\n\nVersion: $appVersion',
+                        actions: <Widget>[
+                         tw.TecDialogButton(
+                            child: const tw.TecText('Not Now'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                          tw.TecDialogButton(
+                            child: const tw.TecText('Tecarta Bible'),
+                            onPressed: () {
+                              Navigator.pop(context);
+                              launcher.launch(tecartaBibleLink);
+                            },
+                          ),
+                        ],
+                      );
+                    }),
               ],
             ),
           );

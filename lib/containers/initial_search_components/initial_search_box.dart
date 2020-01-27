@@ -74,6 +74,7 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
                   onChanged: (s) {
                     setState(() {}); //for clear button to show
                   },
+                  textInputAction: TextInputAction.search,
                   textAlign: TextAlign.left,
                   decoration: InputDecoration(
                     contentPadding:
