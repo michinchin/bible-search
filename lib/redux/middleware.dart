@@ -23,6 +23,9 @@ Future<void> searchMiddleware(
   SearchAction action,
   NextDispatcher next,
 ) async {
+  if (store.state.isInSelectionMode) {
+    store.dispatch(SetSelectionModeAction());
+  }
   store.dispatch(SearchLoadingAction());
   final translationIds = store.state.translations.formatIds();
   if (translationIds.isNotEmpty) {

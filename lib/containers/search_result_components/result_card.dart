@@ -41,44 +41,43 @@ class ResultCard extends StatefulWidget {
 class _ResultCardState extends State<ResultCard> {
   SearchModel searchModel;
   int _currTag;
-  SearchResult _res;
 
   @override
   void initState() {
     searchModel = SearchModel();
-    _res = searchModel.orderByDefaultTranslation(widget.res);
-    _currTag = _res.verses[_res.currentVerseIndex].id;
+    _currTag = widget.res.verses[widget.res.currentVerseIndex].id;
     super.initState();
   }
 
   void _contextButtonPressed() {
-    if (_res.verses[_res.currentVerseIndex].contextText.isEmpty) {
+    if (widget.res.verses[widget.res.currentVerseIndex].contextText.isEmpty) {
       Context.fetch(
-        translation: _res.verses[_res.currentVerseIndex].id,
-        book: _res.bookId,
-        chapter: _res.chapterId,
-        verse: _res.verseId,
+        translation: widget.res.verses[widget.res.currentVerseIndex].id,
+        book: widget.res.bookId,
+        chapter: widget.res.chapterId,
+        verse: widget.res.verseId,
       ).then((context) {
-        _res.verses[_res.currentVerseIndex].contextText = context.text;
-        _res.verses[_res.currentVerseIndex].verseIdx = [
+        widget.res.verses[widget.res.currentVerseIndex].contextText =
+            context.text;
+        widget.res.verses[widget.res.currentVerseIndex].verseIdx = [
           context.initialVerse,
           context.finalVerse
         ];
       }).then((_) {
         setState(() {
-          _res.contextExpanded = !_res.contextExpanded;
+          widget.res.contextExpanded = !widget.res.contextExpanded;
         });
       });
     } else {
       setState(() {
-        _res.contextExpanded = !_res.contextExpanded;
+        widget.res.contextExpanded = !widget.res.contextExpanded;
       });
     }
   }
 
   void _expandButtonPressed() {
     setState(() {
-      _res.isExpanded = !_res.isExpanded;
+      widget.res.isExpanded = !widget.res.isExpanded;
     });
   }
 
@@ -89,24 +88,25 @@ class _ResultCardState extends State<ResultCard> {
 
   void _selectCard() {
     setState(() {
-      _res.isSelected = !_res.isSelected;
-      widget.selectCard(widget.index, _res.isSelected);
+      widget.res.isSelected = !widget.res.isSelected;
+      widget.selectCard(widget.index, widget.res.isSelected);
     });
   }
 
   Future<void> _translationChanged(Verse each, int index) async {
-    _res.currentVerseIndex = index;
+    widget.res.currentVerseIndex = index;
 
-    if (_res.contextExpanded &&
-        _res.verses[_res.currentVerseIndex].contextText.isEmpty) {
+    if (widget.res.contextExpanded &&
+        widget.res.verses[widget.res.currentVerseIndex].contextText.isEmpty) {
       final context = await Context.fetch(
-        translation: _res.verses[_res.currentVerseIndex].id,
-        book: _res.bookId,
-        chapter: _res.chapterId,
-        verse: _res.verseId,
+        translation: widget.res.verses[widget.res.currentVerseIndex].id,
+        book: widget.res.bookId,
+        chapter: widget.res.chapterId,
+        verse: widget.res.verseId,
       );
-      _res.verses[_res.currentVerseIndex].contextText = context.text;
-      _res.verses[_res.currentVerseIndex].verseIdx = [
+      widget.res.verses[widget.res.currentVerseIndex].contextText =
+          context.text;
+      widget.res.verses[widget.res.currentVerseIndex].verseIdx = [
         context.initialVerse,
         context.finalVerse
       ];
@@ -120,7 +120,7 @@ class _ResultCardState extends State<ResultCard> {
   @override
   Widget build(BuildContext context) {
     final model = ResultCardModel(
-      res: _res,
+      res: widget.res,
       keywords: widget.keywords,
       bookNames: widget.bookNames,
       context: context,
@@ -138,7 +138,7 @@ class _ResultCardState extends State<ResultCard> {
         },
         child: Container(
           decoration: BoxDecoration(
-            color: _res.isSelected
+            color: widget.res.isSelected
                 ? Theme.of(context).accentColor
                 : Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(15),
@@ -156,14 +156,14 @@ class _ResultCardState extends State<ResultCard> {
           child: Padding(
               padding: const EdgeInsets.all(8),
               child: Material(
-                color: _res.isSelected
+                color: widget.res.isSelected
                     ? Theme.of(context).accentColor
                     : Theme.of(context).cardColor,
                 child: CardIcons(
                   bookNames: widget.bookNames,
                   model: model,
-                  expanded: _res.isExpanded,
-                  res: _res,
+                  expanded: widget.res.isExpanded,
+                  res: widget.res,
                   onExpanded: _expandButtonPressed,
                   onContext: _contextButtonPressed,
                   onTranslationChanged: _translationChanged,

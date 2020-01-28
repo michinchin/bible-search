@@ -177,18 +177,22 @@ class SearchModel {
     final lverse = verse.toLowerCase();
     final a = 'a'.codeUnitAt(0);
     final z = 'z'.codeUnitAt(0);
+    lFormattedKeywords.removeWhere((s) => s.isEmpty);
 
     // find matching words (case insensitive search)
     for (final keyword in lFormattedKeywords) {
       var where = -1;
 
       while ((where = lverse.indexOf(keyword, where + 1)) >= 0) {
-        if (where == 0 || (lverse.codeUnitAt(where - 1) < a) || lverse.codeUnitAt(where - 1) > z) {
+        if (where == 0 ||
+            (lverse.codeUnitAt(where - 1) < a) ||
+            lverse.codeUnitAt(where - 1) > z) {
           final length = keyword.length;
 
           if (length <= 2 && lverse.length > (where + length)) {
             // match only whole words
-            if (lverse.codeUnitAt(where + length) >= a && lverse.codeUnitAt(where + length) <= z) {
+            if (lverse.codeUnitAt(where + length) >= a &&
+                lverse.codeUnitAt(where + length) <= z) {
               continue;
             }
           }
@@ -201,10 +205,8 @@ class SearchModel {
     if (bold.isEmpty) {
       // no bold - should never happen
       content.add(TextSpan(text: verse));
-    }
-    else {
-      final boldKeys = bold.keys.toList()
-        ..sort((a, b) => a.compareTo(b));
+    } else {
+      final boldKeys = bold.keys.toList()..sort((a, b) => a.compareTo(b));
 
       var lastEnd = 0;
 

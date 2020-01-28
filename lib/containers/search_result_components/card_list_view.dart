@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:bible_search/containers/search_result_components/ad_card.dart';
 import 'package:bible_search/containers/search_result_components/results_description.dart';
 import 'package:bible_search/containers/search_result_components/result_card.dart';
+import 'package:bible_search/models/search_model.dart';
 import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -88,17 +89,15 @@ class _CardViewState extends State<CardView> {
                 }
 
                 if (_adLocations.contains(i)) {
-                  return LayoutBuilder(
-                    builder: (context, constraints) {
-                      _adContexts[i] = ItemContext(context: context);
+                  return LayoutBuilder(builder: (context, constraints) {
+                    _adContexts[i] = ItemContext(context: context);
 
-                      return AdCard(
-                        i,
-                        _hideAd,
-                        hideNow: _hideAds,
-                      );
-                    }
-                  );
+                    return AdCard(
+                      i,
+                      _hideAd,
+                      hideNow: _hideAds,
+                    );
+                  });
                 }
 
                 // we start with 1 since the first card is a showing...
@@ -122,11 +121,10 @@ class _CardViewState extends State<CardView> {
                   );
                 } else {
                   return Container(
-                    color: Colors.transparent, width: 100,
-                    height: MediaQuery
-                        .of(context)
-                        .size
-                        .height / 2,);
+                    color: Colors.transparent,
+                    width: 100,
+                    height: MediaQuery.of(context).size.height / 2,
+                  );
                 }
               },
             ),
@@ -150,15 +148,13 @@ class _CardViewState extends State<CardView> {
                       final vpHeight = viewport.paintBounds.height;
                       final scrollableState = Scrollable.of(ic.context);
                       final scrollPosition = scrollableState.position;
-                      final vpOffset = viewport.getOffsetToReveal(
-                          object, 0.0);
+                      final vpOffset = viewport.getOffsetToReveal(object, 0.0);
 
                       // Retrieve the dimensions of the item
                       final size = object?.semanticBounds?.size;
 
                       // Check if the item is in the viewport
-                      final deltaTop = vpOffset.offset -
-                          scrollPosition.pixels;
+                      final deltaTop = vpOffset.offset - scrollPosition.pixels;
                       final deltaBottom = deltaTop + size.height;
 
                       var isInViewport = false;

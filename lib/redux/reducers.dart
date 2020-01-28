@@ -1,5 +1,7 @@
+import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/app_state.dart';
+import 'package:bible_search/models/search_model.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:flutter/services.dart';
 import 'package:redux/redux.dart';
@@ -28,6 +30,8 @@ final reducers = combineReducers<AppState>([
   TypedReducer<AppState, SetFilteredResultsAction>(_onFiltered),
   TypedReducer<AppState, SetNumSelectedAction>(_onSelected),
 ]);
+
+final searchModel = SearchModel();
 
 AppState _onLoad(AppState state, SearchLoadingAction action) =>
     state.copyWith(isFetchingSearch: true);
@@ -62,22 +66,34 @@ AppState _onResult(AppState state, SearchResultAction action) {
   }
 }
 
-AppState _onResultsChanged(AppState state, SetResultsAction action) =>
-    state.copyWith(results: action.res);
+AppState _onResultsChanged(AppState state, SetResultsAction action) {
+  var res = action.res;
+  res = res.map(searchModel.orderByDefaultTranslation).toList();
+  return state.copyWith(results: res);
+}
 
-AppState _onFiltered(AppState state, SetFilteredResultsAction action) =>
-    state.copyWith(filteredResults: action.res);
+AppState _onFiltered(AppState state, SetFilteredResultsAction action) {
+  var res = action.res;
+  res = res.map(searchModel.orderByDefaultTranslation).toList();
+  return state.copyWith(filteredResults: res);
+}
 
 AppState _onSetSelectionMode(AppState state, SetSelectionModeAction action) {
   if (state.isInSelectionMode) {
-    final res = state.results;
-    res.map((r) => r.isSelected = false).toList();
+    final res = state.results.map(_deselect).toList();
+    final filteredRes = state.filteredResults.map(_deselect).toList();
     return state.copyWith(
         isInSelectionMode: !state.isInSelectionMode,
         results: res,
+        filteredResults: filteredRes,
         numSelected: 0);
   }
   return state.copyWith(isInSelectionMode: !state.isInSelectionMode);
+}
+
+SearchResult _deselect(SearchResult r) {
+  r.isSelected = false;
+  return r;
 }
 
 AppState _onSelected(AppState state, SetNumSelectedAction action) =>
