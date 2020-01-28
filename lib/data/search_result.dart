@@ -116,7 +116,7 @@ class SearchResults {
     const cachePath = '$kTBStreamServer/cache';
     var phrase = 0, exact = 0;
     var cacheWords = words;
-    var searchWords;
+    String searchWords;
 
     urlEncodingExceptions
         .forEach((k, v) => cacheWords = cacheWords.replaceAll(RegExp(k), v));

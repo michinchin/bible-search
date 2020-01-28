@@ -118,7 +118,9 @@ class _FutureAllResultsPage extends StatelessWidget {
                             title:
                                 '${vm.store.state.translations.getFullName(allResults[index].id)}\n',
                             subtitle: model.formatWords(
-                                '${allResults[index].text}', keywords),
+                                '${allResults[index].text}', keywords,
+                                darkMode: Theme.of(context).brightness ==
+                                    Brightness.dark),
                             copy: () =>
                                 model.copyPressed(text: text, context: context),
                             share: () => Share.share(text),

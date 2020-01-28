@@ -182,7 +182,7 @@ class ResultCardModel {
   final SearchResult res;
   final List<Book> bookNames;
   final BuildContext context;
-  final List<TextSpan> Function(String, String) formatWords;
+  final List<TextSpan> Function(String, String, {bool darkMode}) formatWords;
   final String keywords;
   List<int> defaultTranslationIds;
   AutoSizeText nonContextTitle;
@@ -244,7 +244,8 @@ class ResultCardModel {
             : TextStyle(
                 color: colorScheme,
               ),
-        children: formatWords(content, keywords),
+        children: formatWords(content, keywords,
+            darkMode: Theme.of(context).brightness == Brightness.dark),
       ),
       minFontSize: minFontSizeDescription,
     );

@@ -5,7 +5,6 @@ import 'package:bible_search/containers/search_result_components/bible_search_sc
 import 'package:bible_search/containers/sr_components.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/search_model.dart';
-import 'package:bible_search/presentation/all_translations_screen.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/foundation.dart';
 
