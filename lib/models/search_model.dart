@@ -131,7 +131,8 @@ class SearchModel {
     return false;
   }
 
-  List<TextSpan> formatWords(String verseText, String words) {
+  List<TextSpan> formatWords(String verseText, String words,
+      {bool darkMode = true}) {
     final verse = removeDiacritics(verseText);
 
     final content = <TextSpan>[];
@@ -202,11 +203,16 @@ class SearchModel {
       }
     }
 
+    final normalStyle = TextStyle(
+        color: darkMode ? const Color(0xffcccccc) : Colors.black);
+
     if (bold.isEmpty) {
       // no bold - should never happen
-      content.add(TextSpan(text: verse));
-    } else {
-      final boldKeys = bold.keys.toList()..sort((a, b) => a.compareTo(b));
+      content.add(TextSpan(text: verse, style: normalStyle));
+    }
+    else {
+      final boldKeys = bold.keys.toList()
+        ..sort((a, b) => a.compareTo(b));
 
       var lastEnd = 0;
 
@@ -214,20 +220,22 @@ class SearchModel {
         if (where >= lastEnd) {
           if (where > 0) {
             // add any preceding text not bolded...
-            content.add(TextSpan(text: verse.substring(lastEnd, where)));
+            content.add(TextSpan(
+                text: verse.substring(lastEnd, where), style: normalStyle));
           }
 
           // add the bold text...
           content.add(TextSpan(
               text: verse.substring(where, where + bold[where]),
-              style: const TextStyle(fontWeight: FontWeight.bold)));
+              style: TextStyle(fontWeight: FontWeight.bold)));
 
           lastEnd = where + bold[where];
         }
       }
 
       if (lastEnd < verse.length) {
-        content.add(TextSpan(text: verse.substring(lastEnd)));
+        content
+            .add(TextSpan(text: verse.substring(lastEnd), style: normalStyle));
       }
     }
 

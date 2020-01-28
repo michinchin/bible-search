@@ -93,7 +93,8 @@ void contextMiddleware(
             translation: res.verses[res.currentVerseIndex].id,
             book: res.bookId,
             chapter: res.chapterId,
-            verse: res.verseId)
+            verse: res.verseId,
+            content: res.verses[res.currentVerseIndex].verseContent,)
         .then((context) {
       final results = store.state.results;
       results[action.idx].verses[res.currentVerseIndex].contextText =

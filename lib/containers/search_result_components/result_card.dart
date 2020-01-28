@@ -52,11 +52,13 @@ class _ResultCardState extends State<ResultCard> {
   void _contextButtonPressed() {
     if (widget.res.verses[widget.res.currentVerseIndex].contextText.isEmpty) {
       Context.fetch(
-        translation: widget.res.verses[widget.res.currentVerseIndex].id,
-        book: widget.res.bookId,
-        chapter: widget.res.chapterId,
-        verse: widget.res.verseId,
-      ).then((context) {
+              translation: widget.res.verses[widget.res.currentVerseIndex].id,
+              book: widget.res.bookId,
+              chapter: widget.res.chapterId,
+              verse: widget.res.verseId,
+              content:
+                  widget.res.verses[widget.res.currentVerseIndex].verseContent)
+          .then((context) {
         widget.res.verses[widget.res.currentVerseIndex].contextText =
             context.text;
         widget.res.verses[widget.res.currentVerseIndex].verseIdx = [
@@ -103,6 +105,7 @@ class _ResultCardState extends State<ResultCard> {
         book: widget.res.bookId,
         chapter: widget.res.chapterId,
         verse: widget.res.verseId,
+        content: widget.res.verses[widget.res.currentVerseIndex].verseContent,
       );
       widget.res.verses[widget.res.currentVerseIndex].contextText =
           context.text;
@@ -180,7 +183,7 @@ class ResultCardModel {
   final SearchResult res;
   final List<Book> bookNames;
   final BuildContext context;
-  final List<TextSpan> Function(String, String) formatWords;
+  final List<TextSpan> Function(String, String, {bool darkMode}) formatWords;
   final String keywords;
   List<int> defaultTranslationIds;
   AutoSizeText nonContextTitle;
@@ -242,7 +245,8 @@ class ResultCardModel {
             : TextStyle(
                 color: colorScheme,
               ),
-        children: formatWords(content, keywords),
+        children: formatWords(content, keywords,
+            darkMode: Theme.of(context).brightness == Brightness.dark),
       ),
       minFontSize: minFontSizeDescription,
     );
