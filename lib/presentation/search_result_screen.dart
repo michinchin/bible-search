@@ -92,13 +92,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                               resultLength: vm.searchResults.length,
                               resetFilter: vm.resetFilter,
                             )
-                          : vm.isVerseRefSearch
-                              ? AllTranslationsScreen(
-                                  res: vm.filteredRes[0],
-                                  keywords: vm.searchQuery,
-                                  isVerseRefSearch: true,
-                                )
-                              : CardView(vm)));
+                          : CardView(vm)));
         });
   }
 }
@@ -118,7 +112,7 @@ class ResultsViewModel {
   bool isDarkTheme;
   bool hasError;
   bool hasNoTranslationsSelected;
-  bool get isVerseRefSearch => searchQuery.contains(':');
+  bool get isVerseRefSearch => searchQuery.contains(':') && filteredRes.length == 1;
   bool get filterOn => filteredRes.length != searchResults.length;
   int get filteredLength => filteredRes.length;
   List<Book> get booksSelected =>
