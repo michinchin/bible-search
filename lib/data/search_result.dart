@@ -155,7 +155,7 @@ class SearchResults {
 
     final tecCache = TecCache();
     final fullCachedPath =
-        'https://$cachePath/${_getCacheKey(cacheWords, translationIds, exact, phrase)}none.gz';
+        'https://$cachePath/${_getCacheKey(cacheWords, translationIds, exact, phrase)}.gz';
     final fullPath =
         'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=$searchWords&book=0'
         '&bookset=0&exact=$exact&phrase=$phrase&searchVolumes=$translationIds';
@@ -254,7 +254,7 @@ String _getCacheKey(
   modKeywords = keywords.toLowerCase();
   urlEncodingExceptions
       .forEach((k, v) => modKeywords = modKeywords.replaceAll(RegExp(k), v));
-  
+
   var words = keywords.replaceAll(' ', '_');
 
   words += '_';
