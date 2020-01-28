@@ -58,6 +58,7 @@ class _ResultCardState extends State<ResultCard> {
         book: _res.bookId,
         chapter: _res.chapterId,
         verse: _res.verseId,
+        content: _res.verses[_res.currentVerseIndex].verseContent,
       ).then((context) {
         _res.verses[_res.currentVerseIndex].contextText = context.text;
         _res.verses[_res.currentVerseIndex].verseIdx = [
@@ -104,6 +105,7 @@ class _ResultCardState extends State<ResultCard> {
         book: _res.bookId,
         chapter: _res.chapterId,
         verse: _res.verseId,
+        content: _res.verses[_res.currentVerseIndex].verseContent,
       );
       _res.verses[_res.currentVerseIndex].contextText = context.text;
       _res.verses[_res.currentVerseIndex].verseIdx = [

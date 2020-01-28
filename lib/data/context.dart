@@ -1,4 +1,5 @@
 import 'package:bible_search/labels.dart';
+import 'package:flutter/foundation.dart';
 import 'package:tec_cache/tec_cache.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 
@@ -21,7 +22,20 @@ class Context {
   }
 
   static Future<Context> fetch(
-      {int translation, int book, int chapter, int verse}) async {
+      {int translation, int book, int chapter, int verse, String content}) async {
+    final regex = RegExp(r'\[([0-9]+)\]');
+    final arr = regex.allMatches(content).toList();
+    var endVerse = verse;
+
+    if (arr.isNotEmpty) {
+      try {
+        endVerse = int.parse(arr.last.group(1));
+      }
+      catch (_) {
+        debugPrint('error getting range endVerse');
+      }
+    }
+
     final json = await TecCache().jsonFromUrl(
       url:
           'https://$kTBStreamServer/$kTBApiVersion/$translation/chapters/${book}_$chapter.json.gz',
@@ -32,12 +46,12 @@ class Context {
     } else {
       context = Context(verses: <int, String>{});
     }
-    context.text = getString(context, verse);
+    context.text = getString(context, verse, endVerse);
     return context;
   }
 }
 
-String getString(Context context, int verseId) {
+String getString(Context context, int verseId, int endVerseId) {
   var vId = verseId;
   var v = verseId - 1;
   var before = '';
@@ -61,6 +75,15 @@ String getString(Context context, int verseId) {
   final verse = wholeChapter[v];
   if (verse != null && verse.isNotEmpty) {
     before += ' [$verseId] ${wholeChapter[verseId]}';
+  }
+
+  // adding range verses...
+  while (vId < endVerseId) {
+    vId++;
+    final verse = wholeChapter[vId];
+    if (verse != null && verse.isNotEmpty) {
+      before += ' [$vId] ${wholeChapter[vId]}';
+    }
   }
 
   if (verseId <= wholeChapter.keys.last) {
