@@ -118,8 +118,7 @@ class ResultsViewModel {
   bool isDarkTheme;
   bool hasError;
   bool hasNoTranslationsSelected;
-  bool get isVerseRefSearch =>
-      filteredRes.length == 1 && searchQuery.contains(':');
+  bool get isVerseRefSearch => searchQuery.contains(':');
   bool get filterOn => filteredRes.length != searchResults.length;
   int get filteredLength => filteredRes.length;
   List<Book> get booksSelected =>

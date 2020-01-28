@@ -11,16 +11,15 @@ import 'package:share/share.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/models/search_model.dart';
 import 'package:bible_search/Data/all_result.dart';
+import 'package:tec_widgets/tec_widgets.dart' as tw;
 
 class AllTranslationsScreen extends StatelessWidget {
   final SearchResult res;
   final String keywords;
   final bool isVerseRefSearch;
 
-  AllTranslationsScreen(
+  const AllTranslationsScreen(
       {this.res, this.keywords, this.isVerseRefSearch = false});
-
-  final model = SearchModel();
 
   @override
   Widget build(BuildContext context) {
@@ -28,82 +27,125 @@ class AllTranslationsScreen extends StatelessWidget {
         distinct: true,
         converter: (s) => AllTranslationsScreenViewModel(s),
         builder: (context, vm) {
-          final book = res.bookId;
-          final chapter = res.chapterId;
-          final verse = res.verseId;
-          final _future = AllResults.fetch(
-              book: book,
-              chapter: chapter,
-              verse: verse,
-              translations: vm.store.state.translations);
+          if (isVerseRefSearch) {
+            return _VerseAllResultsPage(res: res, vm: vm);
+          } else {
+            return _FutureAllResultsPage(res: res, vm: vm, keywords: keywords);
+          }
+        });
+  }
+}
 
-          return FutureBuilder<AllResults>(
-              future: _future,
-              builder: (context, snapshot) {
-                final allResults =
-                    snapshot.data == null ? <AllResult>[] : snapshot.data.data;
+class _VerseAllResultsPage extends StatelessWidget {
+  final SearchResult res;
+  final AllTranslationsScreenViewModel vm;
+  final String keywords;
+  const _VerseAllResultsPage({this.res, this.vm, this.keywords});
+  @override
+  Widget build(BuildContext context) {
+    final model = SearchModel();
+    return Scaffold(
+        appBar: PreferredSize(
+            preferredSize: AppBar().preferredSize,
+            child: Container(
+                padding: const EdgeInsets.only(top: 20, left: 15),
+                child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: tw.TecText(
+                      '${res.ref} ',
+                      autoSize: true,
+                      style: Theme.of(context)
+                          .textTheme
+                          .display1
+                          .copyWith(fontWeight: FontWeight.bold),
+                    )))),
+        body: ListView.builder(
+            itemCount: res.verses.length,
+            // separatorBuilder: (c, i) => const Divider(),
+            itemBuilder: (context, index) {
+              final allResults = res.verses;
+              final text =
+                  '${res.ref} ${allResults[index].a}\n${allResults[index].verseContent}';
+              return _AllResultCard(
+                title:
+                    '${vm.store.state.translations.getFullName(allResults[index].id)}\n',
+                subtitle: [TextSpan(text: allResults[index].verseContent)],
+                copy: () => model.copyPressed(text: text, context: context),
+                share: () => Share.share(text),
+                openInTB: () => model.openTB(
+                  a: allResults[index].a,
+                  bookId: res.bookId,
+                  id: allResults[index].id,
+                  chapterId: res.chapterId,
+                  verseId: res.verseId,
+                  context: context,
+                ),
+              );
+            }));
+  }
+}
 
-                return Scaffold(
-                  appBar: isVerseRefSearch
-                      ? PreferredSize(
-                          preferredSize: AppBar().preferredSize,
-                          child: Container(
-                              padding: const EdgeInsets.only(top: 20, left: 15),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: AutoSizeText.rich(
-                                  TextSpan(
-                                    style: Theme.of(context).textTheme.display1,
-                                    children: [
-                                      TextSpan(
-                                          text: '${res.ref} ',
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                              )))
-                      : AppBar(
-                          title: Text(res.ref),
-                        ),
-                  body: Container(
-                      padding: const EdgeInsets.only(top: 8),
-                      child: allResults.isEmpty
-                          ? snapshot.connectionState == ConnectionState.done
-                              ? NoResultsView(hasError: snapshot.hasError)
-                              : const Center(
-                                  child: CircularProgressIndicator(),
-                                )
-                          : ListView.builder(
-                              itemCount: allResults.length,
-                              // separatorBuilder: (c, i) => const Divider(),
-                              itemBuilder: (context, index) {
-                                final text =
-                                    '${res.ref} ${allResults[index].a}\n${allResults[index].text}';
-                                return _AllResultCard(
-                                  title:
-                                      '${vm.store.state.translations.getFullName(allResults[index].id)}\n',
-                                  subtitle: isVerseRefSearch
-                                      ? [TextSpan(text: allResults[index].text)]
-                                      : model.formatWords(
-                                          '${allResults[index].text}',
-                                          keywords),
-                                  copy: () => model.copyPressed(
-                                      text: text, context: context),
-                                  share: () => Share.share(text),
-                                  openInTB: () => model.openTB(
-                                    a: allResults[index].a,
-                                    bookId: res.bookId,
-                                    id: allResults[index].id,
-                                    chapterId: res.chapterId,
-                                    verseId: res.verseId,
-                                    context: context,
-                                  ),
-                                );
-                              })),
-                );
-              });
+class _FutureAllResultsPage extends StatelessWidget {
+  final SearchResult res;
+  final AllTranslationsScreenViewModel vm;
+  final String keywords;
+  const _FutureAllResultsPage({this.res, this.vm, this.keywords});
+
+  @override
+  Widget build(BuildContext context) {
+    final model = SearchModel();
+    final book = res.bookId;
+    final chapter = res.chapterId;
+    final verse = res.verseId;
+    final _future = AllResults.fetch(
+        book: book,
+        chapter: chapter,
+        verse: verse,
+        translations: vm.store.state.translations);
+
+    return FutureBuilder<AllResults>(
+        future: _future,
+        builder: (context, snapshot) {
+          final allResults =
+              snapshot.data == null ? <AllResult>[] : snapshot.data.data;
+
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(res.ref),
+            ),
+            body: Container(
+                padding: const EdgeInsets.only(top: 8),
+                child: allResults.isEmpty
+                    ? snapshot.connectionState == ConnectionState.done
+                        ? NoResultsView(hasError: snapshot.hasError)
+                        : const Center(
+                            child: CircularProgressIndicator(),
+                          )
+                    : ListView.builder(
+                        itemCount: allResults.length,
+                        // separatorBuilder: (c, i) => const Divider(),
+                        itemBuilder: (context, index) {
+                          final text =
+                              '${res.ref} ${allResults[index].a}\n${allResults[index].text}';
+                          return _AllResultCard(
+                            title:
+                                '${vm.store.state.translations.getFullName(allResults[index].id)}\n',
+                            subtitle: model.formatWords(
+                                '${allResults[index].text}', keywords),
+                            copy: () =>
+                                model.copyPressed(text: text, context: context),
+                            share: () => Share.share(text),
+                            openInTB: () => model.openTB(
+                              a: allResults[index].a,
+                              bookId: res.bookId,
+                              id: allResults[index].id,
+                              chapterId: res.chapterId,
+                              verseId: res.verseId,
+                              context: context,
+                            ),
+                          );
+                        })),
+          );
         });
   }
 }
