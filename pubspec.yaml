@@ -23,6 +23,7 @@ dependencies:
   auto_size_text: ^2.1.0
   diacritic: ^0.1.1
   dynamic_theme: ^1.0.1
+  feather_icons_flutter: '>=4.7.4'
   feature_discovery: ^0.6.0
   firebase_analytics: ^5.0.9
   firebase_core: ^0.4.3+1

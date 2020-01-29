@@ -108,11 +108,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                     contentPadding: const EdgeInsets.all(0),
                     leading: IconButton(
                       tooltip: 'Menu',
-                      icon: Icon(
-                        Platform.isIOS
-                            ? SFSymbols.line_horizontal_3
-                            : Icons.menu,
-                      ),
+                      icon: Icon(Icons.menu),
                       onPressed: () => Scaffold.of(context).openDrawer(),
                     ),
                     title: InkWell(
@@ -141,11 +137,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                               'Tap here to enter selection mode. Select multiple scripture verses to copy or share!'),
                           child: IconButton(
                             tooltip: 'Selection Mode',
-                            icon: Icon(
-                              Platform.isIOS
-                                  ? SFSymbols.checkmark_alt_circle
-                                  : Icons.check_circle_outline,
-                            ),
+                            icon: Icon(SFSymbols.checkmark_alt_circle),
                             onPressed: _changeToSelectionMode,
                           ),
                         ),
@@ -163,9 +155,8 @@ class _SearchAppBarState extends State<SearchAppBar> {
                             'Check out the filter page! Filter search results by translation and books of the Bible'),
                         child: IconButton(
                           tooltip: 'Filter',
-                          icon: Icon(Platform.isIOS
-                              ? SFSymbols.line_horizontal_3_decrease_circle
-                              : Icons.filter_list),
+                          icon:
+                              Icon(SFSymbols.line_horizontal_3_decrease_circle),
                           onPressed: () => _navigateToFilter(context),
                         ),
                       ),

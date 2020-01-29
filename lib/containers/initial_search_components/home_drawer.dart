@@ -6,6 +6,7 @@ import 'package:bible_search/models/app_state.dart';
 import 'package:bible_search/models/search_model.dart';
 import 'package:bible_search/models/user_model.dart';
 import 'package:bible_search/redux/actions.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 
 import 'package:flutter_redux/flutter_redux.dart';
@@ -57,8 +58,7 @@ class HomeDrawer extends StatelessWidget {
                 const Divider(),
                 if (isResultPage) ...[
                   ListTile(
-                    leading:
-                        Icon(Platform.isIOS ? SFSymbols.clock : Icons.history),
+                    leading: Icon(FeatherIcons.clock),
                     title: const Text('History'),
                     onTap: () {
                       Navigator.of(context).pop();
@@ -76,9 +76,7 @@ class HomeDrawer extends StatelessWidget {
                       if (snapshot.hasData) {
                         if (!snapshot.data) {
                           return ListTile(
-                              leading: Icon(Platform.isIOS
-                                  ? SFSymbols.money_dollar_circle
-                                  : Icons.money_off),
+                              leading: Icon(FeatherIcons.xCircle),
                               title: const Text('Remove Ads'),
                               onTap: () => vm.removeAds(context));
                         }
@@ -88,9 +86,8 @@ class HomeDrawer extends StatelessWidget {
                     }),
 
                 ListTile(
-                  leading: Icon(Platform.isIOS
-                      ? SFSymbols.square_arrow_up
-                      : Icons.share),
+                  leading: Icon(
+                      Platform.isIOS ? SFSymbols.square_arrow_up : Icons.share),
                   title: const Text('Share App'),
                   onTap: () async {
                     await Navigator.of(context).maybePop();
@@ -99,16 +96,13 @@ class HomeDrawer extends StatelessWidget {
                 ),
                 const Divider(),
                 ListTile(
-                  leading: Icon(
-                      Platform.isIOS ? SFSymbols.heart : Icons.favorite_border),
+                  leading: Icon(FeatherIcons.heart),
                   title: const Text('Translations'),
                   onTap: () =>
                       Navigator.of(context).pushNamed('/default_translation'),
                 ),
                 SwitchListTile.adaptive(
-                    secondary: Icon(Platform.isIOS
-                        ? SFSymbols.moon
-                        : Icons.lightbulb_outline),
+                    secondary: Icon(FeatherIcons.moon),
                     activeColor: Theme.of(context).accentColor,
                     value: vm.isDarkTheme,
                     title: const Text('Dark Mode'),
@@ -122,9 +116,7 @@ class HomeDrawer extends StatelessWidget {
                     }),
                 const Divider(),
                 ListTile(
-                    leading: Icon(Platform.isIOS
-                        ? SFSymbols.person_crop_circle
-                        : Icons.account_circle),
+                    leading: Icon(FeatherIcons.user),
                     title: Text(vm.userAccount.isSignedIn
                         ? '${vm.userAccount.user.email}'
                         : 'Account'),
@@ -136,18 +128,14 @@ class HomeDrawer extends StatelessWidget {
                           appName: 'bible_search');
                     }),
                 ListTile(
-                  leading: Icon(Platform.isIOS
-                      ? SFSymbols.question_circle
-                      : Icons.help_outline),
+                  leading: Icon(FeatherIcons.helpCircle),
                   title: const Text('Help & Feedback'),
                   onTap: () {
                     vm.helpAndFeedback(context);
                   },
                 ),
                 ListTile(
-                    leading: Icon(Platform.isIOS
-                        ? SFSymbols.info_circle
-                        : Icons.info_outline),
+                    leading: Icon(FeatherIcons.info),
                     title: const Text('About'),
                     onTap: () {
                       tw.tecShowSimpleAlertDialog(
