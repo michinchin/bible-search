@@ -89,8 +89,8 @@ class HomeDrawer extends StatelessWidget {
 
                 ListTile(
                   leading: Icon(Platform.isIOS
-                      ? SFSymbols.link
-                      : Icons.mobile_screen_share),
+                      ? SFSymbols.square_arrow_up
+                      : Icons.share),
                   title: const Text('Share App'),
                   onTap: () async {
                     await Navigator.of(context).maybePop();
@@ -101,7 +101,7 @@ class HomeDrawer extends StatelessWidget {
                 ListTile(
                   leading: Icon(
                       Platform.isIOS ? SFSymbols.heart : Icons.favorite_border),
-                  title: const Text('Priority Translations'),
+                  title: const Text('Translations'),
                   onTap: () =>
                       Navigator.of(context).pushNamed('/default_translation'),
                 ),

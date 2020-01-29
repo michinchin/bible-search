@@ -14,6 +14,7 @@ import 'package:share/share.dart';
 import 'package:bible_search/data/search_result.dart';
 import 'package:bible_search/models/search_model.dart';
 import 'package:bible_search/Data/all_result.dart';
+import 'package:tec_widgets/tec_widgets.dart';
 
 class AllTranslationsScreen extends StatelessWidget {
   final SearchResult res;
@@ -198,9 +199,7 @@ class _AllResultCard extends StatelessWidget {
                     IconButton(
                       tooltip: 'Open in TecartaBible',
                       onPressed: openInTB,
-                      icon: Icon(Platform.isIOS
-                          ? SFSymbols.arrowshape_turn_up_right
-                          : Icons.exit_to_app),
+                      icon: Icon(TecIcons.tbOutlineLogo),
                     )
                   ]),
             ),

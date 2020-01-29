@@ -10,6 +10,7 @@ import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
 import 'package:bible_search/presentation/all_translations_screen.dart';
 import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
+import 'package:tec_widgets/tec_widgets.dart';
 
 class CardIcons extends StatefulWidget {
   final ResultCardModel model;
@@ -162,17 +163,12 @@ class _CardIconsState extends State<CardIcons> {
                       description: const Text(
                           'Need more study tools? Quickly flip over to Tecarta Bible to read full chapters, '
                           'take notes, explore maps, listen to audio and get help with verse explanations!'),
-                      tapTarget: Icon(
-                          Platform.isIOS
-                              ? SFSymbols.arrowshape_turn_up_right
-                              : Icons.exit_to_app,
-                          color: Colors.black),
+                      tapTarget:
+                          Icon(TecIcons.tbOutlineLogo, color: Colors.black),
                       child: IconButton(
                           tooltip: 'Open in TecartaBible',
                           color: widget.model.iconColor,
-                          icon: Icon(Platform.isIOS
-                              ? SFSymbols.arrowshape_turn_up_right
-                              : Icons.exit_to_app),
+                          icon: Icon(TecIcons.tbOutlineLogo),
                           onPressed: _openInTB),
                     ),
                   ],
