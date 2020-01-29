@@ -29,12 +29,23 @@ Future<void> searchMiddleware(
   store.dispatch(SearchLoadingAction());
   final translationIds = store.state.translations.formatIds();
   if (translationIds.isNotEmpty) {
-    final newSearchList = List<String>.from(store.state.searchHistory)
+    final searchQueries = List<String>.from(store.state.searchHistory)
       ..add(action.searchQuery);
+
+    var sq = <String>[];
+
+    for (var s in searchQueries.reversed) {
+      s = s.trim();
+      if (s.isNotEmpty && !sq.contains(s)) {
+        sq.add(s);
+      }
+    }
+
+    sq = sq.reversed.toList();
+
     store.dispatch(SetSearchHistoryAction(
         searchQuery: action.searchQuery,
-        searchQueries:
-            newSearchList.reversed.toSet().toList().reversed.toList()));
+        searchQueries: sq));
 
     var numAdsAvailable = -1;
 
@@ -59,11 +70,10 @@ Future<void> searchMiddleware(
       }
 
       if (res.isEmpty) {
-        newSearchList.removeLast();
+        sq.removeLast();
         store.dispatch(SetSearchHistoryAction(
             searchQuery: action.searchQuery,
-            searchQueries:
-                newSearchList.reversed.toSet().toList().reversed.toList()));
+            searchQueries: sq));
       }
 
       store

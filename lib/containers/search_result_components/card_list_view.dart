@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:bible_search/containers/search_result_components/ad_card.dart';
 import 'package:bible_search/containers/search_result_components/results_description.dart';
 import 'package:bible_search/containers/search_result_components/result_card.dart';
-import 'package:bible_search/models/search_model.dart';
 import 'package:bible_search/presentation/search_result_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';

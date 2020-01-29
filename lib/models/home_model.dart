@@ -26,10 +26,17 @@ class HomeModel {
 
   /// update the search history with current user prefs
   Future<void> updateSearchHistory(List<String> searchQueries) async {
-    final sq = List<String>.from(searchQueries)
-      ..removeWhere((s) => (s?.trim()?.length ?? 0) == 0);
+    final sq = <String>[];
+
+    for (var s in searchQueries.reversed) {
+      s = s.trim();
+      if (s.isNotEmpty && !sq.contains(s)) {
+        sq.add(s);
+      }
+    }
+
     await tec.Prefs.shared.setStringList(
-        searchHistoryPref, sq.reversed.toSet().toList().reversed.toList());
+        searchHistoryPref, sq.reversed.toList());
   }
 
   /// update the current theme in user prefs
