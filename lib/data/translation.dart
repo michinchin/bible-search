@@ -40,7 +40,7 @@ class BibleTranslation {
     final onSale = tec.as<bool>(json['onsale']);
     final id = tec.as<int>(json['id']);
     final lang = tec.as<String>(json['language']);
-    if (onSale && (id < 300 || id >= 400)) {
+    if (onSale && (id < 300 || id >= 400) && id < 1000) {
       return BibleTranslation(
         id: id,
         name: tec.as<String>(json['name']),
