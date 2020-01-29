@@ -15,23 +15,25 @@ class ChooseDefaultTranslationScreen extends StatelessWidget {
         builder: (context, vm) {
           return Scaffold(
               appBar: AppBar(
-                title: const Text('Default Translations'),
+                title: const Text('Priority Translations'),
               ),
-              body: Container(
-                  child: Column(children: [
-                Container(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: const AutoSizeText(
-                            'Select up to $maxDefaultTranslations translations. This will prioritize them (when available) in search results.',
-                            minFontSize: defaultMinFontSize))),
-                Expanded(
-                    child: LanguageList(
-                  vm,
-                  isFilterView: false,
-                ))
-              ])));
+              body: SafeArea(
+                child: Container(
+                    child: Column(children: [
+                  Container(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: const AutoSizeText(
+                              'Select up to $maxDefaultTranslations translations. This will prioritize them (when available) in search results.',
+                              minFontSize: defaultMinFontSize))),
+                  Expanded(
+                      child: LanguageList(
+                    vm,
+                    isFilterView: false,
+                  ))
+                ])),
+              ));
         });
   }
 }

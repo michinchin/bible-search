@@ -75,101 +75,106 @@ class _SearchAppBarState extends State<SearchAppBar> {
   @override
   Widget build(BuildContext context) {
     return !_isInSelectionMode
-        ? Stack(children: [
-            AppBar(
-                elevation: 0.0,
-                brightness: Theme.of(context).brightness,
-                backgroundColor: Colors.transparent,
-                bottomOpacity: 0.0,
-                toolbarOpacity: 0.0,
-                leading: null),
-            SafeArea(
-              minimum: const EdgeInsets.only(left: 20.0, right: 20.0),
-              child: Container(
-                height: widget.preferredSize.height,
-                width: widget.preferredSize.width,
-                decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(10.0),
-                    color: Theme.of(context).cardColor,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Theme.of(context).brightness == Brightness.light
-                            ? Colors.black12
-                            : Colors.black26,
-                        offset: const Offset(0, 10),
-                        blurRadius: 10,
-                        spreadRadius: 1,
-                      )
-                    ]),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.all(0),
-                  leading: IconButton(
-                    tooltip: 'Menu',
-                    icon: Icon(
-                      Platform.isIOS ? SFSymbols.line_horizontal_3 : Icons.menu,
+        ? SafeArea(
+            child: Stack(children: [
+              AppBar(
+                  elevation: 0.0,
+                  brightness: Theme.of(context).brightness,
+                  backgroundColor: Colors.transparent,
+                  bottomOpacity: 0.0,
+                  toolbarOpacity: 0.0,
+                  leading: null),
+              SafeArea(
+                minimum: const EdgeInsets.only(left: 20.0, right: 20.0),
+                child: Container(
+                  height: widget.preferredSize.height,
+                  width: widget.preferredSize.width,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Theme.of(context).cardColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color:
+                              Theme.of(context).brightness == Brightness.light
+                                  ? Colors.black12
+                                  : Colors.black26,
+                          offset: const Offset(0, 10),
+                          blurRadius: 10,
+                          spreadRadius: 1,
+                        )
+                      ]),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.all(0),
+                    leading: IconButton(
+                      tooltip: 'Menu',
+                      icon: Icon(
+                        Platform.isIOS
+                            ? SFSymbols.line_horizontal_3
+                            : Icons.menu,
+                      ),
+                      onPressed: () => Scaffold.of(context).openDrawer(),
                     ),
-                    onPressed: () => Scaffold.of(context).openDrawer(),
-                  ),
-                  title: InkWell(
-                      onTap: widget.showSearch,
-                      child: AutoSizeText(
-                        widget.model.searchQuery ?? 'Search Here',
-                        minFontSize: minFontSizeDescription,
-                        semanticsLabel:
-                            'Current Search Text is ${widget.model.searchQuery}',
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      )),
-                  trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-                    if (!widget.model.isVerseRefSearch)
+                    title: InkWell(
+                        onTap: widget.showSearch,
+                        child: AutoSizeText(
+                          widget.model.searchQuery ?? 'Search Here',
+                          minFontSize: minFontSizeDescription,
+                          semanticsLabel:
+                              'Current Search Text is ${widget.model.searchQuery}',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        )),
+                    trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+                      if (!widget.model.isVerseRefSearch)
+                        DescribedFeatureOverlay(
+                          featureId: featureIds[0],
+                          onDismiss: () => _onDismiss(0),
+                          tapTarget: Icon(
+                            Platform.isIOS
+                                ? SFSymbols.checkmark_circle
+                                : Icons.check_circle_outline,
+                            color: Colors.black,
+                          ),
+                          title: const Text('Selection Mode'),
+                          description: const Text(
+                              'Tap here to enter selection mode. Select multiple scripture verses to copy or share!'),
+                          child: IconButton(
+                            tooltip: 'Selection Mode',
+                            icon: Icon(
+                              Platform.isIOS
+                                  ? SFSymbols.checkmark_alt_circle
+                                  : Icons.check_circle_outline,
+                            ),
+                            onPressed: _changeToSelectionMode,
+                          ),
+                        ),
                       DescribedFeatureOverlay(
-                        featureId: featureIds[0],
-                        onDismiss: () => _onDismiss(0),
+                        featureId: featureIds[1],
                         tapTarget: Icon(
                           Platform.isIOS
-                              ? SFSymbols.checkmark_circle
-                              : Icons.check_circle_outline,
+                              ? SFSymbols.line_horizontal_3_decrease_circle
+                              : Icons.filter_list,
                           color: Colors.black,
                         ),
-                        title: const Text('Selection Mode'),
+                        onDismiss: () => _onDismiss(1),
+                        title: const Text('Filter'),
                         description: const Text(
-                            'Tap here to enter selection mode. Select multiple scripture verses to copy or share!'),
+                            'Check out the filter page! Filter search results by translation and books of the Bible'),
                         child: IconButton(
-                          tooltip: 'Selection Mode',
-                          icon: Icon(
-                            Platform.isIOS
-                                ? SFSymbols.checkmark_alt_circle
-                                : Icons.check_circle_outline,
-                          ),
-                          onPressed: _changeToSelectionMode,
+                          tooltip: 'Filter',
+                          icon: Icon(Platform.isIOS
+                              ? SFSymbols.line_horizontal_3_decrease_circle
+                              : Icons.filter_list),
+                          onPressed: () => _navigateToFilter(context),
                         ),
                       ),
-                    DescribedFeatureOverlay(
-                      featureId: featureIds[1],
-                      tapTarget: Icon(
-                        Platform.isIOS
-                            ? SFSymbols.line_horizontal_3_decrease_circle
-                            : Icons.filter_list,
-                        color: Colors.black,
-                      ),
-                      onDismiss: () => _onDismiss(1),
-                      title: const Text('Filter'),
-                      description: const Text(
-                          'Check out the filter page! Filter search results by translation and books of the Bible'),
-                      child: IconButton(
-                        tooltip: 'Filter',
-                        icon: Icon(Platform.isIOS
-                            ? SFSymbols.line_horizontal_3_decrease_circle
-                            : Icons.filter_list),
-                        onPressed: () => _navigateToFilter(context),
-                      ),
-                    ),
-                  ]),
+                    ]),
+                  ),
                 ),
               ),
-            ),
-          ])
+            ]),
+          )
         : AppBar(
             title: AutoSizeText('${widget.model.numSelected}'),
             leading: IconButton(
