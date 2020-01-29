@@ -99,9 +99,9 @@ class HomeDrawer extends StatelessWidget {
                 ),
                 const Divider(),
                 ListTile(
-                  leading:
-                      Icon(Platform.isIOS ? SFSymbols.book : Icons.exit_to_app),
-                  title: const Text('Translation'),
+                  leading: Icon(
+                      Platform.isIOS ? SFSymbols.heart : Icons.favorite_border),
+                  title: const Text('Priority Translations'),
                   onTap: () =>
                       Navigator.of(context).pushNamed('/default_translation'),
                 ),
