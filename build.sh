@@ -19,6 +19,11 @@ cp build/app/outputs/apk/release/app-release.apk ${HTDOCS}/bibles/android/BibleS
 /opt/android-sdk-mac_x86/build-tools/29.0.2/apksigner sign --ks ../keystore --ks-key-alias "tecarta apps" --ks-pass pass:Secur1ty --key-pass pass:Secur1ty ${HTDOCS}/bibles/android/BibleSearch-${BUILD_ID}-${BUILD_NUMBER}.apk
 "../makeIndex.sh" "Android Products" "${HTDOCS}/bibles/android"
 
+# Android 
+flutter build appbundle
+echo python ~/tools/playstore/upload.py com.tecarta.biblesearch build/app/outputs/bundle/release/app-release.aab
+python ~/tools/playstore/upload.py com.tecarta.biblesearch build/app/outputs/bundle/release/app-release.aab
+
 # iOS
 cd ios && pod install && cd ..
 security -v unlock-keychain -p goph3rw00d ~/Library/Keychains/login.keychain
@@ -28,9 +33,4 @@ xcodebuild -workspace Runner.xcworkspace -scheme "Runner" -sdk iphoneos -configu
 xcodebuild -project Runner.xcodeproj -exportArchive -archivePath Runner.xcarchive -exportOptionsPlist exportOptions.plist -exportPath . -allowProvisioningUpdates
 xcrun altool --upload-app -f Runner.ipa -t ios -u mike@bibleapplabs.com -p aavj-cupp-yjys-gfze
 cd ..
-
-# Android 
-flutter build appbundle
-echo python ~/tools/playstore/upload.py com.tecarta.biblesearch build/app/outputs/bundle/release/app-release.aab
-python ~/tools/playstore/upload.py com.tecarta.biblesearch build/app/outputs/bundle/release/app-release.aab
 
