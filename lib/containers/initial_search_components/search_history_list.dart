@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
 import 'package:tec_widgets/tec_widgets.dart';
 
 class SearchHistoryList extends StatelessWidget {
@@ -38,7 +41,8 @@ class SearchHistoryList extends StatelessWidget {
                     title: Text(
                       '${words[index]}',
                     ),
-                    leading: Icon(Icons.access_time),
+                    leading: Icon(
+                        Platform.isIOS ? SFSymbols.clock : Icons.access_time),
                     onTap: () {
                       onSearchEntered(words[index]);
                       Navigator.of(context).pushNamed('/results');

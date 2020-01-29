@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/search_model.dart';
+import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
 import 'package:tec_widgets/tec_widgets.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +49,8 @@ class _SearchAppBarState extends State<SearchAppBar> {
 
   void _changeToSelectionMode() {
     if (!_isInSelectionMode) {
-      TecToast.show(context,
+      TecToast.show(
+        context,
         'Entered Selection Mode',
       );
     }
@@ -102,7 +106,9 @@ class _SearchAppBarState extends State<SearchAppBar> {
                   contentPadding: const EdgeInsets.all(0),
                   leading: IconButton(
                     tooltip: 'Menu',
-                    icon: Icon(Icons.menu),
+                    icon: Icon(
+                      Platform.isIOS ? SFSymbols.line_horizontal_3 : Icons.menu,
+                    ),
                     onPressed: () => Scaffold.of(context).openDrawer(),
                   ),
                   title: InkWell(
@@ -121,7 +127,9 @@ class _SearchAppBarState extends State<SearchAppBar> {
                         featureId: featureIds[0],
                         onDismiss: () => _onDismiss(0),
                         tapTarget: Icon(
-                          Icons.check_circle_outline,
+                          Platform.isIOS
+                              ? SFSymbols.checkmark_circle
+                              : Icons.check_circle_outline,
                           color: Colors.black,
                         ),
                         title: const Text('Selection Mode'),
@@ -129,14 +137,20 @@ class _SearchAppBarState extends State<SearchAppBar> {
                             'Tap here to enter selection mode. Select multiple scripture verses to copy or share!'),
                         child: IconButton(
                           tooltip: 'Selection Mode',
-                          icon: Icon(Icons.check_circle_outline),
+                          icon: Icon(
+                            Platform.isIOS
+                                ? SFSymbols.checkmark_alt_circle
+                                : Icons.check_circle_outline,
+                          ),
                           onPressed: _changeToSelectionMode,
                         ),
                       ),
                     DescribedFeatureOverlay(
                       featureId: featureIds[1],
                       tapTarget: Icon(
-                        Icons.filter_list,
+                        Platform.isIOS
+                            ? SFSymbols.line_horizontal_3_decrease_circle
+                            : Icons.filter_list,
                         color: Colors.black,
                       ),
                       onDismiss: () => _onDismiss(1),
@@ -145,7 +159,9 @@ class _SearchAppBarState extends State<SearchAppBar> {
                           'Check out the filter page! Filter search results by translation and books of the Bible'),
                       child: IconButton(
                         tooltip: 'Filter',
-                        icon: Icon(Icons.filter_list),
+                        icon: Icon(Platform.isIOS
+                            ? SFSymbols.line_horizontal_3_decrease_circle
+                            : Icons.filter_list),
                         onPressed: () => _navigateToFilter(context),
                       ),
                     ),
@@ -164,7 +180,9 @@ class _SearchAppBarState extends State<SearchAppBar> {
             actions: <Widget>[
               IconButton(
                   tooltip: 'Copy Selected',
-                  icon: Icon(Icons.content_copy),
+                  icon: Icon(Platform.isIOS
+                      ? SFSymbols.doc_on_doc
+                      : Icons.content_copy),
                   onPressed: () async {
                     // final hasfinishedCopy =
                     await sm.shareSelection(
@@ -179,7 +197,9 @@ class _SearchAppBarState extends State<SearchAppBar> {
                   }),
               IconButton(
                   tooltip: 'Share Selected',
-                  icon: Icon(Icons.share),
+                  icon: Icon(Platform.isIOS
+                      ? SFSymbols.square_arrow_up_on_square
+                      : Icons.share),
                   onPressed: () async {
                     // final hasFinishedShare =
                     await sm.shareSelection(

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bible_search/containers/sr_components.dart';
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
@@ -7,6 +9,7 @@ import 'package:bible_search/models/search_model.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
 import 'package:bible_search/presentation/all_translations_screen.dart';
+import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
 
 class CardIcons extends StatefulWidget {
   final ResultCardModel model;
@@ -96,9 +99,7 @@ class _CardIconsState extends State<CardIcons> {
                     alignment: Alignment.bottomRight,
                     padding: const EdgeInsets.all(0),
                     color: widget.model.iconColor,
-                    icon: Icon(
-                      Icons.expand_less,
-                    ),
+                    icon: Icon(Icons.expand_less),
                     onPressed: widget.onExpanded,
                   ),
                 ],
@@ -144,12 +145,16 @@ class _CardIconsState extends State<CardIcons> {
                     IconButton(
                         tooltip: 'Copy',
                         color: widget.model.iconColor,
-                        icon: Icon(Icons.content_copy),
+                        icon: Icon(Platform.isIOS
+                            ? SFSymbols.doc_on_doc
+                            : Icons.content_copy),
                         onPressed: _onCopy),
                     IconButton(
                         tooltip: 'Share',
                         color: widget.model.iconColor,
-                        icon: Icon(Icons.share),
+                        icon: Icon(Platform.isIOS
+                            ? SFSymbols.square_arrow_up
+                            : Icons.share),
                         onPressed: _onShare),
                     DescribedFeatureOverlay(
                       featureId: 'open_in_TB',
@@ -157,11 +162,17 @@ class _CardIconsState extends State<CardIcons> {
                       description: const Text(
                           'Need more study tools? Quickly flip over to Tecarta Bible to read full chapters, '
                           'take notes, explore maps, listen to audio and get help with verse explanations!'),
-                      tapTarget: Icon(Icons.exit_to_app, color: Colors.black),
+                      tapTarget: Icon(
+                          Platform.isIOS
+                              ? SFSymbols.arrowshape_turn_up_right
+                              : Icons.exit_to_app,
+                          color: Colors.black),
                       child: IconButton(
                           tooltip: 'Open in TecartaBible',
                           color: widget.model.iconColor,
-                          icon: Icon(Icons.exit_to_app),
+                          icon: Icon(Platform.isIOS
+                              ? SFSymbols.arrowshape_turn_up_right
+                              : Icons.exit_to_app),
                           onPressed: _openInTB),
                     ),
                   ],
@@ -191,9 +202,7 @@ class _CardIconsState extends State<CardIcons> {
                   alignment: Alignment.bottomRight,
                   padding: const EdgeInsets.all(0),
                   color: widget.model.iconColor,
-                  icon: Icon(
-                    Icons.expand_more,
-                  ),
+                  icon: Icon(Icons.expand_more),
                   onPressed: widget.onExpanded,
                 ),
               ])

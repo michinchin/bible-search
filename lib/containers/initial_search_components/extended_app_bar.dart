@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:bible_search/presentation/translation_book_filter_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
 
 class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double height;
@@ -35,14 +38,20 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.transparent,
       leading: IconButton(
         tooltip: 'Menu',
-        icon: Icon(Icons.menu),
+        icon: Icon(
+          Platform.isIOS ? SFSymbols.line_horizontal_3 : Icons.menu,
+        ),
         color: Colors.white,
         onPressed: () => Scaffold.of(context).openDrawer(),
       ),
       actions: <Widget>[
         IconButton(
           tooltip: 'Filter',
-          icon: Icon(Icons.filter_list),
+          icon: Icon(
+            Platform.isIOS
+                ? SFSymbols.line_horizontal_3_decrease_circle
+                : Icons.filter_list,
+          ),
           color: Colors.white,
           onPressed: () {
             Navigator.of(context)

@@ -9,6 +9,7 @@ import 'package:bible_search/redux/actions.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
 import 'package:redux/redux.dart';
 import 'package:bible_search/version.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
@@ -56,7 +57,8 @@ class HomeDrawer extends StatelessWidget {
                 const Divider(),
                 if (isResultPage) ...[
                   ListTile(
-                    leading: Icon(Icons.history),
+                    leading:
+                        Icon(Platform.isIOS ? SFSymbols.clock : Icons.history),
                     title: const Text('History'),
                     onTap: () {
                       Navigator.of(context).pop();
@@ -74,7 +76,9 @@ class HomeDrawer extends StatelessWidget {
                       if (snapshot.hasData) {
                         if (!snapshot.data) {
                           return ListTile(
-                              leading: Icon(Icons.money_off),
+                              leading: Icon(Platform.isIOS
+                                  ? SFSymbols.money_dollar_circle
+                                  : Icons.money_off),
                               title: const Text('Remove Ads'),
                               onTap: () => vm.removeAds(context));
                         }
@@ -84,7 +88,9 @@ class HomeDrawer extends StatelessWidget {
                     }),
 
                 ListTile(
-                  leading: Icon(Icons.mobile_screen_share),
+                  leading: Icon(Platform.isIOS
+                      ? SFSymbols.link
+                      : Icons.mobile_screen_share),
                   title: const Text('Share App'),
                   onTap: () async {
                     await Navigator.of(context).maybePop();
@@ -93,13 +99,16 @@ class HomeDrawer extends StatelessWidget {
                 ),
                 const Divider(),
                 ListTile(
-                  leading: Icon(Icons.book),
+                  leading:
+                      Icon(Platform.isIOS ? SFSymbols.book : Icons.exit_to_app),
                   title: const Text('Translation'),
                   onTap: () =>
                       Navigator.of(context).pushNamed('/default_translation'),
                 ),
                 SwitchListTile.adaptive(
-                    secondary: Icon(Icons.lightbulb_outline),
+                    secondary: Icon(Platform.isIOS
+                        ? SFSymbols.moon
+                        : Icons.lightbulb_outline),
                     activeColor: Theme.of(context).accentColor,
                     value: vm.isDarkTheme,
                     title: const Text('Dark Mode'),
@@ -113,7 +122,9 @@ class HomeDrawer extends StatelessWidget {
                     }),
                 const Divider(),
                 ListTile(
-                    leading: Icon(Icons.account_circle),
+                    leading: Icon(Platform.isIOS
+                        ? SFSymbols.person_crop_circle
+                        : Icons.account_circle),
                     title: Text(vm.userAccount.isSignedIn
                         ? '${vm.userAccount.user.email}'
                         : 'Account'),
@@ -125,14 +136,18 @@ class HomeDrawer extends StatelessWidget {
                           appName: 'bible_search');
                     }),
                 ListTile(
-                  leading: Icon(Icons.help_outline),
+                  leading: Icon(Platform.isIOS
+                      ? SFSymbols.question_circle
+                      : Icons.help_outline),
                   title: const Text('Help & Feedback'),
                   onTap: () {
                     vm.helpAndFeedback(context);
                   },
                 ),
                 ListTile(
-                    leading: Icon(Icons.info_outline),
+                    leading: Icon(Platform.isIOS
+                        ? SFSymbols.info_circle
+                        : Icons.info_outline),
                     title: const Text('About'),
                     onTap: () {
                       tw.tecShowSimpleAlertDialog(
@@ -143,7 +158,7 @@ class HomeDrawer extends StatelessWidget {
                         content:
                             'Bible Search! is a product developed by Tecarta.\n\nLooking for a full featured Bible app? Download Tecarta Bible to access thousands of study notes, maps, charts, book introductions and more!\n\nVersion: $appVersion',
                         actions: <Widget>[
-                         tw.TecDialogButton(
+                          tw.TecDialogButton(
                             child: const tw.TecText('Not Now'),
                             onPressed: () {
                               Navigator.pop(context);

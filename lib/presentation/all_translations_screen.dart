@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bible_search/containers/search_result_components/no_results_view.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
 import 'package:redux/redux.dart';
 
 import 'package:share/share.dart';
@@ -118,9 +121,9 @@ class _FutureAllResultsPage extends StatelessWidget {
                             title:
                                 '${vm.store.state.translations.getFullName(allResults[index].id)}\n',
                             subtitle: model.formatWords(
-                                '${allResults[index].text}', keywords,
-                                darkMode: Theme.of(context).brightness ==
-                                    Brightness.dark),
+                              '${allResults[index].text}',
+                              keywords,
+                            ),
                             copy: () =>
                                 model.copyPressed(text: text, context: context),
                             share: () => Share.share(text),
@@ -182,16 +185,22 @@ class _AllResultCard extends StatelessWidget {
                     IconButton(
                       tooltip: 'Copy',
                       onPressed: copy,
-                      icon: Icon(Icons.content_copy),
+                      icon: Icon(Platform.isIOS
+                          ? SFSymbols.doc_on_doc
+                          : Icons.content_copy),
                     ),
                     IconButton(
                         tooltip: 'Share',
                         onPressed: share,
-                        icon: Icon(Icons.share)),
+                        icon: Icon(Platform.isIOS
+                            ? SFSymbols.square_arrow_up
+                            : Icons.share)),
                     IconButton(
                       tooltip: 'Open in TecartaBible',
                       onPressed: openInTB,
-                      icon: Icon(Icons.exit_to_app),
+                      icon: Icon(Platform.isIOS
+                          ? SFSymbols.arrowshape_turn_up_right
+                          : Icons.exit_to_app),
                     )
                   ]),
             ),

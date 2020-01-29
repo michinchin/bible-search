@@ -28,6 +28,7 @@ dependencies:
   firebase_core: ^0.4.3+1
   firebase_dynamic_links: ^0.5.0+9
   flutter_redux: ^0.6.0
+  flutter_sfsymbols: ^1.0.0
   in_app_purchase: ^0.2.2+4
   path_provider: ^1.5.1
   pedantic: ^1.8.0
@@ -458,6 +459,9 @@ flutter:
         - asset: fonts/Roboto-MediumItalic.ttf
           style: italic
           weight: 500
+    - family: sficonsets
+      fonts:
+        - asset: packages/flutter_sfsymbols/fonts/sficonsets.ttf
         
   #
   # For details regarding fonts from package dependencies,

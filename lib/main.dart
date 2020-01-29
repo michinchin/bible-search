@@ -103,7 +103,7 @@ class BibleSearchApp extends StatelessWidget {
                         ),
                     themedWidgetBuilder: (context, theme) {
                       if (theme.brightness == Brightness.dark) {
-                        const textColor = Color(0xffe6e6e6);
+                        const textColor = Color(0xffcccccc);
                         theme = theme.copyWith(
                             textTheme: theme.textTheme.apply(
                                 bodyColor: textColor, displayColor: textColor),

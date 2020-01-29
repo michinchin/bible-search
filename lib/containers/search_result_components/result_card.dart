@@ -183,7 +183,7 @@ class ResultCardModel {
   final SearchResult res;
   final List<Book> bookNames;
   final BuildContext context;
-  final List<TextSpan> Function(String, String, {bool darkMode}) formatWords;
+  final List<TextSpan> Function(String, String) formatWords;
   final String keywords;
   List<int> defaultTranslationIds;
   AutoSizeText nonContextTitle;
@@ -229,8 +229,9 @@ class ResultCardModel {
         : Colors.white;
 
     oppColorScheme = Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xffe6e6e6)
+        ? const Color(0xffcccccc)
         : Colors.black;
+
     formattedTitle = Text(
       res.contextExpanded ? contextTitle.data : nonContextTitle.data,
       style: TextStyle(
@@ -240,13 +241,10 @@ class ResultCardModel {
 
     formattedText = AutoSizeText.rich(
       TextSpan(
-        style: !res.isSelected
-            ? Theme.of(context).textTheme.body1
-            : TextStyle(
-                color: colorScheme,
-              ),
-        children: formatWords(content, keywords,
-            darkMode: Theme.of(context).brightness == Brightness.dark),
+        style: TextStyle(
+          color: res.isSelected ? colorScheme : oppColorScheme,
+        ),
+        children: formatWords(content, keywords),
       ),
       minFontSize: minFontSizeDescription,
     );
