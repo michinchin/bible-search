@@ -2,7 +2,7 @@
 VERSION=1.2
 
 cd bible_search
-#flutter upgrade
+flutter pub get
 flutter clean
 
 sed -i '' "s/DEBUG-VERSION/$VERSION-$BUILD_NUMBER/g" lib/version.dart
