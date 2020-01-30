@@ -6,6 +6,7 @@ import 'package:bible_search/models/app_state.dart';
 import 'package:bible_search/models/user_model.dart';
 import 'package:bible_search/redux/actions.dart';
 import 'package:bible_search/version.dart';
+import 'package:feather_icons_flutter/feather_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
@@ -88,8 +89,7 @@ class _AdCardState extends State<AdCard> {
                                     children: <Widget>[
                                       ListTile(
                                         title: const Text('Hide this ad'),
-                                        leading:
-                                            Icon(Icons.remove_circle_outline),
+                                        leading: Icon(FeatherIcons.minusCircle),
                                         onTap: () {
                                           Navigator.of(context).maybePop();
                                           widget.hideAd(widget.index);
@@ -97,17 +97,18 @@ class _AdCardState extends State<AdCard> {
                                       ),
                                       ListTile(
                                         title: const Text('Remove ads'),
-                                        leading: Icon(Icons.money_off),
+                                        leading: Icon(FeatherIcons.xCircle),
                                         onTap: () => vm.removeAds(context),
                                       ),
                                       ListTile(
                                           title: const Text(
                                               'Why am I seeing this ad?'),
-                                          leading: Icon(Icons.info),
+                                          leading: Icon(FeatherIcons.info),
                                           onTap: () => vm.whyAdDialog(context)),
                                       ListTile(
                                         title: const Text('Send feedback'),
-                                        leading: Icon(Icons.feedback),
+                                        leading:
+                                            Icon(FeatherIcons.messageSquare),
                                         onTap: () {
                                           Navigator.of(context).maybePop();
                                           vm.emailFeedback(
@@ -152,8 +153,7 @@ class AdCardViewModel {
           if (hasLicense) {
             store.dispatch(SearchAction(store.state.searchQuery));
             Navigator.of(context).pop();
-          }
-          else {
+          } else {
             Navigator.of(context).pop();
             UserModel.buyProduct();
           }
@@ -166,10 +166,11 @@ class AdCardViewModel {
   }
 
   void _showWhyAd(BuildContext context) {
-    tecShowSimpleAlertDialog(context: context,
+    tecShowSimpleAlertDialog(
+      context: context,
       title: 'Why am I seeing ads?',
-      content: 'Bible Search! is an ad supported app. To support the app\'s continued development, text only ads will occasionally appear in the search results.',
-
+      content:
+          'Bible Search! is an ad supported app. To support the app\'s continued development, text only ads will occasionally appear in the search results.',
       actions: <Widget>[
         TecDialogButton(
           child: const Text('Close'),

@@ -34,135 +34,139 @@ class HomeDrawer extends StatelessWidget {
         converter: (store) => DrawerViewModel(store),
         builder: (context, vm) {
           return Drawer(
-            child: ListView(
-              children: <Widget>[
-                ListTile(
-                  contentPadding: const EdgeInsets.only(left: 16, top: 16),
-                  title: RichText(
-                    text: TextSpan(
-                        children: [
-                          const TextSpan(text: 'Tecarta'),
-                          TextSpan(
-                              text: 'Bible',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          const TextSpan(text: ' Search')
-                        ],
-                        style: Theme.of(context).brightness == Brightness.dark
-                            ? Theme.of(context).textTheme.headline
-                            : Theme.of(context)
-                                .textTheme
-                                .headline
-                                .copyWith(color: Colors.black54)),
-                  ),
-                ),
-                const Divider(),
-                if (isResultPage) ...[
+            child: IconTheme(
+              data: Theme.of(context).iconTheme.copyWith(size: 20),
+              child: ListView(
+                children: <Widget>[
                   ListTile(
-                    leading: Icon(FeatherIcons.clock),
-                    title: const Text('History'),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Future.delayed(const Duration(milliseconds: 250),
-                          () => Navigator.of(context).pop());
-                    },
+                    contentPadding: const EdgeInsets.only(left: 16, top: 16),
+                    title: RichText(
+                      text: TextSpan(
+                          children: [
+                            const TextSpan(text: 'Tecarta'),
+                            TextSpan(
+                                text: 'Bible',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            const TextSpan(text: ' Search')
+                          ],
+                          style: Theme.of(context).brightness == Brightness.dark
+                              ? Theme.of(context).textTheme.headline
+                              : Theme.of(context)
+                                  .textTheme
+                                  .headline
+                                  .copyWith(color: Colors.black54)),
+                    ),
                   ),
-                  // IconData(0xe0c6, fontFamily: 'MaterialIcons')
-                ],
-                // if (!tec.Prefs.shared
-                //     .getBool(removedAdsPref, defaultValue: false))
-                FutureBuilder<bool>(
-                    future: vm.hasPurchased,
-                    builder: (c, snapshot) {
-                      if (snapshot.hasData) {
-                        if (!snapshot.data) {
-                          return ListTile(
-                              leading: Icon(FeatherIcons.xCircle),
-                              title: const Text('Remove Ads'),
-                              onTap: () => vm.removeAds(context));
+                  const Divider(),
+                  if (isResultPage) ...[
+                    ListTile(
+                      leading: Icon(FeatherIcons.clock),
+                      title: const Text('History'),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        Future.delayed(const Duration(milliseconds: 250),
+                            () => Navigator.of(context).pop());
+                      },
+                    ),
+                    // IconData(0xe0c6, fontFamily: 'MaterialIcons')
+                  ],
+                  // if (!tec.Prefs.shared
+                  //     .getBool(removedAdsPref, defaultValue: false))
+                  FutureBuilder<bool>(
+                      future: vm.hasPurchased,
+                      builder: (c, snapshot) {
+                        if (snapshot.hasData) {
+                          if (!snapshot.data) {
+                            return ListTile(
+                                leading: Icon(FeatherIcons.xCircle),
+                                title: const Text('Remove Ads'),
+                                onTap: () => vm.removeAds(context));
+                          }
+                          return Container();
                         }
                         return Container();
-                      }
-                      return Container();
-                    }),
+                      }),
 
-                ListTile(
-                  leading: Icon(
-                      Platform.isIOS ? SFSymbols.square_arrow_up : Icons.share),
-                  title: const Text('Share App'),
-                  onTap: () async {
-                    await Navigator.of(context).maybePop();
-                    await vm.shareApp(context);
-                  },
-                ),
-                const Divider(),
-                ListTile(
-                  leading: Icon(FeatherIcons.heart),
-                  title: const Text('Translations'),
-                  onTap: () =>
-                      Navigator.of(context).pushNamed('/default_translation'),
-                ),
-                SwitchListTile.adaptive(
-                    secondary: Icon(FeatherIcons.moon),
-                    activeColor: Theme.of(context).accentColor,
-                    value: vm.isDarkTheme,
-                    title: const Text('Dark Mode'),
-                    onChanged: (b) {
-                      DynamicTheme.of(context).setThemeData(ThemeData(
-                        primarySwatch: b ? Colors.teal : Colors.orange,
-                        primaryColorBrightness: Brightness.dark,
-                        brightness: b ? Brightness.dark : Brightness.light,
-                      ));
-                      vm.changeTheme(b);
-                    }),
-                const Divider(),
-                ListTile(
-                    leading: Icon(FeatherIcons.user),
-                    title: Text(vm.userAccount.isSignedIn
-                        ? '${vm.userAccount.user.email}'
-                        : 'Account'),
+                  ListTile(
+                    leading: Icon(Platform.isIOS
+                        ? SFSymbols.square_arrow_up
+                        : Icons.share),
+                    title: const Text('Share App'),
+                    onTap: () async {
+                      await Navigator.of(context).maybePop();
+                      await vm.shareApp(context);
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: Icon(FeatherIcons.heart),
+                    title: const Text('Translations'),
+                    onTap: () =>
+                        Navigator.of(context).pushNamed('/default_translation'),
+                  ),
+                  SwitchListTile.adaptive(
+                      secondary: Icon(FeatherIcons.moon),
+                      activeColor: Theme.of(context).accentColor,
+                      value: vm.isDarkTheme,
+                      title: const Text('Dark Mode'),
+                      onChanged: (b) {
+                        DynamicTheme.of(context).setThemeData(ThemeData(
+                          primarySwatch: b ? Colors.teal : Colors.orange,
+                          primaryColorBrightness: Brightness.dark,
+                          brightness: b ? Brightness.dark : Brightness.light,
+                        ));
+                        vm.changeTheme(b);
+                      }),
+                  const Divider(),
+                  ListTile(
+                      leading: Icon(FeatherIcons.user),
+                      title: Text(vm.userAccount.isSignedIn
+                          ? '${vm.userAccount.user.email}'
+                          : 'Account'),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        showSignInDlg(
+                            context: context,
+                            account: vm.userAccount,
+                            appName: 'bible_search');
+                      }),
+                  ListTile(
+                    leading: Icon(FeatherIcons.helpCircle),
+                    title: const Text('Help & Feedback'),
                     onTap: () {
-                      Navigator.of(context).pop();
-                      showSignInDlg(
+                      vm.helpAndFeedback(context);
+                    },
+                  ),
+                  ListTile(
+                      leading: Icon(FeatherIcons.info),
+                      title: const Text('About'),
+                      onTap: () {
+                        tw.tecShowSimpleAlertDialog(
                           context: context,
-                          account: vm.userAccount,
-                          appName: 'bible_search');
-                    }),
-                ListTile(
-                  leading: Icon(FeatherIcons.helpCircle),
-                  title: const Text('Help & Feedback'),
-                  onTap: () {
-                    vm.helpAndFeedback(context);
-                  },
-                ),
-                ListTile(
-                    leading: Icon(FeatherIcons.info),
-                    title: const Text('About'),
-                    onTap: () {
-                      tw.tecShowSimpleAlertDialog(
-                        context: context,
-                        barrierDismissible: true,
-                        useRootNavigator: false,
-                        title: 'About',
-                        content:
-                            'Bible Search! is a product developed by Tecarta.\n\nLooking for a full featured Bible app? Download Tecarta Bible to access thousands of study notes, maps, charts, book introductions and more!\n\nVersion: $appVersion',
-                        actions: <Widget>[
-                          tw.TecDialogButton(
-                            child: const tw.TecText('Not Now'),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                          tw.TecDialogButton(
-                            child: const tw.TecText('Tecarta Bible'),
-                            onPressed: () {
-                              Navigator.pop(context);
-                              launcher.launch(tecartaBibleLink);
-                            },
-                          ),
-                        ],
-                      );
-                    }),
-              ],
+                          barrierDismissible: true,
+                          useRootNavigator: false,
+                          title: 'About',
+                          content:
+                              'Bible Search! is a product developed by Tecarta.\n\nLooking for a full featured Bible app? Download Tecarta Bible to access thousands of study notes, maps, charts, book introductions and more!\n\nVersion: $appVersion',
+                          actions: <Widget>[
+                            tw.TecDialogButton(
+                              child: const tw.TecText('Not Now'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                            tw.TecDialogButton(
+                              child: const tw.TecText('Tecarta Bible'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                launcher.launch(tecartaBibleLink);
+                              },
+                            ),
+                          ],
+                        );
+                      }),
+                ],
+              ),
             ),
           );
         });
