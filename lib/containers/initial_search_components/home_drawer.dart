@@ -11,6 +11,7 @@ import 'package:feature_discovery/feature_discovery.dart';
 
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:redux/redux.dart';
 import 'package:bible_search/version.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
@@ -90,7 +91,7 @@ class HomeDrawer extends StatelessWidget {
                   ListTile(
                     leading: Icon(Platform.isIOS
                         ? SFSymbols.square_arrow_up
-                        : Icons.share),
+                        : OMIcons.share),
                     title: const Text('Share App'),
                     onTap: () async {
                       await Navigator.of(context).maybePop();

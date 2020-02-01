@@ -10,6 +10,7 @@ import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
 import 'package:bible_search/presentation/all_translations_screen.dart';
 import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:tec_widgets/tec_widgets.dart';
 
 class CardIcons extends StatefulWidget {
@@ -155,7 +156,7 @@ class _CardIconsState extends State<CardIcons> {
                         color: widget.model.iconColor,
                         icon: Icon(Platform.isIOS
                             ? SFSymbols.square_arrow_up
-                            : Icons.share),
+                            : OMIcons.share),
                         onPressed: _onShare),
                     DescribedFeatureOverlay(
                       featureId: 'open_in_TB',

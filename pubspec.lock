@@ -303,6 +303,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.2.1"
+  outline_material_icons:
+    dependency: "direct main"
+    description:
+      name: outline_material_icons
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.1"
   path:
     dependency: transitive
     description:
@@ -345,6 +352,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  pointycastle:
+    dependency: transitive
+    description:
+      name: pointycastle
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.2"
   provider:
     dependency: transitive
     description:
@@ -487,6 +501,13 @@ packages:
     dependency: "direct main"
     description:
       path: "../shared/tec_cache"
+      relative: true
+    source: path
+    version: "0.0.1"
+  tec_crypto:
+    dependency: transitive
+    description:
+      path: "../shared/tec_crypto"
       relative: true
     source: path
     version: "0.0.1"

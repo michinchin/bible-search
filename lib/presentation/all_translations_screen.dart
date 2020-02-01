@@ -7,6 +7,7 @@ import 'package:bible_search/models/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:redux/redux.dart';
 
 import 'package:share/share.dart';
@@ -195,7 +196,7 @@ class _AllResultCard extends StatelessWidget {
                         onPressed: share,
                         icon: Icon(Platform.isIOS
                             ? SFSymbols.square_arrow_up
-                            : Icons.share)),
+                            : OMIcons.share)),
                     IconButton(
                       tooltip: 'Open in TecartaBible',
                       onPressed: openInTB,

@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bible_search/labels.dart';
 import 'package:bible_search/models/search_model.dart';
 import 'package:flutter_sfsymbols/flutter_sfsymbols.dart';
+import 'package:outline_material_icons/outline_material_icons.dart';
 import 'package:tec_widgets/tec_widgets.dart';
 import 'package:feature_discovery/feature_discovery.dart';
 import 'package:flutter/material.dart';
@@ -195,7 +196,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                   tooltip: 'Share Selected',
                   icon: Icon(Platform.isIOS
                       ? SFSymbols.square_arrow_up_on_square
-                      : Icons.share),
+                      : OMIcons.share),
                   onPressed: () async {
                     // final hasFinishedShare =
                     await sm.shareSelection(
