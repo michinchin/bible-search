@@ -51,10 +51,10 @@ class HomeDrawer extends StatelessWidget {
                             const TextSpan(text: ' Search')
                           ],
                           style: Theme.of(context).brightness == Brightness.dark
-                              ? Theme.of(context).textTheme.headline
+                              ? Theme.of(context).textTheme.headline5
                               : Theme.of(context)
                                   .textTheme
-                                  .headline
+                                  .headline5
                                   .copyWith(color: Colors.black54)),
                     ),
                   ),
@@ -142,7 +142,7 @@ class HomeDrawer extends StatelessWidget {
                       leading: Icon(FeatherIcons.info),
                       title: const Text('About'),
                       onTap: () {
-                        tw.tecShowSimpleAlertDialog(
+                        tw.tecShowSimpleAlertDialog<void>(
                           context: context,
                           barrierDismissible: true,
                           useRootNavigator: false,
@@ -198,7 +198,7 @@ class DrawerViewModel {
   void _helpAndFeedback(BuildContext context) {
     var _close = false;
     final accessibilityOff = !MediaQuery.of(context).accessibleNavigation;
-    tw.tecShowSimpleAlertDialog(
+    tw.tecShowSimpleAlertDialog<void>(
       context: context,
       title: 'Help & Feedback',
       content:

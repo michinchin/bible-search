@@ -34,7 +34,7 @@ class LanguageList extends StatelessWidget {
         value: isFilterView ? lang.isSelected : null,
         title: AutoSizeText(
           lang.name,
-          style: Theme.of(context).textTheme.title,
+          style: Theme.of(context).textTheme.headline6,
         ),
         child: _LanguageChildren(
             lang: lang,

@@ -173,7 +173,7 @@ class _AllResultCard extends StatelessWidget {
                       color: Theme.of(context).accentColor),
                   text: title),
               TextSpan(
-                  style: Theme.of(context).textTheme.body1, children: subtitle),
+                  style: Theme.of(context).textTheme.bodyText2, children: subtitle),
             ]),
             minFontSize: minFontSizeDescription,
           ),

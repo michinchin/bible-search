@@ -22,9 +22,9 @@ class ChooseDefaultTranslationScreen extends StatelessWidget {
                     child: Column(children: [
                   Container(
                       padding: const EdgeInsets.all(10.0),
-                      child: Align(
+                      child: const Align(
                           alignment: Alignment.centerLeft,
-                          child: const AutoSizeText(
+                          child: AutoSizeText(
                               'Select up to $maxDefaultTranslations translations. This will prioritize them (when available) in search results.',
                               minFontSize: defaultMinFontSize))),
                   Expanded(

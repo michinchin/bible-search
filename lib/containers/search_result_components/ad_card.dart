@@ -166,7 +166,7 @@ class AdCardViewModel {
   }
 
   void _showWhyAd(BuildContext context) {
-    tecShowSimpleAlertDialog(
+    tecShowSimpleAlertDialog<void>(
       context: context,
       title: 'Why am I seeing ads?',
       content:
