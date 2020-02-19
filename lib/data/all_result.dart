@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:convert' show json, utf8;
-import 'dart:io';
 
-import 'package:bible_search/labels.dart';
 import 'package:bible_search/data/translation.dart';
+import 'package:tec_cache/tec_cache.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 
 class AllResult {
@@ -49,59 +47,31 @@ class AllResults {
       int chapter,
       int verse,
       BibleTranslations translations}) async {
-    try {
-      final json = await getAllResponse(
-        auth: kTBApiServer,
-        unencodedPath: '/allverses',
-        queryParameters: {
-          'key': kTBkey,
-          'version': kTBApiVersion,
+    final _cachedPath = '${book}_${chapter}_${verse}_${translations.formatIds()}';
+
+    final tecCache = TecCache();
+
+    final json = await tecCache.jsonFromFile(cachedPath: _cachedPath);
+
+    if (tec.isNotNullOrEmpty(json)) {
+      return AllResults.fromJson(tec.as<List<dynamic>>(json['list']));
+    }
+
+    return tec.apiRequest(
+        endpoint: 'allverses',
+        parameters: <String, dynamic>{
           'volumes': translations.formatIds(),
-          'book': '$book',
-          'chapter': '$chapter',
-          'verse': '$verse',
+          'book': book,
+          'chapter': chapter,
+          'verse': verse,
         },
-      );
-      if (json != null) {
-        return AllResults.fromJson(json);
-      } else {
-        return AllResults(data: []);
-      }
-    } catch (e) {
-      return Future.error(e);
-    }
-  }
-
-  static Future<List<dynamic>> getAllResponse(
-      {String auth,
-      String unencodedPath,
-      Map<String, String> queryParameters}) async {
-    final uri = Uri.https(auth, unencodedPath, queryParameters);
-    final jsonResponse = await _getAllJson(uri);
-
-    if (jsonResponse == null) {
-      return Future.error('Error retrieving json. URL:${uri.toString()}');
-    }
-    return jsonResponse;
-  }
-
-  static Future<List<dynamic>> _getAllJson(Uri uri) async {
-    final _httpClient = HttpClient();
-    try {
-      final httpRequest = await _httpClient.getUrl(uri);
-      final httpResponse = await httpRequest.close();
-      if (httpResponse.statusCode != HttpStatus.ok) {
-        return null;
-      }
-      // The response is sent as a Stream of bytes that we need to convert to a
-      // `String`.
-      final responseBody = await httpResponse.transform(utf8.decoder).join();
-      // Finally, the string is parsed into a JSON object.
-      final response = tec.as<List<dynamic>>(json.decode(responseBody));
-      return response;
-    } on Exception catch (e) {
-      print('$e');
-      return null;
-    }
+        completion: (status, json, dynamic error) async {
+          if (status == 200) {
+            await tecCache.saveJsonToCache(json: json, cacheUrl: _cachedPath);
+            return AllResults.fromJson(tec.as<List<dynamic>>(json['list']));
+          } else {
+            return AllResults(data: []);
+          }
+        });
   }
 }

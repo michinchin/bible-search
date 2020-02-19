@@ -42,7 +42,7 @@ class NoResultsView extends StatelessWidget {
       child: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Text(text),
-          Divider(
+          const Divider(
             color: Colors.transparent,
           ),
           if (reset)

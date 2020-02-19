@@ -25,45 +25,49 @@ class AutoComplete {
 
     final cleanPhrase = optimizePhrase(phrase);
     final suggestions = getSuggestions(cleanPhrase);
-    const path = 'https://$kTBApiServer/';
-    final parameters =
-        'suggest?key=$kTBkey&version=$kTBApiVersion&words=${suggestions['words']}&partialWord=${suggestions['partialWord']}&searchVolumes=$translationIds';
-    const cachePath = 'https://$kTBStreamServer/cache/';
     final cacheParam = '${_getCacheKey(cleanPhrase, translationIds)}';
-
-    Map<String, dynamic> json;
-
-    if (cleanPhrase
-        .trim()
-        .isEmpty) {
-      json =
-      <String, dynamic>{ 'words': '', 'parital': '', 'possibles': <String>[]};
-      print('Getting empty results');
-    }
-
     final tecCache = TecCache();
 
-    if (tec.isNullOrEmpty(json)) {
-      print('Getting cached results from $cachePath$cacheParam');
+    if (cleanPhrase.trim().isEmpty) {
+      return AutoComplete.fromJson(<String, dynamic>{
+        'words': '',
+        'parital': '',
+        'possibles': <String>[]
+      });
+    }
 
-      json = await tecCache.jsonFromUrl(
-        url: '$cachePath$cacheParam',
-      );
+    // check cloudfront cache
+    var json = await tecCache.jsonFromUrl(
+      url: '${tec.cacheUrl}/$cacheParam',
+      connectionTimeout: const Duration(seconds: 10),
+    );
+
+    // check the server
+    if (tec.isNullOrEmpty(json)) {
+      json = await tec.apiRequest(
+          endpoint: 'suggest',
+          parameters: <String, dynamic>{
+            'words': suggestions['words'],
+            'partialWord': suggestions['partialWord'],
+            'searchVolumes': translationIds,
+          },
+          completion: (status, json, dynamic error) async {
+            if (status == 200) {
+              // save to tecCache...
+              await tecCache.saveJsonToCache(
+                  json: json, cacheUrl: '${tec.cacheUrl}/$cacheParam');
+
+              return json;
+            } else {
+              return null;
+            }
+          });
     }
 
     if (tec.isNullOrEmpty(json)) {
-      print('Getting results from ${Uri.encodeFull('$path$parameters')}');
-
-      json = await tecCache.jsonFromUrl(
-        requestType: 'post',
-        url: '$path$parameters',
-      );
-    }
-
-    if (json != null) {
-      return AutoComplete.fromJson(json);
+      return Future.error('Error getting results from server');
     } else {
-      return null;
+      return AutoComplete.fromJson(json);
     }
   }
 }

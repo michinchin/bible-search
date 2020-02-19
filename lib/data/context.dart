@@ -1,4 +1,3 @@
-import 'package:bible_search/labels.dart';
 import 'package:flutter/foundation.dart';
 import 'package:tec_cache/tec_cache.dart';
 import 'package:tec_util/tec_util.dart' as tec;
@@ -38,7 +37,7 @@ class Context {
 
     final json = await TecCache().jsonFromUrl(
       url:
-          'https://$kTBStreamServer/$kTBApiVersion/$translation/chapters/${book}_$chapter.json.gz',
+          '${tec.streamUrl}/$translation/chapters/${book}_$chapter.json.gz',
     );
     Context context;
     if (json != null) {

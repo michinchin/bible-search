@@ -17,6 +17,7 @@ import 'package:redux/redux.dart';
 import 'package:bible_search/redux/reducers.dart';
 import 'package:bible_search/redux/middleware.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:tec_cache/tec_cache.dart';
 
 import 'package:tec_native_ad/tec_native_ad.dart';
 import 'package:tec_user_account/tec_user_account.dart';
@@ -32,6 +33,8 @@ Future<void> main() async {
 
   // Load preferences.
   await tec.Prefs.shared.load();
+
+  await TecCache.init();
 
   // Load device info
   final di = await tec.DeviceInfo.fetch();

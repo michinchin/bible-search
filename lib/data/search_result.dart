@@ -112,8 +112,6 @@ class SearchResults {
     if ((words?.trim() ?? '').isEmpty) {
       return [];
     }
-    const hostAndPath = '$kTBApiServer/search';
-    const cachePath = '$kTBStreamServer/cache';
     var phrase = 0, exact = 0;
     var cacheWords = words;
     String searchWords;
@@ -154,33 +152,42 @@ class SearchResults {
     }
 
     final tecCache = TecCache();
-    final fullCachedPath =
-        'https://$cachePath/${_getCacheKey(cacheWords, translationIds, exact, phrase)}.gz';
-    final fullPath =
-        'https://$hostAndPath?key=$kTBkey&version=$kTBApiVersion&words=$searchWords&book=0'
-        '&bookset=0&exact=$exact&phrase=$phrase&searchVolumes=$translationIds';
-    final cacheJson = await tecCache.jsonFromUrl(
-      url: fullCachedPath,
-      requestType: 'get',
+    final cacheParam = _getCacheKey(cacheWords, translationIds, exact, phrase);
+
+    // check cloudfront cache
+    var json = await tecCache.jsonFromUrl(
+      url: '${tec.cacheUrl}/$cacheParam.gz',
       connectionTimeout: const Duration(seconds: 10),
     );
 
-    if (cacheJson != null) {
-      debugPrint('Getting cached results from: $fullCachedPath');
-      return SearchResults.fromJson(cacheJson).data;
+    // try server
+    if (tec.isNullOrEmpty(json)) {
+      json = await tec.apiRequest(
+          endpoint: 'search',
+          parameters: <String, dynamic>{
+            'searchWords': searchWords,
+            'book': 0,
+            'bookset': 0,
+            'exact': exact,
+            'phrase': phrase,
+            'searchVolumes': translationIds,
+          },
+          completion: (status, json, dynamic error) async {
+            if (status == 200) {
+              await tecCache.saveJsonToCache(
+                  json: json, cacheUrl: '${tec.cacheUrl}/$cacheParam.gz');
+
+              return json;
+            } else {
+              return null;
+            }
+          });
+    }
+
+    if (tec.isNullOrEmpty(json)) {
+      return Future.error('Error getting results from server');
     } else {
-      final json = await tecCache.jsonFromUrl(
-        url: fullPath,
-        requestType: 'post',
-        connectionTimeout: const Duration(seconds: 10),
-      );
-      if (json != null) {
-        debugPrint('Getting results from: ${Uri.encodeFull(fullPath)}');
-        return SearchResults.fromJson(json).data;
-      } else {
-        return Future.error(
-            'Error getting results from: ${Uri.encodeFull(fullPath)}');
-      }
+      return SearchResults.fromJson(json).data;
     }
   }
 }

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:bible_search/models/home_model.dart';
-import 'package:bible_search/labels.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:tec_cache/tec_cache.dart';
 import 'package:tec_util/tec_util.dart' as tec;
@@ -155,13 +154,13 @@ class BibleTranslations {
 
   static Future<BibleTranslations> fetch() async {
     const fileName = 'WebSite.json.gz';
-    const hostAndPath = '$kTBStreamServer/$kTBApiVersion/products-list';
+    final hostAndPath = '${tec.streamUrl}/products-list';
     final translations = await readTranslationsJson('Translation.txt');
 
     Map<String, dynamic> bibleJson;
     // if the current vs fetched don't match, update current
     bibleJson =
-        await TecCache().jsonFromUrl(url: 'https://$hostAndPath/$fileName');
+        await TecCache().jsonFromUrl(url: '$hostAndPath/$fileName');
 
     var needsUpdate = false;
 

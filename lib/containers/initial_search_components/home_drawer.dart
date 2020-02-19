@@ -43,12 +43,12 @@ class HomeDrawer extends StatelessWidget {
                     contentPadding: const EdgeInsets.only(left: 16, top: 16),
                     title: RichText(
                       text: TextSpan(
-                          children: [
-                            const TextSpan(text: 'Tecarta'),
+                          children: const [
+                            TextSpan(text: 'Tecarta'),
                             TextSpan(
                                 text: 'Bible',
                                 style: TextStyle(fontWeight: FontWeight.bold)),
-                            const TextSpan(text: ' Search')
+                            TextSpan(text: ' Search')
                           ],
                           style: Theme.of(context).brightness == Brightness.dark
                               ? Theme.of(context).textTheme.headline5
@@ -292,16 +292,6 @@ class DrawerViewModel {
   }
 
   Future<void> _shareApp(BuildContext context) async {
-    // String storeUrl;
-    // if (Platform.isAndroid) {
-    //   storeUrl =
-    //       'https://play.google.com/store/apps/details?id=com.tecarta.biblesearch';
-    // } else if (Platform.isIOS) {
-    //   storeUrl = 'https://apps.apple.com/us/app/bible-search/id1436076950';
-    // } else {
-    //   return;
-    // }
-    // final shortUrl = await tec.shortenUrl(storeUrl);
-    await Share.share('http://tbibl.es/search');
+    await Share.share('https://biblesearch.tecartabible.com/link/app');
   }
 }
