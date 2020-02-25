@@ -45,8 +45,10 @@ class _InitialSearchScreenState extends State<InitialSearchScreen> {
         WidgetsBinding.instance.addPostFrameCallback((d) {
           if (rateMyApp.shouldOpenDialog) {
             rateMyApp
+              ..appStoreIdentifier = '1436076950'
               ..showRateDialog(context,
                   title: 'Bible Search!',
+                  ignoreIOS: true,
                   appIcon: Image.asset(
                     'assets/appIcon.png',
                     width: 100,
