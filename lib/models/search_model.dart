@@ -119,7 +119,7 @@ class SearchModel {
         }
       } else {
         await Clipboard.setData(
-                ClipboardData(text: '${verse.selectedText}$shortUrl'))
+                ClipboardData(text: '${verse.selectedText}'))
             .then((x) {
           tw.TecToast.show(context, 'Successfully Copied!');
         });
@@ -321,10 +321,10 @@ class ShareVerse {
             '${each.chapterId}:'
             '${each.verses[each.currentVerseIndex].verseIdx[0]}'
             '-${each.verses[each.currentVerseIndex].verseIdx[1]} '
-            '(${each.verses[each.currentVerseIndex].a})'
+            '${each.verses[each.currentVerseIndex].a}'
             '\n${currVerse.contextText}\n\n';
       } else if (each.isSelected) {
-        text += '${each.ref} (${currVerse.a})\n${currVerse.verseContent}\n\n';
+        text += '${each.ref} ${currVerse.a}\n${currVerse.verseContent}\n\n';
       } else {
         text += '';
       }
