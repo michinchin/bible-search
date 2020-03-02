@@ -98,6 +98,7 @@ class BibleSearchApp extends StatelessWidget {
                 child: DynamicTheme(
                     defaultBrightness: Brightness.light,
                     data: (brightness) => ThemeData(
+                          fontFamily: 'Roboto',
                           primarySwatch: Colors.orange,
                           primaryColorBrightness:
                               darkTheme ? Brightness.dark : Brightness.light,
@@ -121,7 +122,9 @@ class BibleSearchApp extends StatelessWidget {
                               const ChooseDefaultTranslationScreen(),
                         },
                         title: 'Bible Search',
-                        theme: theme,
+                        theme: theme.copyWith(
+                            textTheme:
+                                theme.textTheme.apply(fontFamily: 'Roboto')),
                         home: _AppBindingObserver(store),
                       );
                     }),

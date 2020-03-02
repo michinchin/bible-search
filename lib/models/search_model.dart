@@ -118,8 +118,7 @@ class SearchModel {
           print('ERROR sharing verse: $e');
         }
       } else {
-        await Clipboard.setData(
-                ClipboardData(text: '${verse.selectedText}'))
+        await Clipboard.setData(ClipboardData(text: '${verse.selectedText}'))
             .then((x) {
           tw.TecToast.show(context, 'Successfully Copied!');
         });
