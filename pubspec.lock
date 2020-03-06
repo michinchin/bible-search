@@ -425,9 +425,9 @@ packages:
   rate_my_app:
     dependency: "direct main"
     description:
-      path: "../shared/rate_my_app"
-      relative: true
-    source: path
+      name: rate_my_app
+      url: "http://noah.tecarta.com:8100"
+    source: hosted
     version: "0.5.0+3"
   redux:
     dependency: transitive
@@ -542,37 +542,37 @@ packages:
   tec_auto_size_text:
     dependency: transitive
     description:
-      path: "../shared/tec_auto_size_text"
-      relative: true
-    source: path
+      name: tec_auto_size_text
+      url: "http://noah.tecarta.com:8100"
+    source: hosted
     version: "0.0.1"
   tec_cache:
     dependency: "direct main"
     description:
-      path: "../shared/tec_cache"
-      relative: true
-    source: path
+      name: tec_cache
+      url: "http://noah.tecarta.com:8100"
+    source: hosted
     version: "0.0.1"
   tec_crypto:
     dependency: transitive
     description:
-      path: "../shared/tec_crypto"
-      relative: true
-    source: path
+      name: tec_crypto
+      url: "http://noah.tecarta.com:8100"
+    source: hosted
     version: "0.0.1"
   tec_native_ad:
     dependency: "direct main"
     description:
-      path: "../shared/tec_native_ad"
-      relative: true
-    source: path
+      name: tec_native_ad
+      url: "http://noah.tecarta.com:8100"
+    source: hosted
     version: "0.0.1"
   tec_user_account:
     dependency: "direct main"
     description:
-      path: "../shared/tec_user_account"
-      relative: true
-    source: path
+      name: tec_user_account
+      url: "http://noah.tecarta.com:8100"
+    source: hosted
     version: "0.0.1"
   tec_util:
     dependency: "direct main"
@@ -584,9 +584,9 @@ packages:
   tec_widgets:
     dependency: "direct main"
     description:
-      path: "../shared/tec_widgets"
-      relative: true
-    source: path
+      name: tec_widgets
+      url: "http://noah.tecarta.com:8100"
+    source: hosted
     version: "0.0.1"
   tekartik_app_flutter_idb:
     dependency: transitive

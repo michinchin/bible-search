@@ -1,5 +1,5 @@
 name: bible_search
-description: A new Flutter project.
+description: Bible companion app to search across translations
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -42,20 +42,35 @@ dependencies:
   
   # Internal dependencies
   tec_native_ad:
-    path: ../shared/tec_native_ad
+    hosted:
+      name: tec_native_ad
+      url: http://noah.tecarta.com:8100
+    version: ^0.0.1
   tec_cache:
-    path: ../shared/tec_cache
+    hosted:
+      name: tec_cache
+      url: http://noah.tecarta.com:8100
+    version: ^0.0.1
   tec_user_account:
-    path: ../shared/tec_user_account
+    hosted:
+      name: tec_user_account
+      url: http://noah.tecarta.com:8100
+    version: ^0.0.1
   tec_util:
     hosted:
       name: tec_util
       url: http://noah.tecarta.com:8100
     version: ^0.0.1
   tec_widgets:
-    path: ../shared/tec_widgets
+    hosted:
+      name: tec_widgets
+      url: http://noah.tecarta.com:8100
+    version: ^0.0.1
   rate_my_app:
-    path: ../shared/rate_my_app
+    hosted:
+      name: rate_my_app
+      url: http://noah.tecarta.com:8100
+    version: ^0.5.0+3
 
 dev_dependencies:
   flutter_test:
