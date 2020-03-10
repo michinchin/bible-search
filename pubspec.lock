@@ -545,21 +545,21 @@ packages:
       name: tec_auto_size_text
       url: "http://noah.tecarta.com:8100"
     source: hosted
-    version: "0.0.1"
+    version: "1.0.0"
   tec_cache:
     dependency: "direct main"
     description:
       name: tec_cache
       url: "http://noah.tecarta.com:8100"
     source: hosted
-    version: "0.0.1"
+    version: "1.0.0"
   tec_crypto:
     dependency: transitive
     description:
       name: tec_crypto
       url: "http://noah.tecarta.com:8100"
     source: hosted
-    version: "0.0.1"
+    version: "1.0.0"
   tec_native_ad:
     dependency: "direct main"
     description:
@@ -573,21 +573,21 @@ packages:
       name: tec_user_account
       url: "http://noah.tecarta.com:8100"
     source: hosted
-    version: "0.0.1"
+    version: "1.0.0"
   tec_util:
     dependency: "direct main"
     description:
       name: tec_util
       url: "http://noah.tecarta.com:8100"
     source: hosted
-    version: "0.0.2"
+    version: "1.0.0"
   tec_widgets:
     dependency: "direct main"
     description:
       name: tec_widgets
       url: "http://noah.tecarta.com:8100"
     source: hosted
-    version: "0.0.1"
+    version: "1.0.0"
   tekartik_app_flutter_idb:
     dependency: transitive
     description:

@@ -41,36 +41,36 @@ dependencies:
   validators: ^2.0.0+1
   
   # Internal dependencies
-  tec_native_ad:
+  rate_my_app:
     hosted:
-      name: tec_native_ad
+      name: rate_my_app
       url: http://noah.tecarta.com:8100
-    version: ^0.0.1
+    version: ^0.5.0+3
   tec_cache:
     hosted:
       name: tec_cache
+      url: http://noah.tecarta.com:8100
+    version: ^1.0.0
+  tec_native_ad:
+    hosted:
+      name: tec_native_ad
       url: http://noah.tecarta.com:8100
     version: ^0.0.1
   tec_user_account:
     hosted:
       name: tec_user_account
       url: http://noah.tecarta.com:8100
-    version: ^0.0.1
+    version: ^1.0.0
   tec_util:
     hosted:
       name: tec_util
       url: http://noah.tecarta.com:8100
-    version: ^0.0.1
+    version: ^1.0.0
   tec_widgets:
     hosted:
       name: tec_widgets
       url: http://noah.tecarta.com:8100
-    version: ^0.0.1
-  rate_my_app:
-    hosted:
-      name: rate_my_app
-      url: http://noah.tecarta.com:8100
-    version: ^0.5.0+3
+    version: ^1.0.0
 
 dev_dependencies:
   flutter_test:
