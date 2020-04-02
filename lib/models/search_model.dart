@@ -112,7 +112,8 @@ class SearchModel {
     if (verse.selectedText.isNotEmpty) {
       if (!isCopy) {
         try {
-          await Share.share('${verse.selectedText}$shortUrl');
+          await Share.share(
+              '${verse.selectedText}${shortUrl.isNotEmpty ? '\n$shortUrl' : ''}');
           return true;
         } catch (e) {
           print('ERROR sharing verse: $e');
@@ -312,23 +313,25 @@ class ShareVerse {
   const ShareVerse({this.results, this.books});
 
   String get selectedText {
-    var text = '';
+    final buffer = StringBuffer();
     for (final each in results) {
       final currVerse = each.verses[each.currentVerseIndex];
       if (each.isSelected && each.contextExpanded) {
-        text += '${books.firstWhere((book) => book.id == each.bookId).name} '
-            '${each.chapterId}:'
-            '${each.verses[each.currentVerseIndex].verseIdx[0]}'
-            '-${each.verses[each.currentVerseIndex].verseIdx[1]} '
-            '${each.verses[each.currentVerseIndex].a}'
-            '\n${currVerse.contextText}\n\n';
+        buffer
+            .write('${books.firstWhere((book) => book.id == each.bookId).name} '
+                '${each.chapterId}:'
+                '${each.verses[each.currentVerseIndex].verseIdx[0]}'
+                '-${each.verses[each.currentVerseIndex].verseIdx[1]} '
+                '${each.verses[each.currentVerseIndex].a}'
+                '\n${currVerse.contextText}\n\n');
       } else if (each.isSelected) {
-        text += '${each.ref} ${currVerse.a}\n${currVerse.verseContent}\n\n';
-      } else {
-        text += '';
+        buffer
+            .write('${each.ref} ${currVerse.a}\n${currVerse.verseContent}\n\n');
       }
     }
-    return text;
+    return buffer
+        .toString()
+        .substring(0, buffer.toString().lastIndexOf('\n\n'));
   }
 
   bool get multipleSelected =>

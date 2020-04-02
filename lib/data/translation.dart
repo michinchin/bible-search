@@ -65,8 +65,10 @@ class BibleTranslations {
     for (final b in a) {
       if (b is Map<String, dynamic>) {
         if (b['name'] == 'Bible Translations' || b['name'] == 'Español') {
-          for (final Map<String, dynamic> c in b['products']) {
-            final res = BibleTranslation.fromJson(c);
+          final products = tec.as<List>(b['products']);
+          for (final c in products) {
+            final res =
+                BibleTranslation.fromJson(tec.as<Map<String, dynamic>>(c));
             if (res != null) {
               d.add(res);
             }
@@ -159,8 +161,7 @@ class BibleTranslations {
 
     Map<String, dynamic> bibleJson;
     // if the current vs fetched don't match, update current
-    bibleJson =
-        await TecCache().jsonFromUrl(url: '$hostAndPath/$fileName');
+    bibleJson = await TecCache().jsonFromUrl(url: '$hostAndPath/$fileName');
 
     var needsUpdate = false;
 
