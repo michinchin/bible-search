@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:bible_search/labels.dart';
-import 'package:diacritic/diacritic.dart';
 import 'package:tec_cache/tec_cache.dart';
 import 'package:tec_util/tec_util.dart' as tec;
 
@@ -100,20 +99,8 @@ String _getCacheKey(String phrase, String translationIds) {
 }
 
 String optimizePhrase(String phrase) {
-  //    if (normalize) {
-  //      searchText = TecartaBible.normalize(searchText);
-  //    }
-  //
-  //    if (latinBased) {
-  //      // remove non alpha/number/space/quote and lowercase
-  //      searchText = searchText.replaceAll("[^ a-zA-Z'0-9:\\\\-]", " ").toLowerCase(Locale.ENGLISH);
-  //    } else {
-  //      // remove punctuation from non latin languages
-  //      searchText = searchText.replaceAll("\\P{L}", " ");
-  //    }
-
   // normalize phrase
-  var cleanPhrase = removeDiacritics(phrase.trimLeft());
+  var cleanPhrase = tec.removeDiacritics(phrase.trimLeft());
 
   // remove punctuation
   cleanPhrase = cleanPhrase.replaceAll(RegExp('[^ a-zA-Z\'0-9:\-]'), ' ');

@@ -36,14 +36,14 @@ class ExtendedAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.transparent,
       leading: IconButton(
         tooltip: 'Menu',
-        icon: Icon(Icons.menu),
+        icon: const Icon(Icons.menu),
         color: Colors.white,
         onPressed: () => Scaffold.of(context).openDrawer(),
       ),
       actions: <Widget>[
         IconButton(
           tooltip: 'Filter',
-          icon: Icon(SFSymbols.line_horizontal_3_decrease_circle),
+          icon: const Icon(SFSymbols.line_horizontal_3_decrease_circle),
           color: Colors.white,
           onPressed: () {
             Navigator.of(context)

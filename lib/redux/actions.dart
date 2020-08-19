@@ -36,9 +36,9 @@ class SetNumSelectedAction {
   SetNumSelectedAction(this.numSelected);
 }
 
-class ContextAction {
+class GetContextAction {
   final int idx;
-  ContextAction(this.idx);
+  GetContextAction(this.idx);
 }
 
 class SetSelectionModeAction {}

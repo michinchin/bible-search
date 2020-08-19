@@ -27,7 +27,7 @@ class BibleSearchScreen extends BibleSearchDelegate<String> {
         ? [
             IconButton(
               tooltip: 'Clear text',
-              icon: Icon(Icons.close),
+              icon: const Icon(Icons.close),
               onPressed: () {
                 query = '';
               },
@@ -59,22 +59,18 @@ class BibleSearchScreen extends BibleSearchDelegate<String> {
     //     .toList()
     //     .reversed
     //     .toList();
-    if (data == null){
+    if (data == null) {
       return Container();
     }
     return query.isNotEmpty
         ? ListView(
             children: data.possibles
                 .map((a) => ListTile(
-                      title: query.isEmpty
-                          ? Text(a)
-                          : KeywordText(outer: a, inner: query, c: context),
+                      title:
+                          query.isEmpty ? Text(a) : KeywordText(outer: a, inner: query, c: context),
                       onTap: () {
-                        if (' '
-                            .allMatches(query)
-                            .length < 4 &&
-                            query.substring(query.length - 1, query.length) ==
-                                ' ') {
+                        if (' '.allMatches(query).length < 4 &&
+                            query.substring(query.length - 1, query.length) == ' ') {
                           query += '$a ';
                         } else {
                           final words = query.split(' ')..last = a;

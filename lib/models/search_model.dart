@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:bible_search/data/verse.dart';
 import 'package:bible_search/labels.dart';
-import 'package:diacritic/diacritic.dart';
 
 import 'package:bible_search/data/book.dart';
 import 'package:bible_search/data/search_result.dart';
@@ -135,7 +134,7 @@ class SearchModel {
     String verseText,
     String words,
   ) {
-    final verse = removeDiacritics(verseText);
+    final verse = tec.removeDiacritics(verseText);
 
     final content = <TextSpan>[];
     // var modPar = verse;

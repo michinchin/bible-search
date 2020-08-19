@@ -62,8 +62,7 @@ class _AdCardState extends State<AdCard> {
                             adUnitId: prefAdMobNativeAdId,
                             uniqueId: 'list-${widget.index}',
                             adFormat: 'text',
-                            darkMode: Theme.of(context).brightness !=
-                                Brightness.light,
+                            darkMode: Theme.of(context).brightness != Brightness.light,
                             maxHeight: 105,
                           ),
                   ),
@@ -81,15 +80,14 @@ class _AdCardState extends State<AdCard> {
                         showModalBottomSheet<void>(
                             shape: const RoundedRectangleBorder(
                                 borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(15),
-                                    topRight: Radius.circular(15))),
+                                    topLeft: Radius.circular(15), topRight: Radius.circular(15))),
                             context: context,
                             builder: (context) => Container(
                                   child: Wrap(
                                     children: <Widget>[
                                       ListTile(
                                         title: const Text('Hide this ad'),
-                                        leading: Icon(FeatherIcons.minusCircle),
+                                        leading: const Icon(FeatherIcons.minusCircle),
                                         onTap: () {
                                           Navigator.of(context).maybePop();
                                           widget.hideAd(widget.index);
@@ -97,29 +95,25 @@ class _AdCardState extends State<AdCard> {
                                       ),
                                       ListTile(
                                         title: const Text('Remove ads'),
-                                        leading: Icon(FeatherIcons.xCircle),
+                                        leading: const Icon(FeatherIcons.xCircle),
                                         onTap: () => vm.removeAds(context),
                                       ),
                                       ListTile(
-                                          title: const Text(
-                                              'Why am I seeing this ad?'),
-                                          leading: Icon(FeatherIcons.info),
+                                          title: const Text('Why am I seeing this ad?'),
+                                          leading: const Icon(FeatherIcons.info),
                                           onTap: () => vm.whyAdDialog(context)),
                                       ListTile(
                                         title: const Text('Send feedback'),
-                                        leading:
-                                            Icon(FeatherIcons.messageSquare),
+                                        leading: const Icon(FeatherIcons.messageSquare),
                                         onTap: () {
                                           Navigator.of(context).maybePop();
-                                          vm.emailFeedback(
-                                              context, 'list-${widget.index}');
+                                          vm.emailFeedback(context, 'list-${widget.index}');
                                         },
                                       ),
                                       ListTile(
                                         title: const Text('Close'),
-                                        leading: Icon(Icons.close),
-                                        onTap: () =>
-                                            Navigator.of(context).pop(),
+                                        leading: const Icon(Icons.close),
+                                        onTap: () => Navigator.of(context).pop(),
                                       )
                                     ],
                                   ),
@@ -197,14 +191,11 @@ class AdCardViewModel {
       email = 'androidsupport@tecarta.com';
     }
     final di = await tec.DeviceInfo.fetch();
-    print(
-        'Running on ${di.productName} with ${tec.DeviceInfo.os} ${di.version}');
-    const version =
-        (appVersion == 'DEBUG-VERSION' ? '(debug version)' : 'v$appVersion');
+    print('Running on ${di.productName} with ${di.model} ${di.version}');
+    const version = (appVersion == 'DEBUG-VERSION' ? '(debug version)' : 'v$appVersion');
     final subject = 'Feedback regarding Bible Search! $version '
-        'with ${di.productName} ${tec.DeviceInfo.os} ${di.version}';
-    final adHeadline = await NativeAdController.instance
-        .getHeadline(prefAdMobNativeAdId, uniqueId);
+        'with ${di.productName} ${di.model} ${di.version}';
+    final adHeadline = await NativeAdController.instance.getHeadline(prefAdMobNativeAdId, uniqueId);
     final body =
         'I have the following question or comment about an ad with headline ($adHeadline):\n\n\n';
     final url = Uri.encodeFull('mailto:$email?subject=$subject&body=$body');

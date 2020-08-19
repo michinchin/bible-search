@@ -56,11 +56,9 @@ class _VerseAllResultsPage extends StatelessWidget {
               itemCount: res.verses.length,
               itemBuilder: (context, index) {
                 final allResults = res.verses;
-                final text =
-                    '${res.ref} ${allResults[index].a}\n${allResults[index].verseContent}';
+                final text = '${res.ref} ${allResults[index].a}\n${allResults[index].verseContent}';
                 return _AllResultCard(
-                  title:
-                      '${vm.store.state.translations.getFullName(allResults[index].id)}\n',
+                  title: '${vm.store.state.translations.getFullName(allResults[index].id)}\n',
                   subtitle: [TextSpan(text: allResults[index].verseContent)],
                   copy: () => model.copyPressed(text: text, context: context),
                   share: () => Share.share(text),
@@ -91,16 +89,12 @@ class _FutureAllResultsPage extends StatelessWidget {
     final chapter = res.chapterId;
     final verse = res.verseId;
     final _future = AllResults.fetch(
-        book: book,
-        chapter: chapter,
-        verse: verse,
-        translations: vm.store.state.translations);
+        book: book, chapter: chapter, verse: verse, translations: vm.store.state.translations);
 
     return FutureBuilder<AllResults>(
         future: _future,
         builder: (context, snapshot) {
-          final allResults =
-              snapshot.data == null ? <AllResult>[] : snapshot.data.data;
+          final allResults = snapshot.data == null ? <AllResult>[] : snapshot.data.data;
 
           return Scaffold(
             appBar: AppBar(
@@ -126,8 +120,7 @@ class _FutureAllResultsPage extends StatelessWidget {
                               '${allResults[index].text}',
                               keywords,
                             ),
-                            copy: () =>
-                                model.copyPressed(text: text, context: context),
+                            copy: () => model.copyPressed(text: text, context: context),
                             share: () => Share.share(text),
                             openInTB: () => model.openTB(
                               a: allResults[index].a,
@@ -150,16 +143,14 @@ class _AllResultCard extends StatelessWidget {
   final VoidCallback copy;
   final VoidCallback share;
   final VoidCallback openInTB;
-  const _AllResultCard(
-      {this.title, this.subtitle, this.copy, this.share, this.openInTB});
+  const _AllResultCard({this.title, this.subtitle, this.copy, this.share, this.openInTB});
 
   @override
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).brightness == Brightness.light
           ? ThemeData(
-              accentColor: Colors.orange,
-              iconTheme: IconThemeData(color: Colors.black54))
+              accentColor: Colors.orange, iconTheme: const IconThemeData(color: Colors.black54))
           : Theme.of(context),
       child: Padding(
         padding: const EdgeInsets.only(bottom: 8),
@@ -168,12 +159,10 @@ class _AllResultCard extends StatelessWidget {
           title: AutoSizeText.rich(
             TextSpan(children: [
               TextSpan(
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).accentColor),
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, color: Theme.of(context).accentColor),
                   text: title),
-              TextSpan(
-                  style: Theme.of(context).textTheme.bodyText2, children: subtitle),
+              TextSpan(style: Theme.of(context).textTheme.bodyText2, children: subtitle),
             ]),
             minFontSize: minFontSizeDescription,
           ),
@@ -187,20 +176,16 @@ class _AllResultCard extends StatelessWidget {
                     IconButton(
                       tooltip: 'Copy',
                       onPressed: copy,
-                      icon: Icon(Platform.isIOS
-                          ? SFSymbols.doc_on_doc
-                          : Icons.content_copy),
+                      icon: Icon(Platform.isIOS ? SFSymbols.doc_on_doc : Icons.content_copy),
                     ),
                     IconButton(
                         tooltip: 'Share',
                         onPressed: share,
-                        icon: Icon(Platform.isIOS
-                            ? SFSymbols.square_arrow_up
-                            : OMIcons.share)),
+                        icon: Icon(Platform.isIOS ? SFSymbols.square_arrow_up : OMIcons.share)),
                     IconButton(
                       tooltip: 'Open in TecartaBible',
                       onPressed: openInTB,
-                      icon: Icon(TecIcons.tbOutlineLogo),
+                      icon: const Icon(TecIcons.tbOutlineLogo),
                     )
                   ]),
             ),

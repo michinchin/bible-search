@@ -45,9 +45,7 @@ class HomeDrawer extends StatelessWidget {
                       text: TextSpan(
                           children: const [
                             TextSpan(text: 'Tecarta'),
-                            TextSpan(
-                                text: 'Bible',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            TextSpan(text: 'Bible', style: TextStyle(fontWeight: FontWeight.bold)),
                             TextSpan(text: ' Search')
                           ],
                           style: Theme.of(context).brightness == Brightness.dark
@@ -61,12 +59,12 @@ class HomeDrawer extends StatelessWidget {
                   const Divider(),
                   if (isResultPage) ...[
                     ListTile(
-                      leading: Icon(FeatherIcons.clock),
+                      leading: const Icon(FeatherIcons.clock),
                       title: const Text('History'),
                       onTap: () {
                         Navigator.of(context).pop();
-                        Future.delayed(const Duration(milliseconds: 250),
-                            () => Navigator.of(context).pop());
+                        Future.delayed(
+                            const Duration(milliseconds: 250), () => Navigator.of(context).pop());
                       },
                     ),
                     // IconData(0xe0c6, fontFamily: 'MaterialIcons')
@@ -79,7 +77,7 @@ class HomeDrawer extends StatelessWidget {
                         if (snapshot.hasData) {
                           if (!snapshot.data) {
                             return ListTile(
-                                leading: Icon(FeatherIcons.xCircle),
+                                leading: const Icon(FeatherIcons.xCircle),
                                 title: const Text('Remove Ads'),
                                 onTap: () => vm.removeAds(context));
                           }
@@ -89,9 +87,7 @@ class HomeDrawer extends StatelessWidget {
                       }),
 
                   ListTile(
-                    leading: Icon(Platform.isIOS
-                        ? SFSymbols.square_arrow_up
-                        : OMIcons.share),
+                    leading: Icon(Platform.isIOS ? SFSymbols.square_arrow_up : OMIcons.share),
                     title: const Text('Share App'),
                     onTap: () async {
                       await Navigator.of(context).maybePop();
@@ -100,13 +96,12 @@ class HomeDrawer extends StatelessWidget {
                   ),
                   const Divider(),
                   ListTile(
-                    leading: Icon(FeatherIcons.heart),
+                    leading: const Icon(FeatherIcons.heart),
                     title: const Text('Translations'),
-                    onTap: () =>
-                        Navigator.of(context).pushNamed('/default_translation'),
+                    onTap: () => Navigator.of(context).pushNamed('/default_translation'),
                   ),
                   SwitchListTile.adaptive(
-                      secondary: Icon(FeatherIcons.moon),
+                      secondary: const Icon(FeatherIcons.moon),
                       activeColor: Theme.of(context).accentColor,
                       value: vm.isDarkTheme,
                       title: const Text('Dark Mode'),
@@ -120,26 +115,23 @@ class HomeDrawer extends StatelessWidget {
                       }),
                   const Divider(),
                   ListTile(
-                      leading: Icon(FeatherIcons.user),
-                      title: Text(vm.userAccount.isSignedIn
-                          ? '${vm.userAccount.user.email}'
-                          : 'Account'),
+                      leading: const Icon(FeatherIcons.user),
+                      title: Text(
+                          vm.userAccount.isSignedIn ? '${vm.userAccount.user.email}' : 'Account'),
                       onTap: () {
                         Navigator.of(context).pop();
                         showSignInDlg(
-                            context: context,
-                            account: vm.userAccount,
-                            appName: 'bible_search');
+                            context: context, account: vm.userAccount, appName: 'bible_search');
                       }),
                   ListTile(
-                    leading: Icon(FeatherIcons.helpCircle),
+                    leading: const Icon(FeatherIcons.helpCircle),
                     title: const Text('Help & Feedback'),
                     onTap: () {
                       vm.helpAndFeedback(context);
                     },
                   ),
                   ListTile(
-                      leading: Icon(FeatherIcons.info),
+                      leading: const Icon(FeatherIcons.info),
                       title: const Text('About'),
                       onTap: () {
                         tw.tecShowSimpleAlertDialog<void>(
@@ -249,18 +241,16 @@ class DrawerViewModel {
     await tec.Prefs.shared.setBool(firstTimeOpenedPref, true);
     if (tec.Prefs.shared.getBool(firstTimeOpenedPref, defaultValue: true) &&
         !MediaQuery.of(c).accessibleNavigation) {
-      WidgetsBinding.instance
-          .addPostFrameCallback((duration) => FeatureDiscovery.discoverFeatures(
-                c,
-                featureIds.toSet(),
-              ));
+      WidgetsBinding.instance.addPostFrameCallback((duration) => FeatureDiscovery.discoverFeatures(
+            c,
+            featureIds.toSet(),
+          ));
       await tec.Prefs.shared.setBool(firstTimeOpenedPref, false);
       showToastAndPop(c, 'Success! Reset Feature Discovery');
     }
   }
 
-  void _changeTheme(bool isDarkTheme) =>
-      store.dispatch(SetThemeAction(isDarkTheme: isDarkTheme));
+  void _changeTheme(bool isDarkTheme) => store.dispatch(SetThemeAction(isDarkTheme: isDarkTheme));
 
   /// Opens the native email UI with an email for questions or comments.
   Future<void> _emailFeedback(BuildContext context) async {
@@ -269,12 +259,10 @@ class DrawerViewModel {
       email = 'androidsupport@tecarta.com';
     }
     final di = await tec.DeviceInfo.fetch();
-    print(
-        'Running on ${di.productName} with ${tec.DeviceInfo.os} ${di.version}');
-    const version =
-        (appVersion == 'DEBUG-VERSION' ? '(debug version)' : 'v$appVersion');
+    print('Running on ${di.productName} with ${di.model} ${di.version}');
+    const version = (appVersion == 'DEBUG-VERSION' ? '(debug version)' : 'v$appVersion');
     final subject = 'Feedback regarding Bible Search! $version '
-        'with ${di.productName} ${tec.DeviceInfo.os} ${di.version}';
+        'with ${di.productName} ${di.model} ${di.version}';
     const body = 'I have the following question or comment:\n\n\n';
 
     final url = Uri.encodeFull('mailto:$email?subject=$subject&body=$body');

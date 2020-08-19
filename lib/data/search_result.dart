@@ -1,6 +1,5 @@
 import 'dart:core';
 
-import 'package:diacritic/diacritic.dart';
 import 'package:flutter/material.dart';
 
 import 'package:tec_cache/tec_cache.dart';
@@ -118,7 +117,7 @@ class SearchResults {
 
     urlEncodingExceptions
         .forEach((k, v) => cacheWords = cacheWords.replaceAll(RegExp(k), v));
-    removeDiacritics(cacheWords)
+    tec.removeDiacritics(cacheWords)
         .replaceAll(RegExp('[^ a-zA-Z\'0-9:\-]'), ' ')
         .trim();
 
@@ -200,8 +199,6 @@ final urlEncodingExceptions = <String, String>{
   '‛': '\'',
   '“': '"',
   '”': '"',
-  '“': '"', // UTF-8: E2 80 9C
-  '”': '"', // UTF-8: E2 80 9D
   '„': '"', // UTF-8: E2 80 9E
   '‟': '"',
   '′': '"',
