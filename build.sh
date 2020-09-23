@@ -16,7 +16,7 @@ sed -i '' "s/versionName flutterVersionName/versionName \"$VERSION\"/g" android/
 flutter build apk --release
 cp build/app/outputs/apk/release/app-release.apk ${HTDOCS}/bibles/android/BibleSearch-${BUILD_ID}-${BUILD_NUMBER}.apk
 # resign with regular signature
-/opt/android-sdk-mac_x86/build-tools/29.0.2/apksigner sign --ks ../keystore --ks-key-alias "tecarta apps" --ks-pass pass:Secur1ty --key-pass pass:Secur1ty ${HTDOCS}/bibles/android/BibleSearch-${BUILD_ID}-${BUILD_NUMBER}.apk
+~/Library/Android/sdk/build-tools/29.0.2/apksigner sign --ks ../keystore --ks-key-alias "tecarta apps" --ks-pass pass:Secur1ty --key-pass pass:Secur1ty ${HTDOCS}/bibles/android/BibleSearch-${BUILD_ID}-${BUILD_NUMBER}.apk
 "../makeIndex.sh" "Android Products" "${HTDOCS}/bibles/android"
 
 # Android 
