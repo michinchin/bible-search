@@ -2,7 +2,6 @@
 VERSION=1.2.2
 HTDOCS=/Users/builder/htdocs
 
-cd bible_search
 flutter pub get
 flutter clean
 
