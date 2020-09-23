@@ -68,6 +68,8 @@ class InAppPurchases {
   }
 
   InAppPurchases() {
+    InAppPurchaseConnection.enablePendingPurchases();
+
     final purchaseUpdates =
         InAppPurchaseConnection.instance.purchaseUpdatedStream;
     _subscription = purchaseUpdates.listen(_handlePurchaseUpdates);
@@ -88,27 +90,26 @@ class InAppPurchases {
             // Handle the error.
             print('Unable to restore purchases...');
           } else {
-            _handlePurchaseUpdates(response.pastPurchases);
+            _handlePurchaseUpdates(response.pastPurchases, restoration: true);
           }
         });
       }
     });
   }
 
-  void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetails) {
+  void _handlePurchaseUpdates(List<PurchaseDetails> purchaseDetails,
+      {bool restoration = false}) {
     if (_purchaseHandler != null) {
       for (final details in purchaseDetails) {
         // status is null when it's a past purchase...
         if (details.status == PurchaseStatus.purchased ||
             details.status == null) {
-
-          if (details.skPaymentTransaction != null) {
-            // Mark that you've delivered the purchase. Only the App Store requires
-            // this final confirmation.
+          if (!details.billingClientPurchase.isAcknowledged) {
             InAppPurchaseConnection.instance.completePurchase(details);
           }
-
           _purchaseHandler(details.productID, _userAccount);
+        } else if (details.status == PurchaseStatus.error) {
+          print('IAP purchase error: ${details.error.details}');
         }
       }
     }

@@ -65,7 +65,7 @@ class BibleTranslations {
     for (final b in a) {
       if (b is Map<String, dynamic>) {
         if (b['name'] == 'Bible Translations' || b['name'] == 'Español') {
-          for (final Map<String, dynamic> c in b['products']) {
+          for (final c in tec.as<List<Map<String, dynamic>>>(b['products'])) {
             final res = BibleTranslation.fromJson(c);
             if (res != null) {
               d.add(res);
