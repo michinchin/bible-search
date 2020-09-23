@@ -17,7 +17,6 @@ import 'package:redux/redux.dart';
 import 'package:bible_search/redux/reducers.dart';
 import 'package:bible_search/redux/middleware.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:tec_cache/tec_cache.dart';
 
 import 'package:tec_native_ad/tec_native_ad.dart';
 import 'package:tec_user_account/tec_user_account.dart';
@@ -34,11 +33,9 @@ Future<void> main() async {
   // Load preferences.
   await tec.Prefs.shared.load();
 
-  await TecCache.init();
-
   // Load device info
   final di = await tec.DeviceInfo.fetch();
-  print('Running on ${di.productName} with ${tec.DeviceInfo.os} ${di.version}');
+  print('Running on ${di.productName} with ${di.model} ${di.version}');
 
   final kvStore = KVStore();
   // ignore: prefer_interpolation_to_compose_strings
@@ -53,16 +50,12 @@ Future<void> main() async {
   final store = Store<AppState>(
     reducers,
     initialState: AppState.initial(
-        deviceInfo: di,
-        state: AppLifecycleState.inactive,
-        userAccount: userAccount),
+        deviceInfo: di, state: AppLifecycleState.inactive, userAccount: userAccount),
     middleware: middleware,
   )..dispatch(InitHomeAction());
 
   // init loading of ads...
-  unawaited(userAccount.userDb
-      .hasLicenseToFullVolume(removeAdsVolumeId)
-      .then((hasAccess) {
+  unawaited(userAccount.userDb.hasLicenseToFullVolume(removeAdsVolumeId).then((hasAccess) {
     if (!hasAccess) {
       NativeAdController.instance.loadAds(adUnitId: prefAdMobNativeAdId);
     }
@@ -91,8 +84,7 @@ class BibleSearchApp extends StatelessWidget {
     return StoreProvider<AppState>(
         store: store,
         child: tec.BlocProvider<tw.TecStyleBloc>(
-            bloc: tw.TecStyleBloc(
-                <String, dynamic>{'dialogStyle': tw.TecMetaStyle.material}),
+            bloc: tw.TecStyleBloc(<String, dynamic>{'dialogStyle': tw.TecMetaStyle.material}),
             child: FeatureDiscovery(
               child: OKToast(
                 child: DynamicTheme(
@@ -100,17 +92,15 @@ class BibleSearchApp extends StatelessWidget {
                     data: (brightness) => ThemeData(
                           fontFamily: 'Roboto',
                           primarySwatch: Colors.orange,
-                          primaryColorBrightness:
-                              darkTheme ? Brightness.dark : Brightness.light,
-                          brightness:
-                              darkTheme ? Brightness.dark : Brightness.light,
+                          primaryColorBrightness: darkTheme ? Brightness.dark : Brightness.light,
+                          brightness: darkTheme ? Brightness.dark : Brightness.light,
                         ),
                     themedWidgetBuilder: (context, theme) {
                       if (theme.brightness == Brightness.dark) {
                         const textColor = Color(0xffcccccc);
                         theme = theme.copyWith(
-                            textTheme: theme.textTheme.apply(
-                                bodyColor: textColor, displayColor: textColor),
+                            textTheme: theme.textTheme
+                                .apply(bodyColor: textColor, displayColor: textColor),
                             iconTheme: const IconThemeData(color: textColor));
                       }
                       return MaterialApp(
@@ -122,9 +112,8 @@ class BibleSearchApp extends StatelessWidget {
                               const ChooseDefaultTranslationScreen(),
                         },
                         title: 'Bible Search',
-                        theme: theme.copyWith(
-                            textTheme:
-                                theme.textTheme.apply(fontFamily: 'Roboto')),
+                        theme:
+                            theme.copyWith(textTheme: theme.textTheme.apply(fontFamily: 'Roboto')),
                         home: _AppBindingObserver(store),
                       );
                     }),
@@ -140,8 +129,7 @@ class _AppBindingObserver extends StatefulWidget {
   _AppBindingObserverState createState() => _AppBindingObserverState();
 }
 
-class _AppBindingObserverState extends State<_AppBindingObserver>
-    with WidgetsBindingObserver {
+class _AppBindingObserverState extends State<_AppBindingObserver> with WidgetsBindingObserver {
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(this);

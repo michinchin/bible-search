@@ -62,9 +62,7 @@ class _CardIconsState extends State<CardIcons> {
 
   void _onShare() => searchModel.shareSelection(
       context: context,
-      verse: ShareVerse(
-          books: widget.bookNames,
-          results: [widget.res.copyWith(isSelected: true)]));
+      verse: ShareVerse(books: widget.bookNames, results: [widget.res.copyWith(isSelected: true)]));
 
   void _openInTB() => searchModel.openTB(
         a: widget.res.verses[widget.res.currentVerseIndex].a,
@@ -101,7 +99,7 @@ class _CardIconsState extends State<CardIcons> {
                     alignment: Alignment.bottomRight,
                     padding: const EdgeInsets.all(0),
                     color: widget.model.iconColor,
-                    icon: Icon(Icons.expand_less),
+                    icon: const Icon(Icons.expand_less),
                     onPressed: widget.onExpanded,
                   ),
                 ],
@@ -118,24 +116,22 @@ class _CardIconsState extends State<CardIcons> {
                     },
                     onDismiss: () => _onDismiss(2),
                     title: const Text('Give Context'),
-                    description: const Text(
-                        'Tap here to view the surrounding verses of this scripture'),
-                    tapTarget: RotatedBox(
+                    description:
+                        const Text('Tap here to view the surrounding verses of this scripture'),
+                    tapTarget: const RotatedBox(
                       quarterTurns: 1,
                       child: Icon(Icons.unfold_more, color: Colors.black),
                     ),
                     child: EnsureVisible(
                       key: ensureVisibleGlobalKey,
                       child: IconButton(
-                        tooltip: widget.res.contextExpanded
-                            ? 'Collapse Context'
-                            : 'Expand Context',
+                        tooltip: widget.res.contextExpanded ? 'Collapse Context' : 'Expand Context',
                         color: widget.model.iconColor,
                         icon: RotatedBox(
                           quarterTurns: 1,
                           child: widget.res.contextExpanded
-                              ? Icon(Icons.unfold_less)
-                              : Icon(Icons.unfold_more),
+                              ? const Icon(Icons.unfold_less)
+                              : const Icon(Icons.unfold_more),
                         ),
                         onPressed: widget.onContext,
                       ),
@@ -147,16 +143,12 @@ class _CardIconsState extends State<CardIcons> {
                     IconButton(
                         tooltip: 'Copy',
                         color: widget.model.iconColor,
-                        icon: Icon(Platform.isIOS
-                            ? SFSymbols.doc_on_doc
-                            : Icons.content_copy),
+                        icon: Icon(Platform.isIOS ? SFSymbols.doc_on_doc : Icons.content_copy),
                         onPressed: _onCopy),
                     IconButton(
                         tooltip: 'Share',
                         color: widget.model.iconColor,
-                        icon: Icon(Platform.isIOS
-                            ? SFSymbols.square_arrow_up
-                            : OMIcons.share),
+                        icon: Icon(Platform.isIOS ? SFSymbols.square_arrow_up : OMIcons.share),
                         onPressed: _onShare),
                     DescribedFeatureOverlay(
                       featureId: 'open_in_TB',
@@ -164,12 +156,11 @@ class _CardIconsState extends State<CardIcons> {
                       description: const Text(
                           'Need more study tools? Quickly flip over to Tecarta Bible to read full chapters, '
                           'take notes, explore maps, listen to audio and get help with verse explanations!'),
-                      tapTarget:
-                          Icon(TecIcons.tbOutlineLogo, color: Colors.black),
+                      tapTarget: const Icon(TecIcons.tbOutlineLogo, color: Colors.black),
                       child: IconButton(
                           tooltip: 'Open in TecartaBible',
                           color: widget.model.iconColor,
-                          icon: Icon(TecIcons.tbOutlineLogo),
+                          icon: const Icon(TecIcons.tbOutlineLogo),
                           onPressed: _openInTB),
                     ),
                   ],
@@ -199,7 +190,7 @@ class _CardIconsState extends State<CardIcons> {
                   alignment: Alignment.bottomRight,
                   padding: const EdgeInsets.all(0),
                   color: widget.model.iconColor,
-                  icon: Icon(Icons.expand_more),
+                  icon: const Icon(Icons.expand_more),
                   onPressed: widget.onExpanded,
                 ),
               ])
@@ -232,8 +223,7 @@ class __TranslationSelectorState extends State<_TranslationSelector> {
           container: true,
           label: 'View all translations',
           child: FlatButton(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: const Text('ALL'),
             onPressed: () {
               Navigator.of(context).push<void>(MaterialPageRoute(
@@ -245,12 +235,9 @@ class __TranslationSelectorState extends State<_TranslationSelector> {
                   },
                   fullscreenDialog: true));
             },
-            textColor: widget.res.isSelected
-                ? widget.model.colorScheme
-                : widget.model.oppColorScheme,
-            splashColor: widget.res.isSelected
-                ? Colors.transparent
-                : Theme.of(context).accentColor,
+            textColor:
+                widget.res.isSelected ? widget.model.colorScheme : widget.model.oppColorScheme,
+            splashColor: widget.res.isSelected ? Colors.transparent : Theme.of(context).accentColor,
           ),
         ));
 
@@ -261,31 +248,24 @@ class __TranslationSelectorState extends State<_TranslationSelector> {
       Color buttonColor;
       Color textColor;
       if (widget.res.isSelected) {
-        buttonColor = widget.currTag == each.id
-            ? Theme.of(context).cardColor
-            : Theme.of(context).accentColor;
-        textColor = widget.currTag == each.id
-            ? widget.model.oppColorScheme
-            : widget.model.colorScheme;
+        buttonColor =
+            widget.currTag == each.id ? Theme.of(context).cardColor : Theme.of(context).accentColor;
+        textColor =
+            widget.currTag == each.id ? widget.model.oppColorScheme : widget.model.colorScheme;
       } else {
-        buttonColor = widget.currTag == each.id
-            ? Theme.of(context).accentColor
-            : Colors.transparent;
-        textColor = widget.currTag == each.id
-            ? Theme.of(context).cardColor
-            : widget.model.oppColorScheme;
+        buttonColor =
+            widget.currTag == each.id ? Theme.of(context).accentColor : Colors.transparent;
+        textColor =
+            widget.currTag == each.id ? Theme.of(context).cardColor : widget.model.oppColorScheme;
       }
 
       buttons.add(ButtonTheme(
         minWidth: 50,
         child: Semantics(
           container: true,
-          label: widget.currTag == each.id
-              ? '${each.a} selected'
-              : 'Select ${each.a}',
+          label: widget.currTag == each.id ? '${each.a} selected' : 'Select ${each.a}',
           child: FlatButton(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Text(each.a),
             textColor: textColor,
             color: buttonColor, //currently chosen, pass tag
@@ -297,9 +277,7 @@ class __TranslationSelectorState extends State<_TranslationSelector> {
 
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
-      child: Wrap(
-          alignment: WrapAlignment.spaceAround,
-          children: buttons..add(allButton)),
+      child: Wrap(alignment: WrapAlignment.spaceAround, children: buttons..add(allButton)),
     );
   }
 }

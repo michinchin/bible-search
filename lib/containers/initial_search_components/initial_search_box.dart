@@ -35,20 +35,14 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
   Widget build(BuildContext context) {
     return Theme(
       data: Theme.of(context).brightness == Brightness.dark
-          ? ThemeData(
-              accentColor: Colors.tealAccent.withOpacity(0.5),
-              brightness: Brightness.dark)
+          ? ThemeData(accentColor: Colors.tealAccent.withOpacity(0.5), brightness: Brightness.dark)
           : Theme.of(context),
       child: Padding(
           padding: widget.orientation == Orientation.portrait
               ? EdgeInsets.only(
-                  left: 20.0,
-                  right: 20.0,
-                  top: widget.imageHeight - (widget.height / 2))
+                  left: 20.0, right: 20.0, top: widget.imageHeight - (widget.height / 2))
               : EdgeInsets.only(
-                  left: 40.0,
-                  right: 40.0,
-                  top: widget.imageHeight - (widget.height / 2)),
+                  left: 40.0, right: 40.0, top: widget.imageHeight - (widget.height / 2)),
           child: Container(
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
@@ -76,9 +70,8 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
                   },
                   textInputAction: TextInputAction.search,
                   textAlign: TextAlign.left,
-                  decoration: InputDecoration(
-                    contentPadding:
-                        const EdgeInsets.only(left: 40.0, right: 40.0),
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.only(left: 40.0, right: 40.0),
                     hintText: 'Enter search terms',
                     border: InputBorder.none,
                     hintStyle: TextStyle(color: Colors.grey),
@@ -112,7 +105,7 @@ class _InitialSearchBoxState extends State<InitialSearchBox> {
                 alignment: Alignment.centerLeft,
                 child: IconButton(
                   splashColor: Colors.transparent,
-                  icon: Icon(
+                  icon: const Icon(
                     CupertinoIcons.search,
                   ),
                   onPressed: () {},

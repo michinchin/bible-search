@@ -18,12 +18,11 @@ class SearchAppBar extends StatefulWidget implements PreferredSizeWidget {
   final ResultsViewModel model;
   final VoidCallback showSearch;
 
-  const SearchAppBar({Key key, @required this.model, @required this.showSearch})
-      : super(key: key);
+  const SearchAppBar({Key key, @required this.model, @required this.showSearch}) : super(key: key);
 
   @override
   Size get preferredSize {
-    return Size.fromHeight(kToolbarHeight);
+    return const Size.fromHeight(kToolbarHeight);
   }
 
   @override
@@ -63,8 +62,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
 
   void _navigateToFilter(BuildContext context) {
     Navigator.of(context).push<MaterialPageRoute>(MaterialPageRoute(
-        builder: (context) => TranslationBookFilterScreen(tabValue: 0),
-        fullscreenDialog: true));
+        builder: (context) => TranslationBookFilterScreen(tabValue: 0), fullscreenDialog: true));
   }
 
   Future<bool> _onDismiss(int idx) async {
@@ -96,10 +94,9 @@ class _SearchAppBarState extends State<SearchAppBar> {
                       color: Theme.of(context).cardColor,
                       boxShadow: [
                         BoxShadow(
-                          color:
-                              Theme.of(context).brightness == Brightness.light
-                                  ? Colors.black12
-                                  : Colors.black26,
+                          color: Theme.of(context).brightness == Brightness.light
+                              ? Colors.black12
+                              : Colors.black26,
                           offset: const Offset(0, 10),
                           blurRadius: 10,
                           spreadRadius: 1,
@@ -109,7 +106,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                     contentPadding: const EdgeInsets.all(0),
                     leading: IconButton(
                       tooltip: 'Menu',
-                      icon: Icon(Icons.menu),
+                      icon: const Icon(Icons.menu),
                       onPressed: () => Scaffold.of(context).openDrawer(),
                     ),
                     title: InkWell(
@@ -117,8 +114,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                         child: AutoSizeText(
                           widget.model.searchQuery ?? 'Search Here',
                           minFontSize: minFontSizeDescription,
-                          semanticsLabel:
-                              'Current Search Text is ${widget.model.searchQuery}',
+                          semanticsLabel: 'Current Search Text is ${widget.model.searchQuery}',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         )),
@@ -138,7 +134,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                               'Tap here to enter selection mode. Select multiple scripture verses to copy or share!'),
                           child: IconButton(
                             tooltip: 'Selection Mode',
-                            icon: Icon(SFSymbols.checkmark_alt_circle),
+                            icon: const Icon(SFSymbols.checkmark_alt_circle),
                             onPressed: _changeToSelectionMode,
                           ),
                         ),
@@ -156,8 +152,7 @@ class _SearchAppBarState extends State<SearchAppBar> {
                             'Check out the filter page! Filter search results by translation and books of the Bible'),
                         child: IconButton(
                           tooltip: 'Filter',
-                          icon:
-                              Icon(SFSymbols.line_horizontal_3_decrease_circle),
+                          icon: const Icon(SFSymbols.line_horizontal_3_decrease_circle),
                           onPressed: () => _navigateToFilter(context),
                         ),
                       ),
@@ -171,22 +166,19 @@ class _SearchAppBarState extends State<SearchAppBar> {
             title: AutoSizeText('${widget.model.numSelected}'),
             leading: IconButton(
               tooltip: 'Exit Selection Mode',
-              icon: Icon(Icons.close),
+              icon: const Icon(Icons.close),
               onPressed: _changeToSelectionMode,
             ),
             actions: <Widget>[
               IconButton(
                   tooltip: 'Copy Selected',
-                  icon: Icon(Platform.isIOS
-                      ? SFSymbols.doc_on_doc
-                      : Icons.content_copy),
+                  icon: Icon(Platform.isIOS ? SFSymbols.doc_on_doc : Icons.content_copy),
                   onPressed: () async {
                     // final hasfinishedCopy =
                     await sm.shareSelection(
                         context: context,
                         verse: ShareVerse(
-                            books: widget.model.bookNames,
-                            results: widget.model.filteredRes),
+                            books: widget.model.bookNames, results: widget.model.filteredRes),
                         isCopy: true);
                     // if (hasfinishedCopy) {
                     //   _changeToSelectionMode();
@@ -194,16 +186,13 @@ class _SearchAppBarState extends State<SearchAppBar> {
                   }),
               IconButton(
                   tooltip: 'Share Selected',
-                  icon: Icon(Platform.isIOS
-                      ? SFSymbols.square_arrow_up_on_square
-                      : OMIcons.share),
+                  icon: Icon(Platform.isIOS ? SFSymbols.square_arrow_up_on_square : OMIcons.share),
                   onPressed: () async {
                     // final hasFinishedShare =
                     await sm.shareSelection(
                         context: context,
                         verse: ShareVerse(
-                            books: widget.model.bookNames,
-                            results: widget.model.filteredRes));
+                            books: widget.model.bookNames, results: widget.model.filteredRes));
                     // if (hasFinishedShare) {
                     //   _changeToSelectionMode();
                     // }

@@ -7,8 +7,7 @@ class SearchHistoryList extends StatelessWidget {
   final Function(String) onSearchEntered;
   final Function(List<String>) updateSearchHistory;
 
-  const SearchHistoryList(
-      {this.searchHistory, this.onSearchEntered, this.updateSearchHistory});
+  const SearchHistoryList({this.searchHistory, this.onSearchEntered, this.updateSearchHistory});
 
   @override
   Widget build(BuildContext context) {
@@ -21,16 +20,13 @@ class SearchHistoryList extends StatelessWidget {
                 key: Key(words[index]),
                 direction: DismissDirection.endToStart,
                 onDismissed: (direction) {
-                  TecToast.show(context,
-                      'The search term "${words[index]}" has been removed');
+                  TecToast.show(context, 'The search term "${words[index]}" has been removed');
                   words.removeWhere((w) => (w == words[index]));
                   updateSearchHistory(words.reversed.toList());
                 },
                 background: Container(
                   padding: const EdgeInsets.only(right: 15.0),
-                  child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Icon(Icons.delete)),
+                  child: const Align(alignment: Alignment.centerRight, child: Icon(Icons.delete)),
                   color: Colors.red,
                 ),
                 child: Semantics(
@@ -39,7 +35,7 @@ class SearchHistoryList extends StatelessWidget {
                     title: Text(
                       '${words[index]}',
                     ),
-                    leading: Icon(FeatherIcons.clock),
+                    leading: const Icon(FeatherIcons.clock),
                     onTap: () {
                       onSearchEntered(words[index]);
                       Navigator.of(context).pushNamed('/results');

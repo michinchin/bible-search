@@ -21,14 +21,12 @@ dependencies:
   # External dependencies
   async: ^2.4.0
   auto_size_text: ^2.1.0
-  diacritic: ^0.1.1
   dynamic_theme: ^1.0.1
   feather_icons_flutter: '>=4.7.4'
   feature_discovery: ^0.6.0
   firebase_analytics: ^5.0.9
   firebase_core: 0.4.4
   firebase_dynamic_links: ^0.5.0+9
-  flutter_facebook_login: ^3.0.0
   flutter_redux: ^0.6.0
   flutter_sfsymbols: ^1.0.0
   in_app_purchase: ^0.3.2+1

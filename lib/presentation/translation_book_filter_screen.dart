@@ -32,8 +32,7 @@ class TranslationBookFilterScreen extends StatelessWidget {
             child: Scaffold(
               appBar: AppBar(
                 title: GestureDetector(
-                    onVerticalDragDown: Navigator.of(context).pop,
-                    child: const Text('Filter')),
+                    onVerticalDragDown: Navigator.of(context).pop, child: const Text('Filter')),
                 bottom: TabBar(
                   tabs: tabs,
                 ),
@@ -42,7 +41,7 @@ class TranslationBookFilterScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  icon: Icon(Icons.close),
+                  icon: const Icon(Icons.close),
                 ),
               ),
               body: TabBarView(
@@ -50,9 +49,7 @@ class TranslationBookFilterScreen extends StatelessWidget {
                   return Container(
                       key: PageStorageKey(tab.text),
                       padding: const EdgeInsets.all(10.0),
-                      child: tab.text == 'BOOK'
-                          ? BookList(vm, tabValue)
-                          : LanguageList(vm));
+                      child: tab.text == 'BOOK' ? BookList(vm, tabValue) : LanguageList(vm));
                 }).toList(),
               ),
             ),
@@ -76,16 +73,13 @@ class FilterViewModel {
 
   FilterViewModel(this.store) {
     translations = store.state.translations;
-    selectTranslation = (b, i) =>
-        store.dispatch(SelectionAction(i, Select.translation, toggle: b));
-    selectDefaultTranslation = (b, i) => store
-        .dispatch(SelectionAction(i, Select.defaultTranslation, toggle: b));
+    selectTranslation = (b, i) => store.dispatch(SelectionAction(i, Select.translation, toggle: b));
+    selectDefaultTranslation =
+        (b, i) => store.dispatch(SelectionAction(i, Select.defaultTranslation, toggle: b));
     languages = store.state.languages;
-    selectLanguage = (b, i) =>
-        store.dispatch(SelectionAction(i, Select.language, toggle: b));
+    selectLanguage = (b, i) => store.dispatch(SelectionAction(i, Select.language, toggle: b));
     bookNames = store.state.books;
-    selectBook =
-        (b, i) => store.dispatch(SelectionAction(i, Select.book, toggle: b));
+    selectBook = (b, i) => store.dispatch(SelectionAction(i, Select.book, toggle: b));
     otSelected = store.state.otSelected;
     ntSelected = store.state.ntSelected;
     updateSearch = () => store.dispatch(SearchAction(store.state.searchQuery));

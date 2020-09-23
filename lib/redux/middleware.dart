@@ -29,8 +29,7 @@ Future<void> searchMiddleware(
   store.dispatch(SearchLoadingAction());
   final translationIds = store.state.translations.formatIds();
   if (translationIds.isNotEmpty) {
-    final searchQueries = List<String>.from(store.state.searchHistory)
-      ..add(action.searchQuery);
+    final searchQueries = List<String>.from(store.state.searchHistory)..add(action.searchQuery);
 
     var sq = <String>[];
 
@@ -43,9 +42,7 @@ Future<void> searchMiddleware(
 
     sq = sq.reversed.toList();
 
-    store.dispatch(SetSearchHistoryAction(
-        searchQuery: action.searchQuery,
-        searchQueries: sq));
+    store.dispatch(SetSearchHistoryAction(searchQuery: action.searchQuery, searchQueries: sq));
 
     var numAdsAvailable = -1;
 
@@ -65,28 +62,22 @@ Future<void> searchMiddleware(
       translationIds: translationIds,
     ).then((res) async {
       if (numAdsAvailable < 0) {
-        numAdsAvailable = await NativeAdController.instance
-            .numAdsAvailable(prefAdMobNativeAdId);
+        numAdsAvailable = await NativeAdController.instance.numAdsAvailable(prefAdMobNativeAdId);
       }
 
       if (res.isEmpty) {
         sq.removeLast();
-        store.dispatch(SetSearchHistoryAction(
-            searchQuery: action.searchQuery,
-            searchQueries: sq));
+        store.dispatch(SetSearchHistoryAction(searchQuery: action.searchQuery, searchQueries: sq));
       }
 
       store
         ..dispatch(SearchResultAction(res, numAdsAvailable: numAdsAvailable))
-        ..dispatch(SetFilteredResultsAction(
-            filterModel.updateBooks(res, store.state.books)));
+        ..dispatch(SetFilteredResultsAction(filterModel.updateBooks(res, store.state.books)));
     }).catchError((dynamic e) {
       store..dispatch(SearchResultAction([]))..dispatch(SearchErrorAction());
     });
   } else {
-    store
-      ..dispatch(SearchResultAction([]))
-      ..dispatch(SearchNoTranslationsAction());
+    store..dispatch(SearchResultAction([]))..dispatch(SearchNoTranslationsAction());
   }
 
   next(action);
@@ -94,21 +85,20 @@ Future<void> searchMiddleware(
 
 void contextMiddleware(
   Store<AppState> store,
-  ContextAction action,
+  GetContextAction action,
   NextDispatcher next,
 ) {
   final res = store.state.results[action.idx];
   if (res.verses[res.currentVerseIndex].contextText.isEmpty) {
     Context.fetch(
-            translation: res.verses[res.currentVerseIndex].id,
-            book: res.bookId,
-            chapter: res.chapterId,
-            verse: res.verseId,
-            content: res.verses[res.currentVerseIndex].verseContent,)
-        .then((context) {
+      translation: res.verses[res.currentVerseIndex].id,
+      book: res.bookId,
+      chapter: res.chapterId,
+      verse: res.verseId,
+      content: res.verses[res.currentVerseIndex].verseContent,
+    ).then((context) {
       final results = store.state.results;
-      results[action.idx].verses[res.currentVerseIndex].contextText =
-          context.text;
+      results[action.idx].verses[res.currentVerseIndex].contextText = context.text;
       results[action.idx].verses[res.currentVerseIndex].verseIdx = [
         context.initialVerse,
         context.finalVerse
@@ -156,8 +146,7 @@ void updateStateMiddleware(
   StateChangeAction action,
   NextDispatcher next,
 ) {
-  SystemChrome.setSystemUIOverlayStyle(
-      store.state.isDarkTheme ? darkOverlay : lightOverlay);
+  SystemChrome.setSystemUIOverlayStyle(store.state.isDarkTheme ? darkOverlay : lightOverlay);
   next(action);
 }
 
@@ -184,8 +173,7 @@ void syncMiddleware(
   StateChangeAction action,
   NextDispatcher next,
 ) {
-  if (store.state.userAccount.isSignedIn &&
-      action.state == AppLifecycleState.paused) {
+  if (store.state.userAccount.isSignedIn && action.state == AppLifecycleState.paused) {
     store.state.userAccount.syncUserDb<void>(onlyPostChanges: true);
   } else if (action.state == AppLifecycleState.resumed) {
     store.state.userAccount.syncUserDb<void>();
@@ -265,12 +253,11 @@ void selectionMiddleware(
         ..dispatch(SetTestamentAction(Test.oT, toggle: otOn))
         ..dispatch(SetTestamentAction(Test.nT, toggle: ntOn))
         ..dispatch(SetBookNamesAction(books))
-        ..dispatch(SetFilteredResultsAction(
-            filterModel.filterByBook(store.state.results, books)));
+        ..dispatch(SetFilteredResultsAction(filterModel.filterByBook(store.state.results, books)));
       break;
     case Select.language:
-      final tl = filterModel.selectLang(store.state.languages[action.index],
-          store.state.translations, store.state.languages,
+      final tl = filterModel.selectLang(
+          store.state.languages[action.index], store.state.translations, store.state.languages,
           b: action.toggle);
       final t = tec.as<BibleTranslations>(tl[0]);
       final l = tec.as<List<Language>>(tl[1]);
@@ -300,9 +287,8 @@ final List<Middleware<AppState>> middleware = [
   TypedMiddleware<AppState, SetThemeAction>(updateThemeMiddleware),
   TypedMiddleware<AppState, StateChangeAction>(updateStateMiddleware),
   TypedMiddleware<AppState, SetSearchHistoryAction>(updateSearchesMiddleware),
-  TypedMiddleware<AppState, UpdateTranslationsAction>(
-      updateTranslationsMiddleware),
+  TypedMiddleware<AppState, UpdateTranslationsAction>(updateTranslationsMiddleware),
   TypedMiddleware<AppState, SelectionAction>(selectionMiddleware),
-  TypedMiddleware<AppState, ContextAction>(contextMiddleware),
+  TypedMiddleware<AppState, GetContextAction>(contextMiddleware),
   TypedMiddleware<AppState, StateChangeAction>(syncMiddleware),
 ];
