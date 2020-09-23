@@ -30,6 +30,7 @@ flutter build ios --release
 cd ios
 xcodebuild -workspace Runner.xcworkspace -scheme "Runner" -sdk iphoneos -configuration "Release" archive -archivePath Runner.xcarchive -allowProvisioningUpdates
 xcodebuild -project Runner.xcodeproj -exportArchive -archivePath Runner.xcarchive -exportOptionsPlist exportOptions.plist -exportPath . -allowProvisioningUpdates
-xcrun altool --upload-app -f Runner.ipa -t ios -u mike@bibleapplabs.com -p aavj-cupp-yjys-gfze
+ipa=`ls -t *.ipa | head -1`
+xcrun altool --upload-app -f $ipa -t ios -u mike@bibleapplabs.com -p aavj-cupp-yjys-gfze
 cd ..
 
