@@ -1,0 +1,3 @@
+-keepclassmembers enum * {*;}
+-keep class com.dexterous.** { *; }
+-keep class io.flutter.plugin.editing.** { *; }
