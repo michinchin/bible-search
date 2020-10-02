@@ -43,32 +43,32 @@ dependencies:
     hosted:
       name: rate_my_app
       url: http://noah.tecarta.com:8100
-    version: ^0.5.0+3
+    version: ^0.5.0+5
   tec_cache:
     hosted:
       name: tec_cache
       url: http://noah.tecarta.com:8100
-    version: ^1.0.0
+    version: ^1.0.2
   tec_native_ad:
     hosted:
       name: tec_native_ad
       url: http://noah.tecarta.com:8100
-    version: ^0.0.1
+    version: ^0.0.4
   tec_user_account:
     hosted:
       name: tec_user_account
       url: http://noah.tecarta.com:8100
-    version: ^1.0.0
+    version: ^2.0.8
   tec_util:
     hosted:
       name: tec_util
       url: http://noah.tecarta.com:8100
-    version: ^1.0.1
+    version: ^1.2.22
   tec_widgets:
     hosted:
       name: tec_widgets
       url: http://noah.tecarta.com:8100
-    version: ^1.0.0
+    version: ^2.0.11
 
 dev_dependencies:
   flutter_test:

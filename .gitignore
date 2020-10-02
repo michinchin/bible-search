@@ -25,6 +25,7 @@ Thumbs.db
 # Flutter repo-specific
 flutter_export_environment.sh
 .flutter-plugins-dependencies
+.last_build_id
 /bin/cache/
 /bin/mingit/
 /dev/benchmarks/mega_gallery/
