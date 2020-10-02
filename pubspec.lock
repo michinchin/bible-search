@@ -731,10 +731,10 @@ packages:
   tec_user_account:
     dependency: "direct main"
     description:
-      path: "../shared/tec_user_account"
-      relative: true
-    source: path
-    version: "2.0.7"
+      name: tec_user_account
+      url: "http://noah.tecarta.com:8100"
+    source: hosted
+    version: "2.0.8"
   tec_util:
     dependency: "direct main"
     description:
